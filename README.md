@@ -1,4 +1,4 @@
-# WikiRumours
+# WikiRumours (wikirumours.org)
 
 WikiRumours is a web- and mobile-based platform for moderating
 misinformation and disinformation. The software is free and open
@@ -6,8 +6,9 @@ source under an MIT license, which means that it can be used for
 open, commerical or proprietary use, without mandatory
 attribution.
 
-WikiRumours is the brainchild of The Sentinel Project:
-http://thesentinelproject.org
+WikiRumours is the brainchild of The Sentinel Project and is
+supporting current efforts in Kenya's Tana Delta:
+http://thesentinelproject.org/how-it-works-una-hakika/
 
 # Setup and installation
 
@@ -44,4 +45,4 @@ how the framework functions.
 
 # Questions?
 
-Contact us at wikirumours.org or thesentinelproject.org
+Contact us at http://wikirumours.org or http://thesentinelproject.org
