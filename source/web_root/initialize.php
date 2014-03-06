@@ -40,10 +40,7 @@
 			// Load PHP libraries (disable any which aren't needed)
 				include '../libraries_(protected)/light_open_ID/light_open_ID_0-6/index.php';
 				include '../libraries_(protected)/phpmailer/phpmailer_5-1/class.phpmailer.php';
-				include '../libraries_(protected)/simplepie/simplepie_1-3-1/autoloader.php';
-				include '../libraries_(protected)/simplepie/simplepie_1-3-1/idn/idna_convert.class.php';
 				include '../libraries_(protected)/phpass/phpass_0-3/PasswordHash.php';
-				include '../libraries_(protected)/get_id3/getid3_v1-9-6/getid3/getid3.php';
 				if ($handle = opendir('../libraries_(protected)/tidal_lock/php/.')) {
 					while (false !== ($file = readdir($handle))) {
 						if (substr_count($file, '.php') > 0) include '../libraries_(protected)/tidal_lock/php/' . $file;
