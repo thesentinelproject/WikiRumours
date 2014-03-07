@@ -15,7 +15,7 @@
 			?></div>
 			<div class='col-md-2 pull-right'>
 <?php 
-			if (@$apiKey[0]['hash']) echo "<button class='btn btn-default btn-xs' onClick='document.location.href=" . '"http://api.unahakika.org/v3-0/' . $apiKey[0]['hash'] . '/rumours/xml/country%3DKE%7Cstatus%3DNU"' . ";'>Test API</button>\n";
+			if (@$apiKey[0]['hash']) echo "<button class='btn btn-default btn-xs' onClick='document.location.href=" . '"http://api.unahakika.org/v1-0/' . $apiKey[0]['hash'] . '/rumours/xml/country%3DKE%7Cstatus%3DNU"' . ";'>Test API</button>\n";
 			else echo "<button class='btn btn-default btn-xs' onClick='alert(" . '"Please request your API first!"' . "); return false;'>Test API</button>\n";
 ?>
 			</div>
@@ -35,7 +35,7 @@
 		</div><br />
 		<div>
 <?php 
-			if (@$apiKey[0]['hash']) echo "<button class='btn btn-default btn-block' onClick='document.location.href=" . '"http://api.unahakika.org/v3-0/' . $apiKey[0]['hash'] . '/rumours/xml/country%3DKE%7Cstatus%3DNU"' . ";'>Test API</button>\n";
+			if (@$apiKey[0]['hash']) echo "<button class='btn btn-default btn-block' onClick='document.location.href=" . '"http://api.unahakika.org/v1-0/' . $apiKey[0]['hash'] . '/rumours/xml/country%3DKE%7Cstatus%3DNU"' . ";'>Test API</button>\n";
 			else echo "<button class='btn btn-default btn-block' onClick='alert(" . '"Please request your API first!"' . "); return false;'>Test API</button>\n";
 ?>
 		</div>
