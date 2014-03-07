@@ -18,6 +18,12 @@
 		$urlShortener = new urlShortener_TL();
 		
 	// queries
+		// retrieve all countries
+			$countries = array();
+			$result = retrieveFromDb('countries', null, null, null, null, null, 'country ASC');
+			for ($counter = 0; $counter < count($result); $counter++) {
+				$countries[$result[$counter]['country_id']] = $result[$counter]['country'];
+			}		
 		// retrieve all users
 			$allUsers = array();
 			$result = retrieveUsers(array('enabled'=>1));
@@ -51,7 +57,7 @@
 				
 			// check for errors
 				if (!$_POST['description']) $pageError .= "Please enter a rumour. ";
-				if (!$countriesShort_TL[@$_POST['country_occurred']]) $pageError .= "Please specify a country. ";
+				if (!$_POST['country_occurred']) $pageError .= "Please specify a country. ";
 
 			// search for matches
 				if (!$pageError) {
@@ -104,8 +110,8 @@
 				
 			// check for errors
 				if (!$_POST['description']) $pageError .= "Please enter a rumour. ";
-				if (!$countriesShort_TL[$_POST['country_occurred']]) $pageError .= "Please specify the country where occurred. ";
-				if (!$countriesShort_TL[$_POST['country_heard']]) $pageError .= "Please specify the country where heard. ";
+				if (!$_POST['country_occurred']) $pageError .= "Please specify the country where occurred. ";
+				if (!$_POST['country_heard']) $pageError .= "Please specify the country where heard. ";
 				if (!$_POST['heard_on']) $pageError .= "Please specify the date heard. ";
 				
 				if ($logged_in['is_proxy']) {

@@ -47,7 +47,7 @@
 			$filters[$tablePrefix . 'rumours.enabled'] = 1;
 		}
 		
-		if (@$countriesShort_TL[@$filters['country']]) {
+		if (@$filters['country']) {
 			$filters[$tablePrefix . 'rumours.country'] = $filters['country']; // remove ambiguity in join
 		}
 		if (@$filters['country']) unset($filters['country']);

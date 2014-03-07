@@ -52,7 +52,7 @@
 									echo "  &nbsp;</div>\n";
 									echo "  <div class='floatClear'></div>\n";
 								}
-		$location = trim(@$user[0]['region'] . ', ' . trim(@$northAmerStatesAndProvinces_TL[@$user[0]['province_state']] . ', ' . @$user[0]['other_province_state'], ', ') . ', ' . @$countriesShort_TL[$user[0]['country']], ',- ');
+		$location = trim(@$user[0]['region'] . ', ' . trim(@$user[0]['province_state'] . ', ' . @$user[0]['other_province_state'], ', ') . ', ' . @$countries[$user[0]['country']], ',- ');
 		/* Location */			echo "<!-- Location --><div class='indexApprox_TL'>Location</div><div class='indexedContentApprox_TL'><a href='https://maps.google.com/maps?q=" . urlencode($location) . "' target='_blank'>" . $location . "</a></div><div class='floatClear'></div>\n";
 		/* Email */				if ($logged_in['is_administrator'] && $user[0]['email'] && $user[0]['ok_to_contact']) echo "<!-- Email --><div class='indexApprox_TL'>Email</div><div class='indexedContentApprox_TL'><a href='mailto:" . $user[0]['email'] . "'>" . $user[0]['email'] . "</a></div><div class='floatClear'></div>\n";
 		/* Phone */				if ($logged_in['is_administrator'] && $user[0]['phone'] && $user[0]['ok_to_contact']) echo "<!-- Phone --><div class='indexApprox_TL'>Phone</div><div class='indexedContentApprox_TL'><a href='tel:" . trim($user[0]['phone'], '- ') . "'>" . $user[0]['phone'] . "</a></div><div class='floatClear'></div>\n";

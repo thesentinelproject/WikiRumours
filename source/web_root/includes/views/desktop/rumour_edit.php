@@ -13,7 +13,7 @@
 	/* Status */		echo $form->row('select', 'status', $operators->firstTrue(@$_POST['status'], @$rumour[0]['status']), true, 'Status', 'form-control', $rumourStatuses) . "\n";
 	/* Findings */		echo $form->row('textarea', 'findings', $operators->firstTrue(@$_POST['findings'], @$rumour[0]['findings']), false, 'Findings', 'form-control', null, null, array('rows'=>'5')) . "\n";
 	/* Country */		if ($logged_in['is_administrator'] && $logged_in['can_edit_content']) echo $form->row('country', 'country', $operators->firstTrue(@$_POST['country'], @$rumour[0]['country']), false, 'Country', 'form-control') . "\n";
-						else echo $form->row('uneditable', 'country_readable', $operators->firstTrue($countriesShort_TL[@$rumour[0]['country']], '-'), false, 'Country where occurred', 'form-control-static') . "\n";
+						else echo $form->row('uneditable', 'country_readable', $operators->firstTrue($countries[@$rumour[0]['country']], '-'), false, 'Country where occurred', 'form-control-static') . "\n";
 	/* Region */		if ($logged_in['is_administrator'] && $logged_in['can_edit_content']) echo $form->row('text', 'region', $operators->firstTrue(@$_POST['region'], @$rumour[0]['region']), false, 'City / region', 'form-control') . "\n";
 						else echo $form->row('uneditable', 'region_readable', $operators->firstTrue(@$rumour[0]['region'], '-'), false, 'Region where occurred', 'form-control-static') . "\n";
 	/* Occurred on */	if ($logged_in['is_administrator'] && $logged_in['can_edit_content']) echo $form->row('date', 'occurred_on', $operators->firstTrue(@$_POST['occurred_on'], @$rumour[0]['occurred_on']), false, 'Date occurred', 'form-control') . "\n";

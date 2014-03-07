@@ -39,7 +39,7 @@
 			echo "<h2>Almost done reporting this rumour...</h2>\n";
 			if ($matchingRumour) {
 				/* Description */		echo $form->row('uneditable', 'description', @$rumour[0]['description'], false, 'Rumour') . "\n";
-				/* Country occurred */	echo $form->row('uneditable', 'country_readable', $countriesShort_TL[@$rumour[0]['country']], false, 'Country where occurred') . "\n";
+				/* Country occurred */	echo $form->row('uneditable', 'country_readable', $countries[@$rumour[0]['country']], false, 'Country where occurred') . "\n";
 										echo $form->input('hidden', 'country_occurred', @$rumour[0]['country']) . "\n";
 				/* Region occurred */	echo $form->row('uneditable', 'region_readable', @$rumour[0]['region'], false, 'City/region where occurred') . "\n";
 										echo $form->input('hidden', 'region_occurred', @$rumour[0]['region']) . "\n";

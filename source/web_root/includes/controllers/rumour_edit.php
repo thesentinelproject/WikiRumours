@@ -18,6 +18,12 @@
 			exit();
 		}
 		
+		$countries = array();
+		$result = retrieveFromDb('countries', null, null, null, null, null, 'country ASC');
+		for ($counter = 0; $counter < count($result); $counter++) {
+			$countries[$result[$counter]['country_id']] = $result[$counter]['country'];
+		}		
+		
 	// authenticate user
 		if (!$logged_in) forceLoginThenRedirectHere();
 		
@@ -87,7 +93,7 @@
 			// check for errors
 				if ($logged_in['is_administrator'] && $logged_in['can_edit_content']) {
 					if (!@$_POST['description']) $pageError .= "Please enter a rumour. ";
-					if (!$countriesShort_TL[@$_POST['country']]) $pageError .= "Please specify a country. ";
+					if (!$_POST['country']) $pageError .= "Please specify a country. ";
 					if ((@$_POST['status'] != 'NU' && @$_POST['status'] != 'UI') && !@$_POST['findings']) $pageError .= "Please specify findings before finalizing status on this rumour. ";
 					if (@$_POST['created_by'] && (@$_POST['newuser_first_name'] || @$_POST['newuser_last_name'])) $pageError .= "Please either select an existing user or add a new users; you cannot do both. ";
 					if (@$_POST['created_by'] && @$_POST['newuser_email']) {

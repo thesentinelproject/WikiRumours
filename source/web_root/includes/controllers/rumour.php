@@ -16,6 +16,12 @@
 		$pageSuccess = $parameter3;
 		
 	// queries
+		$countries = array();
+		$result = retrieveFromDb('countries', null, null, null, null, null, 'country ASC');
+		for ($counter = 0; $counter < count($result); $counter++) {
+			$countries[$result[$counter]['country_id']] = $result[$counter]['country'];
+		}		
+		
 		if ($logged_in['is_proxy'] || $logged_in['is_moderator'] || $logged_in['is_administrator']) $rumour = retrieveRumours(array('public_id'=>$publicID), null, null, null, 1);
 		else $rumour = retrieveRumours(array('public_id'=>$publicID, $tablePrefix . 'rumours.enabled'=>1), null, null, null, 1);
 		if (count($rumour) < 1) {

@@ -14,6 +14,12 @@
 		$pageSuccess = $parameter2;
 		
 	// queries
+		$countries = array();
+		$result = retrieveFromDb('countries', null, null, null, null, null, 'country ASC');
+		for ($counter = 0; $counter < count($result); $counter++) {
+			$countries[$result[$counter]['country_id']] = $result[$counter]['country'];
+		}		
+		
 		if ($logged_in['is_proxy'] || $logged_in['is_moderator'] || $logged_in['is_administrator']) $user = retrieveUsers(array('username'=>$username), null, null, null, 1);
 		else $user = retrieveUsers(array('username'=>$username, 'enabled'=>'1'), null, null, null, 1);
 		if (count($user) < 1) {

@@ -30,7 +30,12 @@
 		$keywords = @$filters['keywords'];
 		unset($filters['keywords']);
 		
-		if (@$countriesShort_TL[@$filters['country']]) {
+		$countries = array();
+		$result = retrieveFromDb('countries', null, null, null, null, null, 'country ASC');
+		for ($counter = 0; $counter < count($result); $counter++) {
+			$countries[$result[$counter]['country_id']] = $result[$counter]['country'];
+		}		
+		if (@$countries[@$filters['country']]) {
 			$filters[$tablePrefix . 'rumours.country'] = $filters['country']; // remove ambiguity in join
 		}
 		if (@$filters['country']) unset($filters['country']);
@@ -128,7 +133,7 @@
 				$xmlOutput .= "      <rumour_id><![CDATA[" . $data[$counter]['public_id'] . "]]></rumour_id>\n";
 				$xmlOutput .= "      <rumour><![CDATA[" . $data[$counter]['description'] . "]]></rumour>\n";
 				$xmlOutput .= "      <country_abbreviation><![CDATA[" . $data[$counter]['country'] . "]]></country_abbreviation>\n";
-				$xmlOutput .= "      <country><![CDATA[" . $countriesShort_TL[$data[$counter]['country']] . "]]></country>\n";
+				$xmlOutput .= "      <country><![CDATA[" . @$countries[$data[$counter]['country']] . "]]></country>\n";
 				$xmlOutput .= "      <region><![CDATA[" . $data[$counter]['region'] . "]]></region>\n";
 				$xmlOutput .= "      <occurred_on><![CDATA[" . $data[$counter]['occurred_on'] . "]]></occurred_on>\n";
 				$xmlOutput .= "      <status_abbreviation><![CDATA[" . $data[$counter]['status'] . "]]></status_abbreviation>\n";

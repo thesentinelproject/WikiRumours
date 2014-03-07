@@ -119,7 +119,7 @@
 				else echo "  <tr>\n";
 				echo "  <td><a href='/profile/" . $users[$counter]['username'] . "' class='tooltips' data-toggle='tooltip' title='" . addSlashes($users[$counter]['full_name']) . "'>" . $users[$counter]['username'] . "</a></td>\n";
 				echo "  <td><a href='mailto:" . $users[$counter]['email'] . "'>" . $users[$counter]['email'] . "</a></td>\n";
-				$location = trim(@$users[$counter]['region'] . ', ' . trim(@$northAmerStatesAndProvinces_TL[@$users[$counter]['province_state']] . ', ' . @$users[$counter]['other_province_state'], ', ') . ', ' . @$countriesShort_TL[@$users[$counter]['country']], ',- ');
+				$location = trim(@$users[$counter]['region'] . ', ' . trim(@$users[$counter]['province_state'] . ', ' . @$users[$counter]['other_province_state'], ', ') . ', ' . @$countries[@$users[$counter]['country']], ',- ');
 				echo "      <td><a href='https://maps.google.com/maps?q=" . urlencode($location) . "' target='_blank'>" . $location . "</a></td>\n";
 				echo "  <td class='nowrap'>" . $parser->bubbleDate(date('Y-m-d', strtotime($users[$counter]['registered_on']))) . "</td>\n";
 				if ($users[$counter]['last_login'] != '0000-00-00 00:00:00') echo "  <td class='nowrap'>" . $parser->bubbleDate(date('Y-m-d', strtotime($users[$counter]['last_login']))) . "</td>\n";
@@ -154,7 +154,7 @@
 					echo "  <tr>\n";
 					echo "  <td><span class='tooltips' data-toggle='tooltip' title='" . addSlashes($registrants[$counter]['full_name']) . "'>" . $registrants[$counter]['username'] . "</span></td>\n";
 					echo "  <td><a href='mailto:" . $registrants[$counter]['email'] . "'>" . $registrants[$counter]['email'] . "</a></td>\n";
-					$location = trim($registrants[$counter]['city'] . ', ' . $northAmerStatesAndProvinces_TL[$registrants[$counter]['province_state']] . ', ' . $countriesShort_TL[$registrants[$counter]['country']], ',- ');
+					$location = trim($registrants[$counter]['city'] . ', ' . $registrants[$counter]['province_state'] . ', ' . $countries[$registrants[$counter]['country']], ',- ');
 					echo "      <td><a href='https://maps.google.com/maps?q=" . urlencode($location) . "' target='_blank'>" . $location . "</a></td>\n";
 					echo "  <td class='nowrap'>" . $parser->bubbleDate(date('Y-m-d', strtotime($registrants[$counter]['registered_on']))) . "</td>\n";
 					if ($logged_in['can_edit_users']) {
@@ -254,7 +254,7 @@
 				else echo "  <tr>\n";
 				echo "  <td><a href='/profile/" . $users[$counter]['username'] . "' class='tooltips' data-toggle='tooltip' title='" . addSlashes($users[$counter]['full_name']) . "'>" . $users[$counter]['username'] . "</a></td>\n";
 				echo "  <td><a href='mailto:" . $users[$counter]['email'] . "'>" . $users[$counter]['email'] . "</a></td>\n";
-				$location = trim(@$users[$counter]['region'] . ', ' . trim(@$northAmerStatesAndProvinces_TL[@$users[$counter]['province_state']] . ', ' . @$users[$counter]['other_province_state'], ', ') . ', ' . @$countriesShort_TL[@$users[$counter]['country']], ',- ');
+				$location = trim(@$users[$counter]['region'] . ', ' . trim(@$users[$counter]['province_state'] . ', ' . @$users[$counter]['other_province_state'], ', ') . ', ' . @$countries[@$users[$counter]['country']], ',- ');
 				echo "  <td><a href='https://maps.google.com/maps?q=" . urlencode($location) . "' target='_blank'>" . $location . "</a></td>\n";
 				echo "  <td>" . $parser->bubbleDate(date('Y-m-d', strtotime($users[$counter]['registered_on']))) . "</td>\n";
 				echo "  <td>" . $parser->bubbleDate(date('Y-m-d', strtotime($users[$counter]['last_login']))) . "</td>\n";

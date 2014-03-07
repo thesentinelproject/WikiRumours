@@ -26,6 +26,12 @@
 		$pageSuccess = $parameter3;
 
 	// queries
+		$countries = array();
+		$result = retrieveFromDb('countries', null, null, null, null, null, 'country ASC');
+		for ($counter = 0; $counter < count($result); $counter++) {
+			$countries[$result[$counter]['country_id']] = $result[$counter]['country'];
+		}		
+		
 		if ($report == 'dashboard') {
 			$numberOfRumoursToDisplay = 5;
 			$rumours = retrieveRumours(array($tablePrefix . 'rumours.enabled'=>'1', 'assigned_to'=>'0'), null ,null, $tablePrefix . 'rumours.updated_on DESC, ' . $tablePrefix . 'rumours.created_on DESC', '0,' . ($numberOfRumoursToDisplay + 1));

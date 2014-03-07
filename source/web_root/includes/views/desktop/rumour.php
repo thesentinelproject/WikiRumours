@@ -34,7 +34,7 @@
 		echo "  <div>\n";
 		echo "    Reported by " . $username . " via " . strtolower($rumourSources[$sightings[0]['source']]) . "\n";
 		if ($sightings[0]['heard_on'] != '0000-00-00 00:00:00') "    on " . date('F j, Y', strtotime($sightings[0]['heard_on'])) . "\n";
-		if ($sightings[0]['sighting_country']) echo "    in " . trim($sightings[0]['sighting_region'] . ', ' . $countriesShort_TL[$sightings[0]['sighting_country']], ' ,') . "\n";
+		if ($sightings[0]['sighting_country']) echo "    in " . trim($sightings[0]['sighting_region'] . ', ' . $countries[$sightings[0]['sighting_country']], ' ,') . "\n";
 		echo "  </div>\n";
 		if (count($sightings) > 1) {
 			echo "  <div>Also heard by <a href='' id='revealSightingsLink' onClick='return false;'>" . (count($sightings) - 1) . " other(s)</a></div>\n";
@@ -52,7 +52,7 @@
 					echo "    <td><small>" . $username . "</small></td>\n";
 				// Location & source
 					echo "    <td><small>\n";
-					echo "      " . trim($sightings[$counter]['sighting_region'] . ', ' . $countriesShort_TL[$sightings[$counter]['sighting_country']], ' ,') . "\n";
+					echo "      " . trim($sightings[$counter]['sighting_region'] . ', ' . $countries[$sightings[$counter]['sighting_country']], ' ,') . "\n";
 					if ($sightings[$counter]['source']) echo "      via " . strtolower($rumourSources[$sightings[$counter]['source']]) . "\n";
 					echo "    </small></td>\n";
 				// Date

@@ -521,8 +521,7 @@
 						// validate
 							if ($otherAttributes && !is_array($otherAttributes)) return false; // invalid array
 							if ($eventHandlers && !is_array($eventHandlers)) return false; // invalid array
-							global $countriesShort_TL;
-							if (!$countriesShort_TL) break; // unable to load global variable
+							$countries = retrieveFromDb('countries', null, null, null, null, null, 'country ASC');
 						// initialize
 							if (!$name) $name = 'country';
 						// return
@@ -536,12 +535,12 @@
 								$field .= "<option value=''>" . $label . "</option>";
 								$field .= "<option value=''>--</option>";
 							}
-							foreach ($countriesShort_TL as $optionValue => $optionLabel) {
-								$field .= "  <option value='" . $optionValue . "'";
-								if ($value && $optionValue == $value) $field .= " selected";
+							for ($counter = 0; $counter < count($countries); $counter++) {
+								$field .= "  <option value='" . $countries[$counter]['country_id'] . "'";
+								if ($value && $countries[$counter]['country_id'] == $value) $field .= " selected";
 								$field .= ">";
-								if ($truncateLabel > strlen($optionLabel) - 3) $label = substr($optionLabel, 0, $truncateLabel) . '...';
-								$field .= $optionLabel;
+								if ($truncateLabel > strlen($countries[$counter]['country']) - 3) $countries[$counter]['country'] = substr($countries[$counter]['country'], 0, $truncateLabel) . '...';
+								$field .= $countries[$counter]['country'];
 								$field .= "</option>";
 							}
 							$field .= "</select>";
@@ -552,8 +551,7 @@
 						// validate
 							if ($otherAttributes && !is_array($otherAttributes)) return false; // invalid array
 							if ($eventHandlers && !is_array($eventHandlers)) return false; // invalid array
-							global $states_TL;
-							if (!$states_TL) break; // unable to load global variable
+							$states = retrieveFromDb('states_in_usa', null, null, null, null, null, 'state ASC');
 						// initialize
 							if (!$name) $name = 'state';
 						// return
@@ -567,12 +565,12 @@
 								$field .= "<option value=''>" . $label . "</option>";
 								$field .= "<option value=''>--</option>";
 							}
-							foreach ($states_TL as $optionValue => $optionLabel) {
-								$field .= "  <option value='" . $optionValue . "'";
-								if ($value && $optionValue == $value) $field .= " selected";
+							for ($counter = 0; $counter < count($states); $counter++) {
+								$field .= "  <option value='" . $states[$counter]['state_id'] . "'";
+								if ($value && $states[$counter]['state_id'] == $value) $field .= " selected";
 								$field .= ">";
-								if ($truncateLabel > strlen($optionLabel) - 3) $label = substr($optionLabel, 0, $truncateLabel) . '...';
-								$field .= $optionLabel;
+								if ($truncateLabel > strlen($states[$counter]['state']) - 3) $states[$counter]['state'] = substr($states[$counter]['state'], 0, $truncateLabel) . '...';
+								$field .= $states[$counter]['state'];
 								$field .= "</option>";
 							}
 							$field .= "</select>";
@@ -583,8 +581,7 @@
 						// validate
 							if ($otherAttributes && !is_array($otherAttributes)) return false; // invalid array
 							if ($eventHandlers && !is_array($eventHandlers)) return false; // invalid array
-							global $provinces_TL;
-							if (!$provinces_TL) break; // unable to load global variable
+							$provinces = retrieveFromDb('provinces_in_canada', null, null, null, null, null, 'province ASC');
 						// initialize
 							if (!$name) $name = 'province';
 						// return
@@ -598,12 +595,12 @@
 								$field .= "<option value=''>" . $label . "</option>";
 								$field .= "<option value=''>--</option>";
 							}
-							foreach ($provinces_TL as $optionValue => $optionLabel) {
-								$field .= "  <option value='" . $optionValue . "'";
-								if ($value && $optionValue == $value) $field .= " selected";
+							for ($counter = 0; $counter < count($provinces); $counter++) {
+								$field .= "  <option value='" . $provinces[$counter]['province_id'] . "'";
+								if ($value && $provinces[$counter]['province_id'] == $value) $field .= " selected";
 								$field .= ">";
-								if ($truncateLabel > strlen($optionLabel) - 3) $label = substr($optionLabel, 0, $truncateLabel) . '...';
-								$field .= $optionLabel;
+								if ($truncateLabel > strlen($provinces[$counter]['province']) - 3) $provinces[$counter]['province'] = substr($provinces[$counter]['province'], 0, $truncateLabel) . '...';
+								$field .= $provinces[$counter]['province'];
 								$field .= "</option>";
 							}
 							$field .= "</select>";
@@ -614,8 +611,8 @@
 						// validate
 							if ($otherAttributes && !is_array($otherAttributes)) return false; // invalid array
 							if ($eventHandlers && !is_array($eventHandlers)) return false; // invalid array
-							global $northAmerStatesAndProvinces_TL;
-							if (!$northAmerStatesAndProvinces_TL) break; // unable to load global variable
+							$states = retrieveFromDb('states_in_usa', null, null, null, null, null, 'state ASC');
+							$provinces = retrieveFromDb('provinces_in_canada', null, null, null, null, null, 'province ASC');
 						// initialize
 							if (!$name) $name = 'stateProvince';
 						// return
@@ -629,12 +626,21 @@
 								$field .= "<option value=''>" . $label . "</option>";
 								$field .= "<option value=''>--</option>";
 							}
-							foreach ($northAmerStatesAndProvinces_TL as $optionValue => $optionLabel) {
-								$field .= "  <option value='" . $optionValue . "'";
-								if ($value && $optionValue == $value) $field .= " selected";
+							for ($counter = 0; $counter < count($states); $counter++) {
+								$field .= "  <option value='" . $states[$counter]['state_id'] . "'";
+								if ($value && $states[$counter]['state_id'] == $value) $field .= " selected";
 								$field .= ">";
-								if ($truncateLabel > strlen($optionLabel) - 3) $label = substr($optionLabel, 0, $truncateLabel) . '...';
-								$field .= $optionLabel;
+								if ($truncateLabel > strlen($states[$counter]['state']) - 3) $states[$counter]['state'] = substr($states[$counter]['state'], 0, $truncateLabel) . '...';
+								$field .= $states[$counter]['state'];
+								$field .= "</option>";
+							}
+							$field .= "<option value=''>--</option>";
+							for ($counter = 0; $counter < count($provinces); $counter++) {
+								$field .= "  <option value='" . $provinces[$counter]['province_id'] . "'";
+								if ($value && $provinces[$counter]['province_id'] == $value) $field .= " selected";
+								$field .= ">";
+								if ($truncateLabel > strlen($provinces[$counter]['province']) - 3) $provinces[$counter]['province'] = substr($provinces[$counter]['province'], 0, $truncateLabel) . '...';
+								$field .= $provinces[$counter]['province'];
 								$field .= "</option>";
 							}
 							$field .= "</select>";
@@ -645,8 +651,8 @@
 						// validate
 							if ($otherAttributes && !is_array($otherAttributes)) return false; // invalid array
 							if ($eventHandlers && !is_array($eventHandlers)) return false; // invalid array
-							global $northAmerProvincesAndStates_TL;
-							if (!$northAmerProvincesAndStates_TL) break; // unable to load global variable
+							$states = retrieveFromDb('states_in_usa', null, null, null, null, null, 'state ASC');
+							$provinces = retrieveFromDb('provinces_in_canada', null, null, null, null, null, 'province ASC');
 						// initialize
 							if (!$name) $name = 'provinceState';
 						// return
@@ -660,12 +666,21 @@
 								$field .= "<option value=''>" . $label . "</option>";
 								$field .= "<option value=''>--</option>";
 							}
-							foreach ($northAmerProvincesAndStates_TL as $optionValue => $optionLabel) {
-								$field .= "  <option value='" . $optionValue . "'";
-								if ($value && $optionValue == $value) $field .= " selected";
+							for ($counter = 0; $counter < count($provinces); $counter++) {
+								$field .= "  <option value='" . $provinces[$counter]['province_id'] . "'";
+								if ($value && $provinces[$counter]['province_id'] == $value) $field .= " selected";
 								$field .= ">";
-								if ($truncateLabel > strlen($optionLabel) - 3) $label = substr($optionLabel, 0, $truncateLabel) . '...';
-								$field .= $optionLabel;
+								if ($truncateLabel > strlen($provinces[$counter]['province']) - 3) $provinces[$counter]['province'] = substr($provinces[$counter]['province'], 0, $truncateLabel) . '...';
+								$field .= $provinces[$counter]['province'];
+								$field .= "</option>";
+							}
+							$field .= "<option value=''>--</option>";
+							for ($counter = 0; $counter < count($states); $counter++) {
+								$field .= "  <option value='" . $states[$counter]['state_id'] . "'";
+								if ($value && $states[$counter]['state_id'] == $value) $field .= " selected";
+								$field .= ">";
+								if ($truncateLabel > strlen($states[$counter]['state']) - 3) $states[$counter]['state'] = substr($states[$counter]['state'], 0, $truncateLabel) . '...';
+								$field .= $states[$counter]['state'];
 								$field .= "</option>";
 							}
 							$field .= "</select>";
@@ -676,8 +691,7 @@
 						// validate
 							if ($otherAttributes && !is_array($otherAttributes)) return false; // invalid array
 							if ($eventHandlers && !is_array($eventHandlers)) return false; // invalid array
-							global $languagesMacro_TL; // switch to alternate language set, if desired
-							if (!$languagesMacro_TL) break; // unable to load global variable
+							$languages = retrieveFromDb('languages', array('common'=>'1'), null, null, null, null, 'language ASC');
 						// initialize
 							if (!$name) $name = 'language';
 						// return
@@ -691,12 +705,12 @@
 								$field .= "<option value=''>" . $label . "</option>";
 								$field .= "<option value=''>--</option>";
 							}
-							foreach ($languagesMacro_TL as $optionValue => $optionLabel) {
-								$field .= "  <option value='" . $optionValue . "'";
-								if ($value && $optionValue == $value) $field .= " selected";
+							for ($counter = 0; $counter < count($languages); $counter++) {
+								$field .= "  <option value='" . $languages[$counter]['language_id'] . "'";
+								if ($value && $languages[$counter]['language_id'] == $value) $field .= " selected";
 								$field .= ">";
-								if ($truncateLabel > strlen($optionLabel) - 3) $label = substr($optionLabel, 0, $truncateLabel) . '...';
-								$field .= $optionLabel;
+								if ($truncateLabel > strlen($languages[$counter]['language']) - 3) $languages[$counter]['language'] = substr($languages[$counter]['language'], 0, $truncateLabel) . '...';
+								$field .= $languages[$counter]['language'];
 								$field .= "</option>";
 							}
 							$field .= "</select>";
