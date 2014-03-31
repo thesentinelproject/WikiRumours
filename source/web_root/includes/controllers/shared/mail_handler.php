@@ -195,9 +195,9 @@
 		
 	}
 
-	function emailFromUser($name, $email, $username, $telephone, $message) {
+	function emailFromUser($name, $email, $username, $telephone, $message, $adminEmail) {
 		
-		if (!$name || !$email || !$message) return false;
+		if (!$name || !$email || !$message || !$adminEmail) return false;
 		
 		global $mail_TL;
 		global $environmentals;
@@ -213,7 +213,7 @@
 		$messageHtml = str_replace("\n", "<br />", $messagePlain);
 		$messageHtml = str_replace('{CONTENT}', $messageHtml, loadHtmlEmailTemplate());
 
-		return $phpmailerWrapper->sendEmail($systemPreferences['appName'], $mail_TL['IncomingAddress'], $systemPreferences['appName'], $mail_TL['OutgoingAddress'], $subject, $messageHtml, $messagePlain, '', $name, $email);
+		return $phpmailerWrapper->sendEmail($systemPreferences['appName'], $adminEmail, $systemPreferences['appName'], $mail_TL['OutgoingAddress'], $subject, $messageHtml, $messagePlain, '', $name, $email);
 		
 	}
 	
