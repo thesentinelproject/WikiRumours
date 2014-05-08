@@ -111,7 +111,7 @@
 	Watchlist notifications
 	-------------------------------------- */
 	
-	function notifyUserOfRumourUpdate($name, $email, $publicID, $description, $status) {
+	function notifyUserOfRumourStatusUpdate($name, $email, $publicID, $description, $status) {
 
 		if (!$name || !$email || !$publicID || !$description || !$status) return false;
 		
@@ -127,6 +127,28 @@
 
 		$messagePlain = "The following rumour has updated its status to " . $status . ":\n\n" . $url . "\n\nPlease do not reply to this message.";
 		$messageHtml = "The following rumour has updated its status to " . $status . ":<br /><br /><a href='" . $url . "'>" . $description . "</a><br /><br />Please do not reply to this message.";
+		$messageHtml = str_replace('{CONTENT}', $messageHtml, loadHtmlEmailTemplate());
+		
+		return $phpmailerWrapper->sendEmail($name, $email, $systemPreferences['appName'], $mail_TL['OutgoingAddress'], $subject, $messageHtml, $messagePlain);
+		
+	}
+
+	function notifyUserOfRumourComment($name, $email, $publicID, $description, $comment, $author) {
+
+		if (!$name || !$email || !$publicID || !$description || !$comment || !$author) return false;
+		
+		global $mail_TL;
+		global $environmentals;
+		global $systemPreferences;
+		global $phpmailerWrapper;
+		$parser = new parser_TL();
+		
+		$url = $environmentals['protocol'] . $environmentals['absoluteRoot'] . "/rumour/" . $publicID . "/" . $parser->seoFriendlySuffix($description);
+		
+		$subject = "[" . $systemPreferences['appName'] . "] New comment on a rumour you're watching";
+
+		$messagePlain = $author . " has left a comment on the rumour " . '"' . $description . '"' . " (" . $url . "):\n\n" . $comment . "\n\nPlease do not reply to this message.";
+		$messageHtml = $author . " has left a comment on the rumour <a href='" . $url . "'>" . $description . "</a>:<br /><br />" . $comment . "<br /><br />Please do not reply to this message.";
 		$messageHtml = str_replace('{CONTENT}', $messageHtml, loadHtmlEmailTemplate());
 		
 		return $phpmailerWrapper->sendEmail($name, $email, $systemPreferences['appName'], $mail_TL['OutgoingAddress'], $subject, $messageHtml, $messagePlain);

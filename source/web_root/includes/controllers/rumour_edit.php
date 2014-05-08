@@ -138,7 +138,7 @@
 					if ($_POST['status'] != $rumour[0]['status']) {
 						$notify = retrieveWatchlist(array($tablePrefix . 'watchlist.rumour_id'=>$rumour[0]['rumour_id'], 'notify_of_updates'=>'1'), null, $tablePrefix . "users.email != '' AND " . $tablePrefix . "users.ok_to_contact = '1'");
 						for ($counter = 0; $counter < count($notify); $counter++) {
-							$success = notifyUserOfRumourUpdate($notify[$counter]['full_name'], $notify[$counter]['email'], $rumour[0]['public_id'], $_POST['description'], $rumourStatuses[$_POST['status']]);
+							$success = notifyUserOfRumourStatusUpdate($notify[$counter]['full_name'], $notify[$counter]['email'], $rumour[0]['public_id'], $_POST['description'], $rumourStatuses[$_POST['status']]);
 							if (!$success) {
 								$activity = "Unable to email " . $notify[$counter]['full_name'] . " (" . $notify[$counter]['email'] . ") of a status update to rumour_id " . $rumour[0]['rumour_id'];
 								$logger->logItInDb($activity);

@@ -229,6 +229,16 @@
 				// add to database
 					$commentID = insertIntoDb('comments', array('rumour_id'=>$rumour[0]['rumour_id'], 'comment'=>$_POST['new_comment'], 'created_by'=>$logged_in['user_id'], 'created_on'=>date('Y-m-d H:i:s')));
 
+				// watchlist notifications (email)
+					$notify = retrieveWatchlist(array($tablePrefix . 'watchlist.rumour_id'=>$rumour[0]['rumour_id'], 'notify_of_updates'=>'1'), null, $tablePrefix . "users.email != '' AND " . $tablePrefix . "users.ok_to_contact = '1'");
+					for ($counter = 0; $counter < count($notify); $counter++) {
+						$success = notifyUserOfRumourComment($notify[$counter]['full_name'], $notify[$counter]['email'], $rumour[0]['public_id'], $_POST['description'], $_POST['new_comment'], $logged_in['username']);
+						if (!$success) {
+							$activity = "Unable to email " . $notify[$counter]['full_name'] . " (" . $notify[$counter]['email'] . ") of a new comment on rumour_id " . $rumour[0]['rumour_id'];
+							$logger->logItInDb($activity);
+						}
+					}
+
 				// update log
 					$activity = $logged_in['full_name'] . " (user_id " . $logged_in['user_id'] . ") has added a comment (comment_id " . $commentID . ") to rumour_id " . $rumour[0]['rumour_id'] . ": " . $rumour[0]['description'];
 					$logger->logItInDb($activity);
