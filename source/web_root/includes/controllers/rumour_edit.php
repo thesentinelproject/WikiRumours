@@ -71,8 +71,9 @@
 			// redirect
 				if (!$success) $pageError .= "Unable to delete rumour for some reason. ";
 				else {
-					deleteFromDb('rumour_sightings', array('rumour_id'=>$rumour[0]['rumour_id']), null, null, null, null, 1);
-					deleteFromDb('rumours_x_tags', array('rumour_id'=>$rumour[0]['rumour_id']), null, null, null, null, 1);
+					deleteFromDb('rumour_sightings', array('rumour_id'=>$rumour[0]['rumour_id']));
+					deleteFromDb('rumours_x_tags', array('rumour_id'=>$rumour[0]['rumour_id']));
+					deleteFromDb('watchlist', array('rumour_id'=>$rumour[0]['rumour_id']));
 					header ('Location: /');
 					exit();
 				}
