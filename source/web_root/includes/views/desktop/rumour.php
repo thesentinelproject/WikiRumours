@@ -73,34 +73,34 @@
 		echo $form->end() . "\n";
 		
 	// tags
+		echo $form->start('editTagsForm', '', 'post', 'form-inline', null, array('onSubmit'=>'return false;')) . "\n";
+		echo $form->input('hidden', 'tagToRemove') . "\n";
+		echo "<div id='rumourTags'>\n";
+		echo "  <div id='rumourTagList'>\n";
 		if (count($tags)) {
-			echo $form->start('editTagsForm', '', 'post', 'form-inline', null, array('onSubmit'=>'return false;')) . "\n";
-			echo $form->input('hidden', 'tagToRemove') . "\n";
-			echo "<div id='rumourTags'>\n";
-			echo "  <div id='rumourTagList'>\n";
 			for ($counter = 0; $counter < count($tags); $counter++) {
 				echo "    <span class='badge'>\n";
 				echo "      <a href='/search_results/" . urlencode("tag_id=" . strtolower($tags[$counter]['tag_id'])) . "' class='tagLink'>" . $tags[$counter]['tag'] . "</a>\n";
 				echo "      &nbsp; <a href='javascript:void(0)' onClick='removeTag(" . '"' . $tags[$counter]['tag_id'] . '"' . "); return false;'><span class='glyphicon glyphicon-remove glyphicon-white'></span></a>\n";
 				echo "    </span>\n";
 			}
-			if ($logged_in) echo "    " . $form->input('button', 'addTagsButton', null, false, 'Add a tag', 'btn btn-sm btn-link') . "\n";
-			echo "  </div>\n";
-			if ($logged_in) {
-				echo "  <div id='rumourAddTags'>\n";
-				echo "    <div class='row'>\n";
-				echo "      <div class='col-md-10'>" . $form->input('text', 'new_tag', @$_POST['new_tag'], true, '|Additional tags (separate with spaces)', 'form-control') . "</div>\n";
-				echo "      <div class='col-md-2'>" . $form->input('submit', 'submitTags', null, false, 'Submit', 'btn btn-info', null, null, null, null, array('onClick'=>'validateeditTagsForm(); return false;')) . "</div>\n";
-				echo "    </div>\n";
-				echo "  </div>\n";
-				$pageJavaScript .= "// add more tags\n";
-				$pageJavaScript .= "  $('#addTagsButton').click(function () {\n";
-				$pageJavaScript .= "    $('#rumourAddTags').slideToggle();\n";
-				$pageJavaScript .= "  });\n\n";
-			}
-			echo "</div>\n";
-			echo $form->end() . "\n";
 		}
+		if ($logged_in) echo "    " . $form->input('button', 'addTagsButton', null, false, 'Add a tag', 'btn btn-sm btn-link') . "\n";
+		echo "  </div>\n";
+		if ($logged_in) {
+			echo "  <div id='rumourAddTags'>\n";
+			echo "    <div class='row'>\n";
+			echo "      <div class='col-md-10'>" . $form->input('text', 'new_tag', @$_POST['new_tag'], true, '|Additional tags (separate with spaces)', 'form-control') . "</div>\n";
+			echo "      <div class='col-md-2'>" . $form->input('submit', 'submitTags', null, false, 'Submit', 'btn btn-info', null, null, null, null, array('onClick'=>'validateeditTagsForm(); return false;')) . "</div>\n";
+			echo "    </div>\n";
+			echo "  </div>\n";
+			$pageJavaScript .= "// add more tags\n";
+			$pageJavaScript .= "  $('#addTagsButton').click(function () {\n";
+			$pageJavaScript .= "    $('#rumourAddTags').slideToggle();\n";
+			$pageJavaScript .= "  });\n\n";
+		}
+		echo "</div>\n";
+		echo $form->end() . "\n";
 
 	// status and findings
 		echo "<div id='rumourStatusAndFindings'>\n";
