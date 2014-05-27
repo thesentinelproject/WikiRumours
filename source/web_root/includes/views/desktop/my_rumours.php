@@ -10,7 +10,8 @@
 			echo "  <tr>\n";
 			echo "  <th>Rumour</th>\n";
 			echo "  <th>Status</th>\n";
-			echo "  <th>Assigned to</th>\n";
+			echo "  <th>Priority</th>\n";
+			echo "  <th>Assigned&nbsp;to</th>\n";
 			echo "  </tr>\n";
 			echo "  </thead>\n";
 			echo "  <tbody>\n";
@@ -18,6 +19,7 @@
 				echo "  <tr>\n";
 				echo "  <td><a href='/rumour/" . $assignedRumours[$counter]['public_id'] . "/" . $parser->seoFriendlySuffix($assignedRumours[$counter]['description']) . "'>" . $parser->truncate($assignedRumours[$counter]['description'], 'c', 60) . "</a></td>\n";
 				echo "  <td>" . $rumourStatuses[$assignedRumours[$counter]['status']] . "</td>\n";
+				echo "  <td>" . $operators->firstTrue(@$priorityLevels[$assignedRumours[$counter]['priority']], '-') . "</td>\n";
 				if ($assignedRumours[$counter]['assigned_to_username']) $username = "<a href='/profile/" . $assignedRumours[$counter]['assigned_to_username'] . "'>" . $assignedRumours[$counter]['assigned_to_username'] . "</a>";
 				else $username = '';
 				echo "  <td>" . $username . "</td>\n";

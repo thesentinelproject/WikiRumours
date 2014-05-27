@@ -51,7 +51,7 @@
 			$allModeratorsAndCommunityLiaisons[$result[$counter]['user_id']] = $result[$counter]['username'];
 			if ($result[$counter]['full_name']) $allModeratorsAndCommunityLiaisons[$result[$counter]['user_id']] .= " (" . $result[$counter]['full_name'] . ")";
 		}
-		if (!$allModeratorsAndCommunityLiaisons[$rumour[0]['created_by']]) $allModeratorsAndCommunityLiaisons[$rumour[0]['created_by']] = $rumour[0]['username'];
+		if (!@$allModeratorsAndCommunityLiaisons[$rumour[0]['created_by']]) $allModeratorsAndCommunityLiaisons[$rumour[0]['created_by']] = $rumour[0]['created_by_full_name'];
 			
 	// instantiate required class(es)
 		$operators = new operators_TL();
@@ -97,6 +97,7 @@
 					if (!@$_POST['description']) $pageError .= "Please enter a rumour. ";
 					if (!$_POST['country']) $pageError .= "Please specify a country. ";
 					if ((@$_POST['status'] != 'NU' && @$_POST['status'] != 'UI') && !@$_POST['findings']) $pageError .= "Please specify findings before finalizing status on this rumour. ";
+					if (!@$_POST['priority']) $pageError .= "Please specify a priority for this rumour. ";
 					if (@$_POST['created_by'] && (@$_POST['newuser_first_name'] || @$_POST['newuser_last_name'])) $pageError .= "Please either select an existing user or add a new users; you cannot do both. ";
 					if (@$_POST['created_by'] && @$_POST['newuser_email']) {
 						if (!$validator->validateEmailRobust(@$_POST['newuser_email'])) $pageError .= "Please specify a valid email address. ";
@@ -126,7 +127,7 @@
 							}
 							
 						// update rumour
-							updateDb('rumours', array('description'=>$_POST['description'], 'findings'=>$_POST['findings'], 'country'=>$_POST['country'], 'region'=>$_POST['region'], 'occurred_on'=>$_POST['occurred_on'], 'created_by'=>$createdBy, 'assigned_to'=>$_POST['assigned_to'], 'updated_on'=>date('Y-m-d H:i:s'), 'updated_by'=>$logged_in['user_id'], 'status'=>$_POST['status']), array('public_id'=>$publicID), null, null, null, null, 1);
+							updateDb('rumours', array('description'=>$_POST['description'], 'findings'=>$_POST['findings'], 'country'=>$_POST['country'], 'region'=>$_POST['region'], 'occurred_on'=>$_POST['occurred_on'], 'created_by'=>$createdBy, 'assigned_to'=>$_POST['assigned_to'], 'updated_on'=>date('Y-m-d H:i:s'), 'updated_by'=>$logged_in['user_id'], 'status'=>$_POST['status'], 'priority'=>$_POST['priority']), array('public_id'=>$publicID), null, null, null, null, 1);
 
 					}
 					elseif ($logged_in['is_moderator'] || $logged_in['is_community_liaison']) {

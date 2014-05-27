@@ -107,6 +107,7 @@
 		echo "  <div id='rumourStatus'>This rumour is ";
 		echo "<b>" . strtolower($rumourStatuses[$rumour[0]['status']]) . "</b>";
 		if ($rumour[0]['assigned_to_username'] && ($rumour[0]['status'] == 'NU' || $rumour[0]['status'] == 'UI')) echo " and assigned to <a href='/profile/" . $rumour[0]['assigned_to_username'] . "'>" . $rumour[0]['assigned_to_username'] . "</a>";
+		if (@$priorityLevels[$rumour[0]['priority']]) echo " and is of <b>" . strtolower($priorityLevels[$rumour[0]['priority']]) . "</b> priority\n";
 		echo ".";
 		if ($rumour[0]['findings']) echo " Here's why:";
 		echo "\n";

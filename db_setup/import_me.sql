@@ -3,7 +3,7 @@
 -- http://www.phpmyadmin.net
 --
 -- Host: localhost
--- Generation Time: Mar 07, 2014 at 07:31 PM
+-- Generation Time: May 27, 2014 at 02:29 PM
 -- Server version: 5.5.24-log
 -- PHP Version: 5.3.13
 
@@ -8443,6 +8443,7 @@ CREATE TABLE IF NOT EXISTS `wr_rumours` (
   `created_on` datetime NOT NULL,
   `updated_on` datetime NOT NULL,
   `updated_by` int(9) NOT NULL,
+  `priority` tinyint(1) NOT NULL,
   `status` char(2) COLLATE utf8_unicode_ci NOT NULL,
   `findings` text COLLATE utf8_unicode_ci NOT NULL,
   `assigned_to` int(9) NOT NULL,

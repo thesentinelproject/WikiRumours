@@ -27,5 +27,11 @@
 		'IT' => 'Impossible to verify but probably true',
 		'IF' => 'Impossible to verify but probably false'
 	);
+
+	$priorityLevels = array(
+		1 => 'Low',
+		2 => 'Medium',
+		3 => 'High'
+	);
 	
 ?>

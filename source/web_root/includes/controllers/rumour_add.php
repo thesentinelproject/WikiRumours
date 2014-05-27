@@ -167,7 +167,7 @@
 								else {
 									
 									// add existing tags
-										if ($_POST['tags']) {
+										if (@$_POST['tags']) {
 											foreach ($_POST['tags'] as $tagID) {
 												if ($tagID) insertIntoDb('rumours_x_tags', array('rumour_id'=>$rumourID, 'tag_id'=>$tagID, 'added_by'=>$logged_in['user_id'], 'added_on'=>date('Y-m-d H:i:s')));
 											}
@@ -189,7 +189,7 @@
 						}
 
 					// add rumour sighting to database
-						insertIntoDb('rumour_sightings', array('created_by'=>$createdBy, 'rumour_id'=>$operators->firstTrue(@$rumourID, $rumour[0]['rumour_id']), 'entered_by'=>$logged_in['user_id'], 'entered_on'=>date('Y-m-d H:i:s'), 'heard_on'=>$_POST['heard_on'], 'country'=>@$_POST['country_heard'], 'region'=>@$_POST['region_heard'], 'source'=>@$_POST['source'], 'ipv4'=>@$ipv4, 'ipv6'=>@$ipv6));
+						insertIntoDb('rumour_sightings', array('created_by'=>$createdBy, 'rumour_id'=>$operators->firstTrue(@$rumourID, @$rumour[0]['rumour_id']), 'entered_by'=>$logged_in['user_id'], 'entered_on'=>date('Y-m-d H:i:s'), 'heard_on'=>$_POST['heard_on'], 'country'=>@$_POST['country_heard'], 'region'=>@$_POST['region_heard'], 'source'=>@$_POST['source'], 'ipv4'=>@$ipv4, 'ipv6'=>@$ipv6));
 						
 				}
 				

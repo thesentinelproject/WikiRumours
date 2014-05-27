@@ -10,6 +10,7 @@
 
 	/* Description */	if ($logged_in['is_administrator'] && $logged_in['can_edit_content']) echo $form->row('textarea', 'description', $operators->firstTrue(@$_POST['description'], @$rumour[0]['description']), true, 'Rumour|Please be as concise as possible', 'form-control', null, null, array('rows'=>'7')) . "\n";
 						else echo $form->row('uneditable', 'description', $rumour[0]['description'], false, 'Rumour', 'form-control-static') . "\n";
+	/* Priority */		echo $form->row('select', 'priority', $operators->firstTrue(@$_POST['priority'], @$rumour[0]['priority']), true, 'Priority', 'form-control', array(''=>'Please select') + $priorityLevels) . "\n";
 	/* Status */		echo $form->row('select', 'status', $operators->firstTrue(@$_POST['status'], @$rumour[0]['status']), true, 'Status', 'form-control', $rumourStatuses) . "\n";
 	/* Findings */		echo $form->row('textarea', 'findings', $operators->firstTrue(@$_POST['findings'], @$rumour[0]['findings']), false, 'Findings', 'form-control', null, null, array('rows'=>'5')) . "\n";
 	/* Country */		if ($logged_in['is_administrator'] && $logged_in['can_edit_content']) echo $form->row('country', 'country', $operators->firstTrue(@$_POST['country'], @$rumour[0]['country']), false, 'Country', 'form-control') . "\n";

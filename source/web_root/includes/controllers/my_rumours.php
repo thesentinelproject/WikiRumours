@@ -25,6 +25,7 @@
 
 	// instantiate required class(es)
 		$parser = new parser_TL();
+		$operators = new operators_TL();
 		
 /*	--------------------------------------
 	Execute only if a form post

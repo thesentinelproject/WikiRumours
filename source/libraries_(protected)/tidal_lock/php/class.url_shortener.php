@@ -93,7 +93,7 @@
 			// create ID and compare against blacklist
 				$id = '';
 				
-				while (!$id || $matchedBlacklist) {
+				while (!$id || @$matchedBlacklist) {
 					
 					for ($counter = 0; $counter < $lengthInCharacters; $counter++) {
 						$randomCharacter = substr($source, rand(0, strlen($source) - 1), 1);
