@@ -18,6 +18,19 @@
 		
 	// define description for search engine indexing
 		echo "  <meta name='description' content=" . '"' . $systemPreferences['appDescription'] . '"' . ">\n";
+
+	// Facebook sharing tags
+		if (@$pageTitle) echo "  <meta property='og:title' content=" . '"' . $pageTitle . '"' . " />\n";
+		if (@$pageDescription) echo "  <meta property='og:description' content=" . '"' . $pageDescription . '"' . " />\n";
+		if (@$pageImage) echo "  <meta property='og:image' content='" . $pageImage . "' />\n";
+
+	// Twitter sharing tags
+		if (@$pageTitle || @$pageDescription || @$pageImage) {
+			echo "  <meta name='twitter:card' content='summary'>\n";
+			if (@$pageTitle) echo "  <meta property='twitter:title' content=" . '"' . $pageTitle . '"' . " />\n";
+			if (@$pageDescription) echo "  <meta property='twitter:description' content=" . '"' . $pageDescription . '"' . " />\n";
+			if (@$pageImage) echo "  <meta property='twitter:image' content='" . $pageImage . "' />\n";
+		}
 		
 	// load Bootstrap stylesheet
 		echo "  <!-- Bootstrap --><link href='/libraries/bootstrap/3-0-0/css/bootstrap.min.css' rel='stylesheet' media='screen' type='text/css' />\n";

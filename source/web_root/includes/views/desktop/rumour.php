@@ -1,4 +1,5 @@
 <?php
+	$pageDescription = $rumour[0]['description'];
 	include 'includes/views/desktop/shared/page_top.php';
 
 	if ($pageError) echo "<div class='alert alert-danger alert-dismissable'><button type='button' class='close' data-dismiss='alert' aria-hidden='true'>&times;</button>" . $pageError . "</div>\n";
