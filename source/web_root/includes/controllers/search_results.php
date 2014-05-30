@@ -24,11 +24,6 @@
 		$page = floatval(@$filters['page']);
 
 		$sort = @$filters['sort'];
-		
-		$report = @$filters['report'];
-
-		$keywords = @$filters['keywords'];
-		
 		if ($report == 'common') $sort = 'number_of_sightings DESC';
 		elseif ($sort == 'priority_high') $sort = 'priority DESC';
 		elseif ($sort == 'priority_low') $sort = 'priority ASC';
@@ -39,6 +34,10 @@
 			$sort = $tablePrefix . 'rumours.updated_on DESC';
 			$filters['sort'] = 'date_high';
 		}
+		
+		$report = @$filters['report'];
+
+		$keywords = @$filters['keywords'];
 		
 		if (!$logged_in['is_proxy'] && !$logged_in['is_moderator'] && !$logged_in['is_administrator']) {
 			$otherCriteria .= " AND (" . $tablePrefix . "rumours.enabled = '1')"; // clarifies join

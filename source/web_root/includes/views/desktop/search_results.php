@@ -29,13 +29,13 @@
 		else {
 			echo "<table class='table table-hover table-condensed'>\n";
 			echo "<tr>\n";
-			if ($filters['sort'] == 'date_high') echo "<th><a href='/search_results/" . $keyValue->updateKeyValue($keyValue->arrayToKeyValue($filters), 'sort', 'date_low') . "'>Updated</a></th>\n";
-			else echo "<th><a href='/search_results/" . $keyValue->updateKeyValue($keyValue->arrayToKeyValue($filters), 'sort', 'date_high') . "'>Updated</a></th>\n";
+			if ($filters['sort'] == 'date_high') echo "<th><a href='/search_results/" . $keyValue->updateKeyValue($keyValue->arrayToKeyValue($filters, '|'), 'sort', 'date_low', '|') . "'>Updated</a></th>\n";
+			else echo "<th><a href='/search_results/" . $keyValue->updateKeyValue($keyValue->arrayToKeyValue($filters, '|'), 'sort', 'date_high', '|') . "'>Updated</a></th>\n";
 			echo "<th>Rumour</th>\n";
-			if ($filters['sort'] == 'priority_high') echo "<th><a href='/search_results/" . $keyValue->updateKeyValue($keyValue->arrayToKeyValue($filters), 'sort', 'priority_low') . "'>Priority</a></th>\n";
-			else echo "<th><a href='/search_results/" . $keyValue->updateKeyValue($keyValue->arrayToKeyValue($filters), 'sort', 'priority_high') . "'>Priority</a></th>\n";
-			if ($filters['sort'] == 'status_down') echo "<th><a href='/search_results/" . $keyValue->updateKeyValue($keyValue->arrayToKeyValue($filters), 'sort', 'status_up') . "'>Status</a></th>\n";
-			else echo "<th><a href='/search_results/" . $keyValue->updateKeyValue($keyValue->arrayToKeyValue($filters), 'sort', 'status_down') . "'>Status</a></th>\n";
+			if ($filters['sort'] == 'priority_high') echo "<th><a href='/search_results/" . $keyValue->updateKeyValue($keyValue->arrayToKeyValue($filters, '|'), 'sort', 'priority_low', '|') . "'>Priority</a></th>\n";
+			else echo "<th><a href='/search_results/" . $keyValue->updateKeyValue($keyValue->arrayToKeyValue($filters, '|'), 'sort', 'priority_high', '|') . "'>Priority</a></th>\n";
+			if ($filters['sort'] == 'status_down') echo "<th><a href='/search_results/" . $keyValue->updateKeyValue($keyValue->arrayToKeyValue($filters, '|'), 'sort', 'status_up', '|') . "'>Status</a></th>\n";
+			else echo "<th><a href='/search_results/" . $keyValue->updateKeyValue($keyValue->arrayToKeyValue($filters, '|'), 'sort', 'status_down', '|') . "'>Status</a></th>\n";
 			echo "</tr>\n";
 			for ($counter = 0; $counter < count($rumours); $counter++) {
 				echo "<tr>\n";
