@@ -32,10 +32,11 @@
 			echo "                <div class='siteNavItemSearch'><a href='javascript:void(0)' onClick='return false' id='advancedSearchButton' data-toggle='collapse' data-target='#siteNavSearchAdvancedToggle'>Advanced Search</a></div>\n";
 		// Advanced search
 				echo "                <div id='siteNavSearchAdvancedToggle' class='collapse";
-				if (@$filters[$tablePrefix . 'rumours.country'] || @$filters['status'] || @$filters['tag_id']) echo " in";
+				if (@$filters[$tablePrefix . 'rumours.country'] || @$filters['priority'] || @$filters['status'] || @$filters['tag_id']) echo " in";
 				echo "'>\n";
 				echo "                  <div id='siteNavSearchAdvanced'>\n";
 				/* Country */	echo "                    <div class='form-group'>" . $form->input('country', 'search_country', @$filters[$tablePrefix . 'rumours.country'], false, 'All countries', 'form-control') . "</div>\n";
+				/* Priority */	echo "                    <div class='form-group'>" . $form->input('select', 'search_priority', @$filters['priority'], false, 'All priorities', 'form-control', $priorityLevels) . "</div>\n";
 				/* Status */	echo "                    <div class='form-group'>" . $form->input('select', 'search_status', @$filters['status'], false, 'All statuses', 'form-control', $rumourStatuses) . "</div>\n";
 				/* Tag */		$allTags = array();
 								$result = retrieveFromDb('tags', null, null, null, null, null, 'tag ASC');
@@ -48,7 +49,6 @@
 				echo "                </div><!-- siteNavSearchAdvancedToggle -->\n";
 			echo "              " . $form->end() . "<!-- searchForm -->\n";
 			echo "            </div><!-- siteNavSearch -->\n";
-
 		// API
 			echo "            <div>\n";
 			echo "              <span class='pull-left transluscent'><span class='glyphicon glyphicon-new-window'></span>&nbsp;&nbsp;</span>\n";

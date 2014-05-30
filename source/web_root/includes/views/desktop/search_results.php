@@ -29,13 +29,19 @@
 		else {
 			echo "<table class='table table-hover table-condensed'>\n";
 			echo "<tr>\n";
-			echo "<th colspan='2'>Rumour</th>\n";
-			echo "<th>Status</th>\n";
+			if ($filters['sort'] == 'date_high') echo "<th><a href='/search_results/" . $keyValue->updateKeyValue($keyValue->arrayToKeyValue($filters), 'sort', 'date_low') . "'>Updated</a></th>\n";
+			else echo "<th><a href='/search_results/" . $keyValue->updateKeyValue($keyValue->arrayToKeyValue($filters), 'sort', 'date_high') . "'>Updated</a></th>\n";
+			echo "<th>Rumour</th>\n";
+			if ($filters['sort'] == 'priority_high') echo "<th><a href='/search_results/" . $keyValue->updateKeyValue($keyValue->arrayToKeyValue($filters), 'sort', 'priority_low') . "'>Priority</a></th>\n";
+			else echo "<th><a href='/search_results/" . $keyValue->updateKeyValue($keyValue->arrayToKeyValue($filters), 'sort', 'priority_high') . "'>Priority</a></th>\n";
+			if ($filters['sort'] == 'status_down') echo "<th><a href='/search_results/" . $keyValue->updateKeyValue($keyValue->arrayToKeyValue($filters), 'sort', 'status_up') . "'>Status</a></th>\n";
+			else echo "<th><a href='/search_results/" . $keyValue->updateKeyValue($keyValue->arrayToKeyValue($filters), 'sort', 'status_down') . "'>Status</a></th>\n";
 			echo "</tr>\n";
 			for ($counter = 0; $counter < count($rumours); $counter++) {
 				echo "<tr>\n";
 				echo "<td>" . $parser->bubbleDate(date('Y-m-d', strtotime($rumours[$counter]['updated_on']))) . "</td>\n";
 				echo "<td><a href='/rumour/" . $rumours[$counter]['public_id'] . "/" . $parser->seoFriendlySuffix($rumours[$counter]['description']) . "'>" . $parser->truncate($rumours[$counter]['description'], 'c', 60) . "</a></td>\n";
+				echo "<td class='nowrap'>" . $priorityLevels[$rumours[$counter]['priority']] . "</td>\n";
 				echo "<td class='nowrap'>" . $rumourStatuses[$rumours[$counter]['status']] . "</td>\n";
 				echo "</tr>\n";
 			}

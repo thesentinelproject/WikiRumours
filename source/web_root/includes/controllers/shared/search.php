@@ -18,6 +18,7 @@
 			$filters = '';
 			if ($_POST['search_keywords']) $filters .= "|keywords=" . $_POST['search_keywords'];
 			if ($_POST['search_country']) $filters .= "|country=" . $_POST['search_country'];
+			if ($_POST['search_priority']) $filters .= "|priority=" . $_POST['search_priority'];
 			if ($_POST['search_status']) $filters .= "|status=" . $_POST['search_status'];
 			if ($_POST['search_tag']) $filters .= "|tag_id=" . $_POST['search_tag'];
 

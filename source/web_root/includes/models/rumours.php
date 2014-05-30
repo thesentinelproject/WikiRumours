@@ -36,6 +36,7 @@
 			else {
 				$query = "SELECT " . $tablePrefix . "rumours.*,";
 				$query .= " ". $tablePrefix . "rumours.enabled AS rumour_enabled,";
+				$query .= " ". $tablePrefix . "rumours.updated_on AS rumour_updated_on,";
 				$query .= " TRIM(CONCAT(" . $tablePrefix . "creators.first_name, ' ', " . $tablePrefix . "creators.last_name)) as created_by_full_name,";
 				$query .= " " . $tablePrefix . "creators.username as created_by_username,";
 				$query .= " " . $tablePrefix . "creators.user_id as created_by_user_id,";
