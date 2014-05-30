@@ -257,7 +257,8 @@
 				$location = trim(@$users[$counter]['region'] . ', ' . trim(@$users[$counter]['province_state'] . ', ' . @$users[$counter]['other_province_state'], ', ') . ', ' . @$countries[@$users[$counter]['country']], ',- ');
 				echo "  <td><a href='https://maps.google.com/maps?q=" . urlencode($location) . "' target='_blank'>" . $location . "</a></td>\n";
 				echo "  <td>" . $parser->bubbleDate(date('Y-m-d', strtotime($users[$counter]['registered_on']))) . "</td>\n";
-				echo "  <td>" . $parser->bubbleDate(date('Y-m-d', strtotime($users[$counter]['last_login']))) . "</td>\n";
+				if ($users[$counter]['last_login'] == '0000-00-00 00:00:00') echo "  <td>Never</td>\n";
+				else echo "  <td>" . $parser->bubbleDate(date('Y-m-d', strtotime($users[$counter]['last_login']))) . "</td>\n";
 				echo "  </tr>\n";
 			}
 			echo "  </tbody>\n";
