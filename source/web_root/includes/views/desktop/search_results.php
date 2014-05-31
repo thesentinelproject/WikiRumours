@@ -40,7 +40,7 @@
 			for ($counter = 0; $counter < count($rumours); $counter++) {
 				echo "<tr>\n";
 				echo "<td>" . $parser->bubbleDate(date('Y-m-d', strtotime($rumours[$counter]['updated_on']))) . "</td>\n";
-				echo "<td><a href='/rumour/" . $rumours[$counter]['public_id'] . "/" . $parser->seoFriendlySuffix($rumours[$counter]['description']) . "'>" . $parser->truncate($rumours[$counter]['description'], 'c', 60) . "</a></td>\n";
+				echo "<td><a href='/rumour/" . $rumours[$counter]['public_id'] . "/" . $parser->seoFriendlySuffix($rumours[$counter]['description']) . "'>" . $parser->truncate($rumours[$counter]['description'], 'c', 30) . "</a></td>\n";
 				echo "<td class='nowrap'>" . $priorityLevels[$rumours[$counter]['priority']] . "</td>\n";
 				echo "<td class='nowrap'>" . $rumourStatuses[$rumours[$counter]['status']] . "</td>\n";
 				echo "</tr>\n";

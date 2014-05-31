@@ -210,9 +210,9 @@
 			echo "  <tbody>\n";
 			for ($counter = 0; $counter < count($rumours); $counter++) {
 				echo "  <tr>\n";
-				echo "  <td><a href='/rumour/" . $rumours[$counter]['public_id'] . "/" . $parser->seoFriendlySuffix($rumours[$counter]['description']) . "'>" . $parser->truncate($rumours[$counter]['description'], 'c', 40) . "</a></td>\n";
+				echo "  <td class='nowrap'><a href='/rumour/" . $rumours[$counter]['public_id'] . "/" . $parser->seoFriendlySuffix($rumours[$counter]['description']) . "'>" . $parser->truncate($rumours[$counter]['description'], 'c', 30) . "</a></td>\n";
 				echo "  <td>" . $rumourStatuses[$rumours[$counter]['status']] . "</td>\n";
-				echo "  <td>" . $rumours[$counter]['assigned_to_full_name'] . "</td>\n";
+				echo "  <td class='nowrap'>" . $rumours[$counter]['assigned_to_full_name'] . "</td>\n";
 				echo "  <td class='text-center'>" . floatval($rumours[$counter]['number_of_sightings']) . "</td>\n";
 				echo "  <td class='text-center'>" . floatval($rumours[$counter]['number_of_comments']) . "</td>\n";
 				echo "  <td class='text-center'>" . floatval($rumours[$counter]['number_of_watchlists']) . "</td>\n";
