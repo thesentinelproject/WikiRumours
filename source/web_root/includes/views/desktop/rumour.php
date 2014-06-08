@@ -232,7 +232,7 @@
 							echo "        <div>\n";
 							if ($comments[$counter]['is_moderator']) echo "          <span class='label label-default'>MODERATOR</span>\n";
 							elseif ($comments[$counter]['is_administrator']) echo "          <span class='label label-default'>ADMINISTRATOR</span>\n";
-							echo "          " . $comments[$counter]['comment']. "\n";
+							echo "          " . nl2br($parser->activateURLs($comments[$counter]['comment'])) . "\n";
 							echo "        </div>\n";
 						echo "      </div>\n";
 						echo "  </div>\n";

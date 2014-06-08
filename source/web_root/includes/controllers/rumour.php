@@ -199,7 +199,7 @@
 			$alreadyWatchlisted = retrieveFromDb('watchlist', array('rumour_id'=>$rumour[0]['rumour_id'], 'created_by'=>$logged_in['user_id']), null, null, null, null, null, 1);
 			if (count($alreadyWatchlisted) > 0) $pageError .= "This rumour is already in your watchlist. ";
 			else {
-				insertIntoDb('watchlist', array('rumour_id'=>$rumour[0]['rumour_id'], 'created_by'=>$logged_in['user_id'], 'created_on'=>date('Y-m-d H:i:s')));
+				insertIntoDb('watchlist', array('rumour_id'=>$rumour[0]['rumour_id'], 'notify_of_updates'=>'1', 'created_by'=>$logged_in['user_id'], 'created_on'=>date('Y-m-d H:i:s')));
 				header('Location: /rumour/' . $publicID . '/' . floatval($page) . '/added_to_watchlist');
 				exit();
 			}
@@ -232,7 +232,7 @@
 				// watchlist notifications (email)
 					$notify = retrieveWatchlist(array($tablePrefix . 'watchlist.rumour_id'=>$rumour[0]['rumour_id'], 'notify_of_updates'=>'1'), null, $tablePrefix . "users.email != '' AND " . $tablePrefix . "users.ok_to_contact = '1'");
 					for ($counter = 0; $counter < count($notify); $counter++) {
-						$success = notifyUserOfRumourComment($notify[$counter]['full_name'], $notify[$counter]['email'], $rumour[0]['public_id'], $_POST['description'], $_POST['new_comment'], $logged_in['username']);
+						$success = notifyUserOfRumourComment($notify[$counter]['full_name'], $notify[$counter]['email'], $rumour[0]['public_id'], $rumour[0]['description'], $_POST['new_comment'], $logged_in['username']);
 						if (!$success) {
 							$activity = "Unable to email " . $notify[$counter]['full_name'] . " (" . $notify[$counter]['email'] . ") of a new comment on rumour_id " . $rumour[0]['rumour_id'];
 							$logger->logItInDb($activity);
