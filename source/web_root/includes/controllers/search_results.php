@@ -23,6 +23,8 @@
 
 		$page = floatval(@$filters['page']);
 
+		$report = @$filters['report'];
+
 		$sort = @$filters['sort'];
 		if ($report == 'common') $sort = 'number_of_sightings DESC';
 		elseif ($sort == 'priority_high') $sort = 'priority DESC';
@@ -35,8 +37,6 @@
 			$filters['sort'] = 'date_high';
 		}
 		
-		$report = @$filters['report'];
-
 		$keywords = @$filters['keywords'];
 		
 		if (!$logged_in['is_proxy'] && !$logged_in['is_moderator'] && !$logged_in['is_administrator']) {
