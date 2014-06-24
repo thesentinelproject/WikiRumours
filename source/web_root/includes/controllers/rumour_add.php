@@ -204,7 +204,7 @@
 						for ($counter = 0; $counter < count($moderators); $counter++) {
 							$success = notifyOfRumour($moderators[$counter]['full_name'], $moderators[$counter]['email'], $operators->firstTrue(@$newPublicID, @$rumour[0]['public_id']), $_POST['description']);
 							if (!$success) {
-								$activity = "Unable to email " . $moderators[$counter]['full_name'] . " (" . $moderators[$counter]['email'] . ") of a new rumour with rumour_id " . $rumourID;
+								$activity = "Unable to email " . $moderators[$counter]['full_name'] . " (" . $moderators[$counter]['email'] . ") of a new rumour with rumour_id " . $rumourID . " (" . $operators->firstTrue(@$newPublicID, @$rumour[0]['public_id']) . "):" . $_POST['description'];
 								$logger->logItInDb($activity);
 							}
 						}

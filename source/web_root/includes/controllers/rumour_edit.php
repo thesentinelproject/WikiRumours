@@ -157,7 +157,7 @@
 						if (count($assignedTo) == 1) {
 							$success = notifyOfRumour($assignedTo[0]['full_name'], $assignedTo[0]['email'], $publicID, $_POST['description'], true);
 							if (!$success) {
-								$activity = "Unable to email " . $assignedTo[0]['full_name'] . " (" . $assignedTo[0]['email'] . ") upon assignment of rumour_id " . $rumour[0]['rumour_id'];
+								$activity = "Unable to email " . $assignedTo[0]['full_name'] . " (" . $assignedTo[0]['email'] . ") upon assignment of rumour_id " . $rumour[0]['rumour_id'] . " (public_id " . $publicID . "): " . $_POST['description'];
 								$logger->logItInDb($activity);
 							}
 						}
