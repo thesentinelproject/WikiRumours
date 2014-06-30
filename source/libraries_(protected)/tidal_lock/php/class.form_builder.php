@@ -146,7 +146,7 @@
 								$field .= "<option value='" . $optionValue . "'";
 								if ($value && $optionValue == $value) $field .= " selected";
 								$field .= ">";
-								if ($truncateLabel > strlen($optionLabel) - 3) $label = substr($optionLabel, 0, $truncateLabel) . '...';
+								if ($truncateLabel && $truncateLabel < strlen($optionLabel) - 3) $label = substr($optionLabel, 0, $truncateLabel) . '...';
 								$field .= $optionLabel;
 								$field .= "</option>";
 							}
