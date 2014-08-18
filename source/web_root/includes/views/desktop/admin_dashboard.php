@@ -220,13 +220,15 @@
 			}
 			echo "  </tbody>\n";
 			echo "  </table>\n";
-			
-			if ($numberOfPages > 1) {
-				echo $form->paginate($filters['page'], $numberOfPages, '/admin_dashboard/rumours/#');
-			}
 		}
-		echo "  " . $form->input('cancel_and_return', null, null, false, 'Return', 'btn btn-default') . "\n";
+
 		echo "  " . $form->end() . "\n";
+			
+		if ($numberOfPages > 1) {
+			echo $form->paginate($filters['page'], $numberOfPages, '/admin_dashboard/rumours/page=#');
+		}
+
+		echo "  " . $form->input('cancel_and_return', null, null, false, 'Return', 'btn btn-default') . "\n";
 	}
 	
 /*	--------------------------------------
@@ -263,13 +265,15 @@
 			}
 			echo "  </tbody>\n";
 			echo "  </table>\n\n";
-			
-			if ($numberOfPages > 1) {
-				echo $form->paginate($filters['page'], $numberOfPages, '/admin_dashboard/rumours/#');
-			}
 		}
-		echo "  " . $form->input('cancel_and_return', null, null, false, 'Return', 'btn btn-default') . "\n";
+
 		echo "  " . $form->end() . "\n";
+			
+		if ($numberOfPages > 1) {
+			echo $form->paginate($filters['page'], $numberOfPages, '/admin_dashboard/users/page=#');
+		}
+
+		echo "  " . $form->input('cancel_and_return', null, null, false, 'Return', 'btn btn-default') . "\n";
 	}
 	
 	include 'includes/views/desktop/shared/page_bottom.php';

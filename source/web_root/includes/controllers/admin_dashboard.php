@@ -11,15 +11,14 @@
 		$report = $parameter1;
 		if (!$report) $report = 'dashboard';
 		
-		if ($parameter2 == 'default') $filters = null;
-		else {
+		if ($parameter2 == 'default') $parameter2 = null;
+		if ($parameter2) {
+			$parseFilters = explode('|', urldecode($parameter2));
+	
 			$filters = array();
-			$result = explode('|', urldecode($parameter2));
-			foreach ($result as $keyValue) {
-				$filterKeyValues = explode('=', $keyValue);
-				foreach ($filterKeyValues as $key => $value) {
-					if (trim($key) && trim($value)) $filters[trim($key)] = trim($value);
-				}
+			foreach ($parseFilters as $value) {
+				$splitFilters = explode('=', $value);
+				if ($splitFilters[1]) $filters[$splitFilters[0]] = $splitFilters[1];
 			}
 		}
 		
