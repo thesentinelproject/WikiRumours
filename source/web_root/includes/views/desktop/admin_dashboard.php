@@ -53,7 +53,7 @@
 			
 		// rumours
 			echo "<div class='pageModule'>\n";
-			echo "  <h2>Unassigned rumours</h2>\n";
+			echo "  <h2>Unassigned and unresolved rumours</h2>\n";
 			if (count($rumours) < 1) echo "  <p>None.</p>\n";
 			else {
 				echo "  <table class='table table-hover table-condensed'>\n";
@@ -70,8 +70,8 @@
 					echo "  </tr>\n";
 				}
 				echo "  </table>\n";
-				echo "  " . $form->input('button', null, null, false, 'See all rumours', 'btn btn-default', null, null, null, null, array('onClick'=>'document.location.href = "/admin_dashboard/rumours"; return false;')) . "\n";
 			}
+			echo "  " . $form->input('button', null, null, false, 'See all rumours', 'btn btn-default', null, null, null, null, array('onClick'=>'document.location.href = "/admin_dashboard/rumours"; return false;')) . "\n";
 			echo "</div>\n";
 
 		// flagged comments

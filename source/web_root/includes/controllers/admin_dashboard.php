@@ -33,7 +33,7 @@
 		
 		if ($report == 'dashboard') {
 			$numberOfRumoursToDisplay = 5;
-			$rumours = retrieveRumours(array($tablePrefix . 'rumours.enabled'=>'1', 'assigned_to'=>'0'), null ,null, $tablePrefix . 'rumours.updated_on DESC, ' . $tablePrefix . 'rumours.created_on DESC', '0,' . ($numberOfRumoursToDisplay + 1));
+			$rumours = retrieveRumours(array($tablePrefix . 'rumours.enabled'=>'1', 'assigned_to'=>'0'), null, $tablePrefix . "rumours.status = 'NU' OR " . $tablePrefix . "rumours.status = 'UI'", $tablePrefix . 'rumours.updated_on DESC, ' . $tablePrefix . 'rumours.created_on DESC', '0,' . ($numberOfRumoursToDisplay + 1));
 			$users = retrieveUsers(null, null, null, $tablePrefix . 'users.registered_on DESC');
 			$registrants = retrieveRegistrants(null, null);
 			$alerts = retrieveFromDb('logs', array('error'=>'1', 'resolved'=>'0'), null, null, null, null, $tablePrefix . 'logs.connected_on DESC');

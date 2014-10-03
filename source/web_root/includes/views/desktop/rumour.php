@@ -30,11 +30,14 @@
 		echo $form->start('addAttributionForm', '', 'post', null, null, array('onSubmit'=>'return false;')) . "\n";
 		echo $form->input('hidden', 'sightingToRemove') . "\n";
 		echo "<div id='rumourAttribution'>\n";
+		echo "  Occurred ";
+		echo "    in " . trim($rumour[0]['region'] . ', ' . $countries[$rumour[0]['country']], ' ,') . "\n";
+		if ($rumour[0]['occurred_on'] != '0000-00-00 00:00:00') echo " on " . date('F j, Y', strtotime($rumour[0]['occurred_on'])) . "<br />\n";
 		if ($sightings[0]['ok_to_show_profile']) $username = "<a href='/profile/" . $sightings[0]['username'] . "'>" . $sightings[0]['username'] . "</a>";
 		else $username = "<b>anonymous</b>";
 		echo "  <div>\n";
 		echo "    Reported by " . $username . " via " . strtolower($rumourSources[$sightings[0]['source']]) . "\n";
-		if ($sightings[0]['heard_on'] != '0000-00-00 00:00:00') "    on " . date('F j, Y', strtotime($sightings[0]['heard_on'])) . "\n";
+		if ($sightings[0]['heard_on'] != '0000-00-00 00:00:00') echo "    on " . date('F j, Y', strtotime($sightings[0]['heard_on'])) . "\n";
 		if ($sightings[0]['sighting_country']) echo "    in " . trim($sightings[0]['sighting_region'] . ', ' . $countries[$sightings[0]['sighting_country']], ' ,') . "\n";
 		echo "  </div>\n";
 		if (count($sightings) > 1) {
