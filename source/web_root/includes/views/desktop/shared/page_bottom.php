@@ -109,6 +109,22 @@
 	// load Bootstrap Switch JS
 		echo "  <!-- Bootstrap Switch --><script src='/libraries/bootstrap-switch-master/static/js/bootstrap-switch.min.js'></script>\n";
 		
+	// load Bootstrap Datetimepicker JS
+		echo "  <!-- Bootstrap Datetimepicker -->\n";
+		echo "    <script type='text/javascript' src='/libraries/bootstrap-datetimepicker-master/js/bootstrap-datetimepicker.js' charset='UTF-8'></script>\n";
+		echo "    <script type='text/javascript' src='/libraries/bootstrap-datetimepicker-master/js/locales/bootstrap-datetimepicker.fr.js' charset='UTF-8' /></script>\n";
+		echo "    <script type='text/javascript'>\n";
+		echo "      $('.form_datetime').datetimepicker({\n";
+        echo "        weekStart: 1,\n";
+        echo "        todayBtn:  1,\n";
+		echo "        autoclose: 1,\n";
+		echo "        todayHighlight: 1,\n";
+		echo "        startView: 2,\n";
+		echo "        forceParse: 0,\n";
+        echo "        showMeridian: 1\n";
+    	echo "      });\n";
+		echo "    </script>\n";
+
 	// load Select2 JS
 		echo "  <!-- Select2 --><script src='/libraries/select2/select2-release-3.2/select2.js'></script>\n";
 		

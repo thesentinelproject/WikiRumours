@@ -17,7 +17,15 @@
 						else echo $form->row('uneditable', 'country_readable', $operators->firstTrue($countries[@$rumour[0]['country']], '-'), false, 'Country where occurred', 'form-control-static') . "\n";
 	/* Region */		if ($logged_in['is_administrator'] && $logged_in['can_edit_content']) echo $form->row('text', 'region', $operators->firstTrue(@$_POST['region'], @$rumour[0]['region']), false, 'City / region', 'form-control') . "\n";
 						else echo $form->row('uneditable', 'region_readable', $operators->firstTrue(@$rumour[0]['region'], '-'), false, 'Region where occurred', 'form-control-static') . "\n";
-	/* Occurred on */	if ($logged_in['is_administrator'] && $logged_in['can_edit_content']) echo $form->row('date', 'occurred_on', $operators->firstTrue(@$_POST['occurred_on'], @$rumour[0]['occurred_on']), false, 'Date occurred', 'form-control') . "\n";
+	/* Occurred on */	if ($logged_in['is_administrator'] && $logged_in['can_edit_content']) {
+							echo "  <div class='formLabel'>Occurred on</div>\n";
+							echo "  <div class='formField'>\n";
+							echo "    <div id='occurred_on' class='input-group date form_datetime' data-date-format='yyyy-mm-dd hh:ii:ss' data-link-format='yyyy-mm-dd hh:ii:ss' data-link-field='occurred_on'>\n";
+							echo "      " . $form->input('text', 'occurred_on', $operators->firstTrue(@$_POST['occurred_on'], @$rumour[0]['occurred_on']), false, null, 'form-control', null, 19) . "\n";
+							echo "      <span class='input-group-addon'>&nbsp;<span class='glyphicon glyphicon-calendar'></span></span>\n";
+							echo "    </div>\n";
+							echo "  </div>\n";
+						}
 						elseif ($rumour[0]['occurred_on'] != '0000-00-00') echo $form->row('uneditable', 'occurred_on_readable', date('F j, Y', strtotime(@$rumour[0]['occurred_on'])), false, 'Date occurred', 'form-control-static') . "\n";
 						else echo $form->row('uneditable', 'occurred_on_readable', '-', false, 'Date occurred', 'form-control-static') . "\n";
 	/* On behalf of */	if ($logged_in['is_administrator'] && $logged_in['can_edit_content']) {

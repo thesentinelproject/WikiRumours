@@ -38,6 +38,9 @@
 	// load Bootstrap Switch stylesheet
 		echo "  <!-- Bootstrap Switch --><link href='/libraries/bootstrap-switch-master/static/stylesheets/bootstrap-switch.css' rel='stylesheet' />\n";
 		
+	// load Bootstrap datetimepicker stylesheet
+		echo "  <!-- Bootstrap Datepicker --><link href='/libraries/bootstrap-datetimepicker-master/css/bootstrap-datetimepicker.min.css' rel='stylesheet' media='screen' />\n";
+
 	// load Select2 stylesheet
 		echo "  <!-- Select2 --><link href='/libraries/select2/select2-release-3.2/select2.css' rel='stylesheet' />\n";
 
@@ -52,7 +55,8 @@
 	// load Google stylesheets
 		for ($counter = 0; $counter < count($fonts_TL); $counter++) {
 			$url = "http://fonts.googleapis.com/css?family=" . $fonts_TL[$counter];
-			if (fileManager_TL::doesUrlExist($url)) echo "  <!-- Google Font --><link rel='stylesheet' type='text/css' href='" . $url . "'>\n";
+			$fileManager = new fileManager_TL();
+			if ($fileManager->doesUrlExist($url)) echo "  <!-- Google Font --><link rel='stylesheet' type='text/css' href='" . $url . "'>\n";
 		}
 
 	// load base stylesheets

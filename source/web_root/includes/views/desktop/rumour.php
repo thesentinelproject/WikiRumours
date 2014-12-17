@@ -32,12 +32,20 @@
 		echo "<div id='rumourAttribution'>\n";
 		echo "  Occurred ";
 		echo "    in " . trim($rumour[0]['region'] . ', ' . $countries[$rumour[0]['country']], ' ,') . "\n";
-		if ($rumour[0]['occurred_on'] != '0000-00-00 00:00:00') echo " on " . date('F j, Y', strtotime($rumour[0]['occurred_on'])) . "<br />\n";
+		if ($rumour[0]['occurred_on'] != '0000-00-00 00:00:00') {
+			echo " on " . date('F j, Y', strtotime($rumour[0]['occurred_on']));
+			if (substr($rumour[0]['occurred_on'], 11) != '00:00:00') echo ", at " . date('G:i A', strtotime($rumour[0]['occurred_on']));
+			echo "<br />\n";
+		}
 		if ($sightings[0]['ok_to_show_profile']) $username = "<a href='/profile/" . $sightings[0]['username'] . "'>" . $sightings[0]['username'] . "</a>";
 		else $username = "<b>anonymous</b>";
 		echo "  <div>\n";
 		echo "    Reported by " . $username . " via " . strtolower($rumourSources[$sightings[0]['source']]) . "\n";
-		if ($sightings[0]['heard_on'] != '0000-00-00 00:00:00') echo "    on " . date('F j, Y', strtotime($sightings[0]['heard_on'])) . "\n";
+		if ($sightings[0]['heard_on'] != '0000-00-00 00:00:00') {
+			echo "    on " . date('F j, Y', strtotime($sightings[0]['heard_on']));
+			if (substr($sightings[0]['heard_on'], 11) != '00:00:00') echo ", at " . date('G:i A', strtotime($sightings[0]['heard_on']));
+			echo "\n";
+		}
 		if ($sightings[0]['sighting_country']) echo "    in " . trim($sightings[0]['sighting_region'] . ', ' . $countries[$sightings[0]['sighting_country']], ' ,') . "\n";
 		echo "  </div>\n";
 		if (count($sightings) > 1) {
@@ -60,7 +68,10 @@
 					if ($sightings[$counter]['source']) echo "      via " . strtolower($rumourSources[$sightings[$counter]['source']]) . "\n";
 					echo "    </small></td>\n";
 				// Date
-					echo "    <td><small>" . date('F j, Y', strtotime($sightings[$counter]['heard_on'])) . "</small></td>\n";
+					echo "    <td><small>";
+					echo date('F j, Y', strtotime($sightings[$counter]['heard_on']));
+					if (substr($sightings[$counter]['heard_on'], 11) != '00:00:00') echo ", at " . date('G:i A', strtotime($sightings[$counter]['heard_on']));
+					echo "</small></td>\n";
 				// Actions
 					if (($logged_in['is_administrator'] && $logged_in['can_edit_content']) || $sightings[$counter]['created_by'] == $logged_in['user_id']  || $sightings[$counter]['entered_by'] == $logged_in['user_id']) {
 						echo "    <td><a href='' onClick='removeSighting(" . '"' . $sightings[$counter]['sighting_id'] . '"' . "); return false;'><span class='glyphicon glyphicon-trash transluscent' title='Remove'></span></a></td>\n";
@@ -154,7 +165,12 @@
 			echo "    <div class='row form-group'>\n";
 			/* Country heard */		echo "      <div class='col-md-4'>" . $form->input('country', 'country', @$_POST['country'], false, 'Country where heard', 'form-control') . "</div>\n";
 			/* Region heard */		echo "      <div class='col-md-3'>" . $form->input('text', 'region', @$_POST['region'], false, '|City/region', 'form-control') . "</div>\n";
-			/* Date heard */		echo "      <div class='col-md-3'>" . $form->input('date', 'heard_on', $operators->firstTrue(@$_POST['heard_on'], date('Y-m-d')), false, null, 'form-control') . "</div>\n";
+			/* Date heard */		echo "      <div class='col-md-3'>\n";
+									echo "        <div id='heard_on' class='input-group date form_datetime' data-date-format='yyyy-mm-dd hh:ii:ss' data-link-format='yyyy-mm-dd hh:ii:ss' data-link-field='heard_on'>\n";
+									echo "          " . $form->input('text', 'heard_on', $operators->firstTrue(@$_POST['heard_on'], date('Y-m-d H:i:s')), false, null, 'form-control', null, 19) . "\n";
+									echo "          <span class='input-group-addon'>&nbsp;<span class='glyphicon glyphicon-calendar'></span></span>\n";
+									echo "        </div>\n";
+									echo "      </div>\n";
 			/* Action */			echo "      <div class='col-md-2'>" . $form->input('submit', 'submitSighting', null, false, 'Submit', 'btn btn-info', null, null, null, null, array('onClick'=>'validateAddSightingForm(); return false;')) . "</div>\n";
 			echo "    </div>\n";
 			if ($logged_in['is_proxy']) {

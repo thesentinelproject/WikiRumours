@@ -1,14 +1,13 @@
 -- phpMyAdmin SQL Dump
--- version 3.5.1
+-- version 3.3.10.4
 -- http://www.phpmyadmin.net
 --
--- Host: localhost
--- Generation Time: May 27, 2014 at 02:29 PM
--- Server version: 5.5.24-log
--- PHP Version: 5.3.13
+-- Host: mysql.wikirumours.org
+-- Generation Time: Dec 17, 2014 at 09:48 AM
+-- Server version: 5.1.56
+-- PHP Version: 5.3.27
 
 SET SQL_MODE="NO_AUTO_VALUE_ON_ZERO";
-SET time_zone = "+00:00";
 
 
 /*!40101 SET @OLD_CHARACTER_SET_CLIENT=@@CHARACTER_SET_CLIENT */;
@@ -33,6 +32,11 @@ CREATE TABLE IF NOT EXISTS `wr_api_calls_external` (
   PRIMARY KEY (`call_id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci AUTO_INCREMENT=1 ;
 
+--
+-- Dumping data for table `wr_api_calls_external`
+--
+
+
 -- --------------------------------------------------------
 
 --
@@ -45,6 +49,11 @@ CREATE TABLE IF NOT EXISTS `wr_api_calls_internal` (
   `queried_on` datetime NOT NULL,
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci AUTO_INCREMENT=1 ;
+
+--
+-- Dumping data for table `wr_api_calls_internal`
+--
+
 
 -- --------------------------------------------------------
 
@@ -96,6 +105,11 @@ CREATE TABLE IF NOT EXISTS `wr_comments` (
   PRIMARY KEY (`comment_id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci AUTO_INCREMENT=1 ;
 
+--
+-- Dumping data for table `wr_comments`
+--
+
+
 -- --------------------------------------------------------
 
 --
@@ -108,6 +122,11 @@ CREATE TABLE IF NOT EXISTS `wr_comment_flags` (
   `flagged_on` datetime NOT NULL,
   PRIMARY KEY (`comment_id`,`flagged_by`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
+
+--
+-- Dumping data for table `wr_comment_flags`
+--
+
 
 -- --------------------------------------------------------
 
@@ -8333,6 +8352,11 @@ CREATE TABLE IF NOT EXISTS `wr_logs` (
   PRIMARY KEY (`log_id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci AUTO_INCREMENT=1 ;
 
+--
+-- Dumping data for table `wr_logs`
+--
+
+
 -- --------------------------------------------------------
 
 --
@@ -8346,6 +8370,11 @@ CREATE TABLE IF NOT EXISTS `wr_notifications` (
   `email` varchar(100) COLLATE utf8_unicode_ci NOT NULL,
   PRIMARY KEY (`notification_id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci AUTO_INCREMENT=1 ;
+
+--
+-- Dumping data for table `wr_notifications`
+--
+
 
 -- --------------------------------------------------------
 
@@ -8425,6 +8454,11 @@ CREATE TABLE IF NOT EXISTS `wr_registrations` (
   PRIMARY KEY (`registration_id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci AUTO_INCREMENT=1 ;
 
+--
+-- Dumping data for table `wr_registrations`
+--
+
+
 -- --------------------------------------------------------
 
 --
@@ -8437,7 +8471,7 @@ CREATE TABLE IF NOT EXISTS `wr_rumours` (
   `description` text COLLATE utf8_unicode_ci NOT NULL,
   `country` varchar(2) COLLATE utf8_unicode_ci NOT NULL,
   `region` varchar(50) COLLATE utf8_unicode_ci NOT NULL,
-  `occurred_on` date NOT NULL,
+  `occurred_on` datetime NOT NULL,
   `created_by` int(9) NOT NULL,
   `entered_by` int(9) NOT NULL,
   `created_on` datetime NOT NULL,
@@ -8450,6 +8484,11 @@ CREATE TABLE IF NOT EXISTS `wr_rumours` (
   `enabled` tinyint(1) NOT NULL DEFAULT '1',
   PRIMARY KEY (`rumour_id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci AUTO_INCREMENT=1 ;
+
+--
+-- Dumping data for table `wr_rumours`
+--
+
 
 -- --------------------------------------------------------
 
@@ -8465,6 +8504,11 @@ CREATE TABLE IF NOT EXISTS `wr_rumours_x_tags` (
   PRIMARY KEY (`rumour_id`,`tag_id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
 
+--
+-- Dumping data for table `wr_rumours_x_tags`
+--
+
+
 -- --------------------------------------------------------
 
 --
@@ -8476,7 +8520,7 @@ CREATE TABLE IF NOT EXISTS `wr_rumour_sightings` (
   `rumour_id` int(9) NOT NULL,
   `entered_by` int(9) NOT NULL,
   `entered_on` datetime NOT NULL,
-  `heard_on` date NOT NULL,
+  `heard_on` datetime NOT NULL,
   `country` varchar(2) COLLATE utf8_unicode_ci NOT NULL,
   `region` varchar(50) COLLATE utf8_unicode_ci NOT NULL,
   `source` char(1) COLLATE utf8_unicode_ci NOT NULL,
@@ -8484,6 +8528,11 @@ CREATE TABLE IF NOT EXISTS `wr_rumour_sightings` (
   `ipv6` binary(16) NOT NULL,
   PRIMARY KEY (`created_by`,`rumour_id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
+
+--
+-- Dumping data for table `wr_rumour_sightings`
+--
+
 
 -- --------------------------------------------------------
 
@@ -8577,6 +8626,11 @@ CREATE TABLE IF NOT EXISTS `wr_tags` (
   PRIMARY KEY (`tag_id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci AUTO_INCREMENT=1 ;
 
+--
+-- Dumping data for table `wr_tags`
+--
+
+
 -- --------------------------------------------------------
 
 --
@@ -8612,6 +8666,11 @@ CREATE TABLE IF NOT EXISTS `wr_users` (
   PRIMARY KEY (`user_id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci AUTO_INCREMENT=1 ;
 
+--
+-- Dumping data for table `wr_users`
+--
+
+
 -- --------------------------------------------------------
 
 --
@@ -8627,6 +8686,11 @@ CREATE TABLE IF NOT EXISTS `wr_user_keys` (
   `expiry` datetime NOT NULL,
   PRIMARY KEY (`user_id`,`name`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
+
+--
+-- Dumping data for table `wr_user_keys`
+--
+
 
 -- --------------------------------------------------------
 
@@ -8646,6 +8710,11 @@ CREATE TABLE IF NOT EXISTS `wr_user_permissions` (
   PRIMARY KEY (`user_id`,`name`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
 
+--
+-- Dumping data for table `wr_user_permissions`
+--
+
+
 -- --------------------------------------------------------
 
 --
@@ -8659,6 +8728,11 @@ CREATE TABLE IF NOT EXISTS `wr_user_terminations` (
   `reason` text COLLATE utf8_unicode_ci NOT NULL,
   PRIMARY KEY (`user_id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
+
+--
+-- Dumping data for table `wr_user_terminations`
+--
+
 
 -- --------------------------------------------------------
 
@@ -8674,6 +8748,7 @@ CREATE TABLE IF NOT EXISTS `wr_watchlist` (
   PRIMARY KEY (`created_by`,`rumour_id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
 
-/*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;
-/*!40101 SET CHARACTER_SET_RESULTS=@OLD_CHARACTER_SET_RESULTS */;
-/*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
+--
+-- Dumping data for table `wr_watchlist`
+--
+

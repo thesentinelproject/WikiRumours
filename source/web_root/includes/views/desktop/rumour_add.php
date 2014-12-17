@@ -47,16 +47,34 @@
 										echo $form->input('hidden', 'occurred_on', @$rumour[0]['occurred_on']) . "\n";
 				/* Country heard */		echo $form->row('country', 'country_heard', @$_POST['country_heard'], false, 'Country where heard', 'form-control') . "\n";
 				/* Region heard */		echo $form->row('text', 'region_heard', @$_POST['region_heard'], false, 'City/region where heard', 'form-control') . "\n";
-				/* Date heard */		echo $form->row('date', 'heard_on', @$_POST['heard_on'], false, 'Date heard', 'form-control') . "\n";
+				/* Date heard */		echo "  <div class='formLabel'>Occurred on</div>\n";
+										echo "  <div class='formField'>\n";
+										echo "    <div id='heard_on' class='input-group date form_datetime' data-date-format='yyyy-mm-dd hh:ii:ss' data-link-format='yyyy-mm-dd hh:ii:ss' data-link-field='heard_on'>\n";
+										echo "      " . $form->input('text', 'heard_on', @$_POST['heard_on'], false, null, 'form-control', null, 19) . "\n";
+										echo "      <span class='input-group-addon'>&nbsp;<span class='glyphicon glyphicon-calendar'></span></span>\n";
+										echo "    </div>\n";
+										echo "  </div>\n";
 			}
 			else {
 				/* Description */		echo $form->row('textarea', 'description', @$_POST['description'], true, 'Rumour|Please be as concise as possible', 'form-control', null, null, array('rows'=>'7')) . "\n";
 				/* Country occurred */	echo $form->row('country', 'country_occurred', @$_POST['country_occurred'], false, 'Country where occurred', 'form-control') . "\n";
 				/* Region occurred */	echo $form->row('text', 'region_occurred', @$_POST['region_occurred'], false, 'City/region where occurred', 'form-control') . "\n";
-				/* Date occurred */		echo $form->row('date', 'occurred_on', @$_POST['occurred_on'], false, 'Date occurred', 'form-control') . "\n";
+				/* Date occurred */		echo "  <div class='formLabel'>Occurred on</div>\n";
+										echo "  <div class='formField'>\n";
+										echo "    <div id='occurred_on' class='input-group date form_datetime' data-date-format='yyyy-mm-dd hh:ii:ss' data-link-format='yyyy-mm-dd hh:ii:ss' data-link-field='occurred_on'>\n";
+										echo "      " . $form->input('text', 'occurred_on', @$_POST['occurred_on'], false, null, 'form-control', null, 19) . "\n";
+										echo "      <span class='input-group-addon'>&nbsp;<span class='glyphicon glyphicon-calendar'></span></span>\n";
+										echo "    </div>\n";
+										echo "  </div>\n";
 				/* Country heard */		echo $form->row('country', 'country_heard', @$_POST['country_heard'], false, 'Country where heard', 'form-control') . "\n";
 				/* Region heard */		echo $form->row('text', 'region_heard', @$_POST['region_heard'], false, 'City/region where heard', 'form-control') . "\n";
-				/* Date heard */		echo $form->row('date', 'heard_on', @$_POST['heard_on'], false, 'Date heard', 'form-control') . "\n";
+				/* Date heard */		echo "  <div class='formLabel'>Occurred on</div>\n";
+										echo "  <div class='formField'>\n";
+										echo "    <div id='heard_on' class='input-group date form_datetime' data-date-format='yyyy-mm-dd hh:ii:ss' data-link-format='yyyy-mm-dd hh:ii:ss' data-link-field='heard_on'>\n";
+										echo "      " . $form->input('text', 'heard_on', @$_POST['heard_on'], false, null, 'form-control', null, 19) . "\n";
+										echo "      <span class='input-group-addon'>&nbsp;<span class='glyphicon glyphicon-calendar'></span></span>\n";
+										echo "    </div>\n";
+										echo "  </div>\n";
 				/* Tags */				if (count(@$allTags) > 0) {
 											echo "  <div class='formLabel'>Tags</div>\n";
 											echo "  <div class='formField'>\n";
