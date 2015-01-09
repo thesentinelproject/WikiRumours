@@ -11,6 +11,8 @@
 	echo $form->start('contactForm', null, 'post', null, null, array('onSubmit'=>'validateContactForm(); return false;')) . "\n";
 	echo $form->input('hidden', 'username', htmlspecialchars($logged_in['username'], ENT_QUOTES)) . "\n";
 	/* Name */		echo $form->row('text', 'name', $operators->firstTrue(@$_POST['name'], @$logged_in['full_name']), true, 'Name', 'form-control') . "\n";
+	/* Honeypot */	echo $form->input('honeypot', 'company') . "\n";
+	/* Timer */		echo $form->input('timer', 'title') . "\n"; // for detecting machine submission
 	/* Email */		echo $form->row('email', 'email', $operators->firstTrue(@$_POST['email'], @$logged_in['email']), true, 'Email', 'form-control') . "\n";
 	/* Telephone */	echo $form->row('tel', 'telephone', @$_POST['telephone'], false, 'Telephone', 'form-control') . "\n";
 	/* Message */	echo $form->row('textarea', 'message', @$_POST['message'], true, 'How can we help?', 'form-control') . "\n";

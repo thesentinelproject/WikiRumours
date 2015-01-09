@@ -18,17 +18,25 @@
 			
 	if (count($_POST) > 0) {
 
-		// clean input
-			$_POST = $parser->trimAll($_POST);
+		// check honeypot
+			if (@$_POST['company']) $pageError .= "Nice try, Skynet. No bots allowed. ";
+
+		// check timer
+			if (time() - @$_POST['timer'] < 2) $pageError .= "There was a problem with your form data. Please take a moment and try again. "; // if form submitted in under 2 sec, presumed to be a bot
 					
+		// clean input
+			if (!$pageError) $_POST = $parser->trimAll($_POST);
+
 		// check for errors
-			if (!$_POST['name']) $pageError .= "Please provide your name. ";
-			if (!$validator->validateEmailRobust($_POST['email'])) $pageError .= "There appears to be a problem with your email address. ";
-			if (!$_POST['message']) $pageError .= "Please write a brief message. ";
+			if (!$pageError) {
+				if (!$_POST['name']) $pageError .= "Please provide your name. ";
+				if (!$validator->validateEmailRobust($_POST['email'])) $pageError .= "There appears to be a problem with your email address. ";
+				if (!$_POST['message']) $pageError .= "Please write a brief message. ";
 							
-			$recipients = retrieveFromDb('notifications', array('contact_form'=>'1'), null, null, null);
-			if (count($recipients) < 1) $pageError .= "No recipients specified for the subject selected. ";
-			
+				$recipients = retrieveFromDb('notifications', array('contact_form'=>'1'), null, null, null);
+				if (count($recipients) < 1) $pageError .= "No recipients specified for the subject selected. ";
+			}
+						
 		// send email
 			if (!$pageError) {
 				for ($counter = 0; $counter < count($recipients); $counter++) {

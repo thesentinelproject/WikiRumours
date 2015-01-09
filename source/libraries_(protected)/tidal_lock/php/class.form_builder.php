@@ -799,6 +799,26 @@
 							$field .= " />";
 							return $field;
 							break;
+				/* ------------------------- */
+					case 'honeypot':
+						// validate
+							if (!$name) break; // no name
+						// return
+							$field = "<style>.hpt{display:none;}</style><div class='hpt'>";
+							$field .= "<input type='text' name='" . $name . "' id='" . $name . "' />";
+							$field .= "</div>";
+							return $field;
+							break;
+				/* ------------------------- */
+					case 'timer':
+						// validate
+							if (!$name) break; // no name
+						// return
+							$field = "<style>.hpt{display:none;}</style><div class='hpt'>";
+							$field .= "<input type='text' name='" . $name . "' id='" . $name . "' value='" . time() . "' />";
+							$field .= "</div>";
+							return $field;
+							break;
 			}
 			
 		}
