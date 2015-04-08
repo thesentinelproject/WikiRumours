@@ -19,6 +19,8 @@ instance of WikiRumours.
   db_setup folder. Consider using a unique prefix for your
   table names.
 
+- Rename the folder "source/config_(rename)" as "source/config".
+
 - Update the files in the source/config folder.
 
 - Copy the files over to your web server and point the root of
