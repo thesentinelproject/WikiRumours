@@ -5,28 +5,34 @@
 	-------------------------------------- */
 
 	// parse query string
-		$page = $parameter1;
+		if ($parameter1) $filters = $keyvalue_array->keyValueToArray(urldecode($parameter1), '|');
 		
 	// authentication
 		if (!$logged_in) forceLoginThenRedirectHere();
 		
 	// queries
-		if ($logged_in['is_moderator']) $assignedRumours = retrieveRumours(null, null, "(assigned_to = 0 OR assigned_to = " . $logged_in['user_id'] . ") AND (status = 'NU' OR status = 'UI')", $tablePrefix . 'rumours.updated_on DESC');
-		else $assignedRumours = retrieveRumours(null, null, "(assigned_to = " . $logged_in['user_id'] . ") AND (status = 'NU' OR status = 'UI')", $tablePrefix . 'rumours.updated_on DESC');
-		
-		$result = countInDb('rumours', 'rumour_id', array('created_by'=>$logged_in['user_id'], $tablePrefix . 'rumours.enabled'=>'1'));
-		$numberOfMyRumours = floatval(@$result[0]['count']);
-		
-		$numberOfPages = max(1, ceil($numberOfMyRumours / $maxNumberOfTableRowsPerPage));
-		if ($page < 1) $page = 1;
-		elseif ($page > $numberOfPages) $page = $numberOfPages;
-		
-		$myRumours = retrieveRumours(array('created_by'=>$logged_in['user_id'], $tablePrefix . 'rumours.enabled'=>'1'), null ,null, $tablePrefix . 'rumours.updated_on DESC', floatval(($page * $maxNumberOfTableRowsPerPage) - $maxNumberOfTableRowsPerPage) . ',' . $maxNumberOfTableRowsPerPage);
 
-	// instantiate required class(es)
-		$parser = new parser_TL();
-		$operators = new operators_TL();
-		
+		// assigned to me
+			if ($logged_in['is_moderator']) $otherCriteria = "(assigned_to = '" . $logged_in['user_id'] . "' OR assigned_to = '0')";
+			else $otherCriteria = "assigned_to = '" . $logged_in['user_id'] . "'";
+
+			if (@$pseudonym['pseudonym_id']) $otherCriteria .= " AND " . $tablePrefix . "rumours.pseudonym_id = '" . intval($pseudonym['pseudonym_id']) . "'";
+			
+			$otherCriteria .= " AND (is_closed = '0' OR is_closed IS NULL)";
+
+			$assignedRumours = retrieveRumours(array($tablePrefix . 'rumours.enabled'=>'1'), null, $otherCriteria, $tablePrefix . 'rumours.updated_on DESC');
+
+		// reported by me	
+			$result = countInDb('rumours', 'rumour_id', array('created_by'=>$logged_in['user_id'], $tablePrefix . 'rumours.enabled'=>'1'));
+			$numberOfMyRumours = floatval(@$result[0]['count']);
+			
+			$rowsPerPage = 50;
+			$numberOfPages = max(1, ceil($numberOfMyRumours / $rowsPerPage));
+			if (@$filters['page'] < 1) $filters['page'] = 1;
+			elseif (@$filters['page'] > $numberOfPages) $filters['page'] = $numberOfPages;
+			
+			$myRumours = retrieveRumours(array('created_by'=>$logged_in['user_id'], $tablePrefix . 'rumours.enabled'=>'1'), null ,null, $tablePrefix . 'rumours.updated_on DESC', floatval(($filters['page'] * $rowsPerPage) - $rowsPerPage) . ',' . $rowsPerPage);
+
 /*	--------------------------------------
 	Execute only if a form post
 	-------------------------------------- */

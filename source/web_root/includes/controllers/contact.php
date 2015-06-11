@@ -5,13 +5,8 @@
 	-------------------------------------- */
 
 	// parse query string
-		$pageSuccess = $parameter1;
+		$pageStatus = $parameter1;
 
-	// instantiate required class(es)
-		$validator = new inputValidator_TL();
-		$operators = new operators_TL();
-		$parser = new parser_TL();
-		
 /*	--------------------------------------
 	Execute only if a form post
 	-------------------------------------- */
@@ -30,24 +25,24 @@
 		// check for errors
 			if (!$pageError) {
 				if (!$_POST['name']) $pageError .= "Please provide your name. ";
-				if (!$validator->validateEmailRobust($_POST['email'])) $pageError .= "There appears to be a problem with your email address. ";
+				if (!$input_validator->validateEmailRobust($_POST['email'])) $pageError .= "There appears to be a problem with your email address. ";
 				if (!$_POST['message']) $pageError .= "Please write a brief message. ";
 							
-				$recipients = retrieveFromDb('notifications', array('contact_form'=>'1'), null, null, null);
+				$recipients = retrieveFromDb('notifications', null, array('contact_form'=>'1'));
 				if (count($recipients) < 1) $pageError .= "No recipients specified for the subject selected. ";
 			}
 						
 		// send email
 			if (!$pageError) {
 				for ($counter = 0; $counter < count($recipients); $counter++) {
-					$emailSent = emailFromUser($_POST['name'], $_POST['email'], $_POST['username'], $_POST['telephone'], $_POST['message'], $recipients[$counter]['email']);
+					$emailSent = emailFromUser($_POST['name'], $_POST['email'], $_POST['username'], $_POST['telephone'], $_POST['message'], $recipients[$counter]['recipient_email']);
 					if ($emailSent) {
 						// update log
 							$activity = $_POST['name'] . " (";
 							if ($_POST['username']) $activity .= $_POST['username'] . " / ";
 							if ($_POST['telephone']) $activity .= $_POST['telephone'] . " / ";
 							$activity .= $_POST['email'];
-							$activity .= ") has messaged " . $systemPreferences['appName'] . " through the contact form:\n\n" . $_POST['message'];
+							$activity .= ") has messaged " . $systemPreferences['Name of this application'] . " through the contact form:\n\n" . $_POST['message'];
 							$logger->logItInDb($activity);
 					}
 					else {

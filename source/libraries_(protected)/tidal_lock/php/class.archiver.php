@@ -1,23 +1,25 @@
 <?php
 
-	class compressor_TL {
+	class archiver_TL {
 
 		public function archive($destinationFile, $destinationPath, $sourcePath, $stripSubdirectories = false, $deleteSourcePath = false) {
 
+			global $console;
+
 			// validate existence of source and destination directories
 				if (!file_exists($sourcePath)) {
-					errorManager_TL::addError("Unable to locate source directory.");
+					$console .= __FUNCTION__ . ": Unable to locate source directory " . $sourcePath . ".\n";
 					return false;
 				}
 				if (!file_exists($destinationPath)) {
-					errorManager_TL::addError("Unable to locate destination directory.");
+					$console .= __FUNCTION__ . ": Unable to locate destination directory " . $destinationPath . ".\n";
 					return false;
 				}
 				if (!$this->isZipInstalled()) {
-					errorManager_TL::addError("Info-zip does not appear to be installed on this server.");
+					$console .= __FUNCTION__ . ": Zip does not appear to be installed on this server.\n";
 					return false;
 				}
-			
+
 			// append slash to destination path, if required
 				$destinationPath = rtrim($destinationPath, '/') . '/';
 			
@@ -26,15 +28,31 @@
 				$destinationFile = $random . '_' . rtrim($destinationFile, '.zip') . '.zip';
 	
 			// create the zip
-				$execute = "zip -r";
-				if ($stripSubdirectories) $execute .= " -j";
-				$execute .= " " . $destinationFile;
-				$execute .= " " . $sourcePath;
-				exec($execute);
-				
+				if (floatval(phpversion()) >= 5) {
+					$zip = new ZipArchive;
+					$zip->open($destinationFile, ZipArchive::CREATE);
+					if (is_dir($sourcePath)) {
+						$directory_manager = new directory_manager_TL();
+						$files = $directory_manager->read($sourcePath);
+						foreach ($files as $file) {
+							$zip->addFile($file, str_replace(rtrim($sourcePath, '/'), '', $file));
+						}
+					}
+					else $zip->addFile($sourcePath, str_replace(__DIR__, '', $sourcePath));
+					$zip->close();
+				}
+
+				if (!file_exists($destinationFile)) {
+					$execute = "zip -r";
+					if ($stripSubdirectories) $execute .= " -j";
+					$execute .= " " . $destinationFile;
+					$execute .= " " . $sourcePath;
+					exec($execute);
+				}
+
 			// validate the zip
 				if (!file_exists($destinationFile)) {
-					errorManager_TL::addError("Unknown error attempting to create zip file.");
+					$console .= __FUNCTION__ . ": Unknown error attempting to create zip file.\n";
 					return false;
 				}
 				else {
@@ -42,16 +60,16 @@
 						rename($destinationFile, $destinationPath . str_replace($random . '_', '', $destinationFile));
 						if (!file_exists($destinationPath . str_replace($random . '_', '', $destinationFile))) {
 							unlink ($destinationFile);
-							errorManager_TL::addError("Unable to move zip to destination directory.");
+							$console .= __FUNCTION__ . ": Unable to move zip to destination directory.\n";
 							return false;
 						}
 	
 					// delete pre-archived copies
 						if ($deleteSourcePath == 'Y') {
-							$fileManager = new directoryManager_TL();
+							$fileManager = new directory_manager_TL();
 							$success = $directoryManager->remove($sourcePath);
 							if (!$success) {
-								errorManager_TL::addError("Unable to delete source directory.");
+								$console .= __FUNCTION__ . ": Unable to delete source directory.\n";
 								return false;
 							}
 						}
@@ -64,19 +82,21 @@
 	
 		public function unarchive($file, $destinationDirectory, $deleteArchive = false) {
 			
+			global $console;
+
 			// check for errors
 				if (!$this->isZipInstalled()) {
-					errorManager_TL::addError("Info-zip does not appear to be installed on this server.");
+					$console .= __FUNCTION__ . ": Zip does not appear to be installed on this server.\n";
 					return false;
 				}
 				if (!file_exists($file)) {
-					errorManager_TL::addError("There was a problem locating your archive.");
+					$console .= __FUNCTION__ . ": There was a problem locating the archive " . $file . ".\n";
 					return false;
 				}
 				if (!file_exists($destinationDirectory)) {
 					$success = mkdir($destinationDirectory);
 					if (!$success) {
-						errorManager_TL::addError("Unable to locate or create destination directory.");
+						$console .= __FUNCTION__ . ": Unable to locate or create destination directory.\n";
 						return false;
 					}
 				}
@@ -95,32 +115,35 @@
 					if ($deleteArchive) {
 						$success = unlink ($file);
 						if ($success) {
-							$fileManager = new directoryManager_TL();
+							$fileManager = new directory_manager_TL();
 							$unarchivedContent = $directoryManager->read($destinationDirectory, true, true, true);
 							if (count($unarchivedContent) > 0) return true;
 							else {
-								errorManager_TL::addError("Unable to retrieve files from archive, which could be because the archive is damaged or because the compression is incompatible with the unarchiving tools on the server.");
+								$console .= __FUNCTION__ . ": Unable to retrieve files from archive, which could be because the archive is damaged or because the compression is incompatible with the unarchiving tools on the server.\n";
 								return false;
 							}
 						}
 						else {
-							errorManager_TL::addError("Unable to delete the file " . $file . ".");
+							$console .= __FUNCTION__ . ": Unable to delete the file " . $file . ".\n";
 							return false;
 						}
 					}
 				}
 				else {
 					rmdir($destinationDirectory);
-					errorManager_TL::addError(strtoupper($fileExtension) . " is not a recognized archive file.");
+					$console .= __FUNCTION__ . ": " . strtoupper($fileExtension) . " is not a recognized archive file.\n";
 					return false;
 				}
 				
 		}
 	
 		public function isZipInstalled() {
-			$displayLicense = @exec("zip -L");
-			if ($displayLicense) return true;
-			else return false;
+			if (floatval(phpversion()) >= 5) return true;
+			else {
+				$displayLicense = @exec("zip -L");
+				if ($displayLicense) return true;
+				else return false;
+			}
 		}
 		
 	}
@@ -134,7 +157,7 @@
 
 	::	DEPENDENT ON
 
-		fileManager_TL
+		file_manager_TL
 
 	::	MORE INFORMATION ON INFOZIP
 		

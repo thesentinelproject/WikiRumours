@@ -1,15 +1,22 @@
 <?php
 
-	class keyvalueArray_TL {
+	class keyvalue_array_TL {
 
 		public function keyValueToArray($keyValueString, $delimiter = '&') {
+
+			global $console;
+			
+			if (!$keyValueString) {
+				$console .= __FUNCTION__ . ": No key values specified.\n";
+				return false;
+			}
 			
 			$outputArray = array();
 			
 			$pairs = explode($delimiter, $keyValueString);
 			foreach ($pairs as $counter => $pair) {
 				$keyValue = explode('=', $pair);
-				if ($keyValue[0] && $keyValue[1]) $outputArray[$keyValue[0]] = $keyValue[1];
+				if ($keyValue[0] && @$keyValue[1]) $outputArray[$keyValue[0]] = $keyValue[1];
 			}
 			
 			return $outputArray;
@@ -17,9 +24,11 @@
 		}
 		
 		public function arrayToKeyValue($array, $delimiter = '&') {
+
+			global $console;
 			
 			if (!is_array($array)) {
-				errorManager_TL::addError("No array specified.");
+				$console .= __FUNCTION__ . ": No array specified.\n";
 				return false;
 			}
 			

@@ -1,12 +1,14 @@
 <?php
 
-	class directoryManager_TL {
+	class directory_manager_TL {
 
 		public function read($directory, $recursive = true, $returnDirectories = false, $returnFiles = true, $excludeRegex = '') {
 	
+			global $console;
+
 	    	$directory = rtrim($directory, '/');
 	    	if (!$directory) {
-				errorManager_TL::addError("No directory specified.");
+				$console .= __FUNCTION__ . ": No directory specified.\n";
 	    		return false;
 	    	}
 	    	
@@ -48,23 +50,25 @@
 		
 		public function copy($sourcePath, $destinationPath) {
 	
+			global $console;
+
 			// check if paths exist
 				if (!$sourcePath) {
-					errorManager_TL::addError("No source path specified.");
+					$console .= __FUNCTION__ . ": No source path specified.\n";
 					return false;
 				}
 				if (!file_exists($sourcePath)) {
-					errorManager_TL::addError("Unable to locate source path.");
+					$console .= __FUNCTION__ . ": Unable to locate the source path " . $sourcePath . ".\n";
 					return false;
 				}
 				if (!$destinationPath) {
-					errorManager_TL::addError("No destination path specified.");
+					$console .= __FUNCTION__ . ": No destination path specified.\n";
 					return false;
 				}
 				if (!file_exists($destinationPath)) {
 					mkdir ($destinationPath);
 					if (!file_exists($destinationPath)) {
-						errorManager_TL::addError("Unable to locate or create destination path.");
+						$console .= __FUNCTION__ . ": Unable to locate or create destination path.\n";
 						return false;
 					}
 				}
@@ -89,12 +93,14 @@
 
 		public function remove($dir) {
 			
+			global $console;
+
 			if (!$dir) {
-				errorManager_TL::addError("No directory specified.");
+				$console .= __FUNCTION__ . ": No directory specified.\n";
 				return false;
 			}
 			if (!file_exists($dir)) {
-				errorManager_TL::addError("Unable to locate  " . $dir);
+				$console .= __FUNCTION__ . ": Unable to locate the directory " . $dir . ".\n";
 				return false;
 			}
 			if (!is_dir($dir) || is_link($dir)) {
@@ -106,7 +112,7 @@
 				if (!$this->remove($dir . "/" . $item)) {
 					chmod($dir . "/" . $item, 0777);
 					if (!$this->remove($dir . "/" . $item)) {
-						errorManager_TL::addError("Unable to delete directory.");
+						$console .= __FUNCTION__ . ": Unable to delete the directory " . $dir . "/" . $item . ".\n";
 						return false;
 					}
 				};

@@ -10,11 +10,12 @@
 				
 				$metadata = array();
 				$metadata['error'] = '';
-				$fileManager = new fileManager_TL();
+				$fileManager = new file_manager_TL();
+				global $console;
 				
 				// check for errors
 					if (!$url) {
-						errorManager_TL::addError("No URL specified.");
+						$console .= __FUNCTION__ . ": No URL specified.\n";
 						return false;
 					}
 									
@@ -32,12 +33,16 @@
 					$metadata['query_string'] = $parseUrl['query'];
 					
 				// check if URL exists
-					if ($fileManager->doesUrlExist($url)) $metadata['is_real'] = true;
-					else $metadata['error'] .= "Unable to retrieve webpage; URL may be invalid, or website might be down. ";
+					if (!$fileManager->doesUrlExist($url)) {
+						$console .= __FUNCTION__ . ": Unable to retrieve webpage; URL may be invalid, or website might be down.\n";
+						return false;
+					}
 		
 				// check URL headers
-					if ($fileManager->isHeaderValid($url)) $metadata['valid_headers'] = true;
-					else $metadata['error'] .= "URL headers are invalid; the webpage may be down or redirecting. ";
+					if (!$fileManager->isHeaderValid($url)) {
+						$console .= __FUNCTION__ . ": URL headers are invalid; the webpage may be down or redirecting.\n";
+						return false;
+					}
 		
 				// retrieve HTML
 					if ($retrieveHtml) {
@@ -52,7 +57,10 @@
 							}
 						}
 						if ($sanitizeHtml) $html = htmlspecialchars($html, ENT_QUOTES);
-						if (!$html) $metadata['error'] .= "No content found on this webpage. ";
+						if (!$html) {
+							$console .= __FUNCTION__ . ": No HTML found.\n";
+							return false;
+						}
 						
 						// retrieve page title
 						    $matches = array();
@@ -141,8 +149,11 @@
 					if ($metadata['domain'] == 'youtube.com' || $metadata['domain'] == 'youtu.be') {
 						// youtube
 							$metadata['is_video'] = true;
-							parse_str($metadata['query_string'], $query);
-							$metadata['youtube_id'] = $query['v'];
+							if ($metadata['domain'] == 'youtube.com') {
+								parse_str($metadata['query_string'], $query);
+								$metadata['youtube_id'] = $query['v'];
+							}
+							elseif ($metadata['domain'] == 'youtu.be') $metadata['youtube_id'] = $metadata['path'];
 					}
 					elseif ($metadata['domain'] == 'vimeo.com') {
 						// vimeo
@@ -162,8 +173,10 @@
 			
 		public function activateURLs($inputString, $newBrowser = false, $class = false) {
 
+			global $console;
+
 			if (!$inputString) {
-				errorManager_TL::addError("No input specified.");
+				$console .= __FUNCTION__ . ": No input specified.\n";
 				return false;
 			}
 			
@@ -188,7 +201,7 @@
 					}
 					$numOfUrlsToReplace = count($urlsToReplace);
 					for($urlCounter = 0; $urlCounter < $numOfUrlsToReplace; $urlCounter++) {
-						$inputString = str_replace($urlsToReplace[$urlCounter], "<a href='" . $urlsToReplace[$urlCounter] . "'" . $target . $class . ">" . $urlsToReplace[$urlCounter] . "</a> ", $inputString);
+						$inputString = str_replace($urlsToReplace[$urlCounter], "<a href='" . $urlsToReplace[$urlCounter] . "'" . @$target . $class . ">" . $urlsToReplace[$urlCounter] . "</a> ", $inputString);
 					}
 				}
 				
@@ -198,7 +211,7 @@
 				
 				foreach ($words as $word) {
 					$word = trim($word, '.!?;:/"()[]-=|' . "'");
-					$validator = new inputValidator_TL();
+					$validator = new input_validator_TL();
 					if ($validator->validateEmailBasic($word)) {
 						$emailAddresses[$word] = $word;
 					}
@@ -215,8 +228,10 @@
 		
 		public function activateTwitterHashesAndIDs($inputString, $newBrowser = false, $class = false) {
 			
+			global $console;
+
 			if (!$inputString) {
-				errorManager_TL::addError("No input specified.");
+				$console .= __FUNCTION__ . ": No input specified.\n";
 				return false;
 			}
 			
@@ -234,7 +249,7 @@
 			
 			$uniqueImageURLs = array();
 			$imageURLs = array();
-			$fileManager = new fileManager_TL();
+			$fileManager = new file_manager_TL();
 			
 			$dom = new domDocument;
 			$dom->loadHTML($string);
@@ -270,15 +285,58 @@
 			}
 			
 		}
+
+/*		--------------------------------------
+		Parsing phone numbers
+		-------------------------------------- */
+		
+		function sanitizePhoneNumber($phoneNumber, $formatForDisplay = true) {
+
+			$phoneNumber = preg_replace('/[^0-9]/','',$phoneNumber);
+
+			if ($formatForDisplay) {
+
+				if(strlen($phoneNumber) > 10) {
+					$countryCode = substr($phoneNumber, 0, strlen($phoneNumber)-10);
+					$areaCode = substr($phoneNumber, -10, 3);
+					$nextThree = substr($phoneNumber, -7, 3);
+					$lastFour = substr($phoneNumber, -4, 4);
+					$phoneNumber = '+'.$countryCode.' ('.$areaCode.') '.$nextThree.'-'.$lastFour;
+				}
+				else if(strlen($phoneNumber) == 10) {
+					$areaCode = substr($phoneNumber, 0, 3);
+					$nextThree = substr($phoneNumber, 3, 3);
+					$lastFour = substr($phoneNumber, 6, 4);
+					$phoneNumber = '('.$areaCode.') '.$nextThree.'-'.$lastFour;
+				}
+				else if(strlen($phoneNumber) == 7) {
+					$nextThree = substr($phoneNumber, 0, 3);
+					$lastFour = substr($phoneNumber, 3, 4);
+					$phoneNumber = $nextThree.'-'.$lastFour;
+				}
+
+			}
+
+			return $phoneNumber;
+		}
 		
 /*		--------------------------------------
 		Parsing IP
 		-------------------------------------- */
 		
 		function encodeIP($ip, $type = 'ipv4') {
-			
+
+			global $console;
+						
 			// check for errors
-				if (!$ip || ($type != 'ipv4' && $type != 'ipv6')) return false;
+				if (!$ip) {
+					$console .= __FUNCTION__ . ": No IP specified.\n";
+					return false;
+				}
+				if ($type != 'ipv4' && $type != 'ipv6') {
+					$console .= __FUNCTION__ . ": Missing or invalid IP type.\n";
+					return false;
+				}
 				
 			// encode for MySQL
 				if ($type == 'ipv4') return ip2long($ip);
@@ -288,8 +346,17 @@
 		
 		function decodeIP($ip, $type = 'ipv4') {
 			
+			global $console;
+						
 			// check for errors
-				if (!$ip || ($type != 'ipv4' && $type != 'ipv6')) return false;
+				if (!$ip) {
+					$console .= __FUNCTION__ . ": No IP specified.\n";
+					return false;
+				}
+				if ($type != 'ipv4' && $type != 'ipv6') {
+					$console .= __FUNCTION__ . ": Missing or invalid IP type.\n";
+					return false;
+				}
 				
 			// encode for MySQL
 				if ($type == 'ipv4') return long2ip($ip);
@@ -303,9 +370,11 @@
 		
 		public function extractFromHTML($html, $openingDelimiter, $closingDelimiter) {
 	
+			global $console;
+
 			// check for errors
 				if (!$html) {
-					errorManager_TL::addError("No HTML specified.");
+					$console .= __FUNCTION__ . ": No HTML specified.\n";
 					return false;
 				}
 			
@@ -313,7 +382,7 @@
 				if ($openingDelimiter) {
 					$startPoint = strpos($html, $openingDelimiter);
 					if ($startPoint === false) {
-						errorManager_TL::addError("Unable to find opening delimiter.");
+						$console .= __FUNCTION__ . ": Unable to find opening delimiter.\n";
 						return false;
 					}
 					else $startPoint += strlen($openingDelimiter);
@@ -324,7 +393,7 @@
 				if ($closingDelimiter) {
 					$endPoint = strpos($html, $closingDelimiter, $startPoint);
 					if ($endPoint === false) {
-						errorManager_TL::addError("Unable to find closing delimiter.");
+						$console .= __FUNCTION__ . ": Unable to find closing delimiter.\n";
 						return false;
 					}
 				}
@@ -341,8 +410,10 @@
 				Any tags specified for $tagsToRemove should be in the following format: 'br,img,h1'
 				To remove all tags, pass an empty value into $tagsToRemove */
 	
+			global $console;
+
 			if (!$inputString) {
-				errorManager_TL::addError("No input specified.");
+				$console .= __FUNCTION__ . ": No input specified.\n";
 				return false;
 			}
 			
@@ -397,8 +468,10 @@
 			/*	this is simply a wrapper for parseXML() which
 				correctly interprets a single-item RSS feed */
 			
+			global $console;
+
 			if (!$url && !$xmlStream) {
-				errorManager_TL::addError("No input specified.");
+				$console .= __FUNCTION__ . ": No input specified.\n";
 				return false;
 			}
 			
@@ -418,8 +491,10 @@
 	
 		public function parseXML($url, $xmlStream, $get_attributes = 1, $priority = 'tag') {
 
+			global $console;
+
 			if (!$url && !$xmlStream) {
-				errorManager_TL::addError("No input specified.");
+				$console .= __FUNCTION__ . ": No input specified.\n";
 				return false;
 			}
 			
@@ -568,14 +643,100 @@
 		    return ($xml_array);
 		}
 		
+		public function importFeedWithSimplePie($feed, $checkForEnclosures = false, $enclosuresMustBeImages = false, $maximumNumberOfResults = null, $minimumLengthOfPosts = null) {
+	
+			global $console;
+
+			if (!$feed) {
+				$console .= __FUNCTION__ . ": No feed specified.\n";
+				return false;
+			}
+			
+			// load helper classes
+				$fileManager = new file_manager_TL();
+			
+			// create array
+				$feedArray = array();
+				$feedArray['DateTimeConnected'] = date('Y-m-d H:i:s');
+			
+			// invoke feed parser (SimplePie)
+				$feedContents = new SimplePie();
+				$feedContents->set_feed_url($feed);
+				$feedContents->enable_cache(false);
+				$feedContents->strip_htmltags(array_merge($feedContents->strip_htmltags, array('a')));
+				$feedContents->init();
+				$feedContents->handle_content_type();
+				$feedContents->set_cache_location ('/cache');
+				if ($feedContents->error()) {
+					$feedArray['Status'] = $feedContents->error;
+					return $feedArray;
+				}
+			
+			// populate array
+				
+				$feedArray['Title'] = $feedContents->get_title();
+				$feedArray['Link'] = $feedContents->get_permalink();
+				$feedArray['Description'] = $feedContents->get_description();
+				$feedArray['Items'] = array();
+				
+				foreach ($feedContents->get_items() as $item) {
+					
+					if (!$maximumNumberOfResults || count($feedArray['Items']) < $maximumNumberOfResults) {
+					
+						if (strlen($this->removeHTML($item->get_content(), '')) > $minimumLengthOfPosts) {
+						
+							// look for enclosures
+									if ($checkForEnclosures == 'Y') {
+								
+										$foundEnclosure = $item->get_enclosure(0);
+										if ($foundEnclosure) {
+											$foundEnclosureLink = $foundEnclosure->get_link();
+											if ($foundEnclosureLink && (!$fileManager->isImage($foundEnclosureLink))) $foundEnclosureLink = '';
+										}
+										else {
+											$images = $this->extractImageURLs($item->get_content() . $item->get_description(), true);
+											if ($fileManager->isImage($images[0])) $foundEnclosureLink = $images[0];
+										}
+										
+									}
+			
+								// save data
+										$nextConsecutiveNumber = count($feedArray['Items']);
+										$feedArray['Items'][$nextConsecutiveNumber] = array();
+										$feedArray['Items'][$nextConsecutiveNumber]['Title'] = $item->get_title();
+										$foundAuthor = $item->get_author();
+										if ($foundAuthor) {
+											$feedArray['Items'][$nextConsecutiveNumber]['Author'] = $foundAuthor->get_name();
+											$feedArray['Items'][$nextConsecutiveNumber]['AuthorEmail'] = $foundAuthor->get_email();
+										}
+										$feedArray['Items'][$nextConsecutiveNumber]['Guid'] = $item->get_id();
+										$feedArray['Items'][$nextConsecutiveNumber]['Link'] = $item->get_permalink();
+										$feedArray['Items'][$nextConsecutiveNumber]['Summary'] = $this->removeHTML($item->get_description(), '');
+										$feedArray['Items'][$nextConsecutiveNumber]['Content'] = $this->removeHTML($item->get_content(), '');
+										if (strlen($feedArray['Items'][$nextConsecutiveNumber]['Content']) < strlen($feedArray['Items'][$nextConsecutiveNumber]['Summary'])) $feedArray['Items'][$nextConsecutiveNumber]['Content'] = $this->removeHTML($item->get_description());
+										$feedArray['Items'][$nextConsecutiveNumber]['Enclosure'] = $foundEnclosureLink;
+										$feedArray['Items'][$nextConsecutiveNumber]['PubDate'] = $item->get_date('Y-m-d H:i:s');
+								
+						}
+							
+					}
+					
+				}
+	
+			return $feedArray;
+			
+		}
+		
 /*		--------------------------------------
 		Parsing DB resource
 		-------------------------------------- */
 		
 		public function mySqliResourceToArray($resource, $htmlentities = false) {
 	
+			global $console;
+
 			if (!$resource) {
-				errorManager_TL::addError("No resource specified.");
+				$console .= __FUNCTION__ . ": No resource specified.\n";
 				return false;
 			}
 			
@@ -600,8 +761,10 @@
 		
 		public function calendarPageDate($datetime) {
 
+			global $console;
+
 			if (!$datetime) {
-				errorManager_TL::addError("No date specified.");
+				$console .= __FUNCTION__ . ": No date specified.\n";
 				return false;
 			}
 			
@@ -626,8 +789,10 @@
 		
 		public function bubbleDate($date) {
 			
+			global $console;
+
 			if (!$date) {
-				errorManager_TL::addError("No date specified.");
+				$console .= __FUNCTION__ . ": No date specified.\n";
 				return false;
 			}
 			
@@ -651,8 +816,10 @@
 		
 		public function addOrdinalSuffix($number) {
 
+			global $console;
+
 			if (!floatval($number)) {
-				errorManager_TL::addError("No number specified.");
+				$console .= __FUNCTION__ . ": No number specified.\n";
 				return false;
 			}
 			
@@ -665,8 +832,10 @@
 	    
 		public function addFileSizeSuffix($filesizeInBytes) {
 
+			global $console;
+
 			if (!floatval($filesizeInBytes)) {
-				errorManager_TL::addError("No filesize specified.");
+				$console .= __FUNCTION__ . ": No filesize specified.\n";
 				return false;
 			}
 			
@@ -742,8 +911,10 @@
 
 		public function truncate($inputText, $charactersOrWords = 'c', $desiredLength = 50, $moreLink = false, $moreClass = false, $moreLabel = false) {
 
+			global $console;
+
 			if (!$inputText) {
-				errorManager_TL::addError("No text specified.");
+				$console .= __FUNCTION__ . ": No text specified.\n";
 				return false;
 			}
 			
@@ -862,8 +1033,9 @@
 
 	::	DEPENDENT ON
 	
-		inputValidator_TL
-		fileManager_TL
+		input_validator_TL
+		file_manager_TL
+		SimplePie library
 
 	::	VERSION HISTORY
 

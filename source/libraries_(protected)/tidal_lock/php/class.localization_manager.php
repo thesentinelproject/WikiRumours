@@ -1,21 +1,23 @@
 <?php
 
-	class localization_TL {
+	class localization_manager_TL {
 
 		public function geocodeUsingGoogle($location) {
+
+			global $console;
 			
 			if (!$location) {
-				errorManager_TL::addError("No location specified.");
+				$console .= __FUNCTION__ . ": No location specified.\n";
 				return false;
 			}
 			
 			$geolocation = array();
-			$fileManager = new fileManager_TL();
+			$fileManager = new file_manager_TL();
 			$parser = new parser_TL();
 			$googleUrl = 'http://maps.googleapis.com/maps/api/geocode/xml?sensor=false&address=' . urlencode($location);
 			
 			if (!$fileManager->doesUrlExist($googleUrl)) {
-				errorManager_TL::addError("Unable to access Google Maps API.");
+				$console .= __FUNCTION__ . ": Unable to access Google Maps API.\n";
 				return false;
 			}
 			else {
@@ -29,7 +31,7 @@
 				if (!$geolocation['Latitude'] || !$geolocation['Longitude']) {
 					if ($result['GeocodeResponse']['status']) $geolocation['Error'] = $result['GeocodeResponse']['status'];
 					else {
-						errorManager_TL::addError("Connected to Google Maps API, but was unable to successfully determine latitude and longitude.");
+						$console .= __FUNCTION__ . ": Connected to Google Maps API, but was unable to successfully determine latitude and longitude.\n";
 						return false;
 					}
 				}
@@ -42,23 +44,24 @@
 		public function reverseGeocodeUsingGoogle($coords) {
 			
 			$location = array();
-			$fileManager = new fileManager_TL();
+			$fileManager = new file_manager_TL();
 			$parser = new parser_TL();
 			$googleUrl = 'http://maps.googleapis.com/maps/api/geocode/xml?sensor=false&latlng=' . str_replace(' ', '', $coords);
+			global $console;
 			
 			if (!$coords) {
-				errorManager_TL::addError("No geocoordinates specified.");
+				$console .= __FUNCTION__ . ": No geocoordinates specified.\n";
 				return false;
 			}
 			
 			if (!$fileManager->doesUrlExist($googleUrl)) {
-				errorManager_TL::addError("Unable to access Google Maps API.");
+				$console .= __FUNCTION__ . ": Unable to access Google Maps API.\n";
 				return false;
 			}
 			else {
 				$result = $parser->parseXML($googleUrl, '');
 				if (!$result) {
-					errorManager_TL::addError("Unable to parse results from Google.");
+					$console .= __FUNCTION__ . ": Unable to parse results from Google.\n";
 					return false;
 				}
 				else $location = $result;
@@ -90,7 +93,7 @@
 
 	::	DEPENDENT ON
 	
-		inputValidator_TL();
+		input_validator_TL();
 		parser_TL();
 	
 	::	VERSION HISTORY

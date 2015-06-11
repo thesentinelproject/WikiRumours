@@ -1,24 +1,25 @@
 <?php
 
-	class urlShortener_TL {
+	class url_shortener_TL {
 
 		public function bitly($longUrl) {
 			
 			global $bitlyApiKey;
 			global $bitlyLogin;
+			global $console;
 	
 			if (!$longUrl) {
-				errorManager_TL::addError("No URL specified.");
+				$console .= __FUNCTION__ . ": No URL specified.\n";
 				return false;
 			}
 			if (!$bitlyApiKey || !$bitlyLogin) {
-				errorManager_TL::addError("No bit.ly credentials specified in the configuration file.");
+				$console .= __FUNCTION__ . ": No bit.ly credentials specified in the configuration file.\n";
 				return false;
 			}
 			
 			$longUrl = "http://api.bit.ly/v3/shorten?login=" . $bitlyLogin . "&apiKey=" . $bitlyApiKey . "&uri=" . urlencode($longUrl) . "&format=txt";
 			
-			$fileManager = new fileManager_TL();
+			$fileManager = new file_manager_TL();
 			
 			if ($fileManager->doesUrlExist($longUrl)) {
 				$handle = @fopen($longUrl, 'r');
@@ -27,7 +28,7 @@
 				return $shortUrl;
 			}
 			else {
-				errorManager_TL::addError("Unable to retrieve and/or access shortened URL.");
+				$console .= __FUNCTION__ . ": Unable to retrieve and/or access shortened URL.\n";
 				return false;
 			}
 						
@@ -36,19 +37,20 @@
 		public function owly($longUrl) {
 			
 			global $owlyApiKey;
+			global $console;
 	
 			if (!$longUrl) {
-				errorManager_TL::addError("No URL specified.");
+				$console .= __FUNCTION__ . ": No URL specified.\n";
 				return false;
 			}
 			if (!$owlyApiKey) {
-				errorManager_TL::addError("No ow.ly credentials specified in the configuration file.");
+				$console .= __FUNCTION__ . ": No ow.ly credentials specified in the configuration file.\n";
 				return false;
 			}
 			
 			$longUrl = "http://ow.ly/api/1.1/url/shorten?apiKey=" . $owlyApiKey . "&longUrl=" . urlencode($longUrl);
 			
-			$fileManager = new fileManager_TL();
+			$fileManager = new file_manager_TL();
 			
 			if ($fileManager->doesUrlExist($longUrl)) {
 				$handle = @fopen($longUrl, 'r');
@@ -58,23 +60,25 @@
 				return $shortUrl['results']['shortUrl'];
 			}
 			else {
-				errorManager_TL::addError("Unable to retrieve and/or access shortened URL.");
+				$console .= __FUNCTION__ . ": Unable to retrieve and/or access shortened URL.\n";
 				return false;
 			}
 			
 		}
 		
 		public function customAlphaID($type, $lengthInCharacters, $blacklistArray, $allowMixedCase = true, $excludeAmbiguousCharacters = true) {
-			
+
 			/* Creates a unique Bitly-like whitelist identifier */
+
+			global $console;
 			
 			// check for errors
 				if ($type != 'a' && $type != 'n') {
-					errorManager_TL::addError("Neither numeric nor alphanumeric specified.");
+					$console .= __FUNCTION__ . ": Neither numeric nor alphanumeric specified.\n";
 					return false;
 				}
 				if (intval($lengthInCharacters) < 1 ) {
-					errorManager_TL::addError("String length not specified.");
+					$console .= __FUNCTION__ . ": String length not specified.\n";
 					return false;
 				}
 				
@@ -125,7 +129,7 @@
 
 	::	DEPENDENT ON
 	
-		fileManager_TL
+		file_manager_TL
 
 	::	VERSION HISTORY
 

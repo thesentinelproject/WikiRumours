@@ -1,12 +1,13 @@
 <?php
 
-	class mediaConverter_TL {
+	class media_converter_TL {
 		
-		public function convert($incomingFile, $outgoingFilename, $outgoingPath, $desiredWidth, $desiredHeight, $desiredAngle) {
+		public function convert($incomingFile, $outgoingFilename, $outgoingPath, $desiredWidth, $desiredHeight = null, $desiredAngle = null) {
 
 			global $extToMime_TL;
+			global $console;
 			
-			$fileManager = new fileManager_TL();
+			$fileManager = new file_manager_TL();
 			
 			// get source type and destination type
 				$incomingMIME = $fileManager->determineMIME($incomingFile);
@@ -15,7 +16,7 @@
 			
 			// validate incoming file (rudimentary validation only)
 				if (!file_exists($incomingFile) && !$fileManager->doesUrlExist($incomingFile)) {
-					errorManager_TL::addError("Can't find source image.");
+					$console .= __FUNCTION__ . ": Can't find source image.\n";
 					return false;
 				}
 				
@@ -23,39 +24,41 @@
 				$outgoingPath = trim ($outgoingPath, '/') . '/';
 				if (file_exists($outgoingPath)) {
 					if (!is_dir($outgoingPath) || is_link($outgoingPath)) {
-						errorManager_TL::addError("Destination directory is invalid.");
+						$console .= __FUNCTION__ . ": Destination directory is invalid.\n";
 						return false;
 					}
 				}
 				else {
 					mkdir($outgoingPath);
 					if (!file_exists($outgoingPath)) {
-						errorManager_TL::addError("Unable to locate or create destination directory.");
+						$console .= __FUNCTION__ . ": Unable to locate or create destination directory.\n";
 						return false;
 					}
 				}
 				
 			// redirect to appropriate function
 				if (substr_count($incomingMIME, 'image')) {
-					return $this->convertImage($incomingFile, $outgoingFilename, $outgoingPath, $desiredWidth, $desiredHeight, $desiredAngle);
+					return $this->convertImage($incomingFile, $outgoingFilename, $outgoingPath, $desiredWidth, $desiredHeight = null, $desiredAngle = null);
 				}
 				elseif (substr_count($incomingMIME, 'video')) {
 					if (substr_count($outgoingMIME, 'video')) return $this->convertVideo($incomingFile, $outgoingFilename, $outgoingPath, $desiredWidth, $desiredHeight);
 					elseif (substr_count($outgoingMIME, 'image')) return $this->thumbnailVideo($incomingFile, $outgoingFilename, $outgoingPath, $desiredWidth, $desiredHeight);
 				}
 				else {
-					errorManager_TL::addError("Unable to read incoming file and/or incompatible file format.");
+					$console .= __FUNCTION__ . ": Unable to read incoming file and/or incompatible file format.\n";
 					return false;
 				}
 			
 		}
 		
-		public function convertImage($incomingFile, $outgoingFilename, $outgoingPath, $desiredWidth, $desiredHeight, $desiredAngle) {
+		public function convertImage($incomingFile, $outgoingFilename, $outgoingPath, $desiredWidth, $desiredHeight = null, $desiredAngle = null) {
+
 	
-			global $imageMagickRoot;
+			global $systemPreferences;
 			global $extToMime_TL;
+			global $console;
 			
-			$outgoingPath = trim ($outgoingPath, '/') . '/';
+			$outgoingPath = rtrim ($outgoingPath, '/') . '/';
 			$outgoingExt = pathinfo($outgoingFilename, PATHINFO_EXTENSION);
 			$outgoingMIME = $extToMime_TL[$outgoingExt];
 
@@ -69,7 +72,7 @@
 			
 			// check for errors
 				if (!$currentWidth || !$currentHeight) {
-					errorManager_TL::addError("Unable to retrieve dimensions of currnet image.");
+					$console .= __FUNCTION__ . ": Unable to retrieve dimensions of current image.\n";
 					return false;
 				}
 				
@@ -83,42 +86,64 @@
 					$desiredHeight = $currentHeight;
 				}
 				elseif ($desiredWidth && !$desiredHeight) {
-					$scale = floor($desiredWidth/$currentWidth);
+					$scale = $desiredWidth / $currentWidth;
 					$desiredHeight = floor($scale * $currentHeight);
 				}
 				elseif ($desiredHeight && !$desiredWidth) {
-					$scale = floor($desiredHeight/$currentHeight);
+					$scale = $desiredHeight / $currentHeight;
 					$desiredWidth = floor($scale * $currentWidth);
 				}
 				else {
-					if ($currentWidth > $currentHeight) $currentWidth = $currentHeight;
-					elseif ($currentHeight > $currentWidth) $currentHeight = $currentWidth;
+					if ($currentWidth > $currentHeight) {
+						$xOffset = floor(($currentWidth - $currentHeight) / 2);
+						$currentWidth = $currentHeight;
+					}
+					elseif ($currentHeight > $currentWidth) {
+						$yOffset = floor(($currentHeight - $currentWidth) / 2);
+						$currentHeight = $currentWidth;
+					}
 				}
 				
 			// create new image
-				if ($imageMagickRoot && file_exists($imageMagickRoot . 'convert')) {
-					$convert = $convertWithImageMagick . 'convert';
-					$convert .= ' -thumbnail'; // type of conversion
-					if ($desiredAngle) $convert .= ' -rotate ' . $desiredAngle;
-					$convert .= ' ' . $desiredWidth . 'x' . $desiredHeight; // dimensions of output file
-					$convert .= ' ' . escapeshellarg($incomingFile); // input file
-					$convert .= ' ' . escapeshellarg($outgoingPath . $outgoingFilename); // output file
+				if ($systemPreferences['Server path to ImageMagick|e.g. /usr/bin/'] && file_exists(rtrim($systemPreferences['Server path to ImageMagick|e.g. /usr/bin/'], '/') . '/convert')) {
+					if ((@$xOffset || @$yOffset) && !$desiredAngle) {
+						$convert = rtrim($systemPreferences['Server path to ImageMagick|e.g. /usr/bin/'], '/') . '/convert';
+						$convert .= ' -define jpeg:size=' . min($currentWidth, $currentHeight) . 'x' . min($currentWidth, $currentHeight);
+						$convert .= ' ' . escapeshellarg($incomingFile); // input file
+						$convert .= ' -thumbnail'; // type of conversion
+						$convert .= ' ' . $desiredWidth . 'x' . $desiredHeight . '^ -gravity center -extent ' .  $desiredWidth . 'x' . $desiredHeight; // dimensions of output file
+						$convert .= ' ' . escapeshellarg($outgoingPath . $outgoingFilename); // output file
+					}
+					elseif ($desiredAngle) {
+						$convert = rtrim($systemPreferences['Server path to ImageMagick|e.g. /usr/bin/'], '/') . '/convert';
+						$convert .= ' -rotate ' . $desiredAngle;
+						$convert .= ' ' . escapeshellarg($incomingFile); // input file
+						$convert .= ' ' . escapeshellarg($outgoingPath . $outgoingFilename); // output file
+					}
+					else {
+						$convert = rtrim($systemPreferences['Server path to ImageMagick|e.g. /usr/bin/'], '/') . '/convert';
+						$convert .= ' -thumbnail'; // type of conversion
+						$convert .= ' ' . $desiredWidth . 'x' . $desiredHeight; // dimensions of output file
+						$convert .= ' ' . escapeshellarg($incomingFile); // input file
+						$convert .= ' ' . escapeshellarg($outgoingPath . $outgoingFilename); // output file
+					}
 					exec ($convert, $output, $return_var);
 				}
 
 			// verify complete
-				if (!file_exists($outgoingPath . $outgoingFilename)) {
+				if (file_exists($outgoingPath . $outgoingFilename)) return true;
+				else {
 					if ($desiredAngle) {
-						errorManager_TL::addError("Unable to convert image using ImageMagick.");
+						$console .= __FUNCTION__ . ": Unable to convert image using ImageMagick\n";
 						return false;
 					}
 					else {
-						// calculate transformation
+						// create destination image object
 							if ($img = @imagecreatefromjpeg($incomingFile)) $img = imagecreatefromjpeg($incomingFile);
 							elseif ($img = @imagecreatefromgif($incomingFile)) $img = imagecreatefromgif($incomingFile);
 							elseif ($img = @imagecreatefrompng($incomingFile)) $img = imagecreatefrompng($incomingFile);
 							else {
-								errorManager_TL::addError("Unable to read image format.");
+								$console .= __FUNCTION__ . ": Unable to read image format.\n";
 								return false;
 							}
 							
@@ -128,20 +153,20 @@
 							imagesavealpha($newImage, true);  
 							
 						// copy and resize the old image into the new image
-							imagecopyresampled($newImage, $img, 0, 0, 0, 0, $desiredWidth, $desiredHeight, $currentWidth, $currentHeight);
+							imagecopyresampled($newImage, $img, 0, 0, intval(@$xOffset), intval(@$yOffset), $desiredWidth, $desiredHeight, $currentWidth, $currentHeight);
 							imagedestroy($img);
 							if ($outgoingExt == 'jpg') imagejpeg($newImage, $outgoingPath . $outgoingFilename, 80);
-							elseif ($outgoingExt == 'png') imagepng($newImage, $outgoingPath . $outgoingFilename, 0);
+							elseif ($outgoingExt == 'png') imagepng($newImage, $outgoingPath . $outgoingFilename, 80);
 							elseif ($outgoingExt == 'gif') imagegif($newImage, $outgoingPath . $outgoingFilename);
 							else {
-								errorManager_TL::addError("Unable to determine destination file type.");
+								$console .= __FUNCTION__ . ": Unable to determine destination file type.\n";
 								return false;
 							}
 							
 						// check for errors again
 							if (file_exists($outgoingPath . $outgoingFilename)) return true;
 							else {
-								errorManager_TL::addError("Unknown problem attempting to create new image.");
+								$console .= __FUNCTION__ . ": Unknown problem attempting to create new image.\n";
 								return false;
 							}
 									
@@ -150,14 +175,14 @@
 			
 		}
 		
-		public function convertVideo($incomingFile, $outgoingFilename, $outgoingPath, $desiredWidth, $desiredHeight) {
+		public function convertVideo($incomingFile, $outgoingFilename, $outgoingPath, $desiredWidth, $desiredHeight = null) {
 			
-			global $imageMagickRoot;
-			global $FFmpegRoot;
+			global $systemPreferences;
+			global $console;
 
 			// check for errors
 				if (!$desiredWidth && !$desiredHeight) {
-					errorManager_TL::addError("Missing desired dimensions.");
+					$console .= __FUNCTION__ . ": Missing desired dimensions.\n";
 					return false;
 				}
 			
@@ -170,10 +195,10 @@
 				$desiredHeight = floor(($desiredHeight) / 2) * 2;
 				
 			// select converter
-				if ($imageMagickRoot && file_exists($imageMagickRoot . 'convert')) {
+				if ($systemPreferences['Server path to ImageMagick|e.g. /usr/bin/'] && file_exists(rtrim($systemPreferences['Server path to ImageMagick|e.g. /usr/bin/'], '/') . '/convert')) {
 					
 					// create new image
-						$convert = $imageMagickRoot . 'convert';
+						$convert = rtrim($systemPreferences['Server path to ImageMagick|e.g. /usr/bin/'], '/') . '/convert';
 						$convert .= ' -resize'; // type of conversion
 						$convert .= ' ' . $desiredWidth . 'x' . $desiredHeight; // dimensions of output file
 						$convert .= ' ' . escapeshellarg($incomingFile); // input file
@@ -182,21 +207,21 @@
 				
 						if (file_exists($outgoingPath . $outgoingFilename)) return true;
 						else {
-							errorManager_TL::addError("Unknown problem attempting to create new preview video with ImageMagick.");
+							$console .= __FUNCTION__ . ": Unknown problem attempting to create new preview video with ImageMagick.\n";
 							return false;
 						}
 						
 				}
-				elseif ($FFmpegRoot && file_exists($FFmpegRoot . 'ffmpeg')) {
+				elseif ($systemPreferences['Server path to FFmpeg|e.g. /usr/local/dh/bin/'] && file_exists(rtrim($systemPreferences['Server path to FFmpeg|e.g. /usr/local/dh/bin/'], '/') . '/ffmpeg')) {
 					
 					// file extension must be lowercase
 						if (pathinfo($incomingFile, PATHINFO_EXTENSION) != strtolower(pathinfo($incomingFile, PATHINFO_EXTENSION))) {
-							errorManager_TL::addError("Please make sure file extension of incoming file is lowercase.");
+							$console .= __FUNCTION__ . ": Please make sure file extension of incoming file is lowercase.\n";
 							return false; 
 						}
 						
 					// create new image
-						$convert = $FFmpegRoot . 'ffmpeg';
+						$convert = rtrim($systemPreferences['Server path to FFmpeg|e.g. /usr/local/dh/bin/'], '/') . '/ffmpeg';
 						$convert .= ' -itsoffset -1'; // capture frame after first second
 						$convert .= ' -i ' . escapeshellarg($incomingFile); // input path
 						$convert .= ' -vcodec mjpeg'; // incoming codec
@@ -212,13 +237,13 @@
 				
 						if (file_exists($outgoingPath . $outgoingFilename)) return true;
 						else {
-							errorManager_TL::addError("Unknown problem attempting to create new preview video with FFmpeg.");
+							$console .= __FUNCTION__ . ": Unknown problem attempting to create new preview video with FFmpeg.\n";
 							return false;
 						}
 						
 				}
 				else {
-					errorManager_TL::addError("No video converter found.");
+					$console .= __FUNCTION__ . ": No video converter found.\n";
 					return false;
 				}
 			
@@ -226,17 +251,18 @@
 		
 		public function thumbnailVideo($incomingFile, $outgoingFilename, $outgoingPath, $desiredWidth, $desiredHeight) {
 	
-			global $imageMagickRoot;
+			global $systemPreferences;
+			global $console;
 			
 			// check for errors
-				if ($imageMagickRoot && !file_exists($imageMagickRoot . 'convert')) {
-					errorManager_TL::addError("Can't find ImageMagick on this server.");
+				if ($systemPreferences['Server path to ImageMagick|e.g. /usr/bin/'] && !file_exists(rtrim($systemPreferences['Server path to ImageMagick|e.g. /usr/bin/'], '/') . '/convert')) {
+					$console .= __FUNCTION__ . ": Can't find ImageMagick on this server.\n";
 					return false;
 				}
 			
 			// check for errors
 				if (!$desiredWidth && !$desiredHeight) {
-					errorManager_TL::addError("Missing desired dimensions.");
+					$console .= __FUNCTION__ . ": Missing desired dimensions.\n";
 					return false;
 				}
 			
@@ -245,7 +271,7 @@
 				if (!$desiredHeight) $desiredHeight = intval($desiredWidth * 3 / 4);
 								
 			// create new image
-				$convert = $imageMagickRoot . 'convert';
+				$convert = rtrim($systemPreferences['Server path to ImageMagick|e.g. /usr/bin/'], '/') . '/convert';
 				$convert .= ' -thumbnail'; // type of conversion
 				$convert .= ' ' . $desiredWidth . 'x' . $desiredHeight; // dimensions of output file
 				$convert .= ' ' . escapeshellarg($incomingFile) . '[0]'; // input file
@@ -254,7 +280,7 @@
 		
 				if (file_exists($outgoingPath . $outgoingFilename)) return true;
 				else {
-					errorManager_TL::addError("Unknown problem attempting to thumbnail video.");
+					$console .= __FUNCTION__ . ": Unknown problem attempting to thumbnail video.\n";
 					return false;
 				}
 			
@@ -272,7 +298,7 @@
 	::	DEPENDENT ON
 	
 		metadata_TL
-		fileManager_TL
+		file_manager_TL
 		ImageMagick
 		FFmpeg
 	

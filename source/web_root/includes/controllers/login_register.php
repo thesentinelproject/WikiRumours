@@ -11,17 +11,10 @@
 		}
 
 	// parse query string
-		$pageSuccess = $parameter1;
-		if ($pageSuccess == 'redirect') $destination = $parameter2;
-		elseif ($pageSuccess == 'invitation') $referredBy = $parameter2;
-		elseif ($pageSuccess == 'gmail_login_cancelled') $pageError = "Your Gmail login was unsuccessful.";
-		elseif ($pageSuccess == 'user_disabled') $pageError = "Unable to login via Gmail because account is disabled.";
+		$pageStatus = $parameter1;
+		if ($pageStatus == 'redirect') $destination = trim(str_replace('|', '/', urldecode($parameter2)), '/');
+		elseif ($pageStatus == 'invitation') $referredBy = $parameter2;
 
-	// instantiate required class(es)
-		$validator = new inputValidator_TL();
-		$operators = new operators_TL();
-		$parser = new parser_TL();
-		
 /*	--------------------------------------
 	Execute only if a form post
 	-------------------------------------- */
@@ -45,10 +38,10 @@
 					if ($logged_in) {
 						$_SESSION['username'] = $_POST['loginUsername'];
 						$_SESSION['password_hash'] = $logged_in['password_hash'];
-						$cookieExpiryDate = time()+60*60*24 * floatval($numberOfDaysToPreserveLogin);
+						$cookieExpiryDate = time()+60*60*24 * floatval($systemPreferences['Keep users logged in for']);
 						setcookie("username", $_SESSION['username'], $cookieExpiryDate, '/', '.' . $environmentals['domain'], 0);
 						setcookie("password_hash", $_SESSION['password_hash'], $cookieExpiryDate, '/', '.' . $environmentals['domain'], 0);
-						if ($pageSuccess == 'redirect' && $destination) header ('Location: /' . trim(str_replace('|', '/', urldecode($destination))), '/');
+						if (@$destination) header ('Location: /' . $destination);
 						else header ('Location: /profile/' . $_SESSION['username']);
 						exit();
 					}
@@ -62,11 +55,16 @@
 
 			// clean input
 				$_POST = $parser->trimAll($_POST);
+				$checkboxesToParse = array('primary_phone_sms', 'secondary_phone_sms');
+				foreach ($checkboxesToParse as $checkbox) {
+					if (isset($_POST[$checkbox])) $_POST[$checkbox] = 1;
+					else $_POST[$checkbox] = 0;
+				}
 											
 			// check for errors
 				if (!$_POST['registerUsername']) $pageError .= "Please provide a username. ";
-				if (!$validator->isStringValid($_POST['registerUsername'], '0123456789abcdefghijklmnopqrstuvwxyz-_', '')) $pageError .= "Your username can only contain alphanumeric characters. ";
-				if ($validator->validateEmailRobust($_POST['email']) == false) $pageError .= "There appears to be a problem with your email address. ";
+				if (!$input_validator->isStringValid($_POST['registerUsername'], '0123456789abcdefghijklmnopqrstuvwxyz-_', '')) $pageError .= "Your username can only contain alphanumeric characters. ";
+				if ($input_validator->validateEmailRobust($_POST['email']) == false) $pageError .= "There appears to be a problem with your email address. ";
 				if (!$_POST['first_name']) $pageError .= "Please provide a first name. ";
 				if (!$_POST['last_name']) $pageError .= "Please provide a last name. ";
 				if (!$_POST['country']) $pageError .= "Please provide a country. ";
@@ -104,15 +102,15 @@
 						
 						$doesRegistrationAlreadyExist = retrieveRegistrants(array('email'=>$_POST['email']), null, null, null, 1);
 						
-						if (count($doesRegistrationAlreadyExist) > 0) updateDb('registrations', array('username'=>$_POST['registerUsername'], 'first_name'=>@$_POST['first_name'], 'last_name'=>@$_POST['last_name'], 'country'=>@$_POST['country'], 'province_state'=>@$_POST['province_state'], 'other_province_state'=>@$_POST['other_province_state'], 'region'=>@$_POST['region'], 'phone'=>@$_POST['phone'], 'secondary_phone'=>@$_POST['secondary_phone'], 'sms_notifications'=>@$_POST['sms_notifications'], 'password_hash'=>$hash, 'registered_on'=>date('Y-m-d H:i:s'), 'registration_key'=>$key, 'referred_by'=>@$referral[0]['user_id']), array('email'=>@$_POST['email']), null, null, null, null, 1);
-						else insertIntoDb('registrations', array('username'=>$_POST['registerUsername'], 'first_name'=>@$_POST['first_name'], 'last_name'=>@$_POST['last_name'], 'email'=>@$_POST['email'], 'country'=>@$_POST['country'], 'province_state'=>@$_POST['province_state'], 'other_province_state'=>@$_POST['other_province_state'], 'region'=>@$_POST['region'], 'phone'=>@$_POST['phone'], 'secondary_phone'=>@$_POST['secondary_phone'], 'sms_notifications'=>@$_POST['sms_notifications'], 'password_hash'=>$hash, 'registered_on'=>date('Y-m-d H:i:s'), 'registration_key'=>$key, 'referred_by'=>@$referral[0]['user_id']));
+						if (count($doesRegistrationAlreadyExist) > 0) updateDb('registrations', array('username'=>$_POST['registerUsername'], 'first_name'=>@$_POST['first_name'], 'last_name'=>@$_POST['last_name'], 'country_id'=>$_POST['country'], 'region_id'=>$_POST['region_' . $_POST['country']], 'other_region'=>$_POST['other_region'], 'city'=>$_POST['city'], 'primary_phone'=>@$_POST['primary_phone'], 'primary_phone_sms'=>@$_POST['primary_phone_sms'], 'secondary_phone'=>@$_POST['secondary_phone'], 'secondary_phone_sms'=>@$_POST['secondary_phone_sms'], 'password_hash'=>$hash, 'registered_on'=>date('Y-m-d H:i:s'), 'registration_key'=>$key, 'referred_by'=>@$referral[0]['user_id']), array('email'=>@$_POST['email']), null, null, null, null, 1);
+						else insertIntoDb('registrations', array('username'=>$_POST['registerUsername'], 'first_name'=>@$_POST['first_name'], 'last_name'=>@$_POST['last_name'], 'email'=>@$_POST['email'], 'country_id'=>$_POST['country'], 'region_id'=>$_POST['region_' . $_POST['country']], 'other_region'=>$_POST['other_region'], 'city'=>$_POST['city'], 'primary_phone'=>@$_POST['primary_phone'], 'primary_phone_sms'=>@$_POST['primary_phone_sms'], 'secondary_phone'=>@$_POST['secondary_phone'], 'secondary_phone_sms'=>@$_POST['secondary_phone_sms'], 'password_hash'=>$hash, 'registered_on'=>date('Y-m-d H:i:s'), 'registration_key'=>$key, 'referred_by'=>@$referral[0]['user_id']));
 					
 					// send confirmation request email
 						$emailSent = emailRegistrationKey(trim($_POST['first_name'] . ' ' . $_POST['last_name']), $_POST['email'], $key);
 
 					// confirmation
 						if ($emailSent) {
-							header ('Location: /login_register/registration_success');
+							header ('Location: /login_register/registration_received');
 							exit();
 						}
 						else $pageError .= "Unable to email your registration confirmation. Please try registering again, and if you continue to encounter difficulties, <a href='/contact' class='errorMessage'>let us know</a>. ";

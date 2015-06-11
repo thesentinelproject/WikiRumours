@@ -1,280 +1,206 @@
 <?php
+	$pageTitle = 'Dashboard';
+	$sectionTitle = 'Administration';
 	include 'includes/views/desktop/shared/page_top.php';
 
-/*	--------------------------------------
-	Admin dashboard
-	-------------------------------------- */
-	
-	if ($pageError) echo "      <div class='alert alert-danger alert-dismissable'><button type='button' class='close' data-dismiss='alert' aria-hidden='true'>&times;</button>" . $pageError . "</div>\n";
-	elseif ($pageSuccess == 'alert_resolved') echo "      <div class='alert alert-success alert-dismissable'><button type='button' class='close' data-dismiss='alert' aria-hidden='true'>&times;</button>Successfully marked alert as resolved.</div>\n";
-	elseif ($pageSuccess == 'email_sent') echo "      <div class='alert alert-success alert-dismissable'><button type='button' class='close' data-dismiss='alert' aria-hidden='true'>&times;</button>Successfully sent email.</div>\n";
-	elseif ($pageSuccess == 'registrant_approved') echo "      <div class='alert alert-success alert-dismissable'><button type='button' class='close' data-dismiss='alert' aria-hidden='true'>&times;</button>Successfully approved registrant.</div>\n";
-	elseif ($pageSuccess == 'registrant_deleted') echo "      <div class='alert alert-success alert-dismissable'><button type='button' class='close' data-dismiss='alert' aria-hidden='true'>&times;</button>Successfully deleted registrant.</div>\n";
-
-	$pageJavaScript .= "// tooltips\n";
-	$pageJavaScript .= "  $('.tooltips').tooltip({\n";
-	$pageJavaScript .= "    placement: 'left',\n\n";
-	$pageJavaScript .= "    delay: 250\n\n";
-	$pageJavaScript .= "  });\n\n";
-	
-	if ($report == 'dashboard') {
-		
-		// alerts
-			if (count($alerts) > 0) {
-				echo "<div class='pageModule'>\n";
-				echo "  <h2>Alerts</h2>\n";
-				echo "  " . $form->start('dashboardAlertsForm', null, 'post', null, null, array('onSubmit'=>'return false;')) . "\n";
-				echo "  " . $form->input('hidden', 'alertToResolve') . "\n";
-				echo "  <table class='table table-condensed table-hover'>\n";
-				echo "  <thead>\n";
-				echo "  <tr>\n";
-				echo "  <th>Date</th>\n";
-				echo "  <th>Activity</th>\n";
-				echo "  <th>Resolve</th>\n";
-				echo "  </tr>\n";
-				echo "  </thead>\n";
-				echo "  <tbody>\n";
-				for ($counter = 0; $counter < min(5, count($alerts)); $counter++) {
-					echo "  <tr>\n";
-					echo "  <td>" . str_replace(' ', '&nbsp;', date('M j, Y, \a\t g:i:s A', strtotime($alerts[$counter]['connected_on']))) . "</td>\n";
-					echo "  <td>";
-					echo str_replace(';', '<br />', $alerts[$counter]['activity']);
-					if ($alerts[$counter]['error_message']) echo "<br />(" . $alerts[$counter]['error_message'] . ")";
-					echo "</td>\n";
-					echo "  <td><div class='tableButtonAlignment'>" . $form->input('button', null, null, false, 'Resolved', 'btn btn-default btn-sm', null, null, null, null, array('onClick'=>'resolveAlert("' . $alerts[$counter]['log_id'] . '"); return false;')) . "</div></td>\n";
-					echo "  </tr>\n";
-				}
-				echo "  </tbody>\n";
-				echo "  </table>\n";
-				if (count($logs) > 0) echo "  <br /><br />" . $form->input('button', null, null, false, 'See all logs', 'btn btn-default', null, null, null, null, array('onClick'=>'document.location.href = "/admin/logs"; return false;')) . "\n";
-				echo "  " . $form->end() . "\n";
-				echo "</div>\n";
-			}
-			
-		// rumours
+	// alerts
+		if (count($alerts) > 0) {
 			echo "<div class='pageModule'>\n";
-			echo "  <h2>Unassigned and unresolved rumours</h2>\n";
-			if (count($rumours) < 1) echo "  <p>None.</p>\n";
-			else {
-				echo "  <table class='table table-hover table-condensed'>\n";
-				echo "  <tr>\n";
-				echo "  <th colspan='2'>Rumour</th>\n";
-				echo "  <th>Status</th>\n";
-				echo "  </tr>\n";
-				for ($counter = 0; $counter < min(count($rumours), $numberOfRumoursToDisplay); $counter++) {
-					echo "  <tr>\n";
-					if ($rumours[$counter]['updated_on'] != '0000-00-00 00:00:00') echo "  <td>" . $parser->bubbleDate($rumours[$counter]['updated_on']) . "</td>\n";
-					else echo "  <td>" . $parser->bubbleDate($rumours[$counter]['created_on']) . "</td>\n";
-					echo "  <td><a href='/rumour/" . $rumours[$counter]['public_id'] . "/" . $parser->seoFriendlySuffix($rumours[$counter]['description']) . "'>" . $parser->truncate($rumours[$counter]['description'], 'c', 60) . "</a></td>\n";
-					echo "  <td>" . $rumourStatuses[$rumours[$counter]['status']] . "</td>\n";
-					echo "  </tr>\n";
-				}
-				echo "  </table>\n";
-			}
-			echo "  " . $form->input('button', null, null, false, 'See all rumours', 'btn btn-default', null, null, null, null, array('onClick'=>'document.location.href = "/admin_dashboard/rumours"; return false;')) . "\n";
-			echo "</div>\n";
-
-		// flagged comments
-			echo "<div class='pageModule'>\n";
-			echo "  <h2>Flagged comments</h2>\n";
-			if (count($flaggedComments) < 1) echo "  <p>None.</p>\n";
-			else {
-				echo "  <table class='table table-hover table-condensed'>\n";
-				echo "  <tr>\n";
-				echo "  <th colspan='2'>Comment</th>\n";
-				echo "  <th>Author</th>\n";
-				echo "  <th>Rumour</th>\n";
-				echo "  <th>Flags</th>\n";
-				echo "  </tr>\n";
-				for ($counter = 0; $counter < count($flaggedComments); $counter++) {
-					echo "  <tr>\n";
-					echo "  <td>" . $parser->bubbleDate(date('d-M-Y', strtotime($flaggedComments[$counter]['comment_created_on']))) . "</td>\n";
-					echo "  <td>" . $flaggedComments[$counter]['comment'] . "</td>\n";
-					echo "  <td><a href='/profile/" . $flaggedComments[$counter]['comment_created_by'] . "'>" . $flaggedComments[$counter]['comment_created_by_full_name'] . "</a></td>\n";
-					echo "  <td><a href='/rumour/" . $flaggedComments[$counter]['public_id'] . "/" . $parser->seoFriendlySuffix($flaggedComments[$counter]['description']) . "'>" . $parser->truncate($flaggedComments[$counter]['description'], 'c', 30) . "</a></td>\n";
-					echo "  <td>" . floatval($flaggedComments[$counter]['number_of_flags']) . "</td>\n";
-					echo "  </tr>\n";
-				}
-				echo "  </table>\n";
-			}
-			echo "</div>\n";
-			
-		// users
-			echo "<div class='pageModule'>\n";
-			echo "  " . $form->start() . "\n";
-			echo "  <h2>Users</h2>\n";
+			echo "  <h2>Alerts</h2>\n";
+			echo "  " . $form->start('dashboardAlertsForm', null, 'post', null, null, array('onSubmit'=>'return false;')) . "\n";
+			echo "  " . $form->input('hidden', 'alertToResolve') . "\n";
 			echo "  <table class='table table-condensed table-hover'>\n";
 			echo "  <thead>\n";
 			echo "  <tr>\n";
-			echo "  <th>User</th>\n";
-			echo "  <th>Email</th>\n";
-			echo "  <th>Location</th>\n";
-			echo "  <th>Registered</th>\n";
-			echo "  <th>Last login</th>\n";
+			echo "  <th>Date</th>\n";
+			echo "  <th>Activity</th>\n";
+			echo "  <th>Resolve</th>\n";
 			echo "  </tr>\n";
 			echo "  </thead>\n";
 			echo "  <tbody>\n";
-			for ($counter = 0; $counter < min(5, count($users)); $counter++) {
-				if (!$users[$counter]['enabled']) echo "  <tr class='error'>\n";
-				else echo "  <tr>\n";
-				echo "  <td><a href='/profile/" . $users[$counter]['username'] . "' class='tooltips' data-toggle='tooltip' title='" . addSlashes($users[$counter]['full_name']) . "'>" . $users[$counter]['username'] . "</a></td>\n";
-				echo "  <td><a href='mailto:" . $users[$counter]['email'] . "'>" . $users[$counter]['email'] . "</a></td>\n";
-				$location = trim(@$users[$counter]['region'] . ', ' . trim(@$users[$counter]['province_state'] . ', ' . @$users[$counter]['other_province_state'], ', ') . ', ' . @$countries[@$users[$counter]['country']], ',- ');
-				echo "      <td><a href='https://maps.google.com/maps?q=" . urlencode($location) . "' target='_blank'>" . $location . "</a></td>\n";
-				echo "  <td class='nowrap'>" . $parser->bubbleDate(date('Y-m-d', strtotime($users[$counter]['registered_on']))) . "</td>\n";
-				if ($users[$counter]['last_login'] != '0000-00-00 00:00:00') echo "  <td class='nowrap'>" . $parser->bubbleDate(date('Y-m-d', strtotime($users[$counter]['last_login']))) . "</td>\n";
-				else echo "  <td class='text-center'>Never</td>\n";
+			for ($counter = 0; $counter < count($alerts); $counter++) {
+				echo "  <tr>\n";
+				echo "  <td class='nowrap'>\n";
+				echo "    " . date('j-M-Y', strtotime($alerts[$counter]['connected_on'])) . "<br />\n";
+				echo "    <div class='text-muted'><small>" . date('g:i:s A', strtotime($alerts[$counter]['connected_on'])) . "</small></div>\n";
+				echo "  </td>\n";
+				echo "  <td>";
+				echo str_replace(';', '<br />', $alerts[$counter]['activity']);
+				if ($alerts[$counter]['error_message']) echo "<br />(" . $alerts[$counter]['error_message'] . ")";
+				echo "</td>\n";
+				echo "  <td><div class='tableButtonAlignment'>" . $form->input('button', null, null, false, 'Resolved', 'btn btn-default btn-sm', null, null, null, null, array('onClick'=>'resolveAlert("' . $alerts[$counter]['log_id'] . '"); return false;')) . "</div></td>\n";
 				echo "  </tr>\n";
 			}
 			echo "  </tbody>\n";
 			echo "  </table>\n";
-			if (count($users) > 5) echo "  " . $form->input('button', null, null, false, 'See all users', 'btn btn-default', null, null, null, null, array('onClick'=>'document.location.href = "/admin_dashboard/users"; return false;')) . "\n";
 			echo "  " . $form->end() . "\n";
 			echo "</div>\n";
-			
-		// registrations
-			if (count($registrants) > 0) {
-				echo "<div class='pageModule'>\n";
-				echo "  " . $form->start('editRegistrantsForm', '', 'post', 'form-inline', null, array('onSubmit'=>'return false;')) . "\n";
-				echo "  " . $form->input('hidden', 'registrantToApprove') . "\n";
-				echo "  " . $form->input('hidden', 'registrantToDelete') . "\n";
-				echo "  <h2>Pending Registrants</h2>\n";
-				echo "  <table class='table table-condensed table-hover'>\n";
-				echo "  <thead>\n";
-				echo "  <tr>\n";
-				echo "  <th>User</th>\n";
-				echo "  <th>Email</th>\n";
-				echo "  <th>Location</th>\n";
-				echo "  <th>Registered</th>\n";
-				if ($logged_in['can_edit_users']) echo "  <th></th>\n";
-				echo "  </tr>\n";
-				echo "  </thead>\n";
-				echo "  <tbody>\n";
-				for ($counter = 0; $counter < count($registrants); $counter++) {
-					echo "  <tr>\n";
-					echo "  <td><span class='tooltips' data-toggle='tooltip' title='" . addSlashes($registrants[$counter]['full_name']) . "'>" . $registrants[$counter]['username'] . "</span></td>\n";
-					echo "  <td><a href='mailto:" . $registrants[$counter]['email'] . "'>" . $registrants[$counter]['email'] . "</a></td>\n";
-					$location = trim($registrants[$counter]['city'] . ', ' . $registrants[$counter]['province_state'] . ', ' . $countries[$registrants[$counter]['country']], ',- ');
-					echo "      <td><a href='https://maps.google.com/maps?q=" . urlencode($location) . "' target='_blank'>" . $location . "</a></td>\n";
-					echo "  <td class='nowrap'>" . $parser->bubbleDate(date('Y-m-d', strtotime($registrants[$counter]['registered_on']))) . "</td>\n";
-					if ($logged_in['can_edit_users']) {
-						echo "  <td class='text-right nowrap'>\n";
-						echo "    <a href='javascript:void(0)' class='noUnderscore' onClick='approveRegistrant(" . '"' . $registrants[$counter]['registration_id'] . '"' . "); return false;'><span class='label label-default'>APPROVE</span></a>\n";
-						echo "    <a href='javascript:void(0)' class='noUnderscore' onClick='deleteRegistrant(" . '"' . $registrants[$counter]['registration_id'] . '"' . "); return false;'><span class='label label-danger'>DELETE</span></a>\n";
-						echo "  </td>\n";
-					}
-					echo "  </tr>\n";
-				}
-				echo "  </tbody>\n";
-				echo "  </table>\n";
-				echo "  " . $form->end() . "\n";
-				echo "</div>\n";
-			}
-			
-		// send email
-			if ($logged_in['can_send_email']) {
-				echo "<div class='pageModule'>\n";
-				echo "  <h2>Send email</h2>\n";
-				echo "  " . $form->start('emailUserForm', null, 'post', null, null, array('onSubmit'=>'validateEmailUserForm(); return false;')) . "\n";
-				/* Name */		echo "  " . $form->row('text', 'name', @$_POST['name'], true, 'Name|Recipient name', 'form-control') . "\n";
-				/* Email */		echo "  " . $form->row('email', 'email', @$_POST['email'], true, 'Email|Recipient email', 'form-control') . "\n";
-				/* Reply to */	echo "  " . $form->row('email', 'reply_to', $operators->firstTrue(@$_POST['reply_to'], $logged_in['email']), false, 'Reply to|Sender email (optional)', 'form-control') . "\n";
-				/* Message */	echo "  " . $form->row('textarea', 'message', @$_POST['message'], true, 'Message', 'form-control') . "\n";
-				/* Actions */	echo "  " . $form->row('submit', 'Send', null, false, 'Send now', 'btn btn-default btn-info') . "\n";
-				echo "  " . $form->end() . "\n";
-				echo "</div>\n";
-			}
+		}
 		
-	}
-	
-/*	--------------------------------------
-	Rumour report
-	-------------------------------------- */
-	
-	elseif ($report == 'rumours') {
-		echo "  " . $form->start() . "\n";
-		echo "  <h2>Rumours</h2>\n\n";
-		if (count($rumours) < 1) echo "  <p>None.</p>\n";
-		else {
+	// unsent mail
+		if (count($unsentMail)) {
+			echo "<div class='pageModule'>\n";
+			echo "  <h2>" . (count($unsentMail) ? "<span class='label label-default'>" . count($unsentMail) . "</span> " : false) . "Unsent mail</h2>\n";
+			echo "        <table class='table table-condensed'>\n";
+			echo "        <thead>\n";
+			echo "        <tr>\n";
+			echo "        <th>Date</th>\n";
+			echo "        <th>From</th>\n";
+			echo "        <th>To</th>\n";
+			echo "        <th>Subject</th>\n";
+			echo "        <th>Attempt(s)</th>\n";
+			echo "        </tr>\n";
+			echo "        </thead>\n";
+			echo "        <tbody>\n";
+			for ($counter = 0; $counter < count($unsentMail); $counter++) {
+				if ($unsentMail[$counter]['failed_attempts'] >= $systemPreferences['Maximum allowable failures per email address']) echo "        <tr class='danger'>\n";
+				else echo "        <tr>\n";
+				echo "        <td class='nowrap'>\n";
+				echo "          " . date('j-M-Y', strtotime($unsentMail[$counter]['queued_on'])) . "<br />\n";
+				echo "          <div class='text-muted'><small>" . date('g:i:s A', strtotime($unsentMail[$counter]['queued_on'])) . "</small></div>\n";
+				echo "        </td>\n";
+				echo "        <td>" . $unsentMail[$counter]['from_name'] . " <" . $unsentMail[$counter]['from_email'] . "></td>\n";
+				echo "        <td>" . $unsentMail[$counter]['to_name'] . " <" . $unsentMail[$counter]['to_email'] . "></td>\n";
+				echo "        <td><span class='popovers' data-placement='top' data-toggle='popover' title=" . '"' . htmlspecialchars($unsentMail[$counter]['subject'], ENT_QUOTES) . '"' . " data-html='true' data-content=" . '"' . nl2br(htmlspecialchars($unsentMail[$counter]['message_text'], ENT_QUOTES)) . '"' . ">" . $unsentMail[$counter]['subject'] . "</span></td>\n";
+				echo "        <td>" . intval($unsentMail[$counter]['failed_attempts']) . "</td>\n";
+				echo "        </tr>\n";
+			}
+			echo "        </tbody>\n";
+			echo "        </table>\n";
+			echo "</div>\n";
+		}
+
+	// flagged comments
+		if (count($flaggedComments)) {
+			echo "<div class='pageModule'>\n";
+			echo "  <h2>Flagged comments</h2>\n";
 			echo "  <table class='table table-hover table-condensed'>\n";
+			echo "  <tr>\n";
+			echo "  <th colspan='2'>Comment</th>\n";
+			echo "  <th>Author</th>\n";
+			echo "  <th>Rumour</th>\n";
+			echo "  <th>Flags</th>\n";
+			echo "  </tr>\n";
+			for ($counter = 0; $counter < count($flaggedComments); $counter++) {
+				echo "  <tr>\n";
+				echo "  <td>" . date('j-M-Y', strtotime($flaggedComments[$counter]['comment_created_on'])) . "</td>\n";
+				echo "  <td>" . $flaggedComments[$counter]['comment'] . "</td>\n";
+				echo "  <td><a href='/profile/" . $flaggedComments[$counter]['comment_created_by'] . "'>" . $flaggedComments[$counter]['comment_created_by_full_name'] . "</a></td>\n";
+				echo "  <td><a href='/rumour/" . $flaggedComments[$counter]['public_id'] . "/" . $parser->seoFriendlySuffix($flaggedComments[$counter]['description']) . "'>" . $parser->truncate($flaggedComments[$counter]['description'], 'c', 30) . "</a></td>\n";
+				echo "  <td>" . floatval($flaggedComments[$counter]['number_of_flags']) . "</td>\n";
+				echo "  </tr>\n";
+			}
+			echo "  </table>\n";
+			echo "</div>\n";
+		}
+		
+	// registrations
+		if (count($registrants) > 0) {
+			echo "<div class='pageModule'>\n";
+			echo "  " . $form->start('editRegistrantsForm', '', 'post', 'form-inline', null, array('onSubmit'=>'return false;')) . "\n";
+			echo "  " . $form->input('hidden', 'registrantToApprove') . "\n";
+			echo "  " . $form->input('hidden', 'registrantToDelete') . "\n";
+			echo "  <h2>Pending Registrants</h2>\n";
+			echo "  <table class='table table-condensed table-hover'>\n";
 			echo "  <thead>\n";
 			echo "  <tr>\n";
-			echo "  <th>Rumour</th>\n";
-			echo "  <th>Status</th>\n";
-			echo "  <th>Assigned to</th>\n";
-			echo "  <th><!-- Sightings --><span class='glyphicon glyphicon-eye-open' title='Number of sightings'></span></th>\n";
-			echo "  <th><!-- Comments --><span class='glyphicon glyphicon-comment' title='Number of comments'></span></th>\n";
-			echo "  <th><!-- Watchlists --><span class='glyphicon glyphicon-align-justify' title='Number of watchlists'></span></th>\n";
+			echo "  <th>Registered</th>\n";
+			echo "  <th>User</th>\n";
+			echo "  <th>Email</th>\n";
+			echo "  <th>Location</th>\n";
+			if ($logged_in['can_edit_users']) echo "  <th></th>\n";
 			echo "  </tr>\n";
 			echo "  </thead>\n";
 			echo "  <tbody>\n";
-			for ($counter = 0; $counter < count($rumours); $counter++) {
+			for ($counter = 0; $counter < count($registrants); $counter++) {
 				echo "  <tr>\n";
-				echo "  <td class='nowrap'><a href='/rumour/" . $rumours[$counter]['public_id'] . "/" . $parser->seoFriendlySuffix($rumours[$counter]['description']) . "'>" . $parser->truncate($rumours[$counter]['description'], 'c', 30) . "</a></td>\n";
-				echo "  <td>" . $rumourStatuses[$rumours[$counter]['status']] . "</td>\n";
-				echo "  <td class='nowrap'>" . $rumours[$counter]['assigned_to_full_name'] . "</td>\n";
-				echo "  <td class='text-center'>" . floatval($rumours[$counter]['number_of_sightings']) . "</td>\n";
-				echo "  <td class='text-center'>" . floatval($rumours[$counter]['number_of_comments']) . "</td>\n";
-				echo "  <td class='text-center'>" . floatval($rumours[$counter]['number_of_watchlists']) . "</td>\n";
+				echo "  <td class='nowrap'>" . date('j-M-Y', strtotime($registrants[$counter]['registered_on'])) . "</td>\n";
+				echo "  <td><span class='tooltips' data-toggle='tooltip' title='" . addSlashes($registrants[$counter]['full_name']) . "'>" . $registrants[$counter]['username'] . "</span></td>\n";
+				echo "  <td><a href='mailto:" . $registrants[$counter]['email'] . "'>" . $registrants[$counter]['email'] . "</a></td>\n";
+				$locationMap = trim(@$registrants[$counter]['city'] . ', ' . trim(@$registrants[$counter]['region'] . ', ' . @$registrants[$counter]['other_region'], ', ') . ', ' . @$registrants[$counter]['country'], ',- ');
+				$locationLabel = @$registrants[$counter]['country'];
+				if (@$registrants[$counter]['city']) $locationLabel .= " (" . @$registrants[$counter]['city'] . ")";
+				echo "      <td><a href='https://maps.google.com/maps?q=" . urlencode($locationMap) . "' target='_blank'>" . $locationLabel . "</a></td>\n";
+				if ($logged_in['can_edit_users']) {
+					echo "  <td class='text-right nowrap'>\n";
+					echo "    " . $form->input('button', null, null, false, 'Approve', 'btn btn-default btn-sm', null, null, null, null, array('onClick'=>'approveRegistrant("' . $registrants[$counter]['registration_id'] . '"); return false;')) . "\n";
+					echo "    " . $form->input('button', null, null, false, 'Delete', 'btn btn-link btn-sm', null, null, null, null, array('onClick'=>'deleteRegistrant("' . $registrants[$counter]['registration_id'] . '"); return false;')) . "\n";
+					echo "  </td>\n";
+				}
 				echo "  </tr>\n";
 			}
 			echo "  </tbody>\n";
 			echo "  </table>\n";
+			echo "  " . $form->end() . "\n";
+			echo "</div>\n";
 		}
 
-		echo "  " . $form->end() . "\n";
+	// system stats
+		echo "<div class='pageModule'>\n";
+		echo "  <h2>System stats</h2>\n";
+		echo "  <div class='row'>\n";
+
+		// system
+			echo "    <div class='col-lg-10 col-md-9 col-sm-6 col-xs-6'>\n";
+			echo "      <div class='row'>\n";
+			echo "        <div class='col-md-6'><strong>Server</strong></div>\n";
+			echo "        <div class='col-md-6'>" . gethostbyaddr($_SERVER['SERVER_ADDR']) . "</div>\n";
+			echo "      </div>\n";
+			echo "      <div class='row'>\n";
+			echo "        <div class='col-md-6'><strong><a href='' onClick='return false;' data-toggle='modal' data-target='#phpinfoModal'>PHP</a> version</strong></div>\n";
+			echo "        <div class='col-md-6'>" . phpversion() . "</div>\n";
+			echo "      </div>\n";
+			echo "      <div class='row'>\n";
+			echo "        <div class='col-md-6'><strong>MySQL version</strong></div>\n";
+			echo "        <div class='col-md-6'>" . $dbConnection->server_info . "</div>\n";
+			echo "      </div>\n";
+			echo "      <div class='row'>\n";
+			echo "        <div class='col-md-6'><strong>Current DB</strong></div>\n";
+			echo "        <div class='col-md-6'>" . $currentDatabase . "</div>\n";
+			echo "      </div>\n";
+			echo "      <div class='row'>\n";
+			echo "        <div class='col-md-6'><strong>Size of DB</strong></div>\n";
+			echo "        <div class='col-md-6'>" . $parser->addFileSizeSuffix($dbSize[0]['size_kb'] * 1024) . "</div>\n";
+			echo "      </div>\n";
+			echo "      <div class='row'>\n";
+			echo "        <div class='col-md-6'><strong>SMTP status</strong></div>\n";
+			echo "        <div class='col-md-6'>" . $mailServerStatus . "</div>\n";
+			echo "      </div>\n";
+			echo "    </div>\n";
+
+		// local system time
+			echo "    <div class='col-lg-2 col-md-3 col-sm-6 col-xs-6'>\n";
+			echo "      <div id='timer' class='text-center'>" . date('g:i A') . "</div>\n";
+			echo "      <div id='timerTimezone' class='text-muted text-center'>APP TIMEZONE: " . date('e') . "</div>\n";
+			echo "    </div>\n";
 			
-		if ($numberOfPages > 1) {
-			echo $form->paginate($filters['page'], $numberOfPages, '/admin_dashboard/rumours/page=#');
-		}
+		echo "  </div>\n";
+		echo "</div>\n";
 
-		echo "  " . $form->input('cancel_and_return', null, null, false, 'Return', 'btn btn-default') . "\n";
-	}
-	
-/*	--------------------------------------
-	User report
-	-------------------------------------- */
-	
-	elseif ($report == 'users') {
-		echo "  " . $form->start() . "\n";
-		echo "  <h2>Users</h2>\n\n";
-		if (count($users) < 1) echo "  <p>None.</p>\n";
-		else {
-			echo "  <table class='table table-condensed table-hover'>\n";
-			echo "  <thead>\n";
-			echo "  <tr>\n";
-			echo "  <th>User</th>\n";
-			echo "  <th>Email</th>\n";
-			echo "  <th>Location</th>\n";
-			echo "  <th>Registered</th>\n";
-			echo "  <th>Last login</th>\n";
-			echo "  </tr>\n";
-			echo "  </thead>\n";
-			echo "  <tbody>\n";
-			for ($counter = 0; $counter < count($users); $counter++) {
-				if (!$users[$counter]['enabled']) echo "  <tr class='error'>\n";
-				else echo "  <tr>\n";
-				echo "  <td><a href='/profile/" . $users[$counter]['username'] . "' class='tooltips' data-toggle='tooltip' title='" . addSlashes($users[$counter]['full_name']) . "'>" . $users[$counter]['username'] . "</a></td>\n";
-				echo "  <td><a href='mailto:" . $users[$counter]['email'] . "'>" . $users[$counter]['email'] . "</a></td>\n";
-				$location = trim(@$users[$counter]['region'] . ', ' . trim(@$users[$counter]['province_state'] . ', ' . @$users[$counter]['other_province_state'], ', ') . ', ' . @$countries[@$users[$counter]['country']], ',- ');
-				echo "  <td><a href='https://maps.google.com/maps?q=" . urlencode($location) . "' target='_blank'>" . $location . "</a></td>\n";
-				echo "  <td>" . $parser->bubbleDate(date('Y-m-d', strtotime($users[$counter]['registered_on']))) . "</td>\n";
-				if ($users[$counter]['last_login'] == '0000-00-00 00:00:00') echo "  <td>Never</td>\n";
-				else echo "  <td>" . $parser->bubbleDate(date('Y-m-d', strtotime($users[$counter]['last_login']))) . "</td>\n";
-				echo "  </tr>\n";
-			}
-			echo "  </tbody>\n";
-			echo "  </table>\n\n";
-		}
+		// update clock
+			$pageJavaScript .= "// Dashboard clock (showing server time rather than browser time)\n";
+			$pageJavaScript .= "  var serverTime = moment('" . date('Y') . ", " . date('m') . ", " . date('d') . ", " . date('H') . ", " . date('i') . ", " . date('s') . "');\n";
+			$pageJavaScript .= "  var browserTime = moment();\n";
+			$pageJavaScript .= "  var offsetInMinutes = Math.round((browserTime - serverTime) / 60);\n";
+			$pageJavaScript .= "  setInterval(function(){\n";
+			$pageJavaScript .= "    var currentTime = moment().add(" . intval(@$offsetInMinutes) . ", 'Minutes');\n";
+			$pageJavaScript .= "    document.getElementById('timer').innerHTML = currentTime.format('h:mm A');;\n";
+			$pageJavaScript .= "  },500);\n";
 
-		echo "  " . $form->end() . "\n";
-			
-		if ($numberOfPages > 1) {
-			echo $form->paginate($filters['page'], $numberOfPages, '/admin_dashboard/users/page=#');
-		}
-
-		echo "  " . $form->input('cancel_and_return', null, null, false, 'Return', 'btn btn-default') . "\n";
-	}
-	
+		// phpinfo modal
+			echo "<div class='modal fade' id='phpinfoModal' tabindex='-1' role='dialog' aria-labelledby='phpinfoModalLabel' aria-hidden='true'>\n";
+			echo "  <div class='modal-dialog'>\n";
+			echo "    <div class='modal-content'>\n";
+			echo "      <div class='modal-header'>\n";
+			echo "        <button type='button' class='close' data-dismiss='modal'><span aria-hidden='true'>&times;</span><span class='sr-only'>Close</span></button>\n";
+			echo "        <h4 class='modal-title' id='phpinfoModalLabel'>PHP Configuration</h4>\n";
+			echo "      </div>\n";
+			echo "      <div class='modal-body'>\n";
+			echo "        <pre>" . print_r(phpinfo_array(1), true) . "</pre>\n";
+			echo "      </div>\n";
+			echo "    </div>\n";
+			echo "  </div>\n";
+			echo "</div>\n\n";
+		
 	include 'includes/views/desktop/shared/page_bottom.php';
 ?>

@@ -11,84 +11,81 @@
 			exit();
 		}
 		
-		$page = floatval($parameter2);
+		if ($parameter3) $filters = $keyvalue_array->keyValueToArray(urldecode($parameter3), '|');
 		
-		$pageSuccess = $parameter3;
+		$pageStatus = $parameter4;
+
+	// clean input
+		if (@$filters) {
+			$allowableFilters = array('page', 'view');
+			foreach ($filters as $key=>$value) {
+				if (!in_array($value, $allowableFilters)) unset($filters[$value]);
+			}
+		}
+		
+		if (@$filters['view'] != 'sightings' && @$filters['view'] != 'comments') $filters['view'] = 'rumour';
 		
 	// queries
-		$countries = array();
-		$result = retrieveFromDb('countries', null, null, null, null, null, 'country ASC');
-		for ($counter = 0; $counter < count($result); $counter++) {
-			$countries[$result[$counter]['country_id']] = $result[$counter]['country'];
-		}		
-		
-		if ($logged_in['is_proxy'] || $logged_in['is_moderator'] || $logged_in['is_administrator']) $rumour = retrieveRumours(array('public_id'=>$publicID), null, null, null, 1);
+		if ($logged_in['is_moderator'] || $logged_in['is_administrator']) $rumour = retrieveRumours(array('public_id'=>$publicID), null, null, null, 1);
 		else $rumour = retrieveRumours(array('public_id'=>$publicID, $tablePrefix . 'rumours.enabled'=>1), null, null, null, 1);
 		if (count($rumour) < 1) {
 			header('Location: /404');
 			exit();
 		}
 		
-		$allUsers = array();
-		$result = retrieveUsers(array('enabled'=>1));
-		for ($counter = 0; $counter < count($result); $counter++) {
-			$allUsers[$result[$counter]['user_id']] = $result[$counter]['username'];
-			if ($result[$counter]['full_name']) $allUsers[$result[$counter]['user_id']] .= " (" . $result[$counter]['full_name'] . ")";
-		}
-		
-		$tags = retrieveTags(array('rumour_id'=>$rumour[0]['rumour_id']), null, null, $tablePrefix . 'tags.tag ASC');
-		
-		$sightings = retrieveSightings(array($tablePrefix . 'rumour_sightings.rumour_id'=>$rumour[0]['rumour_id']), null, null, $tablePrefix . 'rumour_sightings.entered_on ASC');
-		
-		$result = countInDb('watchlist', 'created_by', array('rumour_id'=>$rumour[0]['rumour_id'], 'created_by'=>$logged_in['user_id']));
-		if ($result[0]['count'] > 0) $hasBeenWatchlisted = true;
-		else $hasBeenWatchlisted = false;
-				
-		$result = countInDb('comments', 'comment_id', array('rumour_id'=>$rumour[0]['rumour_id']));
-		$numberOfComments = $result[0]['count'];
-		$numberOfCommentsPerPage = 15;
-		$numberOfPages = max(1, ceil($numberOfComments / $numberOfCommentsPerPage));
-		if ($page < 1) $page = 1;
-		elseif ($page > $numberOfPages) $page = $numberOfPages;
+		// tags
+			$tags = retrieveTags(array('rumour_id'=>$rumour[0]['rumour_id']), null, null, $tablePrefix . 'tags.tag ASC');
 
-		$comments = retrieveComments(array($tablePrefix . 'comments.rumour_id'=>$rumour[0]['rumour_id']), null, null, $tablePrefix . 'comments.created_on DESC', floatval(($page * $numberOfCommentsPerPage) - $numberOfCommentsPerPage) . ',' . $numberOfCommentsPerPage);
-		
-	// instantiate required class(es)
-		$profileImage = new avatarManager_TL();
-		$parser = new parser_TL();
-		$operators = new operators_TL();
-		
+		// sightings		
+			$sightings = retrieveSightings(array($tablePrefix . 'rumour_sightings.rumour_id'=>$rumour[0]['rumour_id']), null, null, $tablePrefix . 'rumour_sightings.entered_on ASC');
+
+		// watchlisted?
+			$result = countInDb('watchlist', 'created_by', array('rumour_id'=>$rumour[0]['rumour_id'], 'created_by'=>$logged_in['user_id']));
+			if ($result[0]['count'] > 0) $hasBeenWatchlisted = true;
+			else $hasBeenWatchlisted = false;
+
+		// comments				
+			$result = countInDb('comments', 'comment_id', array('rumour_id'=>$rumour[0]['rumour_id']));
+			$numberOfComments = $result[0]['count'];
+			$numberOfCommentsPerPage = 15;
+			$numberOfPages = max(1, ceil($numberOfComments / $numberOfCommentsPerPage));
+			if (@$filters['page'] < 1) $filters['page'] = 1;
+			elseif ($filters['page'] > $numberOfPages) $filters['page'] = $numberOfPages;
+
+			$comments = retrieveComments(array($tablePrefix . 'comments.rumour_id'=>$rumour[0]['rumour_id']), null, null, $tablePrefix . 'comments.created_on DESC', floatval(($filters['page'] * $numberOfCommentsPerPage) - $numberOfCommentsPerPage) . ',' . $numberOfCommentsPerPage);
+	
+		// misc		
+			$allUsers = array();
+			$result = retrieveUsers(array('enabled'=>1), null, null, 'rumours_created DESC, anonymous ASC');
+			for ($counter = 0; $counter < count($result); $counter++) {
+				if ($result[$counter]['anonymous']) $allUsers[$result[$counter]['user_id']] = "Anonymous (" . $result[$counter]['username'] . ")";
+				else {
+					$allUsers[$result[$counter]['user_id']] = $result[$counter]['username'];
+					if ($result[$counter]['full_name']) $allUsers[$result[$counter]['user_id']] .= " (" . $result[$counter]['full_name'] . ")";
+				}
+			}
+
+			$allTags = array();
+			foreach ($rumourTags as $id=>$tag) {
+				$allTags[$tag] = $tag;
+			}
+
+			if (!$rumour[0]['enabled']) $pageWarning = "This rumour is disabled.";
+			$photoEvidence = 'assets/photo_evidence/' . $rumour[0]['rumour_id'] . '.' . $rumour[0]['photo_evidence_file_ext'];
+			if (!file_exists($photoEvidence)) $photoEvidence = null;
+
 /*	--------------------------------------
 	Execute only if a form post
 	-------------------------------------- */
-			
-	if (count($_POST) > 0) {
-		
-		if ($_POST['formName'] == 'attributionForm' && $_POST['sightingToRemove'] && $logged_in) {
-			
-			// validate sighting
-				$sighting = retrieveFromDb('rumour_sightings', array('sighting_id'=>$_POST['sightingToRemove']), null, null, null, null, null, 1);
-				if (count($sighting) <> 1) $pageError .= "Unknown error attempting to remove sighting. ";
-				else {
 
-					// remove sighting
-						deleteFromDb('rumour_sightings', array('sighting_id'=>$_POST['sightingToRemove']), null, null, null, null, 1);
+	if (count($_POST) > 0) {
+
+		$pageError = null;
 		
-					// update log
-						$activity = $logged_in['full_name'] . " (user_id " . $logged_in['user_id'] . ") has removed a sighting from the rumour &quot;" . $rumour[0]['description'] . "&quot; (public_id " . $publicID . ")";
-						$logger->logItInDb($activity);
-						
-					// redirect
-						header('Location: /rumour/' . $publicID . '/' . floatval($page) . '/sighting_removed');
-						exit();
-					
-				}
-				
-		}
-		elseif ($_POST['formName'] == 'editTagsForm' && $_POST['tagToRemove'] && $logged_in) {
+		if ($_POST['formName'] == 'editTagsForm' && $_POST['tagToRemove'] && $logged_in) {
 			
 			// validate tag
-				$tag = retrieveFromDb('tags', array('tag_id'=>$_POST['tagToRemove']), null, null, null, null, null, 1);
+				$tag = retrieveSingleFromDb('tags', null, array('tag_id'=>$_POST['tagToRemove']));
 				if (count($tag) <> 1) $pageError .= "Unknown error attempting to remove tag. ";
 				else {
 
@@ -96,7 +93,7 @@
 						deleteFromDb('rumours_x_tags', array('tag_id'=>$_POST['tagToRemove'], 'rumour_id'=>$rumour[0]['rumour_id']), null, null, null, null, 1);
 						
 					// check if tag still used, and if not remove it
-						$anyOtherRumours = retrieveFromDb('rumours_x_tags', array('tag_id'=>$_POST['tagToRemove']), null, null, null, 1);
+						$anyOtherRumours = retrieveSingleFromDb('rumours_x_tags', null, array('tag_id'=>$_POST['tagToRemove']));
 						if (count($anyOtherRumours) < 1) deleteFromDb('tags', array('tag_id'=>$_POST['tagToRemove']), null, null, null, null, 1);
 		
 					// update log
@@ -104,7 +101,7 @@
 						$logger->logItInDb($activity);
 						
 					// redirect
-						header('Location: /rumour/' . $publicID . '/' . floatval($page) . '/tag_removed');
+						header('Location: /rumour/' . $publicID . '/' . $parser->seoFriendlySuffix($rumour[0]['description']) . '/' . ($parameter3 ? $parameter3 : "page=1") . '/tag_removed');
 						exit();
 					
 				}
@@ -114,93 +111,130 @@
 			
 			// clean input
 				$_POST = $parser->trimAll($_POST);
-				$_POST['new_tag'] = $parser->removeHTML($_POST['new_tag']);
-				$_POST['new_tag'] = str_replace('"', '', $_POST['new_tag']);
-				$_POST['new_tag'] = str_replace(',', ' ', $_POST['new_tag']);
-				$_POST['new_tag'] = str_replace(';', ' ', $_POST['new_tag']);
-				$_POST['new_tag'] = str_replace('  ', ' ', $_POST['new_tag']);
-				$_POST['new_tag'] = $parser->includeOrExcludeCharacters($_POST['new_tag'], 'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789-_ ');
+				for ($counter = 0; $counter < count($_POST['new_tags']); $counter++) {
+					$_POST['new_tags'][$counter] = $parser->removeHTML($_POST['new_tags'][$counter]);
+					$_POST['new_tags'][$counter] = $parser->includeOrExcludeCharacters($_POST['new_tags'][$counter], 'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789-_ ');
+				}
 				
 			// check for errors
-				if (!$_POST['new_tag']) $pageError .= "Please specify one or more tags. ";
-				
-			// split into individual tags
-				$newTags = explode(' ', $_POST['new_tag']);
-				foreach ($newTags as $newTag) {
-					$newTag = trim($newTag);
-					if ($newTag) {
+				if (!$_POST['new_tags']) $pageError .= "Please specify one or more tags. ";
+				else {
+
+					for ($counter = 0; $counter < count($_POST['new_tags']); $counter++) {
+
 						// retrieve tagID and add any tags which are unique
-							$existingTag = retrieveFromDb('tags', array('tag'=>$newTag), null, null, null, null, null, 1);
-							if (count($existingTag) == 1) $tagID = $existingTag[0]['tag_id'];
-							else $tagID = insertIntoDb('tags', array('tag'=>$newTag, 'created_by'=>$logged_in['user_id'], 'created_on'=>date('Y-m-d H:i:s')));
+							$result = retrieveSingleFromDb('tags', null, array('tag'=>$_POST['new_tags'][$counter]));
+							if (count($result)) $tagID = $result[0]['tag_id'];
+							else $tagID = insertIntoDb('tags', array('tag'=>$_POST['new_tags'][$counter], 'created_by'=>$logged_in['user_id'], 'created_on'=>date('Y-m-d H:i:s')));
+
 						// associate tag
 							deleteFromDb('rumours_x_tags', array('tag_id'=>$tagID, 'rumour_id'=>$rumour[0]['rumour_id']), null, null, null, null, 1);
-							insertIntoDb('rumours_x_tags', array('tag_id'=>$tagID, 'rumour_id'=>$rumour[0]['rumour_id'], 'added_by'=>$logged_on['user_id'], 'added_on'=>date('Y-m-d H:i:s')));
+							insertIntoDb('rumours_x_tags', array('tag_id'=>$tagID, 'rumour_id'=>$rumour[0]['rumour_id'], 'added_by'=>$logged_in['user_id'], 'added_on'=>date('Y-m-d H:i:s')));
+
+						// update log
+							$activity = $logged_in['full_name'] . " (user_id " . $logged_in['user_id'] . ") has added the tag &quot;" . $_POST['new_tags'][$counter] . "&quot; (tag_id " . $tagID . ") to rumour_id " . $rumour[0]['rumour_id'] . ": " . $rumour[0]['description'];
+							$logger->logItInDb($activity);
+							
 					}
+
+					// redirect
+						header('Location: /rumour/' . $publicID . '/' . $parser->seoFriendlySuffix($rumour[0]['description']) . '/' . ($parameter3 ? $parameter3 : "page=1") . '/tags_updated');
+						exit();
+
 				}
 
-			// update log
-				$activity = $logged_in['full_name'] . " (user_id " . $logged_in['user_id'] . ") has added the tag &quot;" . $newTag . "&quot; (tag_id " . $tagID . ") to rumour_id " . $rumour[0]['rumour_id'] . ": " . $rumour[0]['description'];
-				$logger->logItInDb($activity);
-				
-			// redirect
-				header('Location: /rumour/' . $publicID . '/' . floatval($page) . '/tags_added');
-				exit();
-				
 		}
-		elseif ($_POST['formName'] == 'rumourActionsForm' && $_POST['addThisSighting'] == 'Y' && $logged_in) {
+		elseif ($_POST['formName'] == 'moderateSightingsForm' && $_POST['sightingToRemove']) {
 			
-			if (!$sightingAlreadyRecorded) {
-				// clean input
-					$_POST = $parser->trimAll($_POST);
-					
-				// check for errors
-					if (!@$_POST['country']) $pageError .= "Please specify a country. ";
-					if (!@$_POST['heard_on']) $pageError .= "Please specify a date. ";
+			// authenticate
+				$sighting = retrieveSightings(array('sighting_id'=>$_POST['sightingToRemove']), null, null, null, 1);
+				if (count($sighting) <> 1) $pageError .= "Unknown error attempting to remove sighting. ";
+				elseif (($logged_in['is_administrator'] && $logged_in['can_edit_content']) || ($sighting[0]['created_by'] == $logged_in['user_id'] || $sighting[0]['entered_by'] == $logged_in['user_id'])) {
 
-				if (!$pageError) {
-					// create encoded IP
-						if (strlen($_SERVER['REMOTE_ADDR']) > 15) $ipv6 = $parser->encodeIP($_SERVER['REMOTE_ADDR'], 'ipv6');
-						elseif (strlen($_SERVER['REMOTE_ADDR']) > 0) $ipv4 = $parser->encodeIP($_SERVER['REMOTE_ADDR'], 'ipv4');
-					
-					// determine attribution
-						if ($logged_in['is_proxy']) {
-							if ($_POST['created_by']) $createdBy = $_POST['created_by'];
-							else {
-								// create new user
-									$newUsername = null;
-									while ($newUsername == null) {
-										$newUsername = rand(1000000,9999999);
-										$doesUsernameExist = countInDb('users', 'username', array('username'=>$newUsername));
-										if ($doesUsernameExist[0]['count'] > 0) $newUsername = null;
-									}
-									$createdBy = insertIntoDb('users', array('username'=>$newUsername, 'ok_to_contact'=>'0', 'ok_to_show_profile'=>'0', 'registered_on'=>date('Y-m-d H:i:s'), 'registered_by'=>$logged_in['user_id']));
-							}
-						}
-						else $createdBy = $logged_in['user_id'];
-						
-					// save sighting
-						$sightingID = insertIntoDb('rumour_sightings', array('rumour_id'=>$rumour[0]['rumour_id'], 'created_by'=>$createdBy, 'entered_by'=>$logged_in['user_id'], 'entered_on'=>date('Y-m-d H:i:s'), 'source'=>$operators->firstTrue(@$_POST['source'], 'w'), 'ipv4'=>@$ipv4, 'ipv6'=>@$ipv6, 'country'=>$_POST['country'], 'region'=>@$_POST['region'], 'heard_on'=>$_POST['heard_on']));
-											
+					// remove sighting
+						deleteFromDb('rumour_sightings', array('sighting_id'=>$_POST['sightingToRemove']), null, null, null, null, 1);
+		
 					// update log
-						$activity = $logged_in['full_name'] . " (user_id " . $logged_in['user_id'] . ") has added a sighting (sighting_id " . $sightingID . ") of rumour_id " . $rumour[0]['rumour_id'] . ": " . $rumour[0]['description'];
+						$activity = $logged_in['full_name'] . " (user_id " . $logged_in['user_id'] . ") has removed a sighting from the rumour &quot;" . $rumour[0]['description'] . "&quot; (public_id " . $publicID . ")";
 						$logger->logItInDb($activity);
 						
 					// redirect
-						header('Location: /rumour/' . $publicID . '/' . floatval($page) . '/sighting_added');
+						header('Location: /rumour/' . $publicID . '/' . $parser->seoFriendlySuffix($rumour[0]['description']) . '/' . $keyvalue_array->updateKeyValue($parameter3, 'view', 'sightings', '|') . '/sighting_removed');
 						exit();
+
 				}
+				else $pageError .= "You don't appear to be authorized to delete a sighting. ";
+				
+		}
+		elseif ($_POST['formName'] == 'addSightingForm' && $logged_in) {
+			
+			// clean input
+				$_POST = $parser->trimAll($_POST);
+				$checkboxesToParse = array('newuser_ok_to_contact', 'newuser_anonymous');
+				foreach ($checkboxesToParse as $checkbox) {
+					if (isset($_POST[$checkbox])) $_POST[$checkbox] = 1;
+					else $_POST[$checkbox] = 0;
+				}
+				
+			// check for errors
+				if (!@$_POST['country']) $pageError .= "Please specify a country. ";
+				if (!@$_POST['heard_on']) $pageError .= "Please specify a date. ";
+				if (!$_POST['source_id']) $_POST['source_id'] = 1; // set source to "Internet"
+				if ($logged_in['is_proxy']) {
+					if (!@$_POST['created_by']) $pageError .= "Please specify who heard the rumour. ";
+					elseif (@$_POST['created_by'] == 'add') {
+						if (!@$_POST['newuser_username']) $pageError .= "Please choose a username for the new user. ";
+						else {
+							$existingUsers = countInDb('users', 'user_id', array('username'=>$_POST['newuser_username']));
+							$existingRegistrants = countInDb('registrations', 'registration_id', array('username'=>$_POST['newuser_username']));
+							if ($existingUsers[0]['count'] || $existingRegistrants[0]['count'] > 0) $pageError .= "The username you've specified for a new user already belongs to another user. ";
+						}
+						if (!@$_POST['newuser_country']) $pageError .= "Please specify the new user's country. ";
+						if ($_POST['newuser_email'] && !$input_validator->validateEmailRobust($_POST['newuser_email'])) $pageError .= "Please specify a valid email address for the new user. ";
+						else {
+							$existingUsers = countInDb('users', 'user_id', array('email'=>$_POST['newuser_email']));
+							$existingRegistrants = countInDb('registrations', 'registration_id', array('email'=>$_POST['newuser_email']));
+							if ($existingUsers[0]['count'] || $existingRegistrants[0]['count'] > 0) $pageError .= "The email address you've specified for a new user already belongs to another user. ";
+						}
+					}
+				}
+
+			if (!$pageError) {
+				// create encoded IP
+					if (strlen($_SERVER['REMOTE_ADDR']) > 15) $ipv6 = $parser->encodeIP($_SERVER['REMOTE_ADDR'], 'ipv6');
+					elseif (strlen($_SERVER['REMOTE_ADDR']) > 0) $ipv4 = $parser->encodeIP($_SERVER['REMOTE_ADDR'], 'ipv4');
+				
+				// determine attribution
+					if ($logged_in['is_proxy']) {
+						if ($_POST['created_by'] != 'add') $createdBy = $_POST['created_by'];
+						else $createdBy = insertIntoDb('users', array('first_name'=>$_POST['newuser_first_name'], 'last_name'=>$_POST['newuser_last_name'], 'username'=>$_POST['newuser_username'], 'email'=>$_POST['newuser_email'], 'primary_phone'=>$_POST['newuser_primary_phone'], 'primary_phone_sms'=>$_POST['newuser_primary_phone_sms'], 'secondary_phone'=>$_POST['newuser_secondary_phone'], 'secondary_phone_sms'=>$_POST['newuser_secondary_phone_sms'], 'country_id'=>$_POST['newuser_country'], 'ok_to_contact'=>$_POST['newuser_ok_to_contact'], 'anonymous'=>$_POST['newuser_anonymous'], 'registered_on'=>date('Y-m-d H:i:s'), 'registered_by'=>$logged_in['user_id']));
+					}
+					else $createdBy = $logged_in['user_id'];
+
+				// faux geocode
+					$latLong = retrieveSingleFromDB('rumour_sightings', null, array('country_id'=>@$_POST['country'], 'city'=>@$_POST['city']), null, null, null, "latitude <> 0 AND longitude <> 0");
+					if (!count($latLong)) $latLong = retrieveSingleFromDB('rumours', null, array('country_id'=>@$_POST['country'], 'city'=>@$_POST['city']), null, null, null, "latitude <> 0 AND longitude <> 0");
+
+				// save sighting
+					$sightingID = insertIntoDb('rumour_sightings', array('rumour_id'=>$rumour[0]['rumour_id'], 'created_by'=>$createdBy, 'entered_by'=>$logged_in['user_id'], 'entered_on'=>date('Y-m-d H:i:s'), 'source_id'=>$_POST['source_id'], 'ipv4'=>@$ipv4, 'ipv6'=>@$ipv6, 'country_id'=>$_POST['country'], 'city'=>@$_POST['city'], 'location_type'=>@$_POST['location_type'], 'latitude'=>@$latLong[0]['latitude'], 'longitude'=>@$latLong[0]['longitude'], 'heard_on'=>$_POST['heard_on']));
+										
+				// update log
+					$activity = $logged_in['full_name'] . " (user_id " . $logged_in['user_id'] . ") has added a sighting (sighting_id " . $sightingID . ") of rumour_id " . $rumour[0]['rumour_id'] . ": " . $rumour[0]['description'];
+					$logger->logItInDb($activity);
+					
+				// redirect
+					header('Location: /rumour/' . $publicID . '/' . $parser->seoFriendlySuffix($rumour[0]['description']) . '/' . $parameter3 . '/sighting_added');
+					exit();
 			}
-			else $pageError .= "You've already added your sighting to this rumour. ";
 			
 		}
 		elseif ($_POST['formName'] == 'rumourActionsForm' && $_POST['addToWatchlist'] == 'Y' && $logged_in) {
 			
-			$alreadyWatchlisted = retrieveFromDb('watchlist', array('rumour_id'=>$rumour[0]['rumour_id'], 'created_by'=>$logged_in['user_id']), null, null, null, null, null, 1);
+			$alreadyWatchlisted = retrieveSingleFromDb('watchlist', null, array('rumour_id'=>$rumour[0]['rumour_id'], 'created_by'=>$logged_in['user_id']));
 			if (count($alreadyWatchlisted) > 0) $pageError .= "This rumour is already in your watchlist. ";
 			else {
 				insertIntoDb('watchlist', array('rumour_id'=>$rumour[0]['rumour_id'], 'notify_of_updates'=>'1', 'created_by'=>$logged_in['user_id'], 'created_on'=>date('Y-m-d H:i:s')));
-				header('Location: /rumour/' . $publicID . '/' . floatval($page) . '/added_to_watchlist');
+				header('Location: /rumour/' . $publicID . '/' . $parser->seoFriendlySuffix($rumour[0]['description']) . '/' . $parameter3 . '/added_to_watchlist');
 				exit();
 			}
 			
@@ -210,12 +244,12 @@
 			$success = deleteFromDb('watchlist', array('rumour_id'=>$rumour[0]['rumour_id'], 'created_by'=>$logged_in['user_id']), null, null, null, null, 1);
 			if (!$success) $pageError .= "This rumour wasn't found in your watchlist. ";
 			else {
-				header('Location: /rumour/' . $publicID . '/' . floatval($page) . '/removed_from_watchlist');
+				header('Location: /rumour/' . $publicID . '/' . $parser->seoFriendlySuffix($rumour[0]['description']) . '/' . $parameter3 . '/removed_from_watchlist');
 				exit();
 			}
 			
 		}
-		elseif ($_POST['formName'] == 'rumourActionsForm' && $logged_in) {
+		elseif ($_POST['formName'] == 'addCommentForm' && $logged_in) {
 
 			// clean input
 				$_POST = $parser->trimAll($_POST);
@@ -228,25 +262,32 @@
 				
 				// add to database
 					$commentID = insertIntoDb('comments', array('rumour_id'=>$rumour[0]['rumour_id'], 'comment'=>$_POST['new_comment'], 'created_by'=>$logged_in['user_id'], 'created_on'=>date('Y-m-d H:i:s')));
+					if (!$commentID) $pageError .= "Unable to add comment for some reason. ";
+					else {
 
-				// watchlist notifications (email)
-					$notify = retrieveWatchlist(array($tablePrefix . 'watchlist.rumour_id'=>$rumour[0]['rumour_id'], 'notify_of_updates'=>'1'), null, $tablePrefix . "users.email != '' AND " . $tablePrefix . "users.ok_to_contact = '1'");
-					for ($counter = 0; $counter < count($notify); $counter++) {
-						$success = notifyUserOfRumourComment($notify[$counter]['full_name'], $notify[$counter]['email'], $rumour[0]['public_id'], $rumour[0]['description'], $_POST['new_comment'], $logged_in['username']);
-						if (!$success) {
-							$activity = "Unable to email " . $notify[$counter]['full_name'] . " (" . $notify[$counter]['email'] . ") of a new comment on rumour_id " . $rumour[0]['rumour_id'];
+						// update rumour
+							updateDb('rumours', array('updated_on'=>date('Y-m-d H:i:s')), array('rumour_id'=>$rumour[0]['rumour_id']), null, null, null, null, 1);
+
+						// watchlist notifications (email)
+							$notify = retrieveWatchlist(array($tablePrefix . 'watchlist.rumour_id'=>$rumour[0]['rumour_id'], 'notify_of_updates'=>'1'), null, $tablePrefix . "users.email != '' AND " . $tablePrefix . "users.ok_to_contact = '1'");
+							for ($counter = 0; $counter < count($notify); $counter++) {
+								$success = notifyUserOfRumourComment($notify[$counter]['full_name'], $notify[$counter]['email'], $rumour[0]['public_id'], $rumour[0]['description'], $_POST['new_comment'], $logged_in['username']);
+								if (!$success) {
+									$activity = "Unable to email " . $notify[$counter]['full_name'] . " (" . $notify[$counter]['email'] . ") of a new comment on rumour_id " . $rumour[0]['rumour_id'];
+									$logger->logItInDb($activity);
+								}
+							}
+
+						// update log
+							$activity = $logged_in['full_name'] . " (user_id " . $logged_in['user_id'] . ") has added a comment (comment_id " . $commentID . ") to rumour_id " . $rumour[0]['rumour_id'] . ": " . $rumour[0]['description'];
 							$logger->logItInDb($activity);
-						}
+							
+						// redirect
+							header('Location: /rumour/' . $publicID . '/' . $parser->seoFriendlySuffix($rumour[0]['description']) . '/' . $keyvalue_array->updateKeyValue($parameter3, 'view', 'comments', '|') . '/comment_added');
+							exit();
+						
 					}
 
-				// update log
-					$activity = $logged_in['full_name'] . " (user_id " . $logged_in['user_id'] . ") has added a comment (comment_id " . $commentID . ") to rumour_id " . $rumour[0]['rumour_id'] . ": " . $rumour[0]['description'];
-					$logger->logItInDb($activity);
-					
-				// redirect
-					header('Location: /rumour/' . $publicID . '/' . floatval($page) . '/comment_added');
-					exit();
-				
 			}
 				
 				
@@ -263,7 +304,7 @@
 				$logger->logItInDb($activity);
 				
 			// redirect
-				header('Location: /rumour/' . $publicID . '/' . floatval($page) . '/comment_flagged');
+				header('Location: /rumour/' . $publicID . '/' . $parser->seoFriendlySuffix($rumour[0]['description']) . '/' . $keyvalue_array->updateKeyValue($parameter3, 'view', 'comments', '|') . '/comment_flagged');
 				exit();
 				
 		}
@@ -278,7 +319,7 @@
 				$logger->logItInDb($activity);
 				
 			// redirect
-				header('Location: /rumour/' . $publicID . '/' . floatval($page) . '/comment_disabled');
+				header('Location: /rumour/' . $publicID . '/' . $parser->seoFriendlySuffix($rumour[0]['description']) . '/' . $keyvalue_array->updateKeyValue($parameter3, 'view', 'comments', '|') . '/comment_disabled');
 				exit();
 				
 		}
@@ -293,7 +334,7 @@
 				$logger->logItInDb($activity);
 				
 			// redirect
-				header('Location: /rumour/' . $publicID . '/' . floatval($page) . '/comment_enabled');
+				header('Location: /rumour/' . $publicID . '/' . $parser->seoFriendlySuffix($rumour[0]['description']) . '/' . $keyvalue_array->updateKeyValue($parameter3, 'view', 'comments', '|') . '/comment_enabled');
 				exit();
 				
 		}

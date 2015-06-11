@@ -1,13 +1,14 @@
 
 	errorMessage = '';
 
-	function removeSighting(sightingID) {
-		areYouSure = confirm("Are you sure?");
-		if (areYouSure) {
-			document.attributionForm.sightingToRemove.value = sightingID;
-			document.attributionForm.submit();
-		}
-	}
+	// jump to sightings tab
+		$('#jumpToSightingsTab').click(function () {
+			$('#rumourTabs a[href="#sightings"]').tab('show');
+		});
+
+/*	--------------------------------------
+	Rumour
+	-------------------------------------- */
 
 	function removeTag(tagID) {
 		areYouSure = confirm("Are you sure?");
@@ -17,22 +18,11 @@
 		}
 	}
 
-	function validateeditTagsForm() {
+	function validateAddTags() {
 		errorMessage = '';
-		if (!document.editTagsForm.new_tag.value) errorMessage += "Please specify one or more tags.\n";
+		if (!document.editTagsForm.new_tags.value) errorMessage += "Please specify one or more tags.\n";
 		if (errorMessage) alert(errorMessage);
 		else document.editTagsForm.submit();
-	}
-	
-	function validateAddSightingForm() {
-		errorMessage = '';
-		if (!document.rumourActionsForm.country.value) errorMessage += "Please specify a country.\n";
-		if (!document.rumourActionsForm.heard_on.value) errorMessage += "Please specify a date.\n";
-		if (errorMessage) alert(errorMessage);
-		else {
-			document.rumourActionsForm.addThisSighting.value = "Y";
-			document.rumourActionsForm.submit();
-		}
 	}
 	
 	function validateAddToWatchlist() {
@@ -48,11 +38,37 @@
 		}
 	}
 
+/*	--------------------------------------
+	Sightings
+	-------------------------------------- */
+
+	function validateAddSightingForm() {
+		errorMessage = '';
+		if (!document.addSightingForm.country.value) errorMessage += "Please specify a country.\n";
+		if (!document.addSightingForm.heard_on.value) errorMessage += "Please specify a date.\n";
+		if (!document.addSightingForm.created_by.value) errorMessage += "Please specify who heard the rumour.\n";
+		if (document.addSightingForm.created_by.value == 'add') errorMessage += addNewUser();
+		if (errorMessage) alert(errorMessage);
+		else document.addSightingForm.submit();
+	}
+	
+	function removeSighting(sightingID) {
+		areYouSure = confirm("Are you sure?");
+		if (areYouSure) {
+			document.moderateSightingsForm.sightingToRemove.value = sightingID;
+			document.moderateSightingsForm.submit();
+		}
+	}
+
+/*	--------------------------------------
+	Comments
+	-------------------------------------- */
+
 	function validateAddCommentForm() {
 		errorMessage = '';
-		if (!document.rumourActionsForm.new_comment.value) errorMessage += "Please provide a comment.\n";
+		if (!document.addCommentForm.new_comment.value) errorMessage += "Please provide a comment.\n";
 		if (errorMessage) alert(errorMessage);
-		else document.rumourActionsForm.submit();
+		else document.addCommentForm.submit();
 	}
 	
 	function validateModerateCommentsForm(action, commentID) {

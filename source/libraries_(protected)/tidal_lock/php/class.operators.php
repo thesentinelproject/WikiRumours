@@ -22,36 +22,120 @@
 			
 		}
 
-		public function howLongAgo($dateTime) {
+		public function howLongAgo($dateTime, $currentDateTime = null) {
+
+			global $console;
 			
 			if (!$dateTime) {
-				errorManager_TL::addError("No comparative date specified.");
+				$console .= __FUNCTION__ . ": No comparative date specified.\n";
 				return false;
 			}
-			
-			$currentTimestamp = time();
+			if (!$currentDateTime) $currentDateTime = date('Y-m-d H:i:s');
+
+			$currentTimestamp = strtotime($currentDateTime);
 			$desiredTimestamp = strtotime($dateTime);
 	
 			// determine time difference
 				$differenceInSeconds = $currentTimestamp - $desiredTimestamp;
-				$differenceInMinutes = intval($differenceInSeconds / 60);
-				$differenceInHours = intval($differenceInSeconds / 60 / 60);
-				$differenceInDays = intval($differenceInSeconds / 60 / 60 / 24);
-				$differenceInWeeks = intval($differenceInSeconds / 60 / 60 / 24 / 7);
-	
-			// format string if difference can be expressed in minutes, hours, days or weeks
-				if ($differenceInMinutes < 60 && $differenceInMinutes > 0) return $differenceInMinutes . " minute(s) ago";
-				if ($differenceInHours < 24 && $differenceInMinutes > 0) return $differenceInHours . " hour(s) ago";
-				if ($differenceInDays < 7 && $differenceInMinutes > 0) return $differenceInDays . " day(s) ago";
-				if ($differenceInWeeks < 4 && $differenceInMinutes > 0) return $differenceInWeeks . " week(s) ago";
-	
+				if ($differenceInSeconds < 60 && $differenceInSeconds > 0) {
+					if ($differenceInSeconds == 1) return $differenceInSeconds . " second ago";
+					else return $differenceInSeconds . " seconds ago";
+				}
+
+				$differenceInMinutes = round($differenceInSeconds / 60);
+				if ($differenceInMinutes < 60 && $differenceInMinutes > 0) {
+					if ($differenceInMinutes == 1) return $differenceInMinutes . " minute ago";
+					else return $differenceInMinutes . " minutes ago";
+				}
+
+				$differenceInHours = round($differenceInSeconds / 60 / 60);
+				if ($differenceInHours < 24 && $differenceInMinutes > 0) {
+					if ($differenceInHours == 1) return $differenceInHours . " hour ago";
+					else return $differenceInHours . " hours ago";
+				}
+
+				$differenceInDays = round($differenceInSeconds / 60 / 60 / 24);
+				if ($differenceInDays < 7 && $differenceInMinutes > 0) {
+					if ($differenceInDays == 1) return $differenceInDays . " day ago";
+					else return $differenceInDays . " days ago";
+				}
+
+				$differenceInWeeks = round($differenceInSeconds / 60 / 60 / 24 / 7);
+				if ($differenceInWeeks < 4 && $differenceInMinutes > 0) {
+					if ($differenceInWeeks == 1) return $differenceInWeeks . " week ago";
+					else return $differenceInWeeks . " weeks ago";
+				}
+
+				$differenceInMonths = round($differenceInSeconds / 60 / 60 / 24 / 30);
+				if ($differenceInMonths < 12 && $differenceInMinutes > 0) {
+					if ($differenceInMonths == 1) return $differenceInMonths . " month ago";
+					else return $differenceInMonths . " months ago";
+				}
+
 			// format string if difference is greater than 3 weeks, and include time if specified in input string
 				if (strtotime($dateTime) == strtotime(date('Y-m-d', strtotime($dateTime)))) return "on " . date('F j, Y', strtotime($dateTime));
 				else return "on " . date('F j, Y, \a\t g:i A', strtotime($dateTime));
 			
 		}
 		
+		public function inHowLong($currentDateTime, $dateTime) {
+
+			global $console;
+			
+			if (!$dateTime) {
+				$console .= __FUNCTION__ . ": No comparative date specified.\n";
+				return false;
+			}
+			if (!$currentDateTime) $currentDateTime = date('Y-m-d H:i:s');
+
+			$currentTimestamp = strtotime($currentDateTime);
+			$desiredTimestamp = strtotime($dateTime);
+	
+			// determine time difference
+				$differenceInSeconds = $desiredTimestamp - $currentTimestamp;
+				if ($differenceInSeconds < 60 && $differenceInSeconds > 0) {
+					if ($differenceInSeconds == 1) return "in " . $differenceInSeconds . " second";
+					else return "in " . $differenceInSeconds . " seconds";
+				}
+
+				$differenceInMinutes = round($differenceInSeconds / 60);
+				if ($differenceInMinutes < 60 && $differenceInMinutes > 0) {
+					if ($differenceInMinutes == 1) return "in " . $differenceInMinutes . " minute";
+					else return "in " . $differenceInMinutes . " minutes";
+				}
+
+				$differenceInHours = round($differenceInSeconds / 60 / 60);
+				if ($differenceInHours < 24 && $differenceInMinutes > 0) {
+					if ($differenceInHours == 1) return "in " . $differenceInHours . " hour";
+					else return "in " . $differenceInHours . " hours";
+				}
+
+				$differenceInDays = round($differenceInSeconds / 60 / 60 / 24);
+				if ($differenceInDays < 7 && $differenceInMinutes > 0) {
+					if ($differenceInDays == 1) return "in " . $differenceInDays . " day";
+					else return "in " . $differenceInDays . " days";
+				}
+
+				$differenceInWeeks = round($differenceInSeconds / 60 / 60 / 24 / 7);
+				if ($differenceInWeeks < 4 && $differenceInMinutes > 0) {
+					if ($differenceInWeeks == 1) return "in " . $differenceInWeeks . " week";
+					else return "in " . $differenceInWeeks . " weeks";
+				}
+
+				$differenceInMonths = round($differenceInSeconds / 60 / 60 / 24 / 30);
+				if ($differenceInMonths < 12 && $differenceInMinutes > 0) {
+					if ($differenceInMonths == 1) return "in " . $differenceInMonths . " month";
+					else return "in " . $differenceInMonths . " months";
+				}
+
+			// format string if difference is greater than 3 weeks, and include time if specified in input string
+				if (strtotime($dateTime) == strtotime(date('Y-m-d', strtotime($dateTime)))) return "on " . date('F j, Y', strtotime($dateTime));
+				else return "on " . date('F j, Y, \a\t g:i A', strtotime($dateTime));
+			
+		}
+
 	}
+
 	
 /*
 	Operators

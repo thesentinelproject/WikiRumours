@@ -6,13 +6,10 @@
 
 	// parse query string
 		$key = $parameter1;
-		$pageSuccess = $parameter2;
+		$pageStatus = $parameter2;
 
 	// validate query string
-		$doesKeyExist = retrieveFromDb('user_keys', array('name'=>'Reset Password', 'hash'=>$key), null, null, null, null, null, 1);
-		
-	// instantiate required class(es)
-		$parser = new parser_TL();
+		$doesKeyExist = retrieveSingleFromDb('user_keys', null, array('name'=>'Reset Password', 'hash'=>$key));
 		
 /*	--------------------------------------
 	Execute only if a form post
@@ -33,7 +30,7 @@
 				if (strlen($hash) < 20) $pageError .= "There was a problem securing your password, so rather than save it without appropriate security, we've cancelled this operation. Please try again. ";
 			}
 			
-			$doesKeyExist = retrieveFromDb('user_keys', array('name'=>'Reset Password', 'user_id'=>$doesKeyExist[0]['user_id']), null, null, null, null, null, 1);
+			$doesKeyExist = retrieveSingleFromDb('user_keys', null, array('name'=>'Reset Password', 'user_id'=>$doesKeyExist[0]['user_id']));
 			if (count($doesKeyExist) < 1) $pageError .= "Invalid key. Please check the link which brought you here. ";
 			else {
 				$logged_in = retrieveUsers(array($tablePrefix . 'users.user_id'=>$doesKeyExist[0]['user_id'], $tablePrefix . 'users.enabled'=>'1'), null, null, null, 1);

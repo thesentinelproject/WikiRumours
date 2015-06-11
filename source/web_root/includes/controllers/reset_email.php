@@ -6,10 +6,10 @@
 
 	// parse query string
 		$key = $parameter1;
-		$pageSuccess = $parameter2;
+		$pageStatus = $parameter2;
 		
 	// validate query string
-		$doesKeyExist = retrieveFromDb('user_keys', array('name'=>'Reser Email', 'hash'=>$key), null, null, null, null, null, 1);
+		$doesKeyExist = retrieveSingleFromDb('user_keys', null, array('name'=>'Reser Email', 'hash'=>$key));
 		if (count($doesKeyExist) < 1) $pageError = "There's something wrong with the link that brought you here. Please check that the link is complete or rekey it by hand; sometimes mail readers cut a link in two by inserting an inopportune line break. ";
 		else {
 			// retrieve user

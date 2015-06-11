@@ -1,0 +1,9 @@
+
+	.pillActive, a.pillActive, a.pillActive:hover, a.pillActive:active, a.pillActive:visited { background-color: #eee; text-decoration: none; }
+	.pillInactive, a.pillInactive, a.pillInactive:hover, a.pillInactive:active, a.pillInactive:visited { text-decoration: none; }
+	#userNavMobile > .verticalPillActive { background-color: #eee; }
+
+	#userNavMobile > li { border: 1px solid #dddddd; -webkit-border-radius: 5px; -moz-border-radius: 5px; border-radius: 5px; padding: 7px; margin-bottom: 5px; }
+
+	.mutedPills > li > a, .mutedPills > li > a:focus, .mutedPills > li > a { color: #46b8da; }
+	.mutedPills > li.active > a, .mutedPills > li.active > a:focus, .mutedPills > li.active > a:hover { color: #000; background-color: #eee; }

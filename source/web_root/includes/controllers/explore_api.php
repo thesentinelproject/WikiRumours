@@ -5,7 +5,7 @@
 	-------------------------------------- */
 
 	if ($logged_in) {
-		$apiKey = retrieveFromDb('user_keys', array('user_id'=>$logged_in['user_id'], 'name'=>'API'), null, null, null, null, null, 1);
+		$apiKey = retrieveSingleFromDb('user_keys', null, array('user_id'=>$logged_in['user_id'], 'name'=>'API'));
 	}
 		
 /*	--------------------------------------

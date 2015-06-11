@@ -11,7 +11,7 @@
 			exit();
 		}
 				
-		$pageSuccess = $parameter2;
+		$pageStatus = $parameter2;
 		
 	// authenticate user
 		if (!$logged_in) forceLoginThenRedirectHere();
@@ -36,16 +36,13 @@
 			}
 		}
 		
-		$apiKey = retrieveFromDb('user_keys', array('user_id'=>$user[0]['user_id'], 'name'=>'API'));
+		$apiKey = retrieveSingleFromDb('user_keys', null, array('user_id'=>$user[0]['user_id'], 'name'=>'API'));
 		if (count($apiKey) > 0) {
 			$allQueries = countInDb('api_calls_internal', 'id', array('api_key'=>$apiKey[0]['hash']));
 			$expiry = date('Y-m-d H:i:s', mktime(date('H'), date('i'), date('s'), date('m'), date('d') - 1, date('Y')));
 			$recentQueries = countInDb('api_calls_internal', 'id', array('api_key'=>$apiKey[0]['hash']), null, null, null, "queried_on > '" . $expiry . "'");
 		}
 		
-	// instantiate required class(es)
-		$encrypter = new encrypter_TL();
-
 /*	--------------------------------------
 	Execute only if a form post
 	-------------------------------------- */

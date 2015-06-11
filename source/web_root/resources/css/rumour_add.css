@@ -1,0 +1,4 @@
+
+	#addNewUserToRumour { display: none; }
+	#addNewUserToRumourBorder { padding-top: 10px; margin-top: 10px; margin-bottom: 10px; border-top: 1px dotted #aaa; border-bottom: 1px dotted #aaa; }
+	.matchingRumourList { margin-bottom: 15px; border-bottom: 1px dotted #ddd; }

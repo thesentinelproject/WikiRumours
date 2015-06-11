@@ -1,5 +1,6 @@
 <?php 
 	$pageTitle = "Sandbox";
+	$sectionTitle = "Administration";
 	include 'includes/views/desktop/shared/page_top.php';
 
 	echo "<h2>Sandbox</h2>\n";
@@ -8,11 +9,9 @@
 		
 	// Begin sandbox code
 	
-	
-	
-	
-	
-	
+
+
+
 	
 	// End sandbox code
 	

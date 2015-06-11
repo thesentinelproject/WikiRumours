@@ -4,7 +4,8 @@
 
 		public function quickEncrypt($plaintext, $salt = false) {
 			
-			/* 		Uses MD5 for rapid low-criticality encryption. For higher-grade encryption, use a Bcrypt implementation such as PH Pass. */
+			/* 		Uses MD5 for rapid low-criticality one-way encryption. For higher-grade one-way encryption,
+					try a Bcrypt implementation such as PH Pass. */
 			
 			// add salt
 				$plaintext .= $salt;
@@ -17,11 +18,21 @@
 			
 			return $encryptedText;
 		}
+
+		public function robustEncrypt($plaintext, $salt, $key) {
+			return base64_encode(@mcrypt_encrypt(MCRYPT_BLOWFISH, md5($key), $plaintext, MCRYPT_MODE_CBC, md5($salt)));
+		}
+
+		public function robustDecrypt($cyphertext, $salt, $key) {
+			return @mcrypt_decrypt(MCRYPT_BLOWFISH, md5($key), base64_decode($cyphertext), MCRYPT_MODE_CBC, md5($salt));
+		}
 		
 		public function obfuscateID($plainText, $numericSalt) {
 			
 			/* Performs rudimentary two-way encryption to obfuscate a value requiring only minimal security (e.g. a database ID or a URL that you want to transmit by GET) */
 			
+			global $console;
+
 			// ensure salt is numeric
 				$numericSalt = intval($numericSalt);
 	
@@ -29,7 +40,7 @@
 				for ($counter = 0; $counter < strlen($plainText); $counter++) {
 					$asciiCode = str_pad(ord(substr($plainText, $counter, 1)), 3, '0', STR_PAD_LEFT);
 					if ($asciiCode < 1 || $asciiCode > 255) {
-						errorManager_TL::addError("Input string contains characters that aren't part of the standard or extended ASCII character sets.");
+						$console .= __FUNCTION__ . ": Input string contains characters that aren't part of the standard or extended ASCII character sets.\n";
 						return false;
 					}
 					else $convertedText .= $asciiCode;
@@ -69,6 +80,8 @@
 		}
 		
 		public function deobfuscateID($obfuscatedText, $numericSalt) {
+
+			global $console;
 			
 			// ensure salt is numeric
 			// (note that same salt must be used as when text was obfuscated)
@@ -102,7 +115,7 @@
 						$plainText .= chr(substr($unsaltedText, $counter, 3));
 					}
 					else {
-						errorManager_TL::addError("Input string appears to contain characters that aren't part of the standard or extended ASCII character sets; please check that the identical salt was used for obfuscation and de-obfuscation.");
+						$console .= __FUNCTION__ . ": Input string appears to contain characters that aren't part of the standard or extended ASCII character sets; please check that the identical salt was used for obfuscation and de-obfuscation.\n";
 						return false;
 					}
 				}

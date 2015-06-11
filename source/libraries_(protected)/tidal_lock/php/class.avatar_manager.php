@@ -1,14 +1,15 @@
 <?php
 
-	class avatarManager_TL {
+	class avatar_manager_TL {
 
 		public function retrieveProfileImage($username, $addRandomToClearCache = true) {
 			
 			global $salts_TL;
-			global $profileImageSizes_TL;
+			global $profileImageSizes;
+			global $console;
 			
 			if (!$username) {
-				errorManager_TL::addError("No username specified.");
+				$console .= __FUNCTION__ . ": No username specified.\n";
 				return false;
 			}
 			
@@ -19,8 +20,8 @@
 			$image['key'] = $key;
 			$image['sizes'] = array();
 			
-			if ($profileImageSizes_TL) {
-				foreach ($profileImageSizes_TL as $type=>$width) {
+			if ($profileImageSizes) {
+				foreach ($profileImageSizes as $type=>$width) {
 					$url = 'assets/profile_images/' . $key . '_' . $type . '.jpg';
 					if (file_exists($url)) {
 						$image['sizes'][$type] = $url;
@@ -36,14 +37,15 @@
 		public function createProfileImage($username, $sourceImage) {
 			
 			global $salts_TL;
-			global $profileImageSizes_TL;
+			global $profileImageSizes;
+			global $console;
 			
 			if (!$username) {
-				errorManager_TL::addError("No username specified.");
+				$console .= __FUNCTION__ . ": No username specified.\n";
 				return false;
 			}
 			if (!$sourceImage) {
-				errorManager_TL::addError("No source image specified.");
+				$console .= __FUNCTION__ . ": No source image specified.\n";
 				return false;
 			}
 			
@@ -51,9 +53,9 @@
 			$encryption = new encrypter_TL();
 			$key = $encryption->quickEncrypt($username, $salts_TL['public_keys']);
 
-			$converter = new mediaConverter_TL();
+			$converter = new media_converter_TL();
 			
-			foreach ($profileImageSizes_TL as $type=>$width) {
+			foreach ($profileImageSizes as $type=>$width) {
 				$destinationFile = $key . '_' . $type . '.jpg';
 				$destinationPath = 'assets/profile_images/';
 				$success = $converter->convertImage($sourceImage, $destinationFile, $destinationPath, $width, $width, null);
@@ -61,7 +63,7 @@
 			}
 			
 			if ($error) {
-				errorManager_TL::addError($error);
+				$console .= __FUNCTION__ . ": " . $error . ".\n";
 				return false;
 			}
 			else return true;
@@ -71,10 +73,11 @@
 		public function deleteProfileImage($username) {
 			
 			global $salts_TL;
-			global $profileImageSizes_TL;
+			global $profileImageSizes;
+			global $console;
 	
 			if (!$username) {
-				errorManager_TL::addError("No username specified.");
+				$console .= __FUNCTION__ . ": No username specified.\n";
 				return false;
 			}
 			
@@ -82,7 +85,7 @@
 			$encryption = new encrypter_TL();
 			$key = $encryption->quickEncrypt($username, $salts_TL['public_keys']);
 	
-			foreach ($profileImageSizes_TL as $type=>$width) {
+			foreach ($profileImageSizes as $type=>$width) {
 				$filePath = 'assets/profile_images/' . $key . '_' . $type . '.jpg';
 				if (file_exists($filePath)) {
 					$success = unlink($filePath);
@@ -91,7 +94,7 @@
 			}
 			
 			if ($error) {
-				errorManager_TL::addError($error);
+				$console .= __FUNCTION__ . ": " . $error . ".\n";
 				return false;
 			}
 			else return true;
@@ -100,13 +103,15 @@
 		
 		public function retrieveGravatar($email, $width, $destination = false) {
 			
+			global $console;
+
 			if (!$email) {
-				errorManager_TL::addError("No email specified.");
+				$console .= __FUNCTION__ . ": No email specified.\n";
 				return false;
 			}
 			
 			if (!floatval($width)) {
-				errorManager_TL::addError("No desired width specified.");
+				$console .= __FUNCTION__ . ": No desired width specified.\n";
 				return false;
 			}
 			
@@ -114,7 +119,7 @@
 			$url = 'http://www.gravatar.com/avatar/' . md5(strtolower(trim($email))) . '?d=404';
 			if (floatval($width)) $url .= '&s=' . floatval($width);
 			
-			$fileManager = new fileManager_TL();
+			$fileManager = new file_manager_TL();
 			
 			if (!$fileManager->doesUrlExist($url)) return false;
 			else {
@@ -137,8 +142,8 @@
 	::	DEPENDENT ON
 	
 		encrypter_TL
-		mediaConverter_TL
-		fileManager_TL
+		media_converter_TL
+		file_manager_TL
 	
 	::	VERSION HISTORY
 

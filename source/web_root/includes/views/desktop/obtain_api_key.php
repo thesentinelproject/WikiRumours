@@ -1,15 +1,13 @@
 <?php
+	$sectionTitle = "Profile";
+	$pageTitle = "My API Key";
 	include 'includes/views/desktop/shared/page_top.php';
 
 	echo "<h2>Obtain an API key</h2>\n";
 			
-	if ($pageError) echo "<div class='alert alert-danger alert-dismissable'><button type='button' class='close' data-dismiss='alert' aria-hidden='true'>&times;</button>" . $pageError . "</div>\n";
-	elseif ($pageSuccess == 'key_generated') echo "<div class='alert alert-success alert-dismissable'><button type='button' class='close' data-dismiss='alert' aria-hidden='true'>&times;</button>API key successfully generated.</div>\n";
-	elseif ($pageSuccess == 'query_threshold_updated') echo "<div class='alert alert-success alert-dismissable'><button type='button' class='close' data-dismiss='alert' aria-hidden='true'>&times;</button>Query threshold successfully updated.</div>\n";
-	
 	if (count($apiKey) < 1) {
 		echo $form->start('apiForm') . "\n";
-		echo "<p>You don't currently have an API key. Would you like one? The API is intended for users who wish to import " . $systemPreferences['appName'] . " data into their own custom applications.</p>\n";
+		echo "<p>You don't currently have an API key. Would you like one? The API is intended for users who wish to import " . $systemPreferences['Name of this application'] . " data into their own custom applications.</p>\n";
 		echo "<p>" . $form->input('submit', 'obtain_api', null, false, 'Obtain API key now', 'btn btn-info') . "</p>\n";
 		echo "<p>Once you have your key, please consult the <a href='/explore_api'>API guide</a> to set up your queries.</p>\n";
 		echo $form->end() . "\n";
@@ -30,7 +28,7 @@
 		echo "<td>" . floatval($allQueries[0]['count']) . "</td>\n";
 		echo "<td>" . floatval($recentQueries[0]['count']) . "</td>\n";
 		if ($apiKey[0]['value'] == 'u') echo "<td>Unlimited</td>\n";
-		else echo "<td>" . $apiCap . "</td>\n";
+		else echo "<td>" . $systemPreferences['Maximum API calls'] . "</td>\n";
 		echo "</tr>\n";
 		echo "</table>\n";
 
@@ -42,7 +40,6 @@
 			if ($apiKey[0]['value'] == 'u') echo "  " . $form->input('button', 'remove_unlimited', null, false, 'Remove unlimited queries', 'btn btn-link', null, null, null, null, array('onClick'=>'validateRemoveUnlimited(); return false;')) . "\n";
 			else echo "  " . $form->input('button', 'allow_unlimited', null, false, 'Allow unlimited queries', 'btn btn-link', null, null, null, null, array('onClick'=>'validateAllowUnlimited(); return false;')) . "\n";
 		}
-		echo "  " . $form->input('button', 'cancel', null, false, 'Cancel', 'btn btn-link', '', '', '', '', array('onClick'=>'document.location.href="/profile/' . $username . '"; return false;')) . "\n";
 		echo "</p>\n";
 		echo $form->end() . "\n";
 	}

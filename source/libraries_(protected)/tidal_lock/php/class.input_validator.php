@@ -1,6 +1,6 @@
 <?php
 
-	class inputValidator_TL {
+	class input_validator_TL {
 
 		public function validateEmailBasic($email) {
 			if (substr_count($email, '@') < 1) return false;

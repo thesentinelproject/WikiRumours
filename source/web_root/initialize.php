@@ -2,96 +2,102 @@
 
 		session_start();
 		parse_str($_SERVER['QUERY_STRING']);
-		if (!isset($pathToWebRoot)) $pathToWebRoot = '';
 
 		// Identify template
 		
-			// sanitize URL
-				if(!isset($templateName)) $templateName = null;
-				if(!isset($parameter1)) $parameter1 = null;
-				if(!isset($parameter2)) $parameter2 = null;
-				if(!isset($parameter3)) $parameter3 = null;
-				if(!isset($parameter4)) $parameter4 = null;
-				$templateName = preg_replace('/[^A-Za-z0-9-_]/', '', urldecode($templateName));
-			
-			// if no page is specified in the URL, assume home
-				if (!$templateName) $templateName = 'index';
-			
-			// prohibit hitting certain pages (like this one)
-				$prohibitedUrls = array("cms");
+			if (!@$isCron) {
+
+				// sanitize URL
+					if(!isset($templateName)) $templateName = null;
+					if(!isset($parameter1)) $parameter1 = null;
+					if(!isset($parameter2)) $parameter2 = null;
+					if(!isset($parameter3)) $parameter3 = null;
+					if(!isset($parameter4)) $parameter4 = null;
+					$templateName = preg_replace('/[^A-Za-z0-9-_]/', '', urldecode($templateName));
 				
-				if ($prohibitedUrls) foreach ($prohibitedUrls as $key => $value) {
-					if ($value == $templateName) $templateName = '404';
-				}
+				// if no page is specified in the URL, assume home
+					if (!$templateName) $templateName = 'index';
+				
+				// prohibit hitting certain pages (like this one)
+					$prohibitedUrls = array("cms");
+					
+					if ($prohibitedUrls) foreach ($prohibitedUrls as $key => $value) {
+						if ($value == $templateName) $templateName = '404';
+					}
+
+			}
 
 		// Initialize application
 		
 			// Define connection
-				if (!isset($connectionType) || !$connectionType) $connectionType = 'U';
+				if (@$isCron) $connectionType = 'R';
+				else $connectionType = 'U';
 				
 			// Autoload database queries
-				if ($handle = opendir($pathToWebRoot . 'includes/models/.')) {
+				if ($handle = opendir(__DIR__ . '/includes/models/autoload/.')) {
 					while (false !== ($file = readdir($handle))) {
-						if (substr_count($file, '.php') > 0) include $pathToWebRoot . 'includes/models/' . $file;
-					}
-					closedir($handle);
-				}
-				
-			// Load PHP libraries (disable any which aren't needed)
-				include '../libraries_(protected)/light_open_ID/light_open_ID_0-6/index.php';
-				include '../libraries_(protected)/phpmailer/phpmailer_5-1/class.phpmailer.php';
-				include '../libraries_(protected)/phpass/phpass_0-3/PasswordHash.php';
-				if ($handle = opendir('../libraries_(protected)/tidal_lock/php/.')) {
-					while (false !== ($file = readdir($handle))) {
-						if (substr_count($file, '.php') > 0) include '../libraries_(protected)/tidal_lock/php/' . $file;
-					}
-					closedir($handle);
-				}
-				
-			// Proactively instantiate ubiquitous classes
-				$logger = new logger_TL();
-				$phpmailerWrapper = new phpmailerWrapper_TL();
-				$form = new formBuilder_TL;
-				$analytics = new analytics_TL();
-				
-			// Autoload configuration files
-				if ($handle = opendir('../config/.')) {
-					while (false !== ($file = readdir($handle))) {
-						if (substr_count($file, '.php') > 0) include '../config/' . $file;
-					}
-					closedir($handle);
-				}
-				
-			// Set timezone
-				if (!$timezone) $timezone = 'US/Eastern';
-				date_default_timezone_set($timezone);
-				putenv('TZ=' . $timezone);
-				
-			// Autoload shared controllers
-				if ($handle = opendir($pathToWebRoot . 'includes/controllers/shared/.')) {
-					while (false !== ($file = readdir($handle))) {
-						if (substr_count($file, '.php') > 0) include $pathToWebRoot . 'includes/controllers/shared/' . $file;
+						if (substr_count($file, '.php') > 0) include __DIR__ . '/includes/models/autoload/' . $file;
 					}
 					closedir($handle);
 				}
 
-			// Autoload global arrays
-				if ($handle = opendir('../global_arrays/.')) {
+			// Load third-party PHP libraries
+				$thirdPartyLibraries = array(
+					'phpmailer/phpmailer_5-1/class.phpmailer.php',
+					'phpass/phpass_0-3/PasswordHash.php',
+					'mobile_detect/Mobile-Detect-2.8.12/Mobile_Detect.php',
+					'phpinfo_array/index.php',
+				);
+
+				foreach ($thirdPartyLibraries as $path) {
+					if ($path && file_exists(__DIR__ . '/../libraries_(protected)/' . $path)) include __DIR__ . '/../libraries_(protected)/' . $path;
+					else die("Unable to locate " . $path);
+				}
+				
+			// Load Tidal Lock PHP libraries and instantiate classes
+				if ($handle = opendir(__DIR__ . '/../libraries_(protected)/tidal_lock/php/.')) {
 					while (false !== ($file = readdir($handle))) {
-						if (substr_count($file, '.php') > 0) include '../global_arrays/' . $file;
+						if (substr_count($file, '.php') > 0) {
+							// include file
+								include __DIR__ . '/../libraries_(protected)/tidal_lock/php/' . $file;
+							// instantiate class
+								$instance = str_replace('.php', '', str_replace('class.', '', $file));
+								$class = $instance . '_TL';
+								${$instance} = new $class();
+						}
 					}
 					closedir($handle);
 				}
-						
+				
+			// Autoload configuration files
+				if ($handle = opendir(__DIR__ . '/../config/autoload/.')) {
+					while (false !== ($file = readdir($handle))) {
+						if (substr_count($file, '.php') > 0) include __DIR__ . '/../config/autoload/' . $file;
+					}
+					closedir($handle);
+				}
+				
+			// Autoload shared controllers
+				if ($handle = opendir(__DIR__ . '/includes/controllers/autoload/.')) {
+					while (false !== ($file = readdir($handle))) {
+						if (substr_count($file, '.php') > 0) include __DIR__ . '/includes/controllers/autoload/' . $file;
+					}
+					closedir($handle);
+				}
+
+			// Autoload shared views
+				if ($handle = opendir(__DIR__ . '/includes/views/autoload/.')) {
+					while (false !== ($file = readdir($handle))) {
+						if (substr_count($file, '.php') > 0) include __DIR__ . '/includes/views/autoload/' . $file;
+					}
+					closedir($handle);
+				}
+
 			// Load environmentals
 				$environmentals = retrieveEnvironmentals();
 				
-			// Mobile detection
-				if ($redirectForMobile) redirectForMobile('/' . trim($templateName . '/' . $parameter1 . '/' . $parameter2 . '/' . $parameter3, '/'));
-		
 			// Confirm setup
-				if (@$devMode) $db_TL = $devDB_TL;
-				else $db_TL = $prodDB_TL;
+				$db_TL = $databases[$currentDatabase];
 				if (!$db_TL['Server'] || !$db_TL['Name']) die ("Please configure database settings before proceeding.");
 				if (!$mail_TL['Host'] || !$mail_TL['User'] || !$mail_TL['Password'] || !$mail_TL['OutgoingAddress'] || !$mail_TL['IncomingAddress']) die ("Please configure email settings before proceeding.");
 				
@@ -106,19 +112,72 @@
 				}
 				$dbConnection->set_charset('utf8');
 				
+			// Autoload global arrays
+				if ($handle = opendir(__DIR__ . '/../global_arrays/.')) {
+					while (false !== ($file = readdir($handle))) {
+						if (substr_count($file, '.php') > 0) include __DIR__ . '/../global_arrays/' . $file;
+					}
+					closedir($handle);
+				}
+
+			// Populate global arrays from database
+				populateCountriesAndRegions();
+				populateLanguages();
+				populateStatusesTagsAndSources();
+						
 			// Load system preferences
 				$systemPreferences = array();
-				$result = retrieveFromDb('preferences', array('user_id'=>''));
+				$result = retrieveFromDb('preferences', null, array('user_id'=>'0'));
 				for ($counter = 0; $counter < count($result); $counter++) {
 					$systemPreferences[$result[$counter]['preference']] = $result[$counter]['value'];
 				}
 
-				$userLogo = 'assets/preferences/logo.png';
-				if (file_exists($userLogo)) $logo = $userLogo;
-				else {
-					$userLogo = null;
-					$logo = 'resources/img/logo.png';
+			// Determine pseudonym
+				$url = $environmentals['absoluteRoot'];
+				if (substr($url, 0, 4) == 'www.') $url = substr($url, 4); // ensures that www.mydomain.com and mydomain.com aren't treated as separate pseudonyms
+
+				$result = retrievePseudonyms(array('url'=>$url), null, null, null, 1);
+				if (count($result)) $pseudonym = $result[0];
+
+			// Verify that root path of application is in database
+				if (!$systemPreferences['Root URL']) {
+					$systemPreferences['Root URL'] = $environmentals['protocol'] . $environmentals['absoluteRoot'];
+					updateOrInsertIntoDb('preferences', array('value'=>$systemPreferences['Root URL'], 'input_type'=>'text', 'is_mandatory'=>'1'), array('preference'=>'Root URL'), null, null, null, null, 1);
 				}
+												
+			// Mobile and tablet redirection
+				if ($systemPreferences['Redirect for mobile'] && !@$isCron && $environmentals['subdomain'] != 'm') {
+
+					$detect = new Mobile_Detect;
+
+					if ($detect->isMobile()) {
+						if (file_exists('includes/views/mobile/' . $templateName . '.php')) $url = $environmentals['protocol'] . 'm.' . $environmentals['domain'] . '/' . $templateName . '/' . trim($parameter1 . '/' . $parameter2 . '/' . $parameter3, '/');
+						else $url = $environmentals['protocol'] . 'm.' . $environmentals['domain'];
+						
+						header('Location: ' . $url);
+						exit();
+					}
+
+				}
+
+				if ($systemPreferences['Redirect for tablet'] && !@$isCron && $environmentals['subdomain'] != 't') {
+
+					$detect = new Mobile_Detect;
+
+					if ($detect->isTablet()) {
+						if (file_exists('includes/views/tablet/' . $templateName . '.php')) $url = $environmentals['protocol'] . 't.' . $environmentals['domain'] . '/' . $templateName . '/' . trim($parameter1 . '/' . $parameter2 . '/' . $parameter3, '/');
+						else $url = $environmentals['protocol'] . 't.' . $environmentals['domain'];
+						
+						header('Location: ' . $url);
+						exit();
+					}
+
+				}
+		
+			// Set timezone
+				if (!$systemPreferences['Home timezone']) $systemPreferences['Home timezone'] = 'US/Eastern';
+				date_default_timezone_set($systemPreferences['Home timezone']);
+				putenv('TZ=' . $systemPreferences['Home timezone']);
 				
 			// Verify salts have been provided
 				if ($salts_TL) foreach ($salts_TL as $name => $salt) {
@@ -126,35 +185,30 @@
 				}
 		
 			// Verify cron connection
-				if (!@$devMode && !@$isCron) {
+				if (@$currentDatabase == 'production' && !@$isCron) {
 					
-					if ($cronConnectionIntervalInMinutes > 0) {
+					if ($systemPreferences['Enable cron connections'] && $systemPreferences['Interval between cron connections'] > 0) {
 						$cronError = null;
 						$numberOfMinutesSincePreviousCronConnection = null;
-						$previousCronConnection = retrieveFromDb('logs', array('connection_type'=>'R'), null, null, null, null, 'connected_on DESC', 1);
+						$previousCronConnection = retrieveSingleFromDb('logs', null, array('connection_type'=>'R'), null, null, null, null, null, 'connected_on DESC');
 	
 						if (count($previousCronConnection) < 1) $cronError = "Cron does not appear to have attempted a connection yet";
 						else {
 							$numberOfMinutesSincePreviousCronConnection = round((strtotime(date('Y-m-d H:i:s')) - strtotime($previousCronConnection[0]['connected_on'])) / 60, 0);
-							if ($numberOfMinutesSincePreviousCronConnection >= ($cronConnectionIntervalInMinutes * 2)) {
+							if ($numberOfMinutesSincePreviousCronConnection >= ($systemPreferences['Interval between cron connections'] * 2)) {
 								$cronError = "Cron has stopped connecting for some reason (perhaps a server outage?)";
 							}
 						}
 						
 						if ($cronError) {
-							// has error already been logged?
-								$alreadyLogged = retrieveFromDb('logs', array('activity'=>$cronError, 'error'=>'1', 'resolved'=>'0'));
-							// if not, log it
-								if (count($alreadyLogged) < 1) {
-									$logger->logItInDb($cronError, null, array('error'=>'1', 'resolved'=>'0'));
-									emailSystemNotification($cronError, 'Critical error');
-								}
+							$logger->logItInDb($cronError, null, array('error'=>'1', 'resolved'=>'0'), true);
+							emailSystemNotification($cronError, 'Critical error');
 						}
 					}
 					else {
 						$runHousekeeping = false;
 						$numberOfHoursSincePreviousHousekeeping = null;
-						$previousHousekeeping = retrieveFromDb('logs', array('activity'=>'Housekeeping manually initiated'), null, null, null, null, 'connected_on DESC', 1);
+						$previousHousekeeping = retrieveSingleFromDb('logs', null, array('activity'=>'Housekeeping manually initiated'), null, null, null, null, null, 'connected_on DESC');
 						
 						if (count($previousHousekeeping) < 1) $runHousekeeping = true;
 						else {
@@ -166,10 +220,10 @@
 						
 						if ($runHousekeeping) {
 							$logger->logItInDb('Housekeeping manually initiated');
-							include 'housekeeping.php';
+							include __DIR__ . '/housekeeping.php';
 						}
 						
-						include "housekeeping.php";
+						include __DIR__ . '/housekeeping.php';
 					}
 					
 				}
@@ -178,15 +232,18 @@
 				$logged_in = checkLogin();
 				
 				if (@$logged_in['is_moderator']) {
-					$result = countInDb('rumours', 'rumour_id', array('assigned_to'=>''), null, null, null, "status = 'NU' OR status = 'UI'");
-					@$logged_in['rumours_assigned'] += $result[0]['count'];
+					$otherCriteria = "(is_closed = '0' OR is_closed IS NULL)";
+					if (@$pseudonym['pseudonym_id']) $otherCriteria .= " AND pseudonym_id = '" . $pseudonym['pseudonym_id'] . "'";
+					$result = retrieveRumours(array('assigned_to'=>''), null, $otherCriteria);
+					@$logged_in['rumours_assigned'] += count($result);
+					unset($otherCriteria);
 				}
-
 
 			// Clear any garbage in database which wasn't deleted due to inappropriate closure
 				
 			// Initialize page variables
 				$pageError = null;
+				$pageWarning = null;
 				$pageSuccess = null;
 				$console = null;
 				$pageLoadEvents = null;
@@ -198,23 +255,65 @@
 				$sectionTitle = null;
 				$noPageTitle = false;
 				
-			// Execute page-specific form post(s), if required
-				if(file_exists($pathToWebRoot . 'includes/controllers/' . $templateName . '.php')) include $pathToWebRoot . 'includes/controllers/' . $templateName . '.php';
+			// Execute page-specific controllers
+				if(!@$isCron && file_exists(__DIR__ . '/includes/controllers/' . $templateName . '.php')) include __DIR__ . '/includes/controllers/' . $templateName . '.php';
+
+			// Execute page-specific models
+				if(!@$isCron && file_exists(__DIR__ . '/includes/models/' . $templateName . '.php')) include __DIR__ . '/includes/models/' . $templateName . '.php';
 						
 			// Confirm database has been imported
 				$tables = retrieveTables_TL();
 				if (count($tables) < 1) die ("Please import database before proceeding.");
-		
+
 		// Load view
-			if (@$environmentals['subdomain'] == 'api') {
-				if (file_exists('includes/views/api/' . $templateName . ".php")) include 'includes/views/api/' . $templateName . ".php";
-			}
-			else {
-				if (file_exists('includes/views/desktop/' . $templateName . ".php")) include 'includes/views/desktop/' . $templateName . ".php";
-				elseif (!@$isCron) {
-					$cms = retrieveFromDb('cms', array('slug'=>$templateName, 'page_or_block'=>'p'), null, null, null);
-					if (count($cms) == 1) include 'includes/views/desktop/cms.php';
-					else include 'includes/views/desktop/404.php';
+			if (!@$isCron) {
+				if (@$environmentals['subdomain'] == 'm') {
+					if (file_exists(__DIR__ . '/includes/views/mobile/' . $templateName . ".php")) include __DIR__ . '/includes/views/mobile/' . $templateName . ".php";
+					else {
+						$cms = retrieveContent(array('slug'=>$templateName, 'cms_type'=>'p', $tablePrefix . 'cms.language_id'=>$operators->firstTrue(@$pseudonym['language_id'], @$systemPreferences['Default language']), $tablePrefix . 'cms.pseudonym_id'=>@$pseudonym['pseudonym_id']));
+						if (!count(@$cms)) $cms = retrieveContent(array('slug'=>$templateName, 'cms_type'=>'p', $tablePrefix . 'cms.language_id'=>$operators->firstTrue(@$pseudonym['language_id'], @$systemPreferences['Default language']), $tablePrefix . 'cms.pseudonym_id'=>'0'));
+						if (count(@$cms) == 1) {
+							if (@$cms[0]['login_required'] && !$logged_in) forceLoginThenRedirectHere();
+							else {
+								$view = 'mobile';
+								include __DIR__ . '/includes/views/shared/cms_page.php';
+							}
+						}
+						else include __DIR__ . '/includes/views/mobile/404.php';
+					}
+				}
+				elseif (@$environmentals['subdomain'] == 't') {
+					if (file_exists(__DIR__ . '/includes/views/tablet/' . $templateName . ".php")) include __DIR__ . '/includes/views/tablet/' . $templateName . ".php";
+					else {
+						$cms = retrieveContent(array('slug'=>$templateName, 'cms_type'=>'p', $tablePrefix . 'cms.language_id'=>$operators->firstTrue(@$pseudonym['language_id'], @$systemPreferences['Default language']), $tablePrefix . 'cms.pseudonym_id'=>@$pseudonym['pseudonym_id']));
+						if (!count(@$cms)) $cms = retrieveContent(array('slug'=>$templateName, 'cms_type'=>'p', $tablePrefix . 'cms.language_id'=>$operators->firstTrue(@$pseudonym['language_id'], @$systemPreferences['Default language']), $tablePrefix . 'cms.pseudonym_id'=>'0'));
+						if (count(@$cms) == 1) {
+							if (@$cms[0]['login_required'] && !$logged_in) forceLoginThenRedirectHere();
+							else {
+								$view = 'tablet';
+								include __DIR__ . '/includes/views/shared/cms_page.php';
+							}
+						}
+						else include __DIR__ . '/includes/views/tablet/404.php';
+					}
+				}
+				elseif (@$environmentals['subdomain'] == 'api') {
+					if (file_exists(__DIR__ . '/includes/views/api/' . $templateName . ".php")) include __DIR__ . '/includes/views/api/' . $templateName . ".php";
+				}
+				elseif (!@$hideSiteChrome) {
+					if (file_exists(__DIR__ . '/includes/views/desktop/' . $templateName . ".php")) include __DIR__ . '/includes/views/desktop/' . $templateName . ".php";
+					else {
+						$cms = retrieveContent(array('slug'=>$templateName, 'cms_type'=>'p', $tablePrefix . 'cms.language_id'=>$operators->firstTrue(@$pseudonym['language_id'], @$systemPreferences['Default language']), $tablePrefix . 'cms.pseudonym_id'=>@$pseudonym['pseudonym_id']));
+						if (!count(@$cms)) $cms = retrieveContent(array('slug'=>$templateName, 'cms_type'=>'p', $tablePrefix . 'cms.language_id'=>$operators->firstTrue(@$pseudonym['language_id'], @$systemPreferences['Default language']), $tablePrefix . 'cms.pseudonym_id'=>'0'));
+						if (count(@$cms) == 1) {
+							if (@$cms[0]['login_required'] && !$logged_in) forceLoginThenRedirectHere();
+							else {
+								$view = 'desktop';
+								include __DIR__ . '/includes/views/shared/cms_page.php';
+							}
+						}
+						else include __DIR__ . '/includes/views/desktop/404.php';
+					}
 				}
 			}
 

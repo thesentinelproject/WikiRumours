@@ -3,6 +3,8 @@
 /*	--------------------------------------
 	Execute immediately upon load
 	-------------------------------------- */
+
+	$pageStatus = $parameter1;
 		
 /*	--------------------------------------
 	Execute only if a form post

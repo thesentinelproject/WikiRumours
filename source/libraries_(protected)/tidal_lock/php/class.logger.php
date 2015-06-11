@@ -21,33 +21,32 @@
 		}
 		
 		public function logItInDb($activity, $id = null, $otherAttributes = null, $skipIfReported = false) {
+
+			global $console;
+			global $connectionType;
 	
 			// check for errors
 				if (!$activity) {
-					errorManager_TL::addError("No activity specified.");
+					$console .= __FUNCTION__ . ": No activity specified.\n";
 					return false;
 				}
 				
 				if (!function_exists('retrieveFromDb') || !function_exists('updateDb') || !function_exists('insertIntoDb')) {
-					errorManager_TL::addError("Unable to locate database model(s).");
+					$console .= __FUNCTION__ . ": Unable to locate database model(s).\n";
 					return false;
 				}
 			
 			// check if activity has already been reported but not acknowledged
 				if ($skipIfReported) {
-					$previouslyReported = retrieveFromDb('logs', array('activity'=>$activity, 'resolved'=>'0'), null, null, null);
+					$previouslyReported = retrieveFromDb('logs', null, array('activity'=>$activity, 'resolved'=>'0'));
 			        if (count($previouslyReported) > 0) return false;
 			    }
-	
+			    
 			// create new log entry or update previous entry
-				if ($id) {
-					if (is_array($otherAttributes)) updateDb('logs', array('activity'=>$activity) + $otherAttributes, array('log_id'=>$id), null, null, null);
-					else updateDb('logs', array('activity'=>$activity), array('log_id'=>$id), null, null, null);
-				}
-				else {
-					if (is_array($otherAttributes)) $id = insertIntoDb('logs', array('activity'=>$activity, 'connected_on'=>date('Y-m-d H:i:s')) + $otherAttributes);
-					else $id = insertIntoDb('logs', array('activity'=>$activity, 'connected_on'=>date('Y-m-d H:i:s')));
-				}
+				if ($id) updateDb('logs', array('activity'=>$activity), array('log_id'=>$id), null, null, null, null, 1);
+				else $id = insertIntoDb('logs', array('activity'=>$activity, 'connection_type'=>$connectionType, 'connected_on'=>date('Y-m-d H:i:s')));
+
+				if (count($otherAttributes)) updateDb('logs', $otherAttributes, array('log_id'=>$id), null, null, null, null, 1);
 	
 			// add activity, error info & resolution
 				return $id;
@@ -80,7 +79,7 @@
 
 	::	DEPENDENT ON
 	
-		phpmailerWrapper_TL
+		phpmailer_wrapper_TL
 	
 	::	VERSION HISTORY
 

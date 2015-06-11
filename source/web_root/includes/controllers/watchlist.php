@@ -5,16 +5,13 @@
 	-------------------------------------- */
 
 	// parse query string
-		$pageSuccess = $parameter1;
+		$pageStatus = $parameter1;
 
 	// authenticate user
 		if (!$logged_in) forceLoginThenRedirectHere();
 		
 	// queries
 		$watchlist = retrieveWatchlist(array('wr_watchlist.created_by'=>$logged_in['user_id']), null, null, $tablePrefix . 'watchlist.created_on DESC');
-		
-	// instantiate required class(es)
-		$parser = new parser_TL();
 		
 /*	--------------------------------------
 	Execute only if a form post

@@ -3,10 +3,12 @@
 	class analytics_TL {
 
 		public function insertGoogleAnalytics($webPropertyID, $domain = '', $accommodateMultipleTopLevelDomains = false) {
+
+			global $console;
 	
 			// check input
 				if (!$webPropertyID) {
-					errorManager_TL::addError("No ID specified.");
+					$console .= __FUNCTION__ . ": No ID specified.\n";
 					return false;
 				}
 	
@@ -35,10 +37,12 @@
 		}
 		
 		public function insertMixPanel($token) {
+
+			global $console;
 	
 			// check input
 				if (!$token) {
-					errorManager_TL::addError("No token specified.");
+					$console .= __FUNCTION__ . ": No token specified.\n";
 					return false;
 				}
 				

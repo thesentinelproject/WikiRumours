@@ -1,65 +1,84 @@
 <?php
 
-	if (isset($_REQUEST["source"])) {
+	if (!@$_REQUEST["source"]) die("No source image specified.");
+	else {
 
-	// get parameters
-		$source = $_REQUEST["source"];
-		$desiredWidth = floatval(@$_REQUEST["desired_width"]);
-		$desiredHeight = floatval(@$_REQUEST["desired_height"]);
-		
-	// validate image
-		if (!file_exists($source)) die("Can't find source image.");
-		$currentDimensions = @getimagesize($source);
-		$currentWidth = @$currentDimensions[0];
-		$currentHeight = @$currentDimensions[1];
-		
-		if ($currentWidth && $currentHeight) {
+		// get parameters
+			$source = $_REQUEST["source"];
+			$desiredWidth = floatval(@$_REQUEST["desired_width"]);
+			$desiredHeight = floatval(@$_REQUEST["desired_height"]);
 			
-			// supply missing dimensions
-				if (!$desiredWidth && !$desiredHeight) {
-					$desiredWidth = $currentWidth;
-					$desiredHeight = $currentHeight;
-				}
-				elseif ($desiredWidth && !$desiredHeight) $desiredHeight = 999999999;
-				elseif ($desiredHeight && !$desiredWidth) $desiredWidth = 999999999;
-				
-			// prevent upscaling
-				if ($currentDimensions[0] < $desiredWidth) $desiredWidth = $currentDimensions[0];
-				if ($currentDimensions[1] < $desiredHeight) $desiredHeight = $currentDimensions[1];
+		// validate image
+			if (!file_exists($source)) die("Can't find source image.");
+			$currentDimensions = @getimagesize($source);
+			$currentWidth = @$currentDimensions[0];
+			$currentHeight = @$currentDimensions[1];
+			if (!$currentWidth || !$currentHeight) {
+				$currentWidth = @imagesx($source);
+				$currentHeight = @imagesy($source);
+			}
 
-			// create destination dimensions
-				$scale = min($desiredWidth/$currentWidth, $desiredHeight/$currentHeight);
-				$newWidth = floor($scale * $currentWidth);
-				$newHeight = floor($scale * $currentHeight);
+			if (!$currentWidth || !$currentHeight) die("Unable to retrieve dimensions of current image.");
+			else {
 				
-			// create new image
-				if ($img = @imagecreatefromjpeg($source)) $img = imagecreatefromjpeg($source);
-				elseif ($img = @imagecreatefromgif($source)) $img = imagecreatefromgif($source);
-				elseif ($img = @imagecreatefrompng($source)) $img = imagecreatefrompng($source);
-	
-			// create a temporary image
-				$newImage = imagecreatetruecolor($newWidth, $newHeight);
+				// prevent upscaling
+					if ($currentWidth < $desiredWidth) $desiredWidth = $currentWidth;
+					if ($currentHeight < $desiredHeight) $desiredHeight = $currentHeight;
 				
-			// copy and resize the old image into the new image
-				imagecopyresampled($newImage, $img, 0,0,0,0, $newWidth, $newHeight, $currentWidth, $currentHeight);
-				imagedestroy($img);
-				if ($img = @imagecreatefromjpeg($source)) {
-					header("Content-type: image/jpeg");
-					imagejpeg($newImage, '', 80);
-				}
-				elseif ($img = @imagecreatefromgif($source)) {
-					header("Content-type: image/png");
-					imagepng($newImage, '', 80);
-				}
-				elseif ($img = @imagecreatefrompng($source)) {
-					header("Content-type: image/gif");
-					imagegif($newImage, '');
-				}
+				// supply missing dimensions
+					if (!$desiredWidth && !$desiredHeight) {
+						$desiredWidth = $currentWidth;
+						$desiredHeight = $currentHeight;
+					}
+					elseif ($desiredWidth && !$desiredHeight) {
+						$scale = $desiredWidth / $currentWidth;
+						$desiredHeight = floor($scale * $currentHeight);
+					}
+					elseif ($desiredHeight && !$desiredWidth) {
+						$scale = $desiredHeight / $currentHeight;
+						$desiredWidth = floor($scale * $currentWidth);
+					}
+					else {
+						if ($currentWidth > $currentHeight) {
+							$xOffset = floor(($currentWidth - $currentHeight) / 2);
+							$currentWidth = $currentHeight;
+						}
+						elseif ($currentHeight > $currentWidth) {
+							$yOffset = floor(($currentHeight - $currentWidth) / 2);
+							$currentHeight = $currentWidth;
+						}
+					}
+
+				// create new image
+					if ($img = @imagecreatefromjpeg($source)) $img = imagecreatefromjpeg($source);
+					elseif ($img = @imagecreatefrompng($source)) $img = imagecreatefrompng($source);
+					elseif ($img = @imagecreatefromgif($source)) $img = imagecreatefromgif($source);
+					else die("Unable to read image format.");
+		
+				// create a temporary image
+					$newImage = imagecreatetruecolor($desiredWidth, $desiredHeight);
+					imagealphablending($newImage, false);
+					imagesavealpha($newImage, true);
 				
-		}
-		else die("Unable to parse source image.");
+				// copy and resize the old image into the new image
+					imagecopyresampled($newImage, $img, 0, 0, intval(@$xOffset), intval(@$yOffset), $desiredWidth, $desiredHeight, $currentWidth, $currentHeight);
+					imagedestroy($img);
+					if ($img = @imagecreatefromjpeg($source)) {
+						header("Content-type: image/jpeg");
+						imagejpeg($newImage, null, 80);
+					}
+					elseif ($img = @imagecreatefrompng($source)) {
+						header("Content-type: image/png");
+						imagepng($newImage, null, 0);
+					}
+					elseif ($img = @imagecreatefromgif($source)) {
+						header("Content-type: image/gif");
+						imagegif($newImage, null);
+					}
+					
+			}
 				
-}
+	}
 
 /*
 	Dynamic Thumbnailer

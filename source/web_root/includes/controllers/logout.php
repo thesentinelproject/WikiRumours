@@ -5,7 +5,7 @@
 	-------------------------------------- */
 
 	// log user out
-		$cookieExpiryDate = time()-60*60*24 * floatval($numberOfDaysToPreserveLogin);
+		$cookieExpiryDate = time()-60*60*24 * floatval($systemPreferences['Keep users logged in for']);
 		setcookie("username", "", $cookieExpiryDate, '/', '.' . $environmentals['domain'], 0);
 		setcookie("password_hash", "", $cookieExpiryDate, '/', '.' . $environmentals['domain'], 0);
 		unset($_SESSION['username']);

@@ -1,0 +1,23 @@
+
+	.blockquoteOpen { background-image: url(../../img/blockquote_open.png); background-position: top left; background-repeat: no-repeat; text-indent: 50px; }
+	.blockquoteClose { background-image: url(../../img/blockquote_close.png); background-position: bottom right; background-repeat: no-repeat; }
+	.blockquoteCloseOrphan { padding-left: 40px; }
+
+	#rumourTitle { font-size: 18pt; margin-top: 0px; padding-top: 0px; padding-bottom: 7px; line-height: 1.25em; }
+	#rumourAttribution { text-align: right; font-size: 10pt; padding-bottom: 5px; }
+	#rumourTagList { margin-bottom: 10px; }
+	#photoEvidence { margin-bottom: 10px; }
+	#rumourStatus { color: #27aae1; font-size: 12pt; padding-bottom: 10px; }
+	#rumourFindings { padding-bottom: 15px; }
+	#rumourActions { margin-bottom: 15px; }
+
+	#sightingsMap, #sightingsTable { padding-top: 15px; }
+	#rumourMapCanvas { width: 100%; height: 400px; background-color: #eee; margin-bottom: 15px; }
+
+	.comment { border-bottom: 1px solid #999; }
+	.commentAdmin { background-color: #f6f6f6; border-bottom: 1px solid #999; }
+	.commentDateAuthor { color: #27aae1; font-size: 9pt; font-weight: bold; }
+	.commentDateAuthorHidden { color: red; font-size: 9pt; font-weight: bold; }
+	.commentFlag { text-align: right; }
+	.commentPhoto { text-align: center; }
+	.commentText { font-size: 10pt; }

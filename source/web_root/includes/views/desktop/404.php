@@ -5,7 +5,7 @@
 
 	<h2>Page not found</h2>
 
-	Whoops, there's no page here by that name...
+	<img src='/resources/img/404.jpg' class='img-responsive img-rounded' alt='Page not found' />
 		
 <?php
 	include 'includes/views/desktop/shared/page_bottom.php';

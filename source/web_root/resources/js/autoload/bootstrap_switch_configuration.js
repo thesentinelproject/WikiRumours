@@ -1,0 +1,2 @@
+
+	$("input[class='checkboxSwitch']").bootstrapSwitch();

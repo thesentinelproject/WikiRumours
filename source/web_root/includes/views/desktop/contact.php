@@ -3,10 +3,7 @@
 
 	echo "<h2>Contact</h2>\n";
 	
-	echo "<p>Got a technical or usage question? Check the <a href='/faqs'>FAQs</a> first, and if you can't find the answer you're looking for, use the form here to send a message.</p>\n";
-
-	if ($pageError) echo "<div class='alert alert-danger alert-dismissable'><button type='button' class='close' data-dismiss='alert' aria-hidden='true'>&times;</button>" . $pageError . "</div>\n";
-	elseif ($pageSuccess == 'message_sent') echo "<div class='alert alert-success alert-dismissable'><button type='button' class='close' data-dismiss='alert' aria-hidden='true'>&times;</button>Thank you. Your message has been sent.</div>\n";
+	echo "<p>Got a technical or usage question? Check the <a href='/help'>FAQs</a> first, and if you can't find the answer you're looking for, use the form here to send a message.</p>\n";
 
 	echo $form->start('contactForm', null, 'post', null, null, array('onSubmit'=>'validateContactForm(); return false;')) . "\n";
 	echo $form->input('hidden', 'username', htmlspecialchars($logged_in['username'], ENT_QUOTES)) . "\n";

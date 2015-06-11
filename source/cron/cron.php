@@ -2,9 +2,8 @@
 <?php
 
 		$isCron = true;
-		$pathToWebRoot = '../web_root/';
-		include "../web_root/initialize.php";
-		if ($cronConnectionIntervalInMinutes) include "../web_root/housekeeping.php";
+		include __DIR__ . "/../web_root/initialize.php";
+		if ($systemPreferences['Enable cron connections'] && $systemPreferences['Interval between cron connections'] > 0) include __DIR__ . "/../web_root/housekeeping.php";
 		$dbConnection->close();
 		
 ?>
