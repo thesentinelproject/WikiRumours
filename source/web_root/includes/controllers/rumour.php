@@ -190,11 +190,13 @@
 							if ($existingUsers[0]['count'] || $existingRegistrants[0]['count'] > 0) $pageError .= "The username you've specified for a new user already belongs to another user. ";
 						}
 						if (!@$_POST['newuser_country']) $pageError .= "Please specify the new user's country. ";
-						if ($_POST['newuser_email'] && !$input_validator->validateEmailRobust($_POST['newuser_email'])) $pageError .= "Please specify a valid email address for the new user. ";
-						else {
-							$existingUsers = countInDb('users', 'user_id', array('email'=>$_POST['newuser_email']));
-							$existingRegistrants = countInDb('registrations', 'registration_id', array('email'=>$_POST['newuser_email']));
-							if ($existingUsers[0]['count'] || $existingRegistrants[0]['count'] > 0) $pageError .= "The email address you've specified for a new user already belongs to another user. ";
+						if ($_POST['newuser_email']) {
+							if (!$input_validator->validateEmailRobust($_POST['newuser_email'])) $pageError .= "Please specify a valid email address for the new user. ";
+							else {
+								$existingUsers = countInDb('users', 'user_id', array('email'=>$_POST['newuser_email']));
+								$existingRegistrants = countInDb('registrations', 'registration_id', array('email'=>$_POST['newuser_email']));
+								if ($existingUsers[0]['count'] || $existingRegistrants[0]['count'] > 0) $pageError .= "The email address you've specified for a new user already belongs to another user. ";
+							}
 						}
 					}
 				}
