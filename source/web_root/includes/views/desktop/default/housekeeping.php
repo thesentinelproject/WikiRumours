@@ -28,12 +28,12 @@
 		/* Previous Cron */		echo $form->row('uneditable_static', 'previous_cron', $previousCron, false, "Previous cron connection");
 		/* Previous Manual */	if ($previousManual != 'Never') echo $form->row('uneditable_static', 'previous_manual', $previousManual, false, "Previous manual connection");
 
-		$frequencies = $directory_manager->read(__DIR__ . '/../../../../housekeeping/autoload', false, true, false);
+		$frequencies = $directory_manager->read(__DIR__ . '/../../../../../housekeeping/autoload', false, true, false);
 		foreach ($frequencies as $frequency) {
 			$frequency = substr($frequency, strrpos($frequency, '/'));
 			$frequency = substr($frequency, strrpos($frequency, '\\') + 1);
 
-			$tasks = $directory_manager->read(__DIR__ . '/../../../../housekeeping/autoload/' . $frequency);
+			$tasks = $directory_manager->read(__DIR__ . '/../../../../../housekeeping/autoload/' . $frequency);
 			if (count($tasks)) {
 				echo $form->rowStart($frequency . '_tasks', ucwords($frequency) . " tasks");
 				echo "<ul class='housekeepingTasks'>\n";

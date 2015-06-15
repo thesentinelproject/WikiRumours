@@ -1,15 +1,20 @@
 <?php
+	if (@$systemPreferences['Pending registrations auto-deleted after']) {
 
-	if (@$numberOfDaysToPreserveRegistations) {
+		// calculate expiry
+			$expiry = date('Y-m-d H:i:s', mktime(date('H'), date('i'), date('s'), date('m'), date('d') - $systemPreferences['Pending registrations auto-deleted after'], date('Y')));
+			$logger->logItInMemory("Looking for registrations prior to " . $expiry);
+			$logger->logItInDb($logger->retrieveLogFromMemory(), $logID);
 
 		// delete registrants
-			$expiry = date('Y-m-d', mktime(0, 0, 0, date('m'), date('d') - $systemPreferences['Pending registrations auto-deleted after'], date('Y')));
-			$deleted = deleteFromDb('registrations', null, null, null, null, $tablePrefix . "registered_on < '" . $expiry . "'");
-
-		// update log
+			$deleted = deleteFromDb('registrations', null, null, null, null, "registered_on < '" . $expiry . "'");
 			$logger->logItInMemory("Deleted " . floatval($deleted) . " registrant(s)");
 			$logger->logItInDb($logger->retrieveLogFromMemory(), $logID);
 
+	}
+	else {
+		$logger->logItInMemory("No expiry provided in settings");
+		$logger->logItInDb($logger->retrieveLogFromMemory(), $logID);
 	}
 
 ?>

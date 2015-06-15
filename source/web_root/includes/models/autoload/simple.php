@@ -154,7 +154,7 @@
 		
 		// validate input
 			if (!$table) return false; // no table specified
-			if (!$matching && !$containing && !$beginsWith && !$endsWith) return false; // no criteria
+			if (!$matching && !$containing && !$beginsWith && !$endsWith && !$otherCriteria) return false; // no criteria
 			
 		// build query
 			$query = "DELETE FROM " . $tablePrefix . $table;
@@ -165,7 +165,7 @@
 			if ($endsWith) foreach ($endsWith as $field => $value) $query .= " AND " . $field . " LIKE '%" . $dbConnection->escape_string($value) . "'";
 			if (!is_null($otherCriteria)) $query .= " AND (" . $otherCriteria . ")";
 			if ($limit) $query .= " LIMIT " . $dbConnection->escape_string($limit);
-			
+
 			$result = $dbConnection->query($query) or die('Unable to execute ' . __FUNCTION__ . '(' . addSlashes($table) . '): ' . $dbConnection->error . '<br /><br />' . $query);
 
 		// return status

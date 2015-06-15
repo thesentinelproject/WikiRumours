@@ -256,7 +256,8 @@
 				$noPageTitle = false;
 				
 			// Execute page-specific controllers
-				if(!@$isCron && file_exists(__DIR__ . '/includes/controllers/' . $templateName . '.php')) include __DIR__ . '/includes/controllers/' . $templateName . '.php';
+				if (!@$isCron && file_exists(__DIR__ . '/includes/controllers/custom/' . $templateName . '.php')) include __DIR__ . '/includes/controllers/custom/' . $templateName . '.php';
+				elseif (!@$isCron && file_exists(__DIR__ . '/includes/controllers/default/' . $templateName . '.php')) include __DIR__ . '/includes/controllers/default/' . $templateName . '.php';
 
 			// Execute page-specific models
 				if(!@$isCron && file_exists(__DIR__ . '/includes/models/' . $templateName . '.php')) include __DIR__ . '/includes/models/' . $templateName . '.php';
@@ -267,54 +268,28 @@
 
 		// Load view
 			if (!@$isCron) {
-				if (@$environmentals['subdomain'] == 'm') {
-					if (file_exists(__DIR__ . '/includes/views/mobile/' . $templateName . ".php")) include __DIR__ . '/includes/views/mobile/' . $templateName . ".php";
+				if (@$environmentals['subdomain'] == 'm') $view = 'mobile';
+				elseif (@$environmentals['subdomain'] == 't')  $view = 'tablet';
+				elseif (@$environmentals['subdomain'] == 'api') $view = 'api';
+				else $view = 'desktop';
+
+				if ($view == 'api' && file_exists(__DIR__ . '/includes/views/api/' . $templateName . ".php")) include __DIR__ . '/includes/views/api/' . $templateName . ".php";
+				else {
+
+					if (file_exists(__DIR__ . '/includes/views/' . $view . '/custom/' . $templateName . ".php")) include __DIR__ . '/includes/views/' . $view . '/custom/' . $templateName . ".php";
+					elseif (file_exists(__DIR__ . '/includes/views/' . $view . '/default/' . $templateName . ".php")) include __DIR__ . '/includes/views/' . $view . '/default/' . $templateName . ".php";
 					else {
 						$cms = retrieveContent(array('slug'=>$templateName, 'cms_type'=>'p', $tablePrefix . 'cms.language_id'=>$operators->firstTrue(@$pseudonym['language_id'], @$systemPreferences['Default language']), $tablePrefix . 'cms.pseudonym_id'=>@$pseudonym['pseudonym_id']));
 						if (!count(@$cms)) $cms = retrieveContent(array('slug'=>$templateName, 'cms_type'=>'p', $tablePrefix . 'cms.language_id'=>$operators->firstTrue(@$pseudonym['language_id'], @$systemPreferences['Default language']), $tablePrefix . 'cms.pseudonym_id'=>'0'));
 						if (count(@$cms) == 1) {
 							if (@$cms[0]['login_required'] && !$logged_in) forceLoginThenRedirectHere();
-							else {
-								$view = 'mobile';
-								include __DIR__ . '/includes/views/shared/cms_page.php';
-							}
+							else include __DIR__ . '/includes/views/shared/cms_page.php';
 						}
-						else include __DIR__ . '/includes/views/mobile/404.php';
+						else include __DIR__ . '/includes/views/' . $view . '/404.php';
 					}
+
 				}
-				elseif (@$environmentals['subdomain'] == 't') {
-					if (file_exists(__DIR__ . '/includes/views/tablet/' . $templateName . ".php")) include __DIR__ . '/includes/views/tablet/' . $templateName . ".php";
-					else {
-						$cms = retrieveContent(array('slug'=>$templateName, 'cms_type'=>'p', $tablePrefix . 'cms.language_id'=>$operators->firstTrue(@$pseudonym['language_id'], @$systemPreferences['Default language']), $tablePrefix . 'cms.pseudonym_id'=>@$pseudonym['pseudonym_id']));
-						if (!count(@$cms)) $cms = retrieveContent(array('slug'=>$templateName, 'cms_type'=>'p', $tablePrefix . 'cms.language_id'=>$operators->firstTrue(@$pseudonym['language_id'], @$systemPreferences['Default language']), $tablePrefix . 'cms.pseudonym_id'=>'0'));
-						if (count(@$cms) == 1) {
-							if (@$cms[0]['login_required'] && !$logged_in) forceLoginThenRedirectHere();
-							else {
-								$view = 'tablet';
-								include __DIR__ . '/includes/views/shared/cms_page.php';
-							}
-						}
-						else include __DIR__ . '/includes/views/tablet/404.php';
-					}
-				}
-				elseif (@$environmentals['subdomain'] == 'api') {
-					if (file_exists(__DIR__ . '/includes/views/api/' . $templateName . ".php")) include __DIR__ . '/includes/views/api/' . $templateName . ".php";
-				}
-				elseif (!@$hideSiteChrome) {
-					if (file_exists(__DIR__ . '/includes/views/desktop/' . $templateName . ".php")) include __DIR__ . '/includes/views/desktop/' . $templateName . ".php";
-					else {
-						$cms = retrieveContent(array('slug'=>$templateName, 'cms_type'=>'p', $tablePrefix . 'cms.language_id'=>$operators->firstTrue(@$pseudonym['language_id'], @$systemPreferences['Default language']), $tablePrefix . 'cms.pseudonym_id'=>@$pseudonym['pseudonym_id']));
-						if (!count(@$cms)) $cms = retrieveContent(array('slug'=>$templateName, 'cms_type'=>'p', $tablePrefix . 'cms.language_id'=>$operators->firstTrue(@$pseudonym['language_id'], @$systemPreferences['Default language']), $tablePrefix . 'cms.pseudonym_id'=>'0'));
-						if (count(@$cms) == 1) {
-							if (@$cms[0]['login_required'] && !$logged_in) forceLoginThenRedirectHere();
-							else {
-								$view = 'desktop';
-								include __DIR__ . '/includes/views/shared/cms_page.php';
-							}
-						}
-						else include __DIR__ . '/includes/views/desktop/404.php';
-					}
-				}
+
 			}
 
 ?>

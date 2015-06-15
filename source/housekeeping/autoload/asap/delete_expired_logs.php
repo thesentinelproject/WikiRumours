@@ -1,11 +1,21 @@
 <?php
 
-	// delete logs
-		$expiryDate = date('Y-m-d', mktime(0, 0, 0, date('m'), date('d') - floatval($systemPreferences['Keep logs for']), date('Y')));
-		$numberOfLogsDeleted = deleteFromDb('logs', null, null, null, null, $tablePrefix . "connected_on < '" . $expiryDate . "'");
+	if (@$systemPreferences['Keep logs for']) {
 
-	// update log
-		$logger->logItInMemory("Deleted " . floatval($numberOfLogsDeleted) . " expired log(s)");
+		// calculate expiry
+			$expiry = date('Y-m-d H:i:s', mktime(date('H'), date('i'), date('s'), date('m'), date('d') - floatval($systemPreferences['Keep logs for']), date('Y')));
+			$logger->logItInMemory("Looking for logs prior to " . $expiry);
+			$logger->logItInDb($logger->retrieveLogFromMemory(), $logID);
+
+		// delete logs
+			$deleted = deleteFromDb('logs', null, null, null, null, "connected_on < '" . $expiry . "'");
+			$logger->logItInMemory("Deleted " . floatval($deleted) . " expired log(s)");
+			$logger->logItInDb($logger->retrieveLogFromMemory(), $logID);
+
+	}
+	else {
+		$logger->logItInMemory("No expiry provided in settings");
 		$logger->logItInDb($logger->retrieveLogFromMemory(), $logID);
+	}
 
 ?>
