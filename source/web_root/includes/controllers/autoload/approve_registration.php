@@ -46,7 +46,7 @@
 			$existingUsers = retrieveUsers(array('is_administrator'));
 			if (!count($existingUsers)) {
 				updateDbSingle('users', array('is_administrator'=>'1'), array('user_id'=>$userID));
-				insertIntoDb('user_permissions', array('user_id'=>$userID, 'can_edit_content'=>'1', 'can_edit_settings'=>'1', 'can_edit_users'=>'1', 'can_send_email'=>'1', 'can_run_housekeeping'=>'1'));
+				insertIntoDb('user_permissions', array('user_id'=>$userID, 'can_edit_content'=>'1', 'can_update_settings'=>'1', 'can_edit_settings'=>'1', 'can_edit_users'=>'1', 'can_send_email'=>'1', 'can_run_housekeeping'=>'1'));
 			}
 					
 		// delete registrant data

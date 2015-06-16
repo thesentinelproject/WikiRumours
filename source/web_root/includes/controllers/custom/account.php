@@ -66,7 +66,7 @@
 
 			// clean input
 				$_POST = $parser->trimAll($_POST);
-				$checkboxesToParse = array('enabled', 'primary_phone_sms', 'secondary_phone_sms', 'ok_to_contact', 'anonymous', 'is_proxy', 'is_moderator', 'is_community_liaison', 'is_administrator', 'is_tester', 'can_edit_content', 'can_edit_settings', 'can_edit_users', 'can_send_email', 'can_run_housekeeping');
+				$checkboxesToParse = array('enabled', 'primary_phone_sms', 'secondary_phone_sms', 'ok_to_contact', 'anonymous', 'is_proxy', 'is_moderator', 'is_community_liaison', 'is_administrator', 'is_tester', 'can_edit_content', 'can_update_settings', 'can_edit_settings', 'can_edit_users', 'can_send_email', 'can_run_housekeeping');
 				foreach ($checkboxesToParse as $checkbox) {
 					if (isset($_POST[$checkbox])) $_POST[$checkbox] = 1;
 					else $_POST[$checkbox] = 0;
@@ -120,7 +120,7 @@
 					// update permissions
 						if ($logged_in['can_edit_users']) {
 							deleteFromDb('user_permissions', array('user_id'=>$user[0]['user_id']), null, null, null, null, 1);
-							if ($_POST['is_administrator']) insertIntoDb('user_permissions', array('user_id'=>$user[0]['user_id'], 'can_edit_content'=>$_POST['can_edit_content'], 'can_edit_settings'=>$_POST['can_edit_settings'], 'can_edit_users'=>$_POST['can_edit_users'], 'can_send_email'=>$_POST['can_send_email'], 'can_run_housekeeping'=>$_POST['can_run_housekeeping']));
+							if ($_POST['is_administrator']) insertIntoDb('user_permissions', array('user_id'=>$user[0]['user_id'], 'can_edit_content'=>$_POST['can_edit_content'], 'can_update_settings'=>$_POST['can_update_settings'], 'can_edit_settings'=>$_POST['can_edit_settings'], 'can_edit_users'=>$_POST['can_edit_users'], 'can_send_email'=>$_POST['can_send_email'], 'can_run_housekeeping'=>$_POST['can_run_housekeeping']));
 						}
 
 					// update enabled

@@ -3,7 +3,7 @@
 -- http://www.phpmyadmin.net
 --
 -- Host: mysql.wikirumours.org
--- Generation Time: Jun 10, 2015 at 01:34 PM
+-- Generation Time: Jun 16, 2015 at 09:23 AM
 -- Server version: 5.1.56
 -- PHP Version: 5.3.29
 
@@ -13206,6 +13206,7 @@ CREATE TABLE IF NOT EXISTS `wr_user_permissions` (
   `name` varchar(50) COLLATE utf8_unicode_ci NOT NULL,
   `value` tinyint(1) NOT NULL,
   `can_edit_content` tinyint(1) NOT NULL,
+  `can_update_settings` tinyint(1) NOT NULL,
   `can_edit_settings` tinyint(1) NOT NULL,
   `can_edit_users` tinyint(1) NOT NULL,
   `can_send_email` tinyint(1) NOT NULL,

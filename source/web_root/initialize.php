@@ -151,7 +151,7 @@
 					$detect = new Mobile_Detect;
 
 					if ($detect->isMobile()) {
-						if (file_exists('includes/views/mobile/' . $templateName . '.php')) $url = $environmentals['protocol'] . 'm.' . $environmentals['domain'] . '/' . $templateName . '/' . trim($parameter1 . '/' . $parameter2 . '/' . $parameter3, '/');
+						if (file_exists('includes/views/mobile/custom/' . $templateName . '.php') || file_exists('includes/views/mobile/default/' . $templateName . '.php')) $url = $environmentals['protocol'] . 'm.' . $environmentals['domain'] . '/' . $templateName . '/' . trim($parameter1 . '/' . $parameter2 . '/' . $parameter3, '/');
 						else $url = $environmentals['protocol'] . 'm.' . $environmentals['domain'];
 						
 						header('Location: ' . $url);
@@ -165,7 +165,7 @@
 					$detect = new Mobile_Detect;
 
 					if ($detect->isTablet()) {
-						if (file_exists('includes/views/tablet/' . $templateName . '.php')) $url = $environmentals['protocol'] . 't.' . $environmentals['domain'] . '/' . $templateName . '/' . trim($parameter1 . '/' . $parameter2 . '/' . $parameter3, '/');
+						if (file_exists('includes/views/tablet/custom/' . $templateName . '.php') || file_exists('includes/views/tablet/default/' . $templateName . '.php')) $url = $environmentals['protocol'] . 't.' . $environmentals['domain'] . '/' . $templateName . '/' . trim($parameter1 . '/' . $parameter2 . '/' . $parameter3, '/');
 						else $url = $environmentals['protocol'] . 't.' . $environmentals['domain'];
 						
 						header('Location: ' . $url);
@@ -285,7 +285,8 @@
 							if (@$cms[0]['login_required'] && !$logged_in) forceLoginThenRedirectHere();
 							else include __DIR__ . '/includes/views/shared/cms_page.php';
 						}
-						else include __DIR__ . '/includes/views/' . $view . '/404.php';
+						elseif (file_exists(__DIR__ . '/includes/views/' . $view . '/custom/404.php')) include __DIR__ . '/includes/views/' . $view . '/custom/404.php';
+						elseif (file_exists(__DIR__ . '/includes/views/' . $view . '/default/404.php')) include __DIR__ . '/includes/views/' . $view . '/default/404.php';
 					}
 
 				}

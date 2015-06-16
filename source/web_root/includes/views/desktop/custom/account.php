@@ -56,6 +56,7 @@
 							if ($operators->firstTrueStrict(@$_POST['is_administrator'], @$user[0]['is_administrator'])) echo " in";
 							echo "'>\n";
 							echo $form->row('checkbox', 'can_edit_content', $operators->firstTrueStrict(@$_POST['can_edit_content'], @$user[0]['can_edit_content']), false, 'Can edit content?');
+							echo $form->row('checkbox', 'can_update_settings', $operators->firstTrueStrict(@$_POST['can_update_settings'], @$user[0]['can_update_settings']), false, 'Can update settings?');
 							echo $form->row('checkbox', 'can_edit_settings', $operators->firstTrueStrict(@$_POST['can_edit_settings'], @$user[0]['can_edit_settings']), false, 'Can edit settings?');
 							echo $form->row('checkbox', 'can_edit_users', $operators->firstTrueStrict(@$_POST['can_edit_users'], @$user[0]['can_edit_users']), false, 'Can edit users?');
 							echo $form->row('checkbox', 'can_send_email', $operators->firstTrueStrict(@$_POST['can_send_email'], @$user[0]['can_send_email']), false, 'Can send email?');

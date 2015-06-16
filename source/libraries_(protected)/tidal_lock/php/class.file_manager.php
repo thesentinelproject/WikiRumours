@@ -381,14 +381,16 @@
 		
 		private function extractVideoMetadata($file) {
 
+			global $pathToFFmpeg;
+			global $pathToImageMagick;
 			global $systemPreferences;
 							
 			$metadata = array();
 			
 			$fileExt = pathinfo($file, PATHINFO_EXTENSION);
 				
-			if ($systemPreferences['Server path to ImageMagick|e.g. /usr/bin/'] && file_exists(rtrim($systemPreferences['Server path to ImageMagick|e.g. /usr/bin/'], '/') . '/identify')) {
-				$identify = rtrim($systemPreferences['Server path to ImageMagick|e.g. /usr/bin/'], '/') . '/identify';
+			if ($pathToImageMagick && file_exists(rtrim($pathToImageMagick, '/') . '/identify')) {
+				$identify = rtrim($pathToImageMagick, '/') . '/identify';
 				$identify .= ' ' . escapeshellarg($file); // input file
 				exec ($identify, $output, $return_var);
 	
@@ -423,9 +425,9 @@
 					);
 				}
 				
-				if ((!$metadata['Width'] || !$metadata['Height']) && $systemPreferences['Server path to FFmpeg|e.g. /usr/local/dh/bin/'] && file_exists(rtrim($systemPreferences['Server path to FFmpeg|e.g. /usr/local/dh/bin/'], '/') . '/ffmpeg')) {
+				if ((!$metadata['Width'] || !$metadata['Height']) && $pathToFFmpeg && file_exists(rtrim($pathToFFmpeg, '/') . '/ffmpeg')) {
 					ob_start();
-					passthru(rtrim($systemPreferences['Server path to FFmpeg|e.g. /usr/local/dh/bin/'], '/') . "/ffmpeg -i \"{$file}\" 2>&1");
+					passthru(rtrim($pathToFFmpeg, '/') . "/ffmpeg -i \"{$file}\" 2>&1");
 					$resolution = ob_get_contents();
 					ob_end_clean();
 					$search = '/Video: (.*?),(.*?),(.*?),/';

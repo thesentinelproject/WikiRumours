@@ -52,7 +52,7 @@
 						if ($templateName == 'admin_dashboard') echo " pillActive";
 						echo "'><a href='/admin_dashboard'><span class='glyphicon glyphicon-dashboard transluscent'></span> &nbsp; Dashboard</a></li>\n";
 					// Settings
-						if ($logged_in['can_edit_settings']) {
+						if ($logged_in['can_update_settings'] || $logged_in['can_edit_settings']) {
 							echo "                <li class='hideBullets";
 							if ($templateName == 'admin_settings') echo " pillActive";
 							echo "'><a href='/admin_settings'><span class='glyphicon glyphicon-cog transluscent'></span> &nbsp; Settings</a></li>\n";

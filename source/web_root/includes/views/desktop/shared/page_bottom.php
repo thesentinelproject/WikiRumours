@@ -151,7 +151,8 @@
 		}
 
 	// load other JS
-		if (file_exists('resources/js/' . $templateName . '.js')) echo "  <script src='/resources/js/" . $templateName . ".js'></script>\n";
+		if (file_exists('resources/js/custom/' . $templateName . '.js')) echo "  <script src='/resources/js/custom/" . $templateName . ".js'></script>\n";
+		elseif (file_exists('resources/js/default/' . $templateName . '.js')) echo "  <script src='/resources/js/default/" . $templateName . ".js'></script>\n";
 		
 		if ($handle = opendir('resources/js/autoload/.')) {
 			while (false !== ($file = readdir($handle))) {

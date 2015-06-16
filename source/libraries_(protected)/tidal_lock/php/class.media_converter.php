@@ -53,7 +53,7 @@
 		
 		public function convertImage($incomingFile, $outgoingFilename, $outgoingPath, $desiredWidth, $desiredHeight = null, $desiredAngle = null) {
 
-	
+			global $pathToImageMagick;
 			global $systemPreferences;
 			global $extToMime_TL;
 			global $console;
@@ -105,9 +105,9 @@
 				}
 				
 			// create new image
-				if ($systemPreferences['Server path to ImageMagick|e.g. /usr/bin/'] && file_exists(rtrim($systemPreferences['Server path to ImageMagick|e.g. /usr/bin/'], '/') . '/convert')) {
+				if ($pathToImageMagick && file_exists(rtrim($pathToImageMagick, '/') . '/convert')) {
 					if ((@$xOffset || @$yOffset) && !$desiredAngle) {
-						$convert = rtrim($systemPreferences['Server path to ImageMagick|e.g. /usr/bin/'], '/') . '/convert';
+						$convert = rtrim($pathToImageMagick, '/') . '/convert';
 						$convert .= ' -define jpeg:size=' . min($currentWidth, $currentHeight) . 'x' . min($currentWidth, $currentHeight);
 						$convert .= ' ' . escapeshellarg($incomingFile); // input file
 						$convert .= ' -thumbnail'; // type of conversion
@@ -115,13 +115,13 @@
 						$convert .= ' ' . escapeshellarg($outgoingPath . $outgoingFilename); // output file
 					}
 					elseif ($desiredAngle) {
-						$convert = rtrim($systemPreferences['Server path to ImageMagick|e.g. /usr/bin/'], '/') . '/convert';
+						$convert = rtrim($pathToImageMagick, '/') . '/convert';
 						$convert .= ' -rotate ' . $desiredAngle;
 						$convert .= ' ' . escapeshellarg($incomingFile); // input file
 						$convert .= ' ' . escapeshellarg($outgoingPath . $outgoingFilename); // output file
 					}
 					else {
-						$convert = rtrim($systemPreferences['Server path to ImageMagick|e.g. /usr/bin/'], '/') . '/convert';
+						$convert = rtrim($pathToImageMagick, '/') . '/convert';
 						$convert .= ' -thumbnail'; // type of conversion
 						$convert .= ' ' . $desiredWidth . 'x' . $desiredHeight; // dimensions of output file
 						$convert .= ' ' . escapeshellarg($incomingFile); // input file
@@ -177,6 +177,8 @@
 		
 		public function convertVideo($incomingFile, $outgoingFilename, $outgoingPath, $desiredWidth, $desiredHeight = null) {
 			
+			global $pathToImageMagick;
+			global $pathToFFmpeg;
 			global $systemPreferences;
 			global $console;
 
@@ -195,10 +197,10 @@
 				$desiredHeight = floor(($desiredHeight) / 2) * 2;
 				
 			// select converter
-				if ($systemPreferences['Server path to ImageMagick|e.g. /usr/bin/'] && file_exists(rtrim($systemPreferences['Server path to ImageMagick|e.g. /usr/bin/'], '/') . '/convert')) {
+				if ($pathToImageMagick && file_exists(rtrim($pathToImageMagick, '/') . '/convert')) {
 					
 					// create new image
-						$convert = rtrim($systemPreferences['Server path to ImageMagick|e.g. /usr/bin/'], '/') . '/convert';
+						$convert = rtrim($pathToImageMagick, '/') . '/convert';
 						$convert .= ' -resize'; // type of conversion
 						$convert .= ' ' . $desiredWidth . 'x' . $desiredHeight; // dimensions of output file
 						$convert .= ' ' . escapeshellarg($incomingFile); // input file
@@ -212,7 +214,7 @@
 						}
 						
 				}
-				elseif ($systemPreferences['Server path to FFmpeg|e.g. /usr/local/dh/bin/'] && file_exists(rtrim($systemPreferences['Server path to FFmpeg|e.g. /usr/local/dh/bin/'], '/') . '/ffmpeg')) {
+				elseif ($pathToFFmpeg && file_exists(rtrim($pathToFFmpeg, '/') . '/ffmpeg')) {
 					
 					// file extension must be lowercase
 						if (pathinfo($incomingFile, PATHINFO_EXTENSION) != strtolower(pathinfo($incomingFile, PATHINFO_EXTENSION))) {
@@ -221,7 +223,7 @@
 						}
 						
 					// create new image
-						$convert = rtrim($systemPreferences['Server path to FFmpeg|e.g. /usr/local/dh/bin/'], '/') . '/ffmpeg';
+						$convert = rtrim($pathToFFmpeg, '/') . '/ffmpeg';
 						$convert .= ' -itsoffset -1'; // capture frame after first second
 						$convert .= ' -i ' . escapeshellarg($incomingFile); // input path
 						$convert .= ' -vcodec mjpeg'; // incoming codec
@@ -251,11 +253,12 @@
 		
 		public function thumbnailVideo($incomingFile, $outgoingFilename, $outgoingPath, $desiredWidth, $desiredHeight) {
 	
+			global $pathToImageMagick;
 			global $systemPreferences;
 			global $console;
 			
 			// check for errors
-				if ($systemPreferences['Server path to ImageMagick|e.g. /usr/bin/'] && !file_exists(rtrim($systemPreferences['Server path to ImageMagick|e.g. /usr/bin/'], '/') . '/convert')) {
+				if ($pathToImageMagick && !file_exists(rtrim($pathToImageMagick, '/') . '/convert')) {
 					$console .= __FUNCTION__ . ": Can't find ImageMagick on this server.\n";
 					return false;
 				}
@@ -271,7 +274,7 @@
 				if (!$desiredHeight) $desiredHeight = intval($desiredWidth * 3 / 4);
 								
 			// create new image
-				$convert = rtrim($systemPreferences['Server path to ImageMagick|e.g. /usr/bin/'], '/') . '/convert';
+				$convert = rtrim($pathToImageMagick, '/') . '/convert';
 				$convert .= ' -thumbnail'; // type of conversion
 				$convert .= ' ' . $desiredWidth . 'x' . $desiredHeight; // dimensions of output file
 				$convert .= ' ' . escapeshellarg($incomingFile) . '[0]'; // input file

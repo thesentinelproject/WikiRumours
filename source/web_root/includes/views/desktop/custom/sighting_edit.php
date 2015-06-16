@@ -23,7 +23,7 @@
 								echo $form->input('select', 'created_by', $operators->firstTrue(@$_POST['created_by'], $sighting[0]['heard_by'], $logged_in['user_id']), false, '|Heard by', 'form-control', $allUsers + array(''=>'---', 'add'=>'New user')) . "\n";
 								echo "    " . $form->input('button', 'add_user', null, false, '...or create new user', 'btn btn-link', null, null, array('data-toggle'=>'collapse', 'data-target'=>'#newuser_container', 'aria-expanded'=>'false', 'aria-controls'=>'newuser_container'), null, array('onClick'=>'document.getElementById("created_by").value="add"; return false;')) . "\n";
 								
-								include 'shared/add_new_user.php';
+								include 'includes/views/desktop/shared/add_new_user.php';
 								
 								echo $form->rowEnd();
 							}
