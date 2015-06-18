@@ -36,7 +36,7 @@
 
 					// update logs
 						$activity = $logged_in['full_name'] . " (user_id " . $logged_in['user_id'] . ") has deleted the status &quot;" . $status[0]['status'] . "&quot; (status_id " . $status[0]['status_id'] . ")";
-						$logger->logItInDb($activity);
+						$logger->logItInDb($activity, null, array('user_id=' . $logged_in['user_id'], 'status_id=' . $status[0]['status_id']));
 
 					// redirect
 						header('Location: /admin_statuses/status_deleted');
@@ -75,7 +75,7 @@
 
 				// update log
 					$activity = $logged_in['full_name'] . " (user_id " . $logged_in['user_id'] . ") has updated statuses";
-					$logger->logItInDb($activity);
+					$logger->logItInDb($activity, null, array('user_id=' . $logged_in['user_id']));
 				
 				// redirect
 					header('Location: /admin_statuses/statuses_updated');

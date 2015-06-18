@@ -73,9 +73,9 @@
 				
 			if (!$pageError) {
 					// update log
-						if ($logged_in['user_id'] != $user[0]['user_id']) $activity = $logged_in['full_name'] . " (" . $logged_in['user_id'] . ") has updated the password of " . $user[0]['full_name'] . " (" . $user[0]['user_id'] . ")";
-						else $activity = $logged_in['full_name'] . " (" . $logged_in['user_id'] . ") has updated his/her own password";
-						$logger->logItInDb($activity);
+						if ($logged_in['user_id'] != $user[0]['user_id']) $activity = $logged_in['full_name'] . " (user_id " . $logged_in['user_id'] . ") has updated the password of " . $user[0]['full_name'] . " (" . $user[0]['user_id'] . ")";
+						else $activity = $logged_in['full_name'] . " (user_id " . $logged_in['user_id'] . ") has updated his/her own password";
+						$logger->logItInDb($activity, null, array('user_id=' . $logged_in['user_id']));
 					// redirect
 						header('Location: /profile/' . $user[0]['username'] . '/password_updated');
 						exit();

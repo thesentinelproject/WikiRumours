@@ -55,7 +55,7 @@
 			else {
 				// update log
 					$activity = $logged_in['full_name'] . " (user_id " . $logged_in['user_id'] . ") has provided unlimited API downloads for " . $username;
-					$logger->logItInDb($activity);
+					$logger->logItInDb($activity, null, array('user_id=' . $logged_in['user_id']));
 				// redirect
 					header('Location: /obtain_api_key/' . $username . '/query_threshold_updated');
 					exit();
@@ -67,7 +67,7 @@
 			else {
 				// update log
 					$activity = $logged_in['full_name'] . " (user_id " . $logged_in['user_id'] . ") has terminated unlimited API downloads for " . $username;
-					$logger->logItInDb($activity);
+					$logger->logItInDb($activity, null, array('user_id=' . $logged_in['user_id']));
 				// redirect
 					header('Location: /obtain_api_key/' . $username . '/query_threshold_updated');
 					exit();
@@ -88,10 +88,15 @@
 				if ($apiKey[0]['hash']) updateDb('api_calls_internal', array('api_key'=>$newApiKey), array('api_key'=>$apiKey[0]['hash']));
 
 			// update log
-				if ($logged_in['user_id'] != $user[0]['user_id']) $activity = $logged_in['full_name'] . " (user_id " . $logged_in['user_id'] . ") has obtained an API key on behalf of " . trim($user[0]['full_name']) . " (user_id " . $user[0]['user_id'] . ")";
-				else $activity = $logged_in['full_name'] . " (user_id " . $logged_in['user_id'] . ") has obtained an API key";
-				$logger->logItInDb($activity);
-							
+				if ($logged_in['user_id'] != $user[0]['user_id']) {
+					$activity = $logged_in['full_name'] . " (user_id " . $logged_in['user_id'] . ") has obtained an API key on behalf of " . trim($user[0]['full_name']) . " (user_id " . $user[0]['user_id'] . ")";
+					$logger->logItInDb($activity, null, array('user_id=' . $logged_in['user_id'], 'user_id=' . $user[0]['user_id']));
+				}
+				else {
+					$activity = $logged_in['full_name'] . " (user_id " . $logged_in['user_id'] . ") has obtained an API key";
+					$logger->logItInDb($activity, null, array('user_id=' . $logged_in['user_id']));
+				}
+
 			// redirect
 				header('Location: /obtain_api_key/' . $username . '/key_generated');
 				exit();

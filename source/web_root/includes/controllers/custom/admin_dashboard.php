@@ -87,7 +87,7 @@
 				
 			// update log
 				$activity = $logged_in['full_name'] . " (user_id " . $logged_in['user_id'] . ") has deleted the registrant &quot;" . $registrant[0]['full_name'] . "&quot; (registration_id " . $_POST['registrantToDelete'] . ")";
-				$logger->logItInDb($activity);
+				$logger->logItInDb($activity, null, array('user_id=' . $logged_in['user_id'], 'registration_id=' . $_POST['registrantToDelete']));
 				
 			// redirect
 				header('Location: /admin_dashboard/registrant_deleted');

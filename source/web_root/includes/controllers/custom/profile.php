@@ -36,7 +36,8 @@
 		$termination = retrieveSingleFromDb('user_terminations', null, array('user_id'=>$user[0]['user_id']));
 		$rumours = retrieveRumours(array('created_by'=>$user[0]['user_id'], $tablePrefix . 'rumours.enabled'=>'1'), null ,null, $tablePrefix . 'rumours.updated_on DESC', '0,50');
 		$comments = retrieveComments(array($tablePrefix . 'comments.created_by'=>$user[0]['user_id'], $tablePrefix . 'comments.enabled'=>'1', $tablePrefix . 'rumours.enabled'=>'1'), null ,null, $tablePrefix . 'comments.created_on DESC', '0,50');
-		
+		$recentActivities = retrieveLogs(array('relationship_name'=>'user_id', 'relationship_value'=>$user[0]['user_id']), null, null, 'connected_on DESC');
+
 /*	--------------------------------------
 	Execute only if a form post
 	-------------------------------------- */

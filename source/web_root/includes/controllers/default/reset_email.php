@@ -18,7 +18,7 @@
 				updateDb('users', array('email'=>$doesKeyExist[0]['value']), array('user_id'=>$user[0]['user_id']), null, null, null, null, 1);
 			// update log
 				$activity = $user[0]['full_name'] . " (user_id " . $user[0]['user_id'] . ") has successfully updated his/her email address";
-				$logger->logItInDb($activity);
+				$logger->logItInDb($activity, null, array('user_id=' . $user[0]['user_id']));
 			// remove key
 				deleteFromDb('user_keys', array('name'=>'Reset Email', 'hash'=>$key), null, null, null);
 			// redirect

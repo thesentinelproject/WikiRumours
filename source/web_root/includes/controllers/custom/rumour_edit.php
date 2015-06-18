@@ -99,7 +99,7 @@
 
 							// update logs
 								$activity = $logged_in['full_name'] . " (user_id " . $logged_in['user_id'] . ") has removed the photographic evidence from the rumour &quot;" . $rumour[0]['description'] . "&quot; (rumour_id " . $rumour[0]['rumour_id'] . ")";
-								$logger->logItInDb($activity);
+								$logger->logItInDb($activity, null, array('user_id=' . $logged_in['user_id'], 'rumour_id=' . $rumour[0]['rumour_id']));
 
 							// redirect
 								header('Location: /rumour_edit/' . $publicID . '/photographic_evidence_deleted');
@@ -209,11 +209,7 @@
 					if ($_POST['status_id'] != $rumour[0]['status_id']) {
 						$notify = retrieveWatchlist(array($tablePrefix . 'watchlist.rumour_id'=>$rumour[0]['rumour_id'], 'notify_of_updates'=>'1'), null, $tablePrefix . "users.email != '' AND " . $tablePrefix . "users.ok_to_contact = '1'");
 						for ($counter = 0; $counter < count($notify); $counter++) {
-							$success = notifyUserOfRumourStatusUpdate($notify[$counter]['full_name'], $notify[$counter]['email'], $rumour[0]['public_id'], $_POST['description'], $rumourStatuses[$_POST['status_id']]);
-							if (!$success) {
-								$activity = "Unable to email " . $notify[$counter]['full_name'] . " (" . $notify[$counter]['email'] . ") of a status update to rumour_id " . $rumour[0]['rumour_id'];
-								$logger->logItInDb($activity);
-							}
+							notifyUserOfRumourStatusUpdate($notify[$counter]['full_name'], $notify[$counter]['email'], $rumour[0]['public_id'], $_POST['description'], $rumourStatuses[$_POST['status_id']]);
 						}
 					}
 				}
@@ -223,18 +219,14 @@
 					if ($_POST['assigned_to'] != $rumour[0]['assigned_to']) {
 						$assignedTo = retrieveUsers(array($tablePrefix . 'users.user_id'=>$_POST['assigned_to'], 'ok_to_contact'=>'1'), null, $tablePrefix . "users.email != ''", null, 1);
 						if (count($assignedTo) == 1) {
-							$success = notifyOfRumour($assignedTo[0]['full_name'], $assignedTo[0]['email'], $publicID, $_POST['description'], true);
-							if (!$success) {
-								$activity = "Unable to email " . $assignedTo[0]['full_name'] . " (" . $assignedTo[0]['email'] . ") upon assignment of rumour_id " . $rumour[0]['rumour_id'] . " (public_id " . $publicID . "): " . $_POST['description'];
-								$logger->logItInDb($activity);
-							}
+							notifyOfRumour($assignedTo[0]['full_name'], $assignedTo[0]['email'], $publicID, $_POST['description'], true);
 						}
 					}
 				}
 
 			// update log
 				$activity = $logged_in['full_name'] . " (user_id " . $logged_in['user_id'] . ") has updated rumour_id " . $rumour[0]['rumour_id'] . ": " . $rumour[0]['description'];
-				$logger->logItInDb($activity);
+				$logger->logItInDb($activity, null, array('user_id=' . $logged_in['user_id'], 'rumour_id=' . $rumour[0]['rumour_id']));
 				
 			// redirect
 				if (!$pageError) {

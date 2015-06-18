@@ -5,7 +5,7 @@
 	
 	if (!$pageError && $action == 'run') {
 		$output = retrieveSingleFromDb('logs', null, array('log_id'=>$logID));
-		if ($output[0]['activity']) echo str_replace('|', '<br />', $output[0]['activity']);
+		if ($output[0]['activity']) echo nl2br($output[0]['activity']);
 		else echo "<p>There was an unexpected error attempting to retrieve this log.</p>\n";
 		echo "<p><br />\n";
 		echo "  " . $form->input('button', 'logs', null, null, 'Do it again', 'btn btn-info', null, null, null, null, array('onClick'=>'document.location.href = "/housekeeping/run";')) . "\n";

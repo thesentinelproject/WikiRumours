@@ -49,7 +49,7 @@
 
 			// update log
 				$activity = $logged_in['full_name'] . " (user_id " . $logged_in['user_id'] . ") has deleted a sighting (sighting_id " . $sighting[0]['sighting_id'] . ") from the rumour &quot;" . $sighting[0]['description'] . "&quot; (public_id " . $sighting[0]['public_id'] . ")";
-				$logger->logItInDb($activity);
+				$logger->logItInDb($activity, null, array('user_id=' . $logged_in['user_id'], 'sighting_id=' . $sighting[0]['sighting_id'], 'rumour_id=' . $sighting[0]['rumour_id']));
 				
 			// redirect
 				header('Location: /rumour/' . $sighting[0]['public_id'] . '/' . $parser->seoFriendlySuffix($sighting[0]['description']) . '/view=sightings/sighting_removed');
@@ -121,7 +121,7 @@
 										
 				// update log
 					$activity = $logged_in['full_name'] . " (user_id " . $logged_in['user_id'] . ") has updated a sighting (sighting_id " . $sighting[0]['sighting_id'] . ") for the rumour &quot;" . $sighting[0]['description'] . "&quot; (public_id " . $sighting[0]['public_id'] . ")";
-					$logger->logItInDb($activity);
+					$logger->logItInDb($activity, null, array('user_id=' . $logged_in['user_id'], 'sighting_id=' . $sighting[0]['sighting_id'], 'rumour_id=' . $sighting[0]['rumour_id']));
 					
 				// redirect
 					header('Location: /rumour/' . $sighting[0]['public_id'] . '/' . $parser->seoFriendlySuffix($sighting[0]['description']) . '/view=sightings/sighting_updated');

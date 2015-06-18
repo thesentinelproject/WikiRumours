@@ -55,7 +55,7 @@
 		// update log
 			$name = ($registration[0]['first_name'] || $registration[0]['last_name'] ? trim($registration[0]['first_name'] . " " . $registration[0]['last_name']) : $registration[0]['username']);
 			$activity = $name . " has completed registration";
-			$logger->logItInDb($activity);
+			$logger->logItInDb($activity, null, array('user_id=' . $userID, 'registration_id=' . $registrationID));
 						
 		// send welcome email
 			emailNewUser($name, $registration[0]['email']);

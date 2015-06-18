@@ -67,8 +67,8 @@
 						updateDbSingle('preferences', array('value'=>$_POST['value'], 'updated_by'=>$logged_in['user_id'], 'updated_on'=>date('Y-m-d H:i:s')), array('preference_id'=>$setting[0]['preference_id']));
 
 					// update log
-						$activity = $logged_in['full_name'] . " (user_id " . $logged_in['user_id'] . ") has updated the system setting &quot;" . $setting[0]['preference'] . "&quot;";
-						$logger->logItInDb($activity);
+						$activity = $logged_in['full_name'] . " (user_id " . $logged_in['user_id'] . ") has updated the system setting &quot;" . $setting[0]['preference'] . "&quot; (preference_id " . $setting[0]['preference_id'] . ")";
+						$logger->logItInDb($activity, null, array('user_id=' . $logged_in['user_id'], 'preference_id=' . $setting[0]['preference_id']));
 					
 					// redirect
 						header('Location: /admin_settings/all/setting_updated');
@@ -89,8 +89,8 @@
 						deleteFromDbSingle('preferences',  array('preference_id'=>$setting[0]['preference_id']));
 
 					// update log
-						$activity = $logged_in['full_name'] . " (user_id " . $logged_in['user_id'] . ") has deleted the system setting &quot;" . $setting[0]['preference'] . "&quot;";
-						$logger->logItInDb($activity);
+						$activity = $logged_in['full_name'] . " (user_id " . $logged_in['user_id'] . ") has deleted the system setting &quot;" . $setting[0]['preference'] . "&quot; (preference_id " . $setting[0]['preference_id'] . ")";
+						$logger->logItInDb($activity, null, array('user_id=' . $logged_in['user_id'], 'preference_id=' . $setting[0]['preference_id']));
 					
 					// redirect
 						header('Location: /admin_settings/all/setting_deleted');
@@ -116,8 +116,8 @@
 						updateDbSingle('preferences', array('preference'=>$_POST['preference'], 'prepend'=>$_POST['prepend'], 'append'=>$_POST['append'], 'input_type'=>$_POST['input_type'], 'options'=>$_POST['options'], 'is_mandatory'=>$_POST['is_mandatory'], 'tooltip'=>$_POST['tooltip'], 'updated_by'=>$logged_in['user_id'], 'updated_on'=>date('Y-m-d H:i:s')), array('preference_id'=>$setting[0]['preference_id']));
 
 					// update log
-						$activity = $logged_in['full_name'] . " (user_id " . $logged_in['user_id'] . ") has edited the system setting &quot;" . $setting[0]['preference'] . "&quot;";
-						$logger->logItInDb($activity);
+						$activity = $logged_in['full_name'] . " (user_id " . $logged_in['user_id'] . ") has edited the system setting &quot;" . $setting[0]['preference'] . "&quot; (preference_id " . $setting[0]['preference_id'] . ")";
+						$logger->logItInDb($activity, null, array('user_id=' . $logged_in['user_id'], 'preference_id=' . $setting[0]['preference_id']));
 					
 					// redirect
 						header('Location: /admin_settings/all/setting_edited');
@@ -135,11 +135,11 @@
 				else $_POST['is_mandatory'] = 0;
 
 			// update DB
-				insertIntoDb('preferences', array('preference'=>$_POST['preference'], 'prepend'=>$_POST['prepend'], 'value'=>$_POST['setting_value'], 'append'=>$_POST['append'], 'input_type'=>$_POST['input_type'], 'options'=>$_POST['options'], 'is_mandatory'=>$_POST['is_mandatory'], 'tooltip'=>$_POST['tooltip'], 'updated_by'=>$logged_in['user_id'], 'updated_on'=>date('Y-m-d H:i:s')));
+				$preferenceID = insertIntoDb('preferences', array('preference'=>$_POST['preference'], 'prepend'=>$_POST['prepend'], 'value'=>$_POST['setting_value'], 'append'=>$_POST['append'], 'input_type'=>$_POST['input_type'], 'options'=>$_POST['options'], 'is_mandatory'=>$_POST['is_mandatory'], 'tooltip'=>$_POST['tooltip'], 'updated_by'=>$logged_in['user_id'], 'updated_on'=>date('Y-m-d H:i:s')));
 
 			// update log
-				$activity = $logged_in['full_name'] . " (user_id " . $logged_in['user_id'] . ") has created the system setting &quot;" . $_POST['preference'] . "&quot;";
-				$logger->logItInDb($activity);
+				$activity = $logged_in['full_name'] . " (user_id " . $logged_in['user_id'] . ") has created the system setting &quot;" . $_POST['preference'] . "&quot; (preference_id " . $preferenceID . ")";
+				$logger->logItInDb($activity, null, array('user_id=' . $logged_in['user_id'], 'preference_id=' . $preferenceID));
 			
 			// redirect
 				header('Location: /admin_settings/all/setting_added');

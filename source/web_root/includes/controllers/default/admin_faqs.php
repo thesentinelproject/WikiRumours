@@ -39,7 +39,7 @@
 				
 			// update log
 				$activity = $logged_in['full_name'] . " (user_id " . $logged_in['user_id'] . ") has deleted the FAQ &quot;" . $_POST['question_' . $_POST['faqToDelete']] . "&quot; (faq_id " . $_POST['faqToDelete'] . ")";
-				$logger->logItInDb($activity);
+				$logger->logItInDb($activity, null, array('user_id=' . $logged_in['user_id'], 'faq_id=' . $_POST['faqToDelete']));
 				
 			// redirect
 				header('Location: /admin_faqs/faq_deleted');
@@ -75,7 +75,7 @@
 
 				// update log
 					$activity = $logged_in['full_name'] . " (user_id " . $logged_in['user_id'] . ") has updated FAQs";
-					$logger->logItInDb($activity);
+					$logger->logItInDb($activity, null, array('user_id=' . $logged_in['user_id']));
 				
 				// redirect
 					header('Location: /admin_faqs/faqs_updated');
@@ -93,7 +93,7 @@
 				
 			// update log
 				$activity = $logged_in['full_name'] . " (user_id " . $logged_in['user_id'] . ") has deleted the FAQ section &quot;" . $_POST['name_' . $_POST['faqSectionToDelete']] . "&quot; (section_id " . $_POST['faqSectionToDelete'] . ")";
-				$logger->logItInDb($activity);
+				$logger->logItInDb($activity, null, array('user_id=' . $logged_in['user_id'], 'section_id=' . $_POST['faqSectionToDelete']));
 				
 			// redirect
 				header('Location: /admin_faqs/faq_section_deleted');
@@ -123,8 +123,8 @@
 						}
 					
 				// update log
-					$activity = $logged_in['full_name'] . " (user_id " . $logged_in['user_id'] . ") has updated FAQ chapters";
-					$logger->logItInDb($activity);
+					$activity = $logged_in['full_name'] . " (user_id " . $logged_in['user_id'] . ") has updated FAQ sections";
+					$logger->logItInDb($activity, null, array('user_id=' . $logged_in['user_id']));
 				
 				// redirect
 					header('Location: /admin_faqs/faq_sections_updated');

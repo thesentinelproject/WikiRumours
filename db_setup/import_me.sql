@@ -3,7 +3,7 @@
 -- http://www.phpmyadmin.net
 --
 -- Host: mysql.wikirumours.org
--- Generation Time: Jun 16, 2015 at 09:23 AM
+-- Generation Time: Jun 16, 2015 at 06:33 PM
 -- Server version: 5.1.56
 -- PHP Version: 5.3.29
 
@@ -8352,9 +8352,9 @@ INSERT INTO `wr_languages` (`language_id`, `language`, `native`, `macrolanguage`
 
 CREATE TABLE IF NOT EXISTS `wr_location_types` (
   `type_id` tinyint(2) NOT NULL AUTO_INCREMENT,
-  `name` varchar(100) NOT NULL,
+  `name` varchar(100) COLLATE utf8_unicode_ci NOT NULL,
   PRIMARY KEY (`type_id`)
-) ENGINE=MyISAM  DEFAULT CHARSET=utf8 AUTO_INCREMENT=8 ;
+) ENGINE=InnoDB  DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci AUTO_INCREMENT=8 ;
 
 --
 -- Dumping data for table `wr_location_types`
@@ -8391,6 +8391,24 @@ CREATE TABLE IF NOT EXISTS `wr_logs` (
 
 --
 -- Dumping data for table `wr_logs`
+--
+
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `wr_log_relationships`
+--
+
+CREATE TABLE IF NOT EXISTS `wr_log_relationships` (
+  `log_id` int(9) NOT NULL,
+  `relationship_name` varchar(15) COLLATE utf8_unicode_ci NOT NULL,
+  `relationship_value` int(9) NOT NULL,
+  PRIMARY KEY (`log_id`,`relationship_name`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
+
+--
+-- Dumping data for table `wr_log_relationships`
 --
 
 
@@ -8459,7 +8477,6 @@ CREATE TABLE IF NOT EXISTS `wr_preferences` (
   `input_type` varchar(30) COLLATE utf8_unicode_ci NOT NULL,
   `options` varchar(255) COLLATE utf8_unicode_ci NOT NULL,
   `is_mandatory` tinyint(1) NOT NULL,
-  `position` tinyint(3) NOT NULL,
   `updated_by` int(9) NOT NULL,
   `updated_on` datetime NOT NULL,
   PRIMARY KEY (`preference_id`)
@@ -8469,36 +8486,36 @@ CREATE TABLE IF NOT EXISTS `wr_preferences` (
 -- Dumping data for table `wr_preferences`
 --
 
-INSERT INTO `wr_preferences` (`preference_id`, `user_id`, `preference`, `value`, `prepend`, `append`, `input_type`, `options`, `is_mandatory`, `position`, `updated_by`, `updated_on`) VALUES
-(1, 0, 'Name of this application', 'WikiRumours', '', '', 'text', '', 1, 1, 1, '2015-04-01 12:58:13'),
-(2, 0, 'Describe this application', 'Web- and mobile-based platform for moderating misinformation and disinformation', '', '', 'text', '', 0, 2, 1, '2015-04-01 12:58:13'),
-(3, 0, 'Home timezone', 'America/Toronto', '', '', 'timezone', '', 1, 3, 1, '2015-04-01 12:58:13'),
-(4, 0, 'Keep logs for', '90', '', 'days', 'number', '', 1, 4, 1, '2015-04-01 12:58:13'),
-(5, 0, 'Enable database backups', '0', '', '', 'yesno_bootstrap_switch', '', 1, 5, 1, '2015-04-01 12:58:13'),
-(6, 0, 'Keep backups for', '30', '', 'days', 'number', '', 1, 6, 1, '2015-04-01 12:58:13'),
-(7, 0, 'Maximum filesize for CMS uploads', '2000', '', 'kb', 'number', '', 1, 7, 1, '2015-04-01 12:58:13'),
-(8, 0, 'Enable friending', '0', '', '', 'yesno_bootstrap_switch', '', 1, 8, 1, '2015-04-01 12:58:13'),
-(9, 0, 'Maximum number of times a friend invitation can be sent', '3', '', '', 'number', '', 0, 9, 1, '2015-04-01 12:58:13'),
-(10, 0, 'Enable couponing', '0', '', '', 'yesno_bootstrap_switch', '', 1, 10, 1, '2015-04-01 12:58:13'),
-(11, 0, 'Enable API', '0', '', '', 'yesno_bootstrap_switch', '', 1, 11, 1, '2015-04-01 12:58:13'),
-(12, 0, 'Maximum API calls', '100', '', 'per day', 'number', '', 0, 12, 1, '2015-04-01 12:58:13'),
-(13, 0, 'Registration requires validated email address', '1', '', '', 'yesno_bootstrap_switch', '', 1, 13, 1, '2015-04-01 12:58:13'),
-(14, 0, 'Registration requires administrator approval', '0', '', '', 'yesno_bootstrap_switch', '', 1, 14, 1, '2015-04-01 12:58:13'),
-(15, 0, 'Keep users logged in for', '365', '', 'days', 'number', '', 1, 15, 1, '2015-04-01 12:58:13'),
-(16, 0, 'Password reset link active for', '48', '', 'hours', 'number', '', 1, 16, 1, '2015-04-01 12:58:13'),
-(17, 0, 'Email confirmation link active for', '48', '', 'hours', 'number', '', 1, 17, 1, '2015-04-01 12:58:13'),
-(18, 0, 'Pending registrations auto-deleted after', '14', '', 'days', 'number', '', 0, 18, 1, '2015-04-01 12:58:13'),
-(19, 0, 'Server path to ImageMagick|e.g. /usr/bin/', '/usr/bin/', '', '', 'text', '', 0, 19, 1, '2015-04-01 12:58:13'),
-(20, 0, 'Server path to FFmpeg|e.g. /usr/local/dh/bin/', '/usr/local/dh/bin/', '', '', 'text', '', 0, 20, 1, '2015-04-01 12:58:13'),
-(21, 0, 'Redirect for mobile', '0', '', '', 'yesno_bootstrap_switch', '', 1, 21, 1, '2015-04-01 12:58:13'),
-(22, 0, 'Redirect for tablet', '0', '', '', 'yesno_bootstrap_switch', '', 1, 22, 1, '2015-04-01 12:58:13'),
-(23, 0, 'Enable cron connections', '1', '', '', 'yesno_bootstrap_switch', '', 1, 23, 1, '2015-04-01 12:58:13'),
-(24, 0, 'Interval between cron connections', '10', '', 'minutes', 'number', '', 0, 24, 1, '2015-04-01 12:58:13'),
-(25, 0, 'Maximum allowable failures per email address', '3', '', 'failures', 'number', '', 1, 25, 1, '2015-04-01 12:58:13'),
-(26, 0, 'Enable console for testers', '1', '', '', 'yesno_bootstrap_switch', '', 1, 26, 1, '2015-04-01 12:58:13'),
-(27, 0, 'Root URL', 'www.wikirumours.org', '', '', 'text', '', 1, 27, 1, '2015-04-08 15:09:59'),
-(28, 0, 'Google Analytics ID', '', '', '', 'text', '', 0, 28, 1, '0000-00-00 00:00:00'),
-(29, 0, 'Default language', 'eng', '', '', 'language', '', 1, 29, 1, '0000-00-00 00:00:00');
+INSERT INTO `wr_preferences` (`preference_id`, `user_id`, `preference`, `value`, `prepend`, `append`, `input_type`, `options`, `is_mandatory`, `updated_by`, `updated_on`) VALUES
+(1, 0, 'Name of this application', 'WikiRumours', '', '', 'text', '', 1, 1, '2015-04-01 12:58:13'),
+(2, 0, 'Describe this application', 'Web- and mobile-based platform for moderating misinformation and disinformation', '', '', 'text', '', 0, 1, '2015-04-01 12:58:13'),
+(3, 0, 'Home timezone', 'America/Toronto', '', '', 'timezone', '', 1, 1, '2015-04-01 12:58:13'),
+(4, 0, 'Keep logs for', '90', '', 'days', 'number', '', 1, 1, '2015-04-01 12:58:13'),
+(5, 0, 'Enable database backups', '0', '', '', 'yesno_bootstrap_switch', '', 1, 1, '2015-04-01 12:58:13'),
+(6, 0, 'Keep backups for', '30', '', 'days', 'number', '', 1, 1, '2015-04-01 12:58:13'),
+(7, 0, 'Maximum filesize for CMS uploads', '2000', '', 'kb', 'number', '', 1, 1, '2015-04-01 12:58:13'),
+(8, 0, 'Enable friending', '0', '', '', 'yesno_bootstrap_switch', '', 1, 1, '2015-04-01 12:58:13'),
+(9, 0, 'Maximum number of times a friend invitation can be sent', '3', '', '', 'number', '', 0, 1, '2015-04-01 12:58:13'),
+(10, 0, 'Enable couponing', '0', '', '', 'yesno_bootstrap_switch', '', 1, 1, '2015-04-01 12:58:13'),
+(11, 0, 'Enable API', '0', '', '', 'yesno_bootstrap_switch', '', 1, 1, '2015-04-01 12:58:13'),
+(12, 0, 'Maximum API calls', '100', '', 'per day', 'number', '', 0, 1, '2015-04-01 12:58:13'),
+(13, 0, 'Registration requires validated email address', '1', '', '', 'yesno_bootstrap_switch', '', 1, 1, '2015-04-01 12:58:13'),
+(14, 0, 'Registration requires administrator approval', '0', '', '', 'yesno_bootstrap_switch', '', 1, 1, '2015-04-01 12:58:13'),
+(15, 0, 'Keep users logged in for', '365', '', 'days', 'number', '', 1, 1, '2015-04-01 12:58:13'),
+(16, 0, 'Password reset link active for', '48', '', 'hours', 'number', '', 1, 1, '2015-04-01 12:58:13'),
+(17, 0, 'Email confirmation link active for', '48', '', 'hours', 'number', '', 1, 1, '2015-04-01 12:58:13'),
+(18, 0, 'Pending registrations auto-deleted after', '14', '', 'days', 'number', '', 0, 1, '2015-04-01 12:58:13'),
+(19, 0, 'Server path to ImageMagick|e.g. /usr/bin/', '/usr/bin/', '', '', 'text', '', 0, 1, '2015-04-01 12:58:13'),
+(20, 0, 'Server path to FFmpeg|e.g. /usr/local/dh/bin/', '/usr/local/dh/bin/', '', '', 'text', '', 0, 1, '2015-04-01 12:58:13'),
+(21, 0, 'Redirect for mobile', '0', '', '', 'yesno_bootstrap_switch', '', 1, 1, '2015-04-01 12:58:13'),
+(22, 0, 'Redirect for tablet', '0', '', '', 'yesno_bootstrap_switch', '', 1, 1, '2015-04-01 12:58:13'),
+(23, 0, 'Enable cron connections', '1', '', '', 'yesno_bootstrap_switch', '', 1, 1, '2015-04-01 12:58:13'),
+(24, 0, 'Interval between cron connections', '10', '', 'minutes', 'number', '', 0, 1, '2015-04-01 12:58:13'),
+(25, 0, 'Maximum allowable failures per email address', '3', '', 'failures', 'number', '', 1, 1, '2015-04-01 12:58:13'),
+(26, 0, 'Enable console for testers', '1', '', '', 'yesno_bootstrap_switch', '', 1, 1, '2015-04-01 12:58:13'),
+(27, 0, 'Root URL', 'www.wikirumours.org', '', '', 'text', '', 1, 1, '2015-04-08 15:09:59'),
+(28, 0, 'Google Analytics ID', '', '', '', 'text', '', 0, 1, '0000-00-00 00:00:00'),
+(29, 0, 'Default language', 'eng', '', '', 'language', '', 1, 1, '0000-00-00 00:00:00');
 
 -- --------------------------------------------------------
 

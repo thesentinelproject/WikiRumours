@@ -98,7 +98,7 @@
 		
 					// update log
 						$activity = $logged_in['full_name'] . " (user_id " . $logged_in['user_id'] . ") has removed the tag &quot;" . $tag[0]['tag'] . "&quot; (tag_id " . $_POST['tagToRemove'] . ") from rumour_id " . $rumour[0]['rumour_id'] . ": " . $rumour[0]['description'];
-						$logger->logItInDb($activity);
+						$logger->logItInDb($activity, null, array('user_id=' . $logged_in['user_id'], 'rumour_id=' . $rumour[0]['rumour_id'], 'tag_id=' . $_POST['tagToRemove']));
 						
 					// redirect
 						header('Location: /rumour/' . $publicID . '/' . $parser->seoFriendlySuffix($rumour[0]['description']) . '/' . ($parameter3 ? $parameter3 : "page=1") . '/tag_removed');
@@ -133,7 +133,7 @@
 
 						// update log
 							$activity = $logged_in['full_name'] . " (user_id " . $logged_in['user_id'] . ") has added the tag &quot;" . $_POST['new_tags'][$counter] . "&quot; (tag_id " . $tagID . ") to rumour_id " . $rumour[0]['rumour_id'] . ": " . $rumour[0]['description'];
-							$logger->logItInDb($activity);
+							$logger->logItInDb($activity, null, array('user_id=' . $logged_in['user_id'], 'rumour_id=' . $rumour[0]['rumour_id'], 'tag_id=' . $tagID));
 							
 					}
 
@@ -156,7 +156,7 @@
 		
 					// update log
 						$activity = $logged_in['full_name'] . " (user_id " . $logged_in['user_id'] . ") has removed a sighting from the rumour &quot;" . $rumour[0]['description'] . "&quot; (public_id " . $publicID . ")";
-						$logger->logItInDb($activity);
+						$logger->logItInDb($activity, null, array('user_id=' . $logged_in['user_id'], 'rumour_id=' . $rumour[0]['rumour_id'], 'sighting_id=' . $_POST['sightingToRemove']));
 						
 					// redirect
 						header('Location: /rumour/' . $publicID . '/' . $parser->seoFriendlySuffix($rumour[0]['description']) . '/' . $keyvalue_array->updateKeyValue($parameter3, 'view', 'sightings', '|') . '/sighting_removed');
@@ -222,7 +222,7 @@
 										
 				// update log
 					$activity = $logged_in['full_name'] . " (user_id " . $logged_in['user_id'] . ") has added a sighting (sighting_id " . $sightingID . ") of rumour_id " . $rumour[0]['rumour_id'] . ": " . $rumour[0]['description'];
-					$logger->logItInDb($activity);
+					$logger->logItInDb($activity, null, array('user_id=' . $logged_in['user_id'], 'rumour_id=' . $rumour[0]['rumour_id'], 'sighting_id=' . $sightingID));
 					
 				// redirect
 					header('Location: /rumour/' . $publicID . '/' . $parser->seoFriendlySuffix($rumour[0]['description']) . '/' . $parameter3 . '/sighting_added');
@@ -282,7 +282,7 @@
 
 						// update log
 							$activity = $logged_in['full_name'] . " (user_id " . $logged_in['user_id'] . ") has added a comment (comment_id " . $commentID . ") to rumour_id " . $rumour[0]['rumour_id'] . ": " . $rumour[0]['description'];
-							$logger->logItInDb($activity);
+							$logger->logItInDb($activity, null, array('user_id=' . $logged_in['user_id'], 'rumour_id=' . $rumour[0]['rumour_id'], 'comment_id=' . $commentID));
 							
 						// redirect
 							header('Location: /rumour/' . $publicID . '/' . $parser->seoFriendlySuffix($rumour[0]['description']) . '/' . $keyvalue_array->updateKeyValue($parameter3, 'view', 'comments', '|') . '/comment_added');
@@ -303,7 +303,7 @@
 
 			// update log
 				$activity = $logged_in['full_name'] . " (user_id " . $logged_in['user_id'] . ") has flagged a comment (comment_id " . $_POST['commentToFlag'] . ") to rumour_id " . $rumour[0]['rumour_id'] . ": " . $rumour[0]['description'];
-				$logger->logItInDb($activity);
+				$logger->logItInDb($activity, null, array('user_id=' . $logged_in['user_id'], 'rumour_id=' . $rumour[0]['rumour_id'], 'comment_id=' . $_POST['commentToFlag']));
 				
 			// redirect
 				header('Location: /rumour/' . $publicID . '/' . $parser->seoFriendlySuffix($rumour[0]['description']) . '/' . $keyvalue_array->updateKeyValue($parameter3, 'view', 'comments', '|') . '/comment_flagged');
@@ -318,7 +318,7 @@
 
 			// update log
 				$activity = $logged_in['full_name'] . " (user_id " . $logged_in['user_id'] . ") has disabled a comment (comment_id " . $_POST['commentToDisable'] . ") to rumour_id " . $rumour[0]['rumour_id'] . ": " . $rumour[0]['description'];
-				$logger->logItInDb($activity);
+				$logger->logItInDb($activity, null, array('user_id=' . $logged_in['user_id'], 'rumour_id=' . $rumour[0]['rumour_id'], 'comment_id=' . $_POST['commentToDisable']));
 				
 			// redirect
 				header('Location: /rumour/' . $publicID . '/' . $parser->seoFriendlySuffix($rumour[0]['description']) . '/' . $keyvalue_array->updateKeyValue($parameter3, 'view', 'comments', '|') . '/comment_disabled');
@@ -333,7 +333,7 @@
 
 			// update log
 				$activity = $logged_in['full_name'] . " (user_id " . $logged_in['user_id'] . ") has re-enabled a comment (comment_id " . $_POST['commentToEnable'] . ") to rumour_id " . $rumour[0]['rumour_id'] . ": " . $rumour[0]['description'];
-				$logger->logItInDb($activity);
+				$logger->logItInDb($activity, null, array('user_id=' . $logged_in['user_id'], 'rumour_id=' . $rumour[0]['rumour_id'], 'comment_id=' . $_POST['commentToEnable']));
 				
 			// redirect
 				header('Location: /rumour/' . $publicID . '/' . $parser->seoFriendlySuffix($rumour[0]['description']) . '/' . $keyvalue_array->updateKeyValue($parameter3, 'view', 'comments', '|') . '/comment_enabled');

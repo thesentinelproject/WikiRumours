@@ -1,7 +1,7 @@
 <?php
 	include 'includes/views/desktop/shared/page_top.php';
 
-	echo "  <h2>" . (@$numberOfLogs ? "<span class='label label-default'>" . @$numberOfLogs . "</span> " : false) . "Logs</h2>\n\n";
+	echo "  <h2>" . (@$numberOfLogs ? "<span class='label label-default'>" . number_format($numberOfLogs) . "</span> " : false) . "Logs</h2>\n\n";
 
 	echo $form->start('adminLogsForm', null, 'post', null, null, array('onSubmit'=>'validateAdminLogsForm(); return false;')) . "\n";
 	echo $form->input('hidden', 'exportData') . "\n";
@@ -12,11 +12,11 @@
 			echo "  <table class='table table-condensed table-hover'>\n";
 			echo "  <thead>\n";
 			echo "  <tr>\n";
-			echo "  <th>Date</th>\n";
-			echo "  <th>Initiated by</th>\n";
-			echo "  <th>Length</th>\n";
-			echo "  <th>Activity</th>\n";
-			echo "  <th></th>\n";
+			echo "  <th width='25%'>Date</th>\n";
+			echo "  <th width='10%'>Initiated by</th>\n";
+			echo "  <th width='10%'>Length</th>\n";
+			echo "  <th width='60%'>Activity</th>\n";
+			echo "  <th width='5%'></th>\n";
 			echo "  </tr>\n";
 			echo "  </thead>\n";
 			echo "  <tbody>\n";
@@ -35,12 +35,12 @@
 					else echo floatval(@$logs[$counter]['connection_length_in_seconds']) . "&nbsp;s";
 					echo "  </td>\n";
 				// Activity
-					$activity = str_replace('|', '<br />', $logs[$counter]['activity']);
+					$activity = nl2br($logs[$counter]['activity']);
 					if ($logs[$counter]['error_message']) $activity .= $logs[$counter]['error_message'];
 					$lineBreak = strpos($activity, '<br />');
 					if (!$lineBreak) $lineBreak = strlen($activity);
 					$preview = substr($activity, 0, $lineBreak);
-					$preview = $parser->truncate($preview, 'c', 60);
+					$preview = $parser->truncate($preview, 'c', 45);
 
 					echo "  <td>";
 					echo "    <div id='preview_" . $counter . "' class='collapse in'>" . $preview . "</div>\n";

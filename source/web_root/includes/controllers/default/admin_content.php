@@ -55,7 +55,7 @@
 					deleteFromDb('cms', array('cms_id'=>$cms[0]['cms_id']), null, null, null, null, 1);
 				// update log
 					$activity = $logged_in['full_name'] . " (user_id " . $logged_in['user_id'] . ") deleted the page &quot;" . addSlashes($cms[0]['slug']) . "&quot;";
-					$logger->logItInDb($activity);
+					$logger->logItInDb($activity, null, array('user_id=' . $logged_in['user_id'], 'cms_id=' . $cms[0]['cms_id']));
 				// redirect
 					header('Location: /admin_content/menu/page_deleted');
 					exit();
@@ -65,7 +65,7 @@
 					deleteFromDb('cms', array('cms_id'=>$cms[0]['cms_id']), null, null, null, null, 1);
 				// update log
 					$activity = $logged_in['full_name'] . " (user_id " . $logged_in['user_id'] . ") deleted the content block &quot;" . addSlashes($cms[0]['slug']) . "&quot;";
-					$logger->logItInDb($activity);
+					$logger->logItInDb($activity, null, array('user_id=' . $logged_in['user_id'], 'cms_id=' . $cms[0]['cms_id']));
 				// redirect
 					header('Location: /admin_content/menu/block_deleted');
 					exit();
@@ -79,7 +79,7 @@
 							deleteFromDb('cms', array('cms_id'=>$cms[0]['cms_id']), null, null, null, null, 1);
 						// update log
 							$activity = $logged_in['full_name'] . " (user_id " . $logged_in['user_id'] . ") deleted the file &quot;" . addSlashes($cms[0]['slug']) . "&quot;";
-							$logger->logItInDb($activity);
+							$logger->logItInDb($activity, null, array('user_id=' . $logged_in['user_id'], 'cms_id=' . $cms[0]['cms_id']));
 						//redirect
 							header('Location: /admin_content/menu/file_deleted');
 							exit();
@@ -160,7 +160,7 @@
 					elseif ($screen == 'edit_block') $activity = $logged_in['full_name'] . " (user_id " . $logged_in['user_id'] . ") updated the content block &quot;" . $_POST['slug'] . "&quot; (cms_id " . $cms[0]['cms_id'] . ")";
 					elseif ($screen == 'add_file') $activity = $logged_in['full_name'] . " (user_id " . $logged_in['user_id'] . ") added the file &quot;" . $_FILES['cmsFileUpload']['name'] . "&quot; (cms_id " . $cmsID . ")";
 					elseif ($screen == 'edit_file') $activity = $logged_in['full_name'] . " (user_id " . $logged_in['user_id'] . ") updated the file &quot;" . $_POST['slug'] . "&quot; (cms_id " . $cms[0]['cms_id'] . ")";
-					$logger->logItInDb($activity);
+					$logger->logItInDb($activity, null, array('user_id=' . $logged_in['user_id'], 'cms_id=' . (@$cmsID ? $cmsID : @$cms[0]['cms_id'])));
 				}
 				
 			// redirect

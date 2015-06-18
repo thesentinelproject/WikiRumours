@@ -8,6 +8,7 @@
 		echo "  <li class='active'><a href='#profile' data-toggle='tab'><span" . (!$user[0]['enabled'] || $user[0]['anonymous'] ? " class='muted'" : false) . "><strong>" . $user[0]['username'] . "</strong>" . (!$user[0]['enabled'] ? " (account disabled)" : false) . ($user[0]['anonymous'] ? " (profile hidden)" : false) . "</span></a></li>\n";
 		echo "  <li><a href='#rumours' data-toggle='tab'>Rumours reported" . (count($rumours) ? " (" . count($rumours) . ")" : false) . "</a></li>\n";
 		echo "  <li><a href='#comments' data-toggle='tab'>Comments" . (count($comments) ? " (" . count($comments) . ")" : false) . "</a></li>\n";
+		if ($logged_in['is_administrator']) echo "  <li><a href='#activities' data-toggle='tab'>Recent activities" . (count($recentActivities) ? " (" . count($recentActivities) . ")" : false) . "</a></li>\n";
 		echo "</ul><br />\n\n";
 
 	echo "<div class='tab-content'>\n";
@@ -119,6 +120,43 @@
 	}
 		
 	echo "  </div>\n";
+
+	if ($logged_in['is_administrator']) {
+
+		echo "  <div class='tab-pane' id='activities'>\n";
+
+/*		--------------------------------------
+		Recent activities tab
+		-------------------------------------- */
+
+		if (!count($recentActivities)) echo "<p>None yet.</p>\n";
+		else {
+			echo "  <table class='table table-hover table-condensed'>\n";
+			echo "  <thead>\n";
+			echo "  <tr>\n";
+			echo "  <th>Date</th>\n";
+			echo "  <th>Activity</th>\n";
+			echo "  </tr>\n";
+			echo "  </thead>\n";
+			echo "  <tbody>\n";
+			for ($counter = 0; $counter < count($recentActivities); $counter++) {
+				echo "  <tr>\n";
+				echo "  <td>\n";
+				echo "    " . str_replace(' ', '&nbsp;', date('j-M-Y', strtotime($recentActivities[$counter]['connected_on']))) . "\n";
+				echo "    <small><span class='text-muted'>" . date('g:i:s A', strtotime($recentActivities[$counter]['connected_on'])) . "</span></small>\n";
+				echo "  </td>\n";
+				echo "  <td>" . $recentActivities[$counter]['activity'] . "</td>\n";
+				echo "  </tr>\n";
+			}
+			echo "  </tbody>\n";
+			echo "  </table>\n";
+		}
+			
+		echo "  </div>\n";
+
+	}
+
+
 	echo "</div>\n";
 
 	include 'includes/views/desktop/shared/page_bottom.php';

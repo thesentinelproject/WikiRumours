@@ -6,21 +6,18 @@
 		
 		public function logItInMemory($activity) {
 			
-			$numberOfLogEntries = count($this->log);
 			$currentTimeInMilliseconds = round(microtime(true) * 1000);
-			if ($numberOfLogEntries > 0) {
-				$previousMilliseconds = $this->log[$numberOfLogEntries - 1]['milliseconds'];
-				$variance = $currentTimeInMilliseconds - $previousMilliseconds;
-			}
+			if (count($this->log) > 0) $variance = $currentTimeInMilliseconds - $this->log[count($this->log) - 1]['milliseconds'];
 			
-			$this->log[$numberOfLogEntries]['activity'] = $activity;
-			$this->log[$numberOfLogEntries]['time'] = date('H:i:s');
-			$this->log[$numberOfLogEntries]['milliseconds'] = $currentTimeInMilliseconds;
-			$this->log[$numberOfLogEntries]['variance'] = @$variance;
+			$next = count($this->log);
+			$this->log[$next]['activity'] = $activity;
+			$this->log[$next]['time'] = date('H:i:s');
+			$this->log[$next]['milliseconds'] = $currentTimeInMilliseconds;
+			$this->log[$next]['variance'] = @$variance;
 			
 		}
 		
-		public function logItInDb($activity, $id = null, $otherAttributes = null, $skipIfReported = false) {
+		public function logItInDb($activity, $id = null, $relationships = null, $otherAttributes = null, $skipIfReported = false) {
 
 			global $console;
 			global $connectionType;
@@ -31,11 +28,6 @@
 					return false;
 				}
 				
-				if (!function_exists('retrieveFromDb') || !function_exists('updateDb') || !function_exists('insertIntoDb')) {
-					$console .= __FUNCTION__ . ": Unable to locate database model(s).\n";
-					return false;
-				}
-			
 			// check if activity has already been reported but not acknowledged
 				if ($skipIfReported) {
 					$previouslyReported = retrieveFromDb('logs', null, array('activity'=>$activity, 'resolved'=>'0'));
@@ -47,20 +39,33 @@
 				else $id = insertIntoDb('logs', array('activity'=>$activity, 'connection_type'=>$connectionType, 'connected_on'=>date('Y-m-d H:i:s')));
 
 				if (count($otherAttributes)) updateDb('logs', $otherAttributes, array('log_id'=>$id), null, null, null, null, 1);
+
+			// add relationships
+				if (@$relationships && is_array($relationships)) {
+					foreach ($relationships as $relationship) {
+						if (substr_count($relationship, '=') == 1) {
+							$relationship = explode('=', $relationship);
+							if ($relationship[0] && $relationship[1]) {
+								deleteFromDbSingle('log_relationships', array('log_id'=>$id, 'relationship_name'=>$relationship[0], 'relationship_value'=>$relationship[1]));
+								insertIntoDb('log_relationships', array('log_id'=>$id, 'relationship_name'=>$relationship[0], 'relationship_value'=>$relationship[1]));
+							}
+							else $console .= "Malformed relationships attribute in logging query. ";
+						}
+						else $console .= "Malformed relationships attribute in logging query. ";
+					}
+				}
 	
-			// add activity, error info & resolution
-				return $id;
+			return $id;
 		 
 		}
 		
-		public function retrieveLogFromMemory($delimiter = '|', $showMilliseconds = false) {
+		public function retrieveLogFromMemory($showSeconds = true, $showMilliseconds = false, $delimiter = "\n") {
 			
 			$numberOfLogEntries = count($this->log);
 			$output = '';
 			
 			for ($counter = 0; $counter < $numberOfLogEntries; $counter++) {
-				$output .= $this->log[$counter]['time'] . " - " . $this->log[$counter]['activity'];
-				if ($showMilliseconds) $output .= " (" . $this->log[$counter]['milliseconds'] . " / +" . $this->log[$counter]['variance'] . ")";
+				$output .= trim(($showSeconds ? $this->log[$counter]['time'] : false) . " | " . ($showMilliseconds ? $this->log[$counter]['milliseconds'] . " (+" . $this->log[$counter]['variance'] . ")" : false), "| ") . " - " . $this->log[$counter]['activity'];
 				if ($counter < $numberOfLogEntries - 1) $output .= $delimiter;
 			}
 			
@@ -78,8 +83,6 @@
 		Functions for logging user/system activity and errors
 
 	::	DEPENDENT ON
-	
-		phpmailer_wrapper_TL
 	
 	::	VERSION HISTORY
 

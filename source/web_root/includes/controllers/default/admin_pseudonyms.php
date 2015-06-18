@@ -63,7 +63,7 @@
 
 				// update logs
 					$activity = $logged_in['full_name'] . " (user_id " . $logged_in['user_id'] . ") has deleted the pseudonym &quot;" . $pseudonym[0]['name'] . "&quot; (pseudonym_id " . $pseudonym[0]['pseudonym_id'] . ")";
-					$logger->logItInDb($activity);
+					$logger->logItInDb($activity, null, array('user_id=' . $logged_in['user_id'], 'pseudonym_id=' . $pseudonym[0]['pseudonym_id']));
 
 				// redirect
 					header('Location: /admin_pseudonyms/index/pseudonym_deleted');
@@ -86,7 +86,7 @@
 
 							// update logs
 								$activity = $logged_in['full_name'] . " (user_id " . $logged_in['user_id'] . ") has removed the logo from the pseudonym &quot;" . $pseudonym[0]['name'] . "&quot; (pseudonym_id " . $pseudonym[0]['pseudonym_id'] . ")";
-								$logger->logItInDb($activity);
+								$logger->logItInDb($activity, null, array('user_id=' . $logged_in['user_id'], 'pseudonym_id=' . $pseudonym[0]['pseudonym_id']));
 
 							// redirect
 								header('Location: /admin_pseudonyms/index/pseudonym_logo_deleted');
@@ -138,9 +138,14 @@
 						}
 
 					// update logs
-						if ($subView == 'edit') $activity = $logged_in['full_name'] . " (user_id " . $logged_in['user_id'] . ") has updated the pseudonym &quot;" . $pseudonym[0]['name'] . "&quot; (pseudonym_id " . $pseudonym[0]['pseudonym_id'] . ")";
-						else $activity = $logged_in['full_name'] . " (user_id " . $logged_in['user_id'] . ") has added the pseudonym &quot;" . $_POST['name'] . "&quot; (pseudonym_id " . $pseudonymID . ")";
-						$logger->logItInDb($activity);
+						if ($subView == 'edit') {
+							$activity = $logged_in['full_name'] . " (user_id " . $logged_in['user_id'] . ") has updated the pseudonym &quot;" . $pseudonym[0]['name'] . "&quot; (pseudonym_id " . $pseudonym[0]['pseudonym_id'] . ")";
+							$logger->logItInDb($activity, null, array('user_id=' . $logged_in['user_id'], 'pseudonym_id=' . $pseudonym[0]['pseudonym_id']));
+						}
+						else {
+							$activity = $logged_in['full_name'] . " (user_id " . $logged_in['user_id'] . ") has added the pseudonym &quot;" . $_POST['name'] . "&quot; (pseudonym_id " . $pseudonymID . ")";
+							$logger->logItInDb($activity, null, array('user_id=' . $logged_in['user_id'], 'pseudonym_id=' . $pseudonymID));
+						}
 
 					// redirect
 						if (!$pageError) {

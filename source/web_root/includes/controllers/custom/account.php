@@ -51,10 +51,15 @@
 				if (!$success) $pageError .= "There was a problem deleting this profile image. ";
 				else {
 					// update log
-						if ($logged_in['user_id'] != $user[0]['user_id']) $activity = $logged_in['full_name'] . " (" . $logged_in['user_id'] . ") has deleted the profile photo of " . $user[0]['full_name'] . " (" . $user[0]['user_id'] . ")";
-						else $activity = $logged_in['full_name'] . " (user_id " . $logged_in['user_id'] . ") has deleted his/her own profile photo";
-						$logger->logItInDb($activity);
-						
+						if ($logged_in['user_id'] != $user[0]['user_id']) {
+							$activity = $logged_in['full_name'] . " (" . $logged_in['user_id'] . ") has deleted the profile photo of " . $user[0]['full_name'] . " (" . $user[0]['user_id'] . ")";
+							$logger->logItInDb($activity, null, array('user_id=' . $logged_in['user_id'], 'user_id=' . $user[0]['user_id']));
+						}
+						else {
+							$activity = $logged_in['full_name'] . " (user_id " . $logged_in['user_id'] . ") has deleted his/her own profile photo";
+							$logger->logItInDb($activity, null, array('user_id=' . $logged_in['user_id']));
+						}
+
 					// redirect
 						header('Location: /account/' . $_POST['username'] . '/profile_image_deleted');
 						exit();
@@ -164,10 +169,15 @@
 				
 				if (!$pageError) {
 					// update log
-						if ($logged_in['user_id'] != $user[0]['user_id']) $activity = $logged_in['full_name'] . " (" . $logged_in['user_id'] . ") has updated the profile of " . $user[0]['full_name'] . " (" . $user[0]['user_id'] . ")";
-						else $activity = $logged_in['full_name'] . " (user_id " . $logged_in['user_id'] . ") has updated his/her own profile";
-						$logger->logItInDb($activity);
-						
+						if ($logged_in['user_id'] != $user[0]['user_id']) {
+							$activity = $logged_in['full_name'] . " (user_id " . $logged_in['user_id'] . ") has updated the profile of " . $user[0]['full_name'] . " (" . $user[0]['user_id'] . ")";
+							$logger->logItInDb($activity, null, array('user_id=' . $logged_in['user_id'], 'user_id=' . $user[0]['user_id']));
+						}
+						else {
+							$activity = $logged_in['full_name'] . " (user_id " . $logged_in['user_id'] . ") has updated his/her own profile";
+							$logger->logItInDb($activity, null, array('user_id=' . $logged_in['user_id']));
+						}
+
 					// redirect
 						if ($logged_in['user_id'] == $user[0]['user_id'] && $_POST['email'] != $user[0]['email']) header('Location: /account/' . $_POST['username'] . '/account_updated_check_email');
 						else  header('Location: /account/' . $_POST['username'] . '/account_updated');

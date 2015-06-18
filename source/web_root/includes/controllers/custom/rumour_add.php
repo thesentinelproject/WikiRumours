@@ -202,7 +202,7 @@
 						$latLong = retrieveSingleFromDB('rumour_sightings', null, array('country_id'=>@$_POST['country_heard'], 'city'=>@$_POST['city_heard']), null, null, null, "latitude <> 0 AND longitude <> 0");
 						if (!count($latLong)) $latLong = retrieveSingleFromDB('rumours', null, array('country_id'=>@$_POST['country_heard'], 'city'=>@$_POST['city_heard']), null, null, null, "latitude <> 0 AND longitude <> 0");
 						
-						insertIntoDb('rumour_sightings', array('created_by'=>$heardBy, 'rumour_id'=>$operators->firstTrue(@$rumourID, @$rumour[0]['rumour_id']), 'entered_by'=>$logged_in['user_id'], 'entered_on'=>date('Y-m-d H:i:s'), 'heard_on'=>$_POST['heard_on'], 'country_id'=>@$_POST['country_heard'], 'city'=>@$_POST['city_heard'], 'latitude'=>@$latLong[0]['latitude'], 'longitude'=>@$latLong[0]['longitude'], 'location_type'=>$_POST['location_type'], 'source_id'=>@$_POST['source_id'], 'ipv4'=>@$ipv4, 'ipv6'=>@$ipv6));
+						$sightingID = insertIntoDb('rumour_sightings', array('created_by'=>$heardBy, 'rumour_id'=>$operators->firstTrue(@$rumourID, @$rumour[0]['rumour_id']), 'entered_by'=>$logged_in['user_id'], 'entered_on'=>date('Y-m-d H:i:s'), 'heard_on'=>$_POST['heard_on'], 'country_id'=>@$_POST['country_heard'], 'city'=>@$_POST['city_heard'], 'latitude'=>@$latLong[0]['latitude'], 'longitude'=>@$latLong[0]['longitude'], 'location_type'=>$_POST['location_type'], 'source_id'=>@$_POST['source_id'], 'ipv4'=>@$ipv4, 'ipv6'=>@$ipv6));
 						
 				}
 				
@@ -211,7 +211,7 @@
 					$moderators = retrieveUsers(array('is_moderator'=>'1', 'ok_to_contact'=>'1'), null, $tablePrefix . "users.email != ''");
 					if (count($moderators) < 1) {
 						$activity = "Added a rumour, but no moderator has been designated to assign it.";
-						$logger->logItInDb($activity, null, array('error'=>'1', 'resolved'=>'0'));
+						$logger->logItInDb($activity, null, null, array('error'=>'1', 'resolved'=>'0'));
 					}
 					else {
 						for ($counter = 0; $counter < count($moderators); $counter++) {
@@ -226,9 +226,14 @@
 
 			// update log
 				if (!$pageError) {
-					if ($matchingRumour) $activity = $logged_in['full_name'] . " (user_id " . $logged_in['user_id'] . ") has added a sighting for rumour_id " . $rumour[0]['rumour_id'] . ": " . $rumour[0]['description'];
-					else $activity = $logged_in['full_name'] . " (user_id " . $logged_in['user_id'] . ") has added rumour_id " . $rumourID . ": " . $_POST['description'];
-					$logger->logItInDb($activity);
+					if ($matchingRumour) {
+						$activity = $logged_in['full_name'] . " (user_id " . $logged_in['user_id'] . ") has added a sighting for rumour_id " . $rumour[0]['rumour_id'] . ": " . $rumour[0]['description'];
+						$logger->logItInDb($activity, null, array('user_id=' . $logged_in['user_id'], 'user_id=' . $heardBy, 'rumour_id=' . $rumour[0]['rumour_id'], 'sighting_id=' . $sightingID));
+					}
+					else {
+						$activity = $logged_in['full_name'] . " (user_id " . $logged_in['user_id'] . ") has added rumour_id " . $rumourID . ": " . $_POST['description'];
+						$logger->logItInDb($activity, null, array('user_id=' . $logged_in['user_id'], 'user_id=' . $heardBy, 'rumour_id=' . $rumourID, 'sighting_id=' . $sightingID));
+					}
 				}
 				
 			// redirect

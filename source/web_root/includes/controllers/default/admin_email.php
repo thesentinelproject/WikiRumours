@@ -28,7 +28,7 @@
 				
 			// update log
 				$activity = $logged_in['full_name'] . " (user_id " . $logged_in['user_id'] . ") has deleted a notification for &quot;" . $_POST['notification_email_' . $_POST['notificationEmailToDelete']] . "&quot; (notification_id " . $_POST['notificationEmailToDelete'] . ")";
-				$logger->logItInDb($activity);
+				$logger->logItInDb($activity, null, array('user_id=' . $logged_in['user_id'], 'notification_id=' . $_POST['notificationEmailToDelete']));
 				
 			// redirect
 				header('Location: /admin_email/notification_deleted');
@@ -82,7 +82,7 @@
 					
 				// update log
 					$activity = $logged_in['full_name'] . " (user_id " . $logged_in['user_id'] . ") has updated email notifications";
-					$logger->logItInDb($activity);
+					$logger->logItInDb($activity, null, array('user_id=' . $logged_in['user_id']));
 				
 				// redirect
 					header('Location: /admin_email/notifications_updated');
@@ -111,7 +111,7 @@
 					else {
 						// update log
 							$activity = $logged_in['full_name'] . " (user_id " . $logged_in['user_id'] . ") sent an email to " . $_POST['name'] . " (" . $_POST['email'] . ") with the subject &quot;" . $_POST['subject'] . "&quot;";
-							$logger->logItInDb($activity);
+							$logger->logItInDb($activity, null, array('user_id=' . $logged_in['user_id']));
 						// redirect
 							header('Location: /admin_email/email_queued');
 							exit();

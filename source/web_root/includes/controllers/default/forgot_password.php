@@ -31,8 +31,8 @@
 						deleteFromDb('user_keys', array('name'=>'Reset Password', 'user_id'=>$doesUserExist[0]['user_id']), null, null, null);
 						insertIntoDb('user_keys', array('user_id'=>$doesUserExist[0]['user_id'], 'name'=>'Reset Password', 'hash'=>$key, 'saved_on'=>date('Y-m-d H:i:s'), 'expiry'=>$expiryDate));
 					// update log
-						$activity = trim($doesUserExist[0]['first_name'] . ' ' . $doesUserExist[0]['last_name']) . " (" . $doesUserExist[0]['user_id'] . ") has requested a password reset";
-						$logger->logItInDb($activity);
+						$activity = trim($doesUserExist[0]['first_name'] . ' ' . $doesUserExist[0]['last_name']) . " (user_id " . $doesUserExist[0]['user_id'] . ") has requested a password reset";
+						$logger->logItInDb($activity, null, array('user_id=' . $doesUserExist[0]['user_id']));
 					// email user
 						$emailSent = emailPasswordResetKey(trim($doesUserExist[0]['first_name'] . ' ' . $doesUserExist[0]['last_name']), addSlashes($_POST['email']), $key);
 						if (!$emailSent) $pageError = "Unable to email your password reset link. Please try again, and if you continue to encounter difficulties, <a href='/contact' class='errorMessage'>let us know</a>. ";

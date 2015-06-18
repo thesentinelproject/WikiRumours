@@ -201,7 +201,7 @@
 						}
 						
 						if ($cronError) {
-							$logger->logItInDb($cronError, null, array('error'=>'1', 'resolved'=>'0'), true);
+							$logger->logItInDb($cronError, null, null, array('error'=>'1', 'resolved'=>'0'), true);
 							emailSystemNotification($cronError, 'Critical error');
 						}
 					}

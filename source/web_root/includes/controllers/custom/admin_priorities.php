@@ -35,7 +35,7 @@
 
 					// update logs
 						$activity = $logged_in['full_name'] . " (user_id " . $logged_in['user_id'] . ") has deleted the priority &quot;" . $priority[0]['priority'] . "&quot; (priority_id " . $priority[0]['priority_id'] . ")";
-						$logger->logItInDb($activity);
+						$logger->logItInDb($activity, null, array('user_id=' . $logged_in['user_id'], 'priority_id=' . $priority[0]['priority_id']));
 
 					// redirect
 						header('Location: /admin_priorities/priority_deleted');
@@ -76,7 +76,7 @@
 
 				// update log
 					$activity = $logged_in['full_name'] . " (user_id " . $logged_in['user_id'] . ") has updated priorities";
-					$logger->logItInDb($activity);
+					$logger->logItInDb($activity, null, array('user_id=' . $logged_in['user_id']));
 				
 				// redirect
 					header('Location: /admin_priorities/priorities_updated');

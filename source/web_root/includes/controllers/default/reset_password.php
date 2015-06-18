@@ -43,7 +43,7 @@
 					updateDb('users', array('password_hash'=>$hash), array('user_id'=>$doesKeyExist[0]['user_id']), null, null, null, null, 1);
 				// update log
 					$activity = $logged_in['full_name'] . " (user_id " . $doesKeyExist[0]['user_id'] . ") has successfully updated his/her password";
-					$logger->logItInDb($activity);
+					$logger->logItInDb($activity, null, array('user_id=' . $doesKeyExist[0]['user_id']));
 				// remove key
 					deleteFromDb('user_keys', array('name'=>'Reset Password', 'user_id'=>$doesKeyExist[0]['user_id']), null, null, null);
 				// redirect
