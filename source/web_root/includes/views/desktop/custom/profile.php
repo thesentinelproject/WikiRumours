@@ -141,7 +141,7 @@
 			echo "  <tbody>\n";
 			for ($counter = 0; $counter < count($recentActivities); $counter++) {
 				echo "  <tr>\n";
-				echo "  <td>\n";
+				echo "  <td class='nowrap'>\n";
 				echo "    " . str_replace(' ', '&nbsp;', date('j-M-Y', strtotime($recentActivities[$counter]['connected_on']))) . "\n";
 				echo "    <small><span class='text-muted'>" . date('g:i:s A', strtotime($recentActivities[$counter]['connected_on'])) . "</span></small>\n";
 				echo "  </td>\n";
