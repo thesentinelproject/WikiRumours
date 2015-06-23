@@ -224,6 +224,14 @@
 					}
 				}
 
+			// notify assignee
+				if (!$pageError && @$_POST['assigned_to']) {
+					if ($_POST['assigned_to'] != $rumour[0]['assigned_to']) {
+						$assignedTo = retrieveUsers(array($tablePrefix . 'users.user_id'=>$_POST['assigned_to'], 'ok_to_contact'=>'1'), null, $tablePrefix . "users.email != ''", null, 1);
+						if (count($assignedTo)) notifyOfRumour($assignedTo[0]['full_name'], $assignedTo[0]['email'], $operators->firstTrue(@$newPublicID, @$rumour[0]['public_id']), $_POST['description'], true);
+					}
+				}
+
 			// update log
 				if (!$pageError) {
 					if ($matchingRumour) {

@@ -7,7 +7,7 @@
 	echo $form->input('hidden', 'deleteThisRumour') . "\n";
 	echo $form->input('hidden', 'templateName', $templateName) . "\n";
 
-	/* Description */			if (($templateName == 'rumour_add' && !$matchingRumour) || ($logged_in['is_administrator'] && $logged_in['can_edit_content'])) echo $form->row('textarea', 'description', $operators->firstTrue(@$_POST['description'], @$rumour[0]['description']), true, 'Rumour|Please be as concise as possible', 'form-control', null, null, array('rows'=>'7'));
+	/* Description */			if (($templateName == 'rumour_add' && !$matchingRumour) || ($templateName == 'rumour_edit' && $logged_in['is_administrator'] && $logged_in['can_edit_content'])) echo $form->row('textarea', 'description', $operators->firstTrue(@$_POST['description'], @$rumour[0]['description']), true, 'Rumour|Please be as concise as possible', 'form-control', null, null, array('rows'=>'7'));
 								else echo $form->row('uneditable_static', 'description', "<a href='/rumour/" . $rumour[0]['public_id'] . "/" . $parser->seoFriendlySuffix($rumour[0]['description']) . "' target='_blank'>" . $rumour[0]['description'] . "</a>", false, 'Rumour');
 
 	if ($templateName == 'rumour_edit') {
@@ -44,9 +44,9 @@
 
 	/* Tags */				if (!@$matchingRumour) echo $form->row('select', 'tags', $operators->firstTrue(@$currentTags, @$suggestedTags), false, 'Tags', 'select2', $allTags, null, array('multiple'=>'multiple', 'data-tags'=>'true'));
 
-	/* Country occurred */		if (($templateName == 'rumour_add' && !$matchingRumour) || ($logged_in['is_administrator'] && $logged_in['can_edit_content'])) echo $form->row('country', 'country', $operators->firstTrue(@$_POST['country'], @$rumour[0]['country_id']), false, 'Country occurred', 'form-control');
+	/* Country occurred */		if (($templateName == 'rumour_add' && !$matchingRumour) || ($templateName == 'rumour_edit' && $logged_in['is_administrator'] && $logged_in['can_edit_content'])) echo $form->row('country', 'country', $operators->firstTrue(@$_POST['country'], @$rumour[0]['country_id']), false, 'Country occurred', 'form-control');
 								else echo $form->row('uneditable_static', 'country', @$rumour[0]['country'], false, 'Country occurred');
-	/* Area occurred */			if (($templateName == 'rumour_add' && !$matchingRumour) || ($logged_in['is_administrator'] && $logged_in['can_edit_content'])) {
+	/* Area occurred */			if (($templateName == 'rumour_add' && !$matchingRumour) || ($templateName == 'rumour_edit' && $logged_in['is_administrator'] && $logged_in['can_edit_content'])) {
 									echo $form->row('text', 'city', $operators->firstTrue(@$_POST['city'], @$rumour[0]['city']), false, 'Area occurred', 'form-control');
 									if ($templateName == 'rumour_edit') {
 										echo $form->rowStart('latLong');
@@ -58,7 +58,7 @@
 									}
 								}
 								else echo $form->row('uneditable_static', 'city', @$rumour[0]['city'], false, 'Area occurred');
-	/* Occurred on */			if (($templateName == 'rumour_add' && !$matchingRumour) || ($logged_in['is_administrator'] && $logged_in['can_edit_content'])) echo $form->row('datetime_with_picker', 'occurred_on', $operators->firstTrue(@$_POST['occurred_on'], @$rumour[0]['occurred_on']), false, 'Occurred on', 'form-control');
+	/* Occurred on */			if (($templateName == 'rumour_add' && !$matchingRumour) || ($templateName == 'rumour_edit' && $logged_in['is_administrator'] && $logged_in['can_edit_content'])) echo $form->row('datetime_with_picker', 'occurred_on', $operators->firstTrue(@$_POST['occurred_on'], @$rumour[0]['occurred_on']), false, 'Occurred on', 'form-control');
 								elseif (@$rumour[0]['occurred_on'] == '0000-00-00 00:00:00') echo $form->row('uneditable_static', 'occurred_on', 'Unknown', false, 'Occurred on');
 								else echo $form->row('uneditable_static', 'occurred_on', date('F j, Y', strtotime(@$rumour[0]['occurred_on'])), false, 'Occurred on');
 								
