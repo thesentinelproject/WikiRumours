@@ -1,6 +1,4 @@
 <?php
-	$sectionTitle = "Administration";
-	include 'includes/views/desktop/shared/page_top.php';
 
 	echo "<h2>" . $pageTitle . "</h2>\n";
 
@@ -93,7 +91,7 @@
 		/* Input type */	echo $form->row('text', 'input_type', $operators->firstTrue(@$_POST['input_type'], @$setting[0]['input_type'], 'text'), true, 'Input type', 'form-control', '', 30);
 		/* Options */		echo $form->row('text', 'options', $operators->firstTrue(@$_POST['options'], @$setting[0]['options']), false, "<a href='javascript:void(0)' class='tooltips' onClick='return false' data-toggle='tooltip' title='Use pipes as delimiters, e.g.  {option_1} &#124; {option_2}'>Input options</a>", 'form-control', '', 255);
 		/* Mandatory */		echo $form->row('yesno_bootstrap_switch', 'is_mandatory', $operators->firstTrue(@$_POST['is_mandatory'], @$setting[0]['is_mandatory']), false, 'Mandatory?', null, null, null, array('data-on-color'=>'default', 'data-off-color'=>'default'));
-		/* Tooltip */		echo $form->row('text', 'tooltip', $operators->firstTrue(@$_POST['tooltip'], @$setting[0]['tooltip']), true, 'Tooltip', 'form-control', '', 255);
+		/* Tooltip */		echo $form->row('text', 'tooltip', $operators->firstTrue(@$_POST['tooltip'], @$setting[0]['tooltip']), false, 'Tooltip', 'form-control', '', 255);
 
 		/* Actions */		echo $form->rowStart('actions');
 							echo "<div class='row'>\n";
@@ -111,5 +109,4 @@
 
 	}
 
-	include 'includes/views/desktop/shared/page_bottom.php';
 ?>

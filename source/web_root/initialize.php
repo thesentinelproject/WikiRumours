@@ -276,17 +276,35 @@
 				if ($view == 'api' && file_exists(__DIR__ . '/includes/views/api/' . $templateName . ".php")) include __DIR__ . '/includes/views/api/' . $templateName . ".php";
 				else {
 
-					if (file_exists(__DIR__ . '/includes/views/' . $view . '/custom/' . $templateName . ".php")) include __DIR__ . '/includes/views/' . $view . '/custom/' . $templateName . ".php";
-					elseif (file_exists(__DIR__ . '/includes/views/' . $view . '/default/' . $templateName . ".php")) include __DIR__ . '/includes/views/' . $view . '/default/' . $templateName . ".php";
+					if (file_exists(__DIR__ . '/includes/views/' . $view . '/custom/' . $templateName . ".php")) {
+						include __DIR__ . '/includes/views/desktop/shared/page_top.php';
+						include __DIR__ . '/includes/views/' . $view . '/custom/' . $templateName . ".php";
+						include __DIR__ . '/includes/views/desktop/shared/page_bottom.php';
+					}
+					elseif (file_exists(__DIR__ . '/includes/views/' . $view . '/default/' . $templateName . ".php")) {
+						include __DIR__ . '/includes/views/desktop/shared/page_top.php';
+						include __DIR__ . '/includes/views/' . $view . '/default/' . $templateName . ".php";
+						include __DIR__ . '/includes/views/desktop/shared/page_bottom.php';
+					}
 					else {
 						$cms = retrieveContent(array('slug'=>$templateName, 'cms_type'=>'p', $tablePrefix . 'cms.language_id'=>$operators->firstTrue(@$pseudonym['language_id'], @$systemPreferences['Default language']), $tablePrefix . 'cms.pseudonym_id'=>@$pseudonym['pseudonym_id']));
 						if (!count(@$cms)) $cms = retrieveContent(array('slug'=>$templateName, 'cms_type'=>'p', $tablePrefix . 'cms.language_id'=>$operators->firstTrue(@$pseudonym['language_id'], @$systemPreferences['Default language']), $tablePrefix . 'cms.pseudonym_id'=>'0'));
 						if (count(@$cms) == 1) {
 							if (@$cms[0]['login_required'] && !$logged_in) forceLoginThenRedirectHere();
-							else include __DIR__ . '/includes/views/shared/cms_page.php';
+							else {
+								$pageTitle = $cms[0]['title'];
+								$pageCss = $cms[0]['content_css'];
+								include __DIR__ . '/includes/views/' . $view . '/shared/page_top.php';
+								include __DIR__ . '/includes/views/shared/cms_page.php';
+								$pageJavaScript = $cms[0]['content_js'];
+								include __DIR__ . '/includes/views/' . $view . '/shared/page_bottom.php';
+							}
 						}
-						elseif (file_exists(__DIR__ . '/includes/views/' . $view . '/custom/404.php')) include __DIR__ . '/includes/views/' . $view . '/custom/404.php';
-						elseif (file_exists(__DIR__ . '/includes/views/' . $view . '/default/404.php')) include __DIR__ . '/includes/views/' . $view . '/default/404.php';
+						else {
+							include __DIR__ . '/includes/views/' . $view . '/shared/page_top.php';
+							include __DIR__ . '/includes/views/' . $view . '/default/404.php';
+							include __DIR__ . '/includes/views/' . $view . '/shared/page_bottom.php';
+						}
 					}
 
 				}

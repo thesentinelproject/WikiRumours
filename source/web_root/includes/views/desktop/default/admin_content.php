@@ -1,7 +1,4 @@
 <?php
-	$pageTitle = 'Content';
-	$sectionTitle = 'Administration';
-	include 'includes/views/desktop/shared/page_top.php';
 
 	if ($screen == 'menu') {
 		
@@ -171,5 +168,4 @@
 		
 	}
  
-	include 'includes/views/desktop/shared/page_bottom.php';
 ?>

@@ -1,7 +1,4 @@
 <?php
-	$pageTitle = 'Dashboard';
-	$sectionTitle = 'Administration';
-	include 'includes/views/desktop/shared/page_top.php';
 
 	// alerts
 		if (count($alerts) > 0) {
@@ -202,5 +199,4 @@
 			echo "  </div>\n";
 			echo "</div>\n\n";
 		
-	include 'includes/views/desktop/shared/page_bottom.php';
 ?>

@@ -1,7 +1,4 @@
 <?php
-	$pageTitle = "Statuses";
-	$sectionTitle = "Administration";
-	include 'includes/views/desktop/shared/page_top.php';
 
 	echo "<h2>" . (@$numberOfStatuses ? "<span class='label label-default'>" . @$numberOfStatuses . "</span> " : false) . "Statuses</h2>\n\n";
 
@@ -39,5 +36,4 @@
 
 	echo "  " . $form->end() . "\n";
 	
-	include 'includes/views/desktop/shared/page_bottom.php';
 ?>

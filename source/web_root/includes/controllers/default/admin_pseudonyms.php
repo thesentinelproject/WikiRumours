@@ -39,6 +39,11 @@
 		else {
 			$pseudonyms = retrievePseudonyms(null, null, null, $tablePrefix . 'pseudonyms.name ASC');
 		}
+		
+	if (@$pseudonym[0]['pseudonym_id']) $pageTitle = "Edit the pseudonym &quot;" . @$pseudonym[0]['name'] . "&quot;";
+	elseif ($subView == 'add') $pageTitle = "Add pseudonym";
+	else $pageTitle = "Pseudonyms";
+	$sectionTitle = "Administration";
 
 /*	--------------------------------------
 	Execute only if a form post

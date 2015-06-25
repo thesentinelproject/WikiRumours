@@ -38,6 +38,9 @@
 			if ($width > $minimumProfileImageWidth) $minimumProfileImageWidth = $width;
 		}
 		
+	$pageTitle = "My Account";
+	$sectionTitle = "Profile";
+		
 /*	--------------------------------------
 	Execute only if a form post
 	-------------------------------------- */

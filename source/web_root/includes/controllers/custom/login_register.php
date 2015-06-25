@@ -15,6 +15,8 @@
 		if ($pageStatus == 'redirect') $destination = trim(str_replace('|', '/', urldecode($parameter2)), '/');
 		elseif ($pageStatus == 'invitation') $referredBy = $parameter2;
 
+	$pageTitle = 'Login or Register';
+
 /*	--------------------------------------
 	Execute only if a form post
 	-------------------------------------- */

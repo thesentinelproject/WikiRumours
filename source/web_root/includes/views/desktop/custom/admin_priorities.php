@@ -1,7 +1,4 @@
 <?php
-	$pageTitle = "Priorities";
-	$sectionTitle = "Administration";
-	include 'includes/views/desktop/shared/page_top.php';
 
 	echo "<h2>" . (@$numberOfPriorities ? "<span class='label label-default'>" . @$numberOfPriorities . "</span> " : false) . "Priorities</h2>\n\n";
 
@@ -38,5 +35,4 @@
 
 	echo "  " . $form->end() . "\n";
 	
-	include 'includes/views/desktop/shared/page_bottom.php';
 ?>

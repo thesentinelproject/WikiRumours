@@ -41,6 +41,9 @@
 			header('Location: /admin_settings/all');
 			exit();
 		}
+
+	$pageTitle = "Settings";		
+	$sectionTitle = "Administration";
 		
 /*	--------------------------------------
 	Execute only if a form post

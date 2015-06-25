@@ -1,7 +1,4 @@
 <?php
-	$pageTitle = "All Users";
-	$sectionTitle = "Administration";
-	include 'includes/views/desktop/shared/page_top.php';
 
 	echo "  <h2>" . (@$numberOfUsers ? "<span class='label label-default'>" . @$numberOfUsers . "</span> " : false) . "Users</h2>\n\n";
 
@@ -86,5 +83,4 @@
 			echo "  </div>\n";
 		}
 	
-	include 'includes/views/desktop/shared/page_bottom.php';
 ?>

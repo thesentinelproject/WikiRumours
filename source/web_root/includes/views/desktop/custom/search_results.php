@@ -1,10 +1,6 @@
 <?php
-	if (@$filters['view'] == 'map') $pageLoadEvents = "populateMap();";
-	include 'includes/views/desktop/shared/page_top.php';
 
-	if ($report == 'recent') echo "<h2>Recent Rumours</h2>\n";
-	elseif ($report == 'common') echo "<h2>Most Common Rumours</h2>\n";
-	else echo "<h2>Search Results</h2>\n";
+	echo "<h2>" . $pageTitle . "</h2>\n";
 			
 	if (count($rumours) < 1) {
 		echo "<p>No matching rumours found.</p>\n";
@@ -105,5 +101,4 @@
 		
 	}
 	
-	include 'includes/views/desktop/shared/page_bottom.php';
 ?>

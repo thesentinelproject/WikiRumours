@@ -12,6 +12,9 @@
 		
 	// queries
 		$notifications = retrieveFromDb('notifications');
+
+	$pageTitle = "Email";
+	$sectionTitle = "Administration";
 		
 /*	--------------------------------------
 	Execute only if a form post

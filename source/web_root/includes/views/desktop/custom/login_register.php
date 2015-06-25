@@ -1,6 +1,4 @@
 <?php 
-	$pageTitle = 'Login or Register';
-	include 'includes/views/desktop/shared/page_top.php';
 
 	// Login
 
@@ -57,5 +55,4 @@
 				
 		echo "  </div>\n";
 
-	include 'includes/views/desktop/shared/page_bottom.php';
 ?>

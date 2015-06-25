@@ -1,6 +1,3 @@
-<?php 
-	include 'includes/views/desktop/shared/page_top.php';
-?>
 
 	<h2>Explore the API</h2>
 
@@ -116,7 +113,3 @@
 			</div>
 		</div>
 	</div>
-
-<?php 
-	include 'includes/views/desktop/shared/page_bottom.php';
-?>

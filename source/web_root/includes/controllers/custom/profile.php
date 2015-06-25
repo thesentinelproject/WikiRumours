@@ -38,6 +38,9 @@
 		$comments = retrieveComments(array($tablePrefix . 'comments.created_by'=>$user[0]['user_id'], $tablePrefix . 'comments.enabled'=>'1', $tablePrefix . 'rumours.enabled'=>'1'), null ,null, $tablePrefix . 'comments.created_on DESC', '0,50');
 		$recentActivities = retrieveLogs(array('relationship_name'=>'user_id', 'relationship_value'=>$user[0]['user_id']), null, null, 'connected_on DESC');
 
+	$noPageTitle = true;
+	$sectionTitle = "Profile";
+
 /*	--------------------------------------
 	Execute only if a form post
 	-------------------------------------- */

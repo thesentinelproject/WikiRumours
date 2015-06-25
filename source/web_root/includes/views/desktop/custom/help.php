@@ -1,6 +1,4 @@
 <?php
-	$pageTitle = "Help";
-	include 'includes/views/desktop/shared/page_top.php';
 
 //	echo "<div class='container'>\n";
 	echo "  <div class='row'>\n";
@@ -64,5 +62,4 @@
 	echo "  </div>\n";
 //	echo "</div>\n";
 	
-	include 'includes/views/desktop/shared/page_bottom.php';
 ?>

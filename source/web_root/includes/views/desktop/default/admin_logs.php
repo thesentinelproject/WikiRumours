@@ -1,5 +1,4 @@
 <?php
-	include 'includes/views/desktop/shared/page_top.php';
 
 	echo "  <h2>" . (@$numberOfLogs ? "<span class='label label-default'>" . number_format($numberOfLogs) . "</span> " : false) . "Logs</h2>\n\n";
 
@@ -86,5 +85,4 @@
 			echo "  </div>\n";
 		}
 
-	include 'includes/views/desktop/shared/page_bottom.php';
 ?>

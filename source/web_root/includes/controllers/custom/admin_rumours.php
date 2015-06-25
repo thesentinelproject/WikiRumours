@@ -47,6 +47,9 @@
 		elseif ($filters['page'] > $numberOfPages) $filters['page'] = $numberOfPages;
 		
 		$rumours = retrieveRumours($matching, null, @$otherCriteria, $sortBy, floatval(($filters['page'] * $rowsPerPage) - $rowsPerPage) . ',' . $rowsPerPage);
+
+	$pageTitle = 'Rumours';
+	$sectionTitle = 'Administration';
 		
 /*	--------------------------------------
 	Execute only if a form post

@@ -81,6 +81,11 @@
 
 			$map = retrieveRumours(null, null, @$otherCriteria . " AND " . $tablePrefix . "rumours.latitude <> 0 AND " . $tablePrefix . "rumours.longitude <> 0", $sort, @$limit);
 		}
+
+	if (@$filters['view'] == 'map') $pageLoadEvents = "populateMap();";
+	if ($report == 'recent') $pageTitle = "Recent Rumours";
+	elseif ($report == 'common') $pageTitle = "Most Common Rumours";
+	else $pageTitle = "Search Results";
 	
 /*	--------------------------------------
 	Execute only if a form post

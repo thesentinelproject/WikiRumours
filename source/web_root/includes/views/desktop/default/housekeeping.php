@@ -1,5 +1,4 @@
 <?php
-	include 'includes/views/desktop/shared/page_top.php';
 
 	echo "<h2>Housekeeping</h2>\n";
 	
@@ -57,5 +56,4 @@
 		echo $pageError;
 	}
 	
-	include 'includes/views/desktop/shared/page_bottom.php';
 ?>

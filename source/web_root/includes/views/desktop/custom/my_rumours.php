@@ -1,5 +1,4 @@
 <?php
-	include 'includes/views/desktop/shared/page_top.php';
 
 	// rumours assigned to me
 		if (count($assignedRumours) > 0) {
@@ -68,5 +67,4 @@
 		
 		echo "</div>\n";
 		
-	include 'includes/views/desktop/shared/page_bottom.php';
 ?>

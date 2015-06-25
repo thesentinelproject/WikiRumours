@@ -1,7 +1,4 @@
 <?php
-	$pageTitle = "Email";
-	$sectionTitle = "Administration";
-	include 'includes/views/desktop/shared/page_top.php';
 
 	// notifications
 		echo "<div class='pageModule'>\n";
@@ -67,7 +64,7 @@
 			/* Reply to */	echo $form->rowStart('replyTo', 'Reply to');
 							echo "  <div class='row'>\n";
 							echo "    <div class='col-lg-6 col-md-6 col-sm-6 col-xs-6'>\n";
-							echo "  " . $form->input('text', 'reply_to_name', $operators->firstTrue(@$_POST['reply_to_name'], $logged_in['full_name']), false, '|Name', 'form-control') . "\n";
+							echo "  " . $form->input('text', 'reply_to_name', $operators->firstTrue(@$_POST['reply_to_name'], $logged_in['full__name']), false, '|Name', 'form-control') . "\n";
 							echo "    </div>\n";
 							echo "    <div class='col-lg-6 col-md-6 col-sm-6 col-xs-6'>\n";
 							echo "  " . $form->input('email', 'reply_to_email', $operators->firstTrue(@$_POST['reply_to_email'], $logged_in['email']), false, '|Email', 'form-control') . "\n";
@@ -81,5 +78,4 @@
 			echo "</div>\n";
 		}
 	
-	include 'includes/views/desktop/shared/page_bottom.php';
 ?>

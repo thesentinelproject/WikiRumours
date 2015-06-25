@@ -12,6 +12,9 @@
 			exit();
 		}
 		
+	$pageTitle = "Sandbox";
+	$sectionTitle = "Administration";
+		
 /*	--------------------------------------
 	Execute only if a form post
 	-------------------------------------- */

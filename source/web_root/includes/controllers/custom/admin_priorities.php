@@ -13,6 +13,9 @@
 	// queries
 		$priorities = retrievePriorities(null, null, null, $sortBy = 'severity ASC');
 		$numberOfPriorities = floatval(count($priorities));
+		
+	$pageTitle = "Priorities";
+	$sectionTitle = "Administration";
 
 /*	--------------------------------------
 	Execute only if a form post

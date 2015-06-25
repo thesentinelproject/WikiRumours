@@ -1,7 +1,4 @@
 <?php
-	$pageTitle = 'Rumours';
-	$sectionTitle = 'Administration';
-	include 'includes/views/desktop/shared/page_top.php';
 
 	echo "  <h2>" . (@$numberOfRumours ? "<span class='label label-default'>" . @$numberOfRumours . "</span> " : false) . "Rumours</h2>\n\n";
 
@@ -87,5 +84,4 @@
 			echo "  </div>\n";
 		}
 	
-	include 'includes/views/desktop/shared/page_bottom.php';
 ?>

@@ -73,6 +73,9 @@
 			if (!$rumour[0]['enabled']) $pageWarning = "This rumour is disabled.";
 			$photoEvidence = 'assets/photo_evidence/' . $rumour[0]['rumour_id'] . '.' . $rumour[0]['photo_evidence_file_ext'];
 			if (!file_exists($photoEvidence)) $photoEvidence = null;
+			
+	if (@$filters['view'] == 'sightings') $pageLoadEvents = "populateMap();";
+	$pageDescription = $rumour[0]['description'];
 
 /*	--------------------------------------
 	Execute only if a form post

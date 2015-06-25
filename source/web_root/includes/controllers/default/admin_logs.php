@@ -34,6 +34,9 @@
 		elseif ($filters['page'] > $numberOfPages) $filters['page'] = $numberOfPages;
 		
 		$logs = retrieveFromDb('logs', null, null, null, null, null, @$otherCriteria, null, 'connected_on DESC', floatval(($filters['page'] * $rowsPerPage) - $rowsPerPage) . ',' . $rowsPerPage);
+
+	$pageTitle = 'Logs';
+	$sectionTitle = "Administration";
 		
 /*	--------------------------------------
 	Execute only if a form post

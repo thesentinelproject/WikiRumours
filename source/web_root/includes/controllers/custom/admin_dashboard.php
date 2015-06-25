@@ -31,6 +31,9 @@
 			else $mailServerStatus = 'Inactive';
 			
 			$dbSize = retrieveDbSize_TL();
+
+	$pageTitle = 'Dashboard';
+	$sectionTitle = 'Administration';
 		
 /*	--------------------------------------
 	Execute only if a form post

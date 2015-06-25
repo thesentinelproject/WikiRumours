@@ -1,5 +1,4 @@
 <?php
-	include 'includes/views/desktop/shared/page_top.php';
 
 	// load Google Charts packages
 		$pageJavaScript .= "  google.load('visualization', '1.1', {packages:['bar', 'corechart']});\n";
@@ -244,5 +243,4 @@
 			$pageJavaScript .= "  };\n";
 	}
 
-	include 'includes/views/desktop/shared/page_bottom.php';
 ?>

@@ -13,6 +13,9 @@
 	// queries
 		$statuses = retrieveStatuses();
 		$numberOfStatuses = floatval(count($statuses));
+		
+	$pageTitle = "Statuses";
+	$sectionTitle = "Administration";
 
 /*	--------------------------------------
 	Execute only if a form post

@@ -24,6 +24,9 @@
 			$allPositions[$counter] = $counter;
 		}
 		
+	$pageTitle = "FAQs";
+	$sectionTitle = "Administration";
+		
 /*	--------------------------------------
 	Execute only if a form post
 	-------------------------------------- */

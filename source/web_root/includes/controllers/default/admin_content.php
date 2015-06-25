@@ -43,6 +43,9 @@
 			$allPseudonyms[$result[$counter]['pseudonym_id']] = $result[$counter]['name'];
 		}
 		
+	$pageTitle = 'Content';
+	$sectionTitle = "Administration";
+		
 /*	--------------------------------------
 	Execute only if a form post
 	-------------------------------------- */

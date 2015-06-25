@@ -1,7 +1,4 @@
 <?php
-	$noPageTitle = true;
-	$sectionTitle = "Profile";
-	include 'includes/views/desktop/shared/page_top.php';
 
 	// tabs
 		echo "<ul class='nav nav-tabs'>\n";
@@ -159,5 +156,4 @@
 
 	echo "</div>\n";
 
-	include 'includes/views/desktop/shared/page_bottom.php';
 ?>

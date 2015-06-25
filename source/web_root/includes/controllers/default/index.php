@@ -4,7 +4,7 @@
 	Execute immediately upon load
 	-------------------------------------- */
 
-	$pageStatus = $parameter1;
+	$noPageTitle = true;
 		
 /*	--------------------------------------
 	Execute only if a form post

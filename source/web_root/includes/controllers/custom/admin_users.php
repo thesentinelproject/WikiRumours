@@ -47,6 +47,9 @@
 		elseif ($filters['page'] > $numberOfPages) $filters['page'] = $numberOfPages;
 		
 		$users = retrieveUsers($matching, null, @$otherCriteria, $sortBy, floatval(($filters['page'] * $rowsPerPage) - $rowsPerPage) . ',' . $rowsPerPage);
+		
+	$pageTitle = "All Users";
+	$sectionTitle = "Administration";
 			
 /*	--------------------------------------
 	Execute only if a form post

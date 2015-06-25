@@ -1,7 +1,4 @@
 <?php
-	if (@$filters['view'] == 'sightings') $pageLoadEvents = "populateMap();";
-	$pageDescription = $rumour[0]['description'];
-	include 'includes/views/desktop/shared/page_top.php';
 
 	// tabs
 		echo "<ul id='rumourTabs' class='nav nav-tabs'>\n";
@@ -374,5 +371,4 @@
 	echo "  </div>\n";
 	echo "</div>\n";
 		
-	include 'includes/views/desktop/shared/page_bottom.php';
 ?>

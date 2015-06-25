@@ -1,7 +1,6 @@
 <?php 
-	include 'includes/views/desktop/shared/page_top.php';
 
-	if ($pageSuccess == 'success') {
+	if ($pageStatus == 'success') {
 		echo "<h2>Congratulations</h2>\n";
 		echo "<p>Your password has been reset. Please <a href='/login_register'>log in</a>.</p>\n";
 	}
@@ -18,15 +17,13 @@
 		echo "<h2>Reset Your Password</h2>\n";
 		echo "<p>Congratulations, you're now ready to reset your password! Once you've assigned a new password, you'll be asked to log in immediately.</p>\n";
 		
-		if ($pageError) echo "  <div class='alert alert-danger alert-dismissable'><button type='button' class='close' data-dismiss='alert' aria-hidden='true'>&times;</button>" . $pageError . "</div>\n";
-		
 		echo $form->start('resetPasswordForm', null, 'post', null, null, array('onSubmit'=>'validateResetPassword(); return false;'));
 		/* Password */		echo $form->row('password_with_health_meter', 'password', '', true, 'Password', 'form-control', '', 72) . "\n";
 		/* Confirm */		echo $form->row('password', 'confirm', '', true, 'Confirm', 'form-control', '', 72) . "\n";
 		/* Actions */		echo $form->row('submit', 'reset_now', null, false, 'Reset now', 'btn btn-info') . "\n";
+		
 		echo $form->end();
 	
 	}
 	
-	include 'includes/views/desktop/shared/page_bottom.php';
 ?>

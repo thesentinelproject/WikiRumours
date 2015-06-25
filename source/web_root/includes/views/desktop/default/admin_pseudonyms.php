@@ -1,9 +1,4 @@
 <?php
-	if (@$pseudonym[0]['pseudonym_id']) $pageTitle = "Edit the pseudonym &quot;" . @$pseudonym[0]['name'] . "&quot;";
-	elseif ($subView == 'add') $pageTitle = "Add pseudonym";
-	else $pageTitle = "Pseudonyms";
-	$sectionTitle = "Administration";
-	include 'includes/views/desktop/shared/page_top.php';
 
 	echo "  <h2>" . (count(@$pseudonyms) ? "<span class='label label-default'>" . count(@$pseudonyms) . "</span> " : false) . $pageTitle . "</h2>\n\n";
 
@@ -17,23 +12,21 @@
 			// url
 				echo $form->rowStart('url', 'URL');
 				echo "  <div class='row'>\n";
-				echo "    <div class='col-md-3'>" . $form->input('text', 'subdomain', $operators->firstTrue(@$_POST['subdomain'], @$result[0]['subdomain'], @$environmentals['subdomain']), false, '|subdomain', 'form-control', '', 50) . "</div>\n";
+				echo "    <div class='col-md-3'>" . $form->input('text', 'subdomain', $operators->firstTrue(@$_POST['subdomain'], @$pseudonym[0]['subdomain'], @$environmentals['subdomain']), false, '|subdomain', 'form-control', '', 50) . "</div>\n";
 				echo "    <div class='col-md-1 text-center'>.</div>\n";
-				echo "    <div class='col-md-8'>" . $form->input('text', 'domain', $operators->firstTrue(@$_POST['domain'], @$result[0]['domain'], @$environmentals['domain']), true, '|domain.com', 'form-control', '', 205) . "</div>\n";
+				echo "    <div class='col-md-8'>" . $form->input('text', 'domain', $operators->firstTrue(@$_POST['domain'], @$pseudonym[0]['domain'], @$environmentals['domain']), true, '|domain.com', 'form-control', '', 205) . "</div>\n";
 				echo "  </div>\n";
 				echo $form->rowEnd();
 			// name
-				echo $form->row('text', 'name', $operators->firstTrue(@$_POST['name'], @$result[0]['name']), true, "<a href='javascript:void(0)' class='tooltips' onClick='return false' data-toggle='tooltip' title='This name will be used throughout the application, including in outgoing email notifications.'>Name</a>", 'form-control', '', 255);
+				echo $form->row('text', 'name', $operators->firstTrue(@$_POST['name'], @$pseudonym[0]['name']), true, "<a href='javascript:void(0)' class='tooltips' onClick='return false' data-toggle='tooltip' title='This name will be used throughout the application, including in outgoing email notifications.'>Name</a>", 'form-control', '', 255);
 			// description
-				echo $form->row('textarea', 'description', $operators->firstTrue(@$_POST['description'], @$result[0]['description']), false, "<a href='javascript:void(0)' class='tooltips' onClick='return false' data-toggle='tooltip' title='This description will appear as the meta description for this website in Google.'>Description</a>", 'form-control', '', 255);
+				echo $form->row('textarea', 'description', $operators->firstTrue(@$_POST['description'], @$pseudonym[0]['description']), false, "<a href='javascript:void(0)' class='tooltips' onClick='return false' data-toggle='tooltip' title='This description will appear as the meta description for this website in Google.'>Description</a>", 'form-control', '', 255);
 			// country
-				echo $form->row('country', 'country_id', $operators->firstTrue(@$_POST['country_id'], @$result[0]['country_id']), false, 'Default country', 'form-control');
+				echo $form->row('country', 'country_id', $operators->firstTrue(@$_POST['country_id'], @$pseudonym[0]['country_id']), false, 'Default country', 'form-control');
 			// language
-				echo $form->row('language', 'language_id', $operators->firstTrue(@$_POST['language_id'], @$result[0]['language_id']), false, 'Default language', 'form-control');
-			// outgoing email
-				echo $form->row('email', 'outgoing_email', $operators->firstTrue(@$_POST['outgoing_email'], @$result[0]['outgoing_email']), false, 'Outgoing email address', 'form-control', '', 100);
+				echo $form->row('language', 'language_id', $operators->firstTrue(@$_POST['language_id'], @$pseudonym[0]['language_id']), false, 'Default language', 'form-control');
 			// google analytics
-				echo $form->row('text', 'google_analytics_id', $operators->firstTrue(@$_POST['google_analytics_id'], @$result[0]['google_analytics_id']), false, 'Google Analytics ID', 'form-control', '', 255);
+				echo $form->row('text', 'google_analytics_id', $operators->firstTrue(@$_POST['google_analytics_id'], @$pseudonym[0]['google_analytics_id']), false, 'Google Analytics ID', 'form-control', '', 255);
 			// logo
 				echo $form->rowStart('logo', "Logo");
 				if (@$logo) echo "<div><img src='/" . $logo . "' border='0' class='img-responsive' alt='Current logo' /></div><br />\n";
@@ -88,5 +81,4 @@
 
 		}
 	
-	include 'includes/views/desktop/shared/page_bottom.php';
 ?>

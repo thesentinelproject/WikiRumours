@@ -1,7 +1,4 @@
 <?php
-	$pageTitle = "FAQs";
-	$sectionTitle = "Administration";
-	include 'includes/views/desktop/shared/page_top.php';
 
 	// FAQs
 		echo "<div class='pageModule'>\n";
@@ -74,5 +71,4 @@
 		echo "  " . $form->end() . "\n";
 		echo "</div>\n";
 	
-	include 'includes/views/desktop/shared/page_bottom.php';
 ?>
