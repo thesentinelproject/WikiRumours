@@ -141,6 +141,9 @@
 
 	// load Google AJAX API and Google charts package
 		echo "  <!-- Google Charts --><script type='text/javascript' src='https://www.google.com/jsapi'></script>\n";
+
+	// load Google Material Design icons
+		if (@$loadMaterialDesignLocally) echo "  <!-- Google Material Design Icons --><script type='text/javascript' src='/libraries/material_design_icons/rendering.js'></script>\n";
 				
 	// load Tidal Lock JS
 		if ($handle = opendir('libraries/tidal_lock/js/.')) {

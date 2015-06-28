@@ -45,6 +45,10 @@
 	// load Bootstrap datetimepicker stylesheet
 		echo "  <!-- Bootstrap Datepicker --><link href='/libraries/bootstrap-datetimepicker-master/css/bootstrap-datetimepicker.min.css' rel='stylesheet' media='screen' />\n";
 
+	// load Font Awesome stylesheet
+		if ($file_manager->doesUrlExist('https://maxcdn.bootstrapcdn.com/font-awesome/4.3.0/css/font-awesome.min.css')) echo "  <!-- Font Awesome --><link href='//maxcdn.bootstrapcdn.com/font-awesome/4.3.0/css/font-awesome.min.css' rel='stylesheet' media='screen' type='text/css' />\n";
+		else echo "  <!-- Font Awesome (fallback) --><link href='/libraries/font_awesome/font-awesome_4-3-0/font-awesome.min.css' rel='stylesheet' media='screen' type='text/css' />\n";
+
 	// load Select2 stylesheet
 		if ($file_manager->doesUrlExist('https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.0/css/select2.min.css')) echo "  <!-- Select2 --><link href='//cdnjs.cloudflare.com/ajax/libs/select2/4.0.0/css/select2.min.css' rel='stylesheet' />\n";
 		else echo "  <!-- Select2 --><link href='/libraries/select2/select2_4-0/dist/css/select2.min' rel='stylesheet' />\n";
@@ -57,10 +61,12 @@
 			closedir($handle);
 		}
 
-	// load Google stylesheets
-		for ($counter = 0; $counter < count(@$fonts_TL); $counter++) {
-			$url = "http://fonts.googleapis.com/css?family=" . $fonts_TL[$counter];
-			if ($file_manager->doesUrlExist($url)) echo "  <!-- Google Font --><link rel='stylesheet' type='text/css' href='" . $url . "'>\n";
+	// load Google Material Design icons
+		$url = "https://fonts.googleapis.com/icon?family=Material+Icons";
+		if ($file_manager->doesUrlExist($url)) echo "  <!-- Google Material Design Icons --><link rel='stylesheet' type='text/css' href='" . $url . "'>\n";
+		else {
+			echo "  <!-- Google Material Design Icons --><link rel='stylesheet' type='text/css' href='/libraries/material_design_icons/material_design_icons.css'>\n";
+			$loadMaterialDesignLocally = true;
 		}
 
 	// load base stylesheets
