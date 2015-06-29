@@ -81,8 +81,14 @@
 					deleteFromDb('rumour_sightings', array('rumour_id'=>$rumour[0]['rumour_id']));
 					deleteFromDb('rumours_x_tags', array('rumour_id'=>$rumour[0]['rumour_id']));
 					deleteFromDb('watchlist', array('rumour_id'=>$rumour[0]['rumour_id']));
-					header ('Location: /index/rumour_removed');
-					exit();
+
+					// update logs
+						$activity = $logged_in['full_name'] . " (user_id " . $logged_in['user_id'] . ") has deleted the rumour &quot;" . $rumour[0]['description'] . "&quot; (rumour_id " . $rumour[0]['rumour_id'] . ")";
+						$logger->logItInDb($activity, null, array('user_id=' . $logged_in['user_id'], 'rumour_id=' . $rumour[0]['rumour_id']));
+
+					// redirect
+						header ('Location: /index/rumour_removed');
+						exit();
 				}
 			
 		}
