@@ -31,7 +31,7 @@
 			if (@$filters['page'] < 1) $filters['page'] = 1;
 			elseif (@$filters['page'] > $numberOfPages) $filters['page'] = $numberOfPages;
 			
-			$myRumours = retrieveRumours(array('created_by'=>$logged_in['user_id'], $tablePrefix . 'rumours.enabled'=>'1'), null ,null, $tablePrefix . 'rumours.updated_on DESC', floatval(($filters['page'] * $rowsPerPage) - $rowsPerPage) . ',' . $rowsPerPage);
+			$myRumours = retrieveRumours(array('created_by'=>$logged_in['user_id'], $tablePrefix . 'rumours.enabled'=>'1'), null, ($pseudonym['pseudonym_id'] ? $tablePrefix . "rumours.pseudonym_id = '" . intval($pseudonym['pseudonym_id']) . "'" : false), $tablePrefix . 'rumours.updated_on DESC', floatval(($filters['page'] * $rowsPerPage) - $rowsPerPage) . ',' . $rowsPerPage);
 
 /*	--------------------------------------
 	Execute only if a form post

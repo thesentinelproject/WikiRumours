@@ -234,7 +234,7 @@
 				if (@$logged_in['is_moderator']) {
 					$otherCriteria = "(is_closed = '0' OR is_closed IS NULL)";
 					if (@$pseudonym['pseudonym_id']) $otherCriteria .= " AND pseudonym_id = '" . $pseudonym['pseudonym_id'] . "'";
-					$result = retrieveRumours(array('assigned_to'=>''), null, $otherCriteria);
+					$result = retrieveRumours(array('assigned_to'=>'', $tablePrefix . 'rumours.enabled'=>'1'), null, $otherCriteria);
 					@$logged_in['rumours_assigned'] += count($result);
 					unset($otherCriteria);
 				}
