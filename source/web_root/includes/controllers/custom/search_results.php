@@ -56,7 +56,7 @@
 		
 	// queries
 		if (@$filters['tag_id']) {
-			$result = retrieveRumours(array('tag_id'=>$filters['tag_id']), null, @$otherCriteria, null, @$limit);
+			$result = retrieveRumours(array('tag_id'=>$filters['tag_id'], $tablePrefix . "rumours.enabled"=>'1'), null, @$otherCriteria, null, @$limit);
 			$numberOfRumours = count($result);
 
 			$numberOfPages = max(1, ceil($numberOfRumours / $rowsPerPage));
@@ -64,12 +64,12 @@
 			if ($page < 1) $page = 1;
 			elseif ($page > $numberOfPages) $page = $numberOfPages;
 			
-			$rumours = retrieveRumours(array('tag_id'=>$filters['tag_id']), null, @$otherCriteria, $sort, floatval(($page * $rowsPerPage) - $rowsPerPage) . ',' . $rowsPerPage);
+			$rumours = retrieveRumours(array('tag_id'=>$filters['tag_id'], $tablePrefix . "rumours.enabled"=>'1'), null, @$otherCriteria, $sort, floatval(($page * $rowsPerPage) - $rowsPerPage) . ',' . $rowsPerPage);
 
-			$map = retrieveRumours(array('tag_id'=>$filters['tag_id']), null, @$otherCriteria . " AND " . $tablePrefix . "rumours.latitude <> 0 AND " . $tablePrefix . "rumours.longitude <> 0", $sort, @$limit);
+			$map = retrieveRumours(array('tag_id'=>$filters['tag_id'], $tablePrefix . "rumours.enabled"=>'1'), null, @$otherCriteria . " AND " . $tablePrefix . "rumours.latitude <> 0 AND " . $tablePrefix . "rumours.longitude <> 0", $sort, @$limit);
 		}
 		else {
-			$result = countInDb('rumours', 'rumour_id', null, null, null, null, @$otherCriteria);
+			$result = countInDb('rumours', 'rumour_id', array($tablePrefix . 'rumours.enabled'=>'1'), null, null, null, @$otherCriteria);
 			$numberOfRumours = min(floatval(@$result[0]['count']), @$limit);
 		
 			$numberOfPages = max(1, ceil($numberOfRumours / $rowsPerPage));
@@ -77,9 +77,9 @@
 			if ($page < 1) $page = 1;
 			elseif ($page > $numberOfPages) $page = $numberOfPages;
 			
-			$rumours = retrieveRumours(null, null, @$otherCriteria, $sort, floatval(($page * $rowsPerPage) - $rowsPerPage) . ',' . $rowsPerPage);
+			$rumours = retrieveRumours(array($tablePrefix . "rumours.enabled"=>'1'), null, @$otherCriteria, $sort, floatval(($page * $rowsPerPage) - $rowsPerPage) . ',' . $rowsPerPage);
 
-			$map = retrieveRumours(null, null, @$otherCriteria . " AND " . $tablePrefix . "rumours.latitude <> 0 AND " . $tablePrefix . "rumours.longitude <> 0", $sort, @$limit);
+			$map = retrieveRumours(array($tablePrefix . "rumours.enabled"=>'1'), null, @$otherCriteria . " AND " . $tablePrefix . "rumours.latitude <> 0 AND " . $tablePrefix . "rumours.longitude <> 0", $sort, @$limit);
 		}
 
 	if (@$filters['view'] == 'map') $pageLoadEvents = "populateMap();";
