@@ -99,7 +99,7 @@
 
 	// load jQuery
 		if ($file_manager->doesUrlExist('http://code.jquery.com/jquery-latest.js')) echo "  <!-- jQuery --><script src='http://code.jquery.com/jquery-latest.js'></script>\n";
-		else echo "  <!-- jQuery (fallback) --><script src='/libraries/jquery_(fallback)/jquery_v1-9.js'></script>\n";
+		else echo "  <!-- jQuery (fallback) --><script src='/libraries/jquery/jquery_v1-11-1.js'></script>\n";
 				
 	// load Bootstrap JS
 		if ($file_manager->doesUrlExist('https://maxcdn.bootstrapcdn.com/bootstrap/3.3.4/js/bootstrap.min.js')) echo "  <!-- Bootstrap --><script src='//maxcdn.bootstrapcdn.com/bootstrap/3.3.4/js/bootstrap.min.js'></script>\n";
@@ -133,14 +133,11 @@
 		echo "    <script src='/libraries/moment-js/moment.min.js'></script>\n";
 		echo "    <script src='/libraries/moment-js/moment-timezone-with-data.min.js'></script>\n";
 
-	// load Google Maps
-//		echo "  <!-- Google Maps API --><script type='text/javascript' src='http://maps.google.com/maps/api/js?sensor=false'></script>\n";
-
 	// load Google Maps Visualization library
-		echo "  <!-- Google Maps Visualization Library --><script type='text/javascript' src='https://maps.googleapis.com/maps/api/js?libraries=visualization&sensor=true_or_false'></script>\n";
+		if ($file_manager->doesUrlExist('https://maps.googleapis.com/maps/api/js?libraries=visualization&sensor=true_or_false')) echo "  <!-- Google Maps Visualization Library --><script type='text/javascript' src='https://maps.googleapis.com/maps/api/js?libraries=visualization&sensor=true_or_false'></script>\n";
 
 	// load Google AJAX API and Google charts package
-		echo "  <!-- Google Charts --><script type='text/javascript' src='https://www.google.com/jsapi'></script>\n";
+		if ($file_manager->doesUrlExist('https://www.google.com/jsapi')) echo "  <!-- Google Charts --><script type='text/javascript' src='https://www.google.com/jsapi'></script>\n";
 
 	// load Google Material Design icons
 		if (@$loadMaterialDesignLocally) echo "  <!-- Google Material Design Icons --><script type='text/javascript' src='/libraries/material_design_icons/rendering.js'></script>\n";
