@@ -136,7 +136,7 @@
 				$url = $environmentals['absoluteRoot'];
 				if (substr($url, 0, 4) == 'www.') $url = substr($url, 4); // ensures that www.mydomain.com and mydomain.com aren't treated as separate pseudonyms
 
-				$result = retrievePseudonyms(array('url'=>$url), null, null, null, 1);
+				$result = retrievePseudonyms(null, null, "url = '" . $url . "' OR url = '" . $environmentals['absoluteRoot'] . "'", null, 1);
 				if (count($result)) $pseudonym = $result[0];
 
 			// Verify that root path of application is in database

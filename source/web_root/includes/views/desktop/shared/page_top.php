@@ -128,13 +128,13 @@
 		echo "      <div id='header' class='row'>\n";
 			
 		// logo
-			echo "        <div id='logo' class='col-xs-12 col-sm-3 col-md-3'>\n";
+			echo "        <div id='logo' class='col-xs-12 col-sm-3 col-md-3 col-lg-3'>\n";
 			echo "          <h1 class='hidden'>" . htmlspecialchars($operators->firstTrue(@$pseudonym['name'], $systemPreferences['Name of this application']), ENT_QUOTES) . "</h1>\n";
-			echo "          <a href='/'><img src='" . (@$pseudonym['pseudonym_id'] && file_exists('assets/pseudonym_logos/' . $pseudonym['pseudonym_id'] . '.' . $pseudonym['logo_ext']) ? '/assets/pseudonym_logos/' . $pseudonym['pseudonym_id'] . '.' . $pseudonym['logo_ext'] : "/resources/img/logo.png") . "' border='0' alt='" . htmlspecialchars($operators->firstTrue(@$pseudonym['name'], $systemPreferences['Name of this application']), ENT_QUOTES) . "' /></a>\n";
+			echo "          <a href='/'><img src='" . (@$pseudonym['pseudonym_id'] && file_exists('assets/pseudonym_logos/' . $pseudonym['pseudonym_id'] . '.' . $pseudonym['logo_ext']) ? '/assets/pseudonym_logos/' . $pseudonym['pseudonym_id'] . '.' . $pseudonym['logo_ext'] : "/resources/img/logo.png") . "' border='0' class='img-responsive' alt='" . htmlspecialchars($operators->firstTrue(@$pseudonym['name'], $systemPreferences['Name of this application']), ENT_QUOTES) . "' /></a>\n";
 			echo "        </div><!-- logo -->\n\n";
 	
 		// header
-			echo "        <div id='userNav' class='col-xs-12 col-sm-9 col-md-9'>\n";
+			echo "        <div id='userNav' class='col-xs-12 col-sm-9 col-md-9 col-lg-9'>\n";
 			
 			// non-mobile experience
 				echo "          <ul id='userNavNonMobile' class='nav nav-pills pull-right hidden-xs'>\n";
