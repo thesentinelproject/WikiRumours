@@ -64,11 +64,11 @@
 			if (!$pageError) {
 
 				// delete pseudonym
-					deleteFromDb('pseudonyms', array('pseudonym_id'=>$pseudonym[0]['pseudonym_id']), null, null, null, null, 1);
+					deleteFromDb('pseudonyms', array('pseudonym_id'=>$result[0]['pseudonym_id']), null, null, null, null, 1);
 
 				// update logs
-					$activity = $logged_in['full_name'] . " (user_id " . $logged_in['user_id'] . ") has deleted the pseudonym &quot;" . $pseudonym[0]['name'] . "&quot; (pseudonym_id " . $pseudonym[0]['pseudonym_id'] . ")";
-					$logger->logItInDb($activity, null, array('user_id=' . $logged_in['user_id'], 'pseudonym_id=' . $pseudonym[0]['pseudonym_id']));
+					$activity = $logged_in['full_name'] . " (user_id " . $logged_in['user_id'] . ") has deleted the pseudonym &quot;" . $result[0]['name'] . "&quot; (pseudonym_id " . $result[0]['pseudonym_id'] . ")";
+					$logger->logItInDb($activity, null, array('user_id=' . $logged_in['user_id'], 'pseudonym_id=' . $result[0]['pseudonym_id']));
 
 				// redirect
 					header('Location: /admin_pseudonyms/index/pseudonym_deleted');
@@ -90,8 +90,8 @@
 						else {
 
 							// update logs
-								$activity = $logged_in['full_name'] . " (user_id " . $logged_in['user_id'] . ") has removed the logo from the pseudonym &quot;" . $pseudonym[0]['name'] . "&quot; (pseudonym_id " . $pseudonym[0]['pseudonym_id'] . ")";
-								$logger->logItInDb($activity, null, array('user_id=' . $logged_in['user_id'], 'pseudonym_id=' . $pseudonym[0]['pseudonym_id']));
+								$activity = $logged_in['full_name'] . " (user_id " . $logged_in['user_id'] . ") has removed the logo from the pseudonym &quot;" . $result[0]['name'] . "&quot; (pseudonym_id " . $result[0]['pseudonym_id'] . ")";
+								$logger->logItInDb($activity, null, array('user_id=' . $logged_in['user_id'], 'pseudonym_id=' . $result[0]['pseudonym_id']));
 
 							// redirect
 								header('Location: /admin_pseudonyms/index/pseudonym_logo_deleted');
@@ -126,12 +126,12 @@
 			// update DB
 				if (!$pageError) {
 
-					if ($subView == 'edit') updateDb('pseudonyms', array('url'=>trim($_POST['subdomain'] . '.' . $_POST['domain'], '. '), 'name'=>$_POST['name'], 'description'=>$_POST['description'], 'country_id'=>$_POST['country_id'], 'language_id'=>$_POST['language_id'], 'outgoing_email'=>$_POST['outgoing_email'], 'google_analytics_id'=>$_POST['google_analytics_id'], 'logo_ext'=>$fileExtension), array('pseudonym_id'=>$pseudonym[0]['pseudonym_id']), null, null, null, null, 1);
+					if ($subView == 'edit') updateDb('pseudonyms', array('url'=>trim($_POST['subdomain'] . '.' . $_POST['domain'], '. '), 'name'=>$_POST['name'], 'description'=>$_POST['description'], 'country_id'=>$_POST['country_id'], 'language_id'=>$_POST['language_id'], 'outgoing_email'=>$_POST['outgoing_email'], 'google_analytics_id'=>$_POST['google_analytics_id'], 'logo_ext'=>$fileExtension), array('pseudonym_id'=>$result[0]['pseudonym_id']), null, null, null, null, 1);
 					else $pseudonymID = insertIntoDb('pseudonyms', array('url'=>trim($_POST['subdomain'] . '.' . $_POST['domain'], '. '), 'name'=>$_POST['name'], 'description'=>$_POST['description'], 'country_id'=>$_POST['country_id'], 'language_id'=>$_POST['language_id'], 'outgoing_email'=>$_POST['outgoing_email'], 'google_analytics_id'=>$_POST['google_analytics_id'], 'logo_ext'=>$fileExtension));
 
 					// update logo
 						if ($_FILES['new_logo']['tmp_name']) {
-							$destination = 'assets/pseudonym_logos/' . $operators->firstTrue(@$pseudonymID, $pseudonym[0]['pseudonym_id']) . '.' . $fileExtension;
+							$destination = 'assets/pseudonym_logos/' . $operators->firstTrue(@$pseudonymID, $result[0]['pseudonym_id']) . '.' . $fileExtension;
 							// delete old
 								@unlink ($logo);
 								if (file_exists($logo)) $pageError .= "Unable to delete previous logo for some reason. ";
@@ -144,8 +144,8 @@
 
 					// update logs
 						if ($subView == 'edit') {
-							$activity = $logged_in['full_name'] . " (user_id " . $logged_in['user_id'] . ") has updated the pseudonym &quot;" . $pseudonym[0]['name'] . "&quot; (pseudonym_id " . $pseudonym[0]['pseudonym_id'] . ")";
-							$logger->logItInDb($activity, null, array('user_id=' . $logged_in['user_id'], 'pseudonym_id=' . $pseudonym[0]['pseudonym_id']));
+							$activity = $logged_in['full_name'] . " (user_id " . $logged_in['user_id'] . ") has updated the pseudonym &quot;" . $result[0]['name'] . "&quot; (pseudonym_id " . $result[0]['pseudonym_id'] . ")";
+							$logger->logItInDb($activity, null, array('user_id=' . $logged_in['user_id'], 'pseudonym_id=' . $result[0]['pseudonym_id']));
 						}
 						else {
 							$activity = $logged_in['full_name'] . " (user_id " . $logged_in['user_id'] . ") has added the pseudonym &quot;" . $_POST['name'] . "&quot; (pseudonym_id " . $pseudonymID . ")";
