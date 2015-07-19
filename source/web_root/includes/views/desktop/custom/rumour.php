@@ -33,14 +33,14 @@
 		echo "    Occurred in " . trim($rumour[0]['city'] . ', ' . $rumour[0]['country'], ' ,') . "\n";
 		if ($rumour[0]['occurred_on'] != '0000-00-00 00:00:00') {
 			echo " on " . date('F j, Y', strtotime($rumour[0]['occurred_on']));
-			if (substr($rumour[0]['occurred_on'], 11) != '00:00:00') echo ", at " . date('G:i A', strtotime($rumour[0]['occurred_on']));
+			if (substr($rumour[0]['occurred_on'], 11) != '00:00:00') echo ", at " . date('g:i A', strtotime($rumour[0]['occurred_on']));
 		}
 		echo "  </div>\n";
 		echo "  <div>\n";
 		echo "    Reported by " . ($sightings[0]['anonymous'] ? "<b>anonymous</b>" : "<a href='/profile/" . $sightings[0]['username'] . "'>" . $sightings[0]['username'] . "</a>") . " via " . $sightings[0]['source'] . "\n";
 		if ($sightings[0]['heard_on'] != '0000-00-00 00:00:00') {
 			echo "    on " . date('F j, Y', strtotime($sightings[0]['heard_on']));
-			if (substr($sightings[0]['heard_on'], 11) != '00:00:00') echo ", at " . date('G:i A', strtotime($sightings[0]['heard_on']));
+			if (substr($sightings[0]['heard_on'], 11) != '00:00:00') echo ", at " . date('g:i A', strtotime($sightings[0]['heard_on']));
 			echo "\n";
 		}
 		if ($sightings[0]['sighting_country']) echo "    in " . trim($sightings[0]['sighting_city'] . ', ' . $sightings[0]['sighting_country'], ' ,') . "\n";
@@ -273,7 +273,7 @@
 				// Date
 					echo "    <td>";
 					echo date('j-M-Y', strtotime($sightings[$counter]['heard_on']));
-					if (substr($sightings[$counter]['heard_on'], 11) != '00:00:00') echo " @ " . date('G:i A', strtotime($sightings[$counter]['heard_on']));
+					if (substr($sightings[$counter]['heard_on'], 11) != '00:00:00') echo " @ " . date('g:i A', strtotime($sightings[$counter]['heard_on']));
 					echo "    </td>\n";
 				// Actions
 					echo "    <td>\n";

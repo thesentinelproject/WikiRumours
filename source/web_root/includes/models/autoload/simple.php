@@ -165,7 +165,7 @@
 			if ($endsWith) foreach ($endsWith as $field => $value) $query .= " AND " . $field . " LIKE '%" . $dbConnection->escape_string($value) . "'";
 			if (!is_null($otherCriteria)) $query .= " AND (" . $otherCriteria . ")";
 			if ($limit) $query .= " LIMIT " . $dbConnection->escape_string($limit);
-
+			
 			$result = $dbConnection->query($query) or die('Unable to execute ' . __FUNCTION__ . '(' . addSlashes($table) . '): ' . $dbConnection->error . '<br /><br />' . $query);
 
 		// return status
@@ -221,6 +221,11 @@
 
 	function directlyQueryDb($query) {
 		
+		/*
+			Use with EXTREME caution, since any queries made through this interface will NOT be automatically
+			protected from SQL injection. Escape all your values before calling this function.
+		*/
+
 		global $dbConnection;
 		
 		// validate input
