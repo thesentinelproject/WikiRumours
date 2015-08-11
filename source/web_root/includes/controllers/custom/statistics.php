@@ -21,18 +21,21 @@
 
 	// rumours and sightings over time
 		$rumoursAndSightingsByDateChart = array();
-		$result = retrieveFromDb('rumour_sightings', array("DATE_FORMAT(heard_on, '%M %Y')"=>'month', "COUNT(sighting_id)"=>'count'), null, null, null, null, "heard_on > '0000-00-00 00:00:00'", 'month', 'heard_on ASC');
-		for ($counter = 0; $counter < count($result); $counter++) {
-			$month = $result[$counter]['month'];
-			if (!count(@$rumoursAndSightingsByDateChart[$month])) $rumoursAndSightingsByDateChart[$month] = array();
-			$rumoursAndSightingsByDateChart[$month]['sightings'] = $result[$counter]['count'];
-		}
-		$result = retrieveFromDb('rumours', array("DATE_FORMAT(occurred_on, '%M %Y')"=>'month', "COUNT(rumour_id)"=>'count'), null, null, null, null, "occurred_on > '0000-00-00 00:00:00'", 'month', 'occurred_on ASC');
-		for ($counter = 0; $counter < count($result); $counter++) {
-			$month = $result[$counter]['month'];
-			if (!count(@$rumoursAndSightingsByDateChart[$month])) $rumoursAndSightingsByDateChart[$month] = array();
-			$rumoursAndSightingsByDateChart[$month]['rumours'] = $result[$counter]['count'];
-		}
+		// sightings
+//			$result = retrieveFromDb('rumour_sightings', array("DATE_FORMAT(heard_on, '%M %Y')"=>'month', "COUNT(sighting_id)"=>'count'), null, null, null, null, "heard_on > '0000-00-00 00:00:00'", 'month', 'heard_on ASC');
+			$result = directlyQueryDb("SELECT DATE_FORMAT(heard_on, '%M %Y') AS month, COUNT(sighting_id) AS count FROM " . $tablePrefix . "rumour_sightings LEFT JOIN " . $tablePrefix . "rumours ON " . $tablePrefix . "rumour_sightings.rumour_id = " . $tablePrefix . "rumours.rumour_id WHERE heard_on > '0000-00-00 00:00:00' " . (@$pseudonym['pseudonym_id'] ? " AND " . $tablePrefix . "rumours.pseudonym_id = '" . $pseudonym['pseudonym_id'] . "'" : false) . "GROUP BY month ORDER BY heard_on ASC");
+			for ($counter = 0; $counter < count($result); $counter++) {
+				$month = $result[$counter]['month'];
+				if (!count(@$rumoursAndSightingsByDateChart[$month])) $rumoursAndSightingsByDateChart[$month] = array();
+				$rumoursAndSightingsByDateChart[$month]['sightings'] = $result[$counter]['count'];
+			}
+		// rumours
+			$result = retrieveFromDb('rumours', array("DATE_FORMAT(occurred_on, '%M %Y')"=>'month', "COUNT(rumour_id)"=>'count'), null, null, null, null, "occurred_on > '0000-00-00 00:00:00'" . (@$pseudonym['pseudonym_id'] ? " AND " . $tablePrefix . "rumours.pseudonym_id = '" . $pseudonym['pseudonym_id'] . "'" : false), 'month', 'occurred_on ASC');
+			for ($counter = 0; $counter < count($result); $counter++) {
+				$month = $result[$counter]['month'];
+				if (!count(@$rumoursAndSightingsByDateChart[$month])) $rumoursAndSightingsByDateChart[$month] = array();
+				$rumoursAndSightingsByDateChart[$month]['rumours'] = $result[$counter]['count'];
+			}
 		$rumoursAndSightingsByDateTable = array_reverse($rumoursAndSightingsByDateChart);
 
 	// statuses
