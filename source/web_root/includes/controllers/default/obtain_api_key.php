@@ -82,7 +82,7 @@
 				$newApiKey = $encrypter->quickEncrypt($user[0]['user_id'] . rand(100000, 999999));
 			
 			// save API key
-				insertIntoDb('user_keys', array('user_id'=>$user[0]['user_id'], 'name'=>'API', 'hash'=>$newApiKey));
+				insertIntoDb('user_keys', array('user_id'=>$user[0]['user_id'], 'name'=>'API', 'hash'=>$newApiKey, 'saved_on'=>date('Y-m-d H:i:s')));
 				
 			// update record of previous API calls (if an API was previously assigned)
 				if ($apiKey[0]['hash']) updateDb('api_calls_internal', array('api_key'=>$newApiKey), array('api_key'=>$apiKey[0]['hash']));

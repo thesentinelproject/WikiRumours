@@ -16,3 +16,8 @@
 			document.apiForm.submit()
 		}
 	}
+
+	function validateRecycleKey() {
+		areYouSure = confirm("Are you sure?");
+		if (areYouSure) document.apiForm.submit()
+	}
