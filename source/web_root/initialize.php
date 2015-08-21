@@ -267,7 +267,7 @@
 				if (count($tables) < 1) die ("Please import database before proceeding.");
 
 		// Load view
-			if (!@$isCron) {
+			if (!@$isCron && !@$isAjax) {
 				if (@$environmentals['subdomain'] == 'm') $view = 'mobile';
 				elseif (@$environmentals['subdomain'] == 't')  $view = 'tablet';
 				elseif (@$environmentals['subdomain'] == 'api') $view = 'api';
