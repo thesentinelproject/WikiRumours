@@ -42,7 +42,6 @@
 			exit();
 		}
 
-	$pageTitle = "Settings";		
 	$sectionTitle = "Administration";
 		
 /*	--------------------------------------
@@ -67,7 +66,7 @@
 						}
 
 					// update DB
-						updateDbSingle('preferences', array('value'=>$_POST['value'], 'updated_by'=>$logged_in['user_id'], 'updated_on'=>date('Y-m-d H:i:s')), array('preference_id'=>$setting[0]['preference_id']));
+						updateDbSingle('preferences', array('value'=>$_POST['setting_value'], 'updated_by'=>$logged_in['user_id'], 'updated_on'=>date('Y-m-d H:i:s')), array('preference_id'=>$setting[0]['preference_id']));
 
 					// update log
 						$activity = $logged_in['full_name'] . " (user_id " . $logged_in['user_id'] . ") has updated the system setting &quot;" . $setting[0]['preference'] . "&quot; (preference_id " . $setting[0]['preference_id'] . ")";
