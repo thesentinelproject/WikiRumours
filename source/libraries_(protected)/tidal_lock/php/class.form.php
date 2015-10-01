@@ -26,6 +26,8 @@
 			
 			if (!isset($label)) $label = null;
 			if (!isset($placeholder)) $placeholder = null;
+
+			if ($this->style == 'no-label' && !$placeholder) $placeholder = $label;
 			
 			switch($type) {
 				/* ------------------------- */
