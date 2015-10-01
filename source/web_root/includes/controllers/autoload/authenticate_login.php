@@ -1,33 +1,31 @@
 <?php
 
-	function checkLogin() {
+	function checkLogin($usernameOrEmail) {
+
+		if ($usernameOrEmail != 'username' && $usernameOrEmail != 'email') return false;
 		
-		if (isset($_COOKIE['username']) && isset($_COOKIE['password_hash'])) {
-			if (!@$_SESSION['username']) $_SESSION['username'] = @$_COOKIE['username'];
+		if (isset($_COOKIE[$usernameOrEmail]) && isset($_COOKIE['password_hash'])) {
+			if (!@$_SESSION[$usernameOrEmail]) $_SESSION[$usernameOrEmail] = @$_COOKIE[$usernameOrEmail];
 			if (!@$_SESSION['password_hash']) $_SESSION['password_hash'] = @$_COOKIE['password_hash'];
 		}
 
-		if (isset($_SESSION['username']) && isset($_SESSION['password_hash'])) {
+		if (isset($_SESSION[$usernameOrEmail]) && isset($_SESSION['password_hash'])) {
 
-			$logged_in = confirmUser($_SESSION['username'], null, $_SESSION['password_hash'], null);
-			if (!$logged_in) {
-				unset($_SESSION['username']);
+			if ($usernameOrEmail == 'username') $logged_in = confirmUser($_SESSION['username'], null, $_SESSION['password_hash'], null);
+			else $logged_in = confirmUser(null, $_SESSION['email'], $_SESSION['password_hash'], null);
+
+			if (!@$logged_in['error']) return $logged_in;
+			else {
+				unset($_SESSION[$usernameOrEmail]);
 				unset($_SESSION['password_hash']);
 				return false;
 			}
-			else {
-				return $logged_in;
-			}
 		}
-		else {
-			return false;
-		}
+		else return false;
 		
 	}
 	
-	function confirmUser($username, $email, $hashedPassword, $unhashedPassword, $errorReporting = false) {
-
-		if ($errorReporting) global $error;
+	function confirmUser($username, $email, $hashedPassword, $unhashedPassword) {
 
 		// check for errors
 			if ((!$username && !$email) || (!$hashedPassword && !$unhashedPassword)) return false;
@@ -36,25 +34,15 @@
 			if ($username) $user = retrieveUsers(array('username'=>$username, 'enabled'=>'1'), null, null, null, 1);
 			elseif ($email) $user = retrieveUsers(array('email'=>$email, 'enabled'=>'1'), null, null, null, 1);
 
-			if (count($user) < 1) {
-				$error = 'Invalid login. Please try again.'; // username not found
-				return false;
-			}
+			if (count($user) < 1) return array('error'=>"Invalid login. Please try again.");  // username not found
 			
 		// check password
-			if ($hashedPassword && $hashedPassword != $user[0]['password_hash']) {
-				$error = 'Invalid login. Please try again.'; // password hash is incorrect
-				return false;
-			}
+			if ($hashedPassword && $hashedPassword != $user[0]['password_hash']) return array('error'=>"Invalid login. Please try again.");  // password hash is incorrect
 			
 			if ($unhashedPassword) {
 				$hasher = new PasswordHash(8, false);
 				$check = $hasher->CheckPassword($unhashedPassword, $user[0]['password_hash']);
-				
-				if (!$check) {
-					$error = 'Invalid login. Please try again.'; // password hash is incorrect
-					return false;
-				}
+				if (!$check) return array('error'=>"Invalid login. Please try again.");  // password hash is incorrect
 			}
 			
 		// update last login and return user credentials

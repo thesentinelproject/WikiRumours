@@ -2,6 +2,12 @@
 
 	class form_TL {
 
+		private $style = 'horizontal'; // alternate styles are "stacked" and "no-label"
+
+		public function styleForm($style) {
+			$this->style = $style;
+		}
+
 		public function input($type, $name, $value = null, $mandatory = false, $labelPlaceholder = null, $class = null, $options = null, $maxlength = null, $otherAttributes = null, $truncateLabel = null, $eventHandlers = null) {
 
 			global $parser;
@@ -1031,6 +1037,8 @@
 							break;
 				/* ------------------------- */
 					case 'button':
+					case 'submit':
+					case 'reset':
 						// validate
 							if ($otherAttributes && !is_array($otherAttributes)) {
 								$console .= __FUNCTION__ . " (" . $name . "): otherAttributes must be an array.\n";
@@ -1044,7 +1052,7 @@
 							if (!$label && $type == 'button') $label = 'Go';
 							if (!$label && $type == 'submit') $label = 'Submit';
 						// return
-							$field = "<button type='button'";
+							$field = "<button type='" . $type . "'";
 							if ($name) $field .= " name='" . $name . "' id='" . $name . "'";
 							if ($class) $field .= " class='" . $class . "'";
 							if ($otherAttributes) foreach ($otherAttributes as $attribute => $attributeValue) $field .= " " . $attribute . "='" . trim($attributeValue) . "'";
@@ -1052,30 +1060,6 @@
 							$field .= ">";
 							$field .= $label;
 							$field .= "</button>";
-							return $field;
-							break;
-				/* ------------------------- */
-					case 'submit':
-						// validate
-							if ($otherAttributes && !is_array($otherAttributes)) {
-								$console .= __FUNCTION__ . " (" . $name . "): otherAttributes must be an array.\n";
-								return false;
-							}
-							if ($eventHandlers && !is_array($eventHandlers)) {
-								$console .= __FUNCTION__ . " (" . $name . "): eventHandlers must be an array.\n";
-								return false;
-							}
-						// initialize
-							if (!$label && $type == 'button') $label = 'Go';
-							if (!$label && $type == 'submit') $label = 'Submit';
-						// return
-							$field = "<input type='" . $type . "'";
-							$field .= " value='" . htmlspecialchars($label, ENT_QUOTES) . "'";
-							if ($name) $field .= " name='" . $name . "' id='" . $name . "'";
-							if ($class) $field .= " class='" . $class . "'";
-							if ($otherAttributes) foreach ($otherAttributes as $attribute => $attributeValue) $field .= " " . $attribute . "='" . trim($attributeValue) . "'";
-							if ($eventHandlers) foreach ($eventHandlers as $event => $action) $field .= " " . $event . "='" . trim($action) . "'";
-							$field .= " />";
 							return $field;
 							break;
 				/* ------------------------- */
@@ -1152,7 +1136,7 @@
 				$console .= __FUNCTION__ . ": No element type specified.\n";
 				return false;
 			}
-			
+
 			if ($labelPlaceholder) {
 				$result = explode('|', $labelPlaceholder);
 				if (isset($result[0])) $label = $result[0];
@@ -1186,10 +1170,7 @@
 			}
 			else {
 
-				$row = "<!-- " . $label . " -->\n";
-				$row .= "  <div class='form-group'>\n";
-				$row .= "    <label for='formField_" . $name . "' id='formLabel_" . $name . "' class='col-lg-3 col-md-3 col-sm-4 col-xs-12 control-label'>" . $label . "</label>\n";
-				$row .= "    <div id='formField_" . $name . "' class='col-lg-9 col-md-9 col-sm-8 col-xs-12'>\n";
+				$row = $this->rowStart($name, $label, null, $class);
 				$row .= "      " . $this->input($type, $name, $value, $mandatory, $labelPlaceholder, $class, $options, $maxlength, $otherAttributes, $truncateLabel, $eventHandlers) . "\n";
 				
 				if ($duplicateRows) {
@@ -1215,9 +1196,8 @@
 					$row .= "      </script>\n";
 		
 				}
-				
-				$row .= "    </div>\n";
-				$row .= "  </div>\n";
+
+				$row .= $this->rowEnd();
 
 			}
 			
@@ -1225,7 +1205,7 @@
 
 		}
 
-		public function rowStart($name = null, $label = null, $truncate = false, $class = null) {
+		public function rowStart($name = null, $label = null, $truncate = false, $class = null, $stacked = true) {
 
 			global $operators;
 			global $parser;
@@ -1237,16 +1217,25 @@
 			
 			$row = "<!-- " . $operators->firstTrue($label, $name) . " -->\n";
 			$row .= "  <div class='form-group'>\n";
-			$row .= "    <label for='" . trim('formField_' . $name, '_') . "' id='" . trim('formLabel_' . $name, '_') . "' class='col-lg-3 col-md-3 col-sm-4 col-xs-12 control-label'>" . $label . "</label>\n";
-			$row .= "    <div id='" . trim('formField_' . $name, '_') . "' class='col-lg-9 col-md-9 col-sm-8 col-xs-12" . ($class ? " " . $class : false) . "'>\n";
-			
+
+			if ($this->style == 'horizontal') {
+				$row .= "    <label for='" . $name . "' id='" . trim('formLabel_' . $name, '_') . "' class='col-lg-3 col-md-3 col-sm-4 col-xs-12 control-label'>" . $label . "</label>\n";
+				$row .= "    <div id='" . trim('formField_' . $name, '_') . "' class='col-lg-9 col-md-9 col-sm-8 col-xs-12'>\n";
+			}
+			elseif ($this->style == 'stacked') {
+				$row .= "    <label for='" . $name . "' id='" . trim('formLabel_' . $name, '_') . "' class='control-label'>" . $label . "</label>\n";
+			}
+
 			return $row;
 			
 		}
 			
-		public function rowEnd() {
+		public function rowEnd($stacked = true) {
 		
-			$row = "    </div>\n";
+			$row = null;
+
+			if ($this->style == 'horizontal') $row .= "    </div>\n";
+
 			$row .= "  </div>\n";
 						
 			return $row;
@@ -1255,16 +1244,19 @@
 		
 		public function start($name = null, $action = null, $method = 'post', $class = null, $otherAttributes = null, $eventHandlers = null) {
 			
+			if (!$this->style) {
+				$console .= __FUNCTION__ . ": No form style specified.\n";
+				return false;
+			}
+			
 			$field = "<form role='form'";
 			if ($name) $field .= " name='" . $name . "' id='" . $name . "'";
 			if ($action) $field .= " action='" . $action . "'";
 			if ($method) $field .= " method='" . $method . "'";
-			$field .= " class='form-horizontal";
-			if ($class) $field .= " " . $class . "'";
-			$field .= "'";
+			if ($class || $this->style == 'horizontal') $field .= " class='" . (($this->style == 'horizontal' ? "form-horizontal " : false) . $class) . "'";
 			if ($otherAttributes) foreach ($otherAttributes as $attribute => $attributeValue) $field .= " " . $attribute . "='" . trim($attributeValue) . "'";
 			if ($eventHandlers) foreach ($eventHandlers as $event => $action) $field .= " " . $event . "='" . trim($action) . "'";
-			$field .= ">";
+			$field .= ">\n";
 			if ($name) $field .= "<input type='hidden' name='formName' id='formName' value='" . $name . "' />";
 			
 			return $field;
@@ -1272,7 +1264,7 @@
 		}
 		
 		public function end() {
-			return "</form>";
+			return "</form>\n";
 		}
 		
 		public function paginate($currentPage, $numberOfPages, $urlStructure) {

@@ -34,10 +34,10 @@
 				
 			// check login
 				if (!$pageError) {
-					$error = '';
+
 					$logged_in = confirmUser($_POST['loginUsername'], null, null, $_POST['loginPassword'], true);
 
-					if ($logged_in) {
+					if (!@$logged_in['error']) {
 						$_SESSION['username'] = $_POST['loginUsername'];
 						$_SESSION['password_hash'] = $logged_in['password_hash'];
 						$cookieExpiryDate = time()+60*60*24 * floatval($systemPreferences['Keep users logged in for']);
@@ -47,7 +47,10 @@
 						else header ('Location: /profile/' . $_SESSION['username']);
 						exit();
 					}
-					else $pageError = $error;
+					else {
+						$pageError = $logged_in['error'];
+						unset ($logged_in);
+					}
 
 				}
 				

@@ -229,7 +229,7 @@
 				}
 								
 			// Authentication
-				$logged_in = checkLogin();
+				$logged_in = checkLogin('username');
 				
 				if (@$logged_in['is_moderator']) {
 					$otherCriteria = "(is_closed = '0' OR is_closed IS NULL)";
