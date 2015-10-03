@@ -28,8 +28,8 @@
 						$key = $encryption->quickEncrypt($_POST['email'], $salts_TL['public_keys']);
 						$expiryDate = date('Y-m-d', mktime(0, 0, 0, date('m'), date('d') + $systemPreferences['Password reset link active for'], date('Y'))); // one week
 					// save key to database with expiry
-						deleteFromDb('user_keys', array('name'=>'Reset Password', 'user_id'=>$doesUserExist[0]['user_id']), null, null, null);
-						insertIntoDb('user_keys', array('user_id'=>$doesUserExist[0]['user_id'], 'name'=>'Reset Password', 'hash'=>$key, 'saved_on'=>date('Y-m-d H:i:s'), 'expiry'=>$expiryDate));
+						deleteFromDb('user_keys', array('user_key'=>'Reset Password', 'user_id'=>$doesUserExist[0]['user_id']));
+						insertIntoDb('user_keys', array('user_id'=>$doesUserExist[0]['user_id'], 'user_key'=>'Reset Password', 'hash'=>$key, 'saved_on'=>date('Y-m-d H:i:s'), 'expiry'=>$expiryDate));
 					// update log
 						$activity = trim($doesUserExist[0]['first_name'] . ' ' . $doesUserExist[0]['last_name']) . " (user_id " . $doesUserExist[0]['user_id'] . ") has requested a password reset";
 						$logger->logItInDb($activity, null, array('user_id=' . $doesUserExist[0]['user_id']));

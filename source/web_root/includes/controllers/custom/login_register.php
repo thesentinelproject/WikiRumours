@@ -6,7 +6,7 @@
 
 	// don't allow redundant login
 		if ($logged_in) {
-			header('Location: /logout');
+			header('Location: /logout/' . trim($parameter1 . '/' . $parameter2 . '/' . $parameter3 . '/' . $parameter4, '/ '));
 			exit();
 		}
 

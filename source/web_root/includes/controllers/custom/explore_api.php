@@ -5,7 +5,7 @@
 	-------------------------------------- */
 
 	if ($logged_in) {
-		$apiKey = retrieveSingleFromDb('user_keys', null, array('user_id'=>$logged_in['user_id'], 'name'=>'API'));
+		$apiKey = retrieveSingleFromDb('user_keys', null, array('user_id'=>$logged_in['user_id'], 'user_key'=>'API'));
 	}
 
 	$pageTitle = "Explore API";

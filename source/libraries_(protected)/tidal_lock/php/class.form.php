@@ -2,7 +2,7 @@
 
 	class form_TL {
 
-		private $style = 'horizontal'; // alternate styles are "stacked" and "no-label"
+		private $style = 'horizontal'; // alternate styles are "stacked", "inline" and "no-label"
 
 		public function styleForm($style) {
 			$this->style = $style;
@@ -27,7 +27,7 @@
 			if (!isset($label)) $label = null;
 			if (!isset($placeholder)) $placeholder = null;
 
-			if ($this->style == 'no-label' && !$placeholder) $placeholder = $label;
+			if (($this->style == 'inline' || $this->style == 'no-label') && !$placeholder) $placeholder = $label;
 			
 			switch($type) {
 				/* ------------------------- */
@@ -1224,7 +1224,7 @@
 				$row .= "    <label for='" . $name . "' id='" . trim('formLabel_' . $name, '_') . "' class='col-lg-3 col-md-3 col-sm-4 col-xs-12 control-label'>" . $label . "</label>\n";
 				$row .= "    <div id='" . trim('formField_' . $name, '_') . "' class='col-lg-9 col-md-9 col-sm-8 col-xs-12'>\n";
 			}
-			elseif ($this->style == 'stacked') {
+			elseif ($this->style == 'stacked' || $this->style == 'inline') {
 				$row .= "    <label for='" . $name . "' id='" . trim('formLabel_' . $name, '_') . "' class='control-label'>" . $label . "</label>\n";
 			}
 
@@ -1250,12 +1250,14 @@
 				$console .= __FUNCTION__ . ": No form style specified.\n";
 				return false;
 			}
-			
+			elseif ($this->style == 'horizontal') $class = trim('form-horizontal ' . $class);
+			elseif ($this->style == 'inline') $class = trim('form-inline ' . $class);
+
 			$field = "<form role='form'";
 			if ($name) $field .= " name='" . $name . "' id='" . $name . "'";
 			if ($action) $field .= " action='" . $action . "'";
 			if ($method) $field .= " method='" . $method . "'";
-			if ($class || $this->style == 'horizontal') $field .= " class='" . (($this->style == 'horizontal' ? "form-horizontal " : false) . $class) . "'";
+			if ($class) $field .= " class='" . $class . "'";
 			if ($otherAttributes) foreach ($otherAttributes as $attribute => $attributeValue) $field .= " " . $attribute . "='" . trim($attributeValue) . "'";
 			if ($eventHandlers) foreach ($eventHandlers as $event => $action) $field .= " " . $event . "='" . trim($action) . "'";
 			$field .= ">\n";

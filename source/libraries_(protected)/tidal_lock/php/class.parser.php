@@ -909,6 +909,21 @@
 			
 		}
 
+		public function checkboxesToBinary($arrayOfIDs) {
+
+			if (!is_array($arrayOfIDs)) {
+				$console .= __FUNCTION__ . ": &quot;" . $arrayOfIDs . "&quot; is not an array.\n";
+				return false;
+			}
+
+			foreach ($arrayOfIDs as $id) {
+				$_POST[$id] = (isset($_POST[$id]) ? 1 : 0);
+			}
+
+			return true;
+			
+		}
+
 		public function truncate($inputText, $charactersOrWords = 'c', $desiredLength = 50, $moreLink = false, $moreClass = false, $moreLabel = false) {
 
 			global $console;

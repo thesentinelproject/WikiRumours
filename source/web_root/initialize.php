@@ -302,7 +302,8 @@
 						}
 						else {
 							include __DIR__ . '/includes/views/' . $view . '/shared/page_top.php';
-							include __DIR__ . '/includes/views/' . $view . '/default/404.php';
+							if (file_exists(__DIR__ . '/includes/views/' . $view . '/custom/404.php')) include __DIR__ . '/includes/views/' . $view . '/custom/404.php';
+							else include __DIR__ . '/includes/views/' . $view . '/default/404.php';
 							include __DIR__ . '/includes/views/' . $view . '/shared/page_bottom.php';
 						}
 					}

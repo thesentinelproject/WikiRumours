@@ -36,7 +36,7 @@
 			}
 		}
 		
-		$apiKey = retrieveSingleFromDb('user_keys', null, array('user_id'=>$user[0]['user_id'], 'name'=>'API'));
+		$apiKey = retrieveSingleFromDb('user_keys', null, array('user_id'=>$user[0]['user_id'], 'user_key'=>'API'));
 		if (count($apiKey) > 0) {
 			$allQueries = countInDb('api_calls_internal', 'id', array('api_key'=>$apiKey[0]['hash']));
 			$expiry = date('Y-m-d H:i:s', mktime(date('H'), date('i'), date('s'), date('m'), date('d') - 1, date('Y')));
@@ -50,7 +50,7 @@
 	if (count($_POST) > 0) {
 
 		if ($_POST['formName'] == 'apiForm' && @$_POST['allowUnlimited'] == 'Y') {
-			$success = updateDb('user_keys', array('value'=>'u'), array('name'=>'API', 'user_id'=>$user[0]['user_id']));
+			$success = updateDb('user_keys', array('value'=>'u'), array('user_key'=>'API', 'user_id'=>$user[0]['user_id']));
 			if (!$success) $pageError .= "Unable to update API query threshold. ";
 			else {
 				// update log
@@ -62,7 +62,7 @@
 			}
 		}
 		elseif ($_POST['formName'] == 'apiForm' && @$_POST['removeUnlimited'] == 'Y') {
-			$success = updateDb('user_keys', array('value'=>''), array('name'=>'API', 'user_id'=>$user[0]['user_id']));
+			$success = updateDb('user_keys', array('value'=>''), array('user_key'=>'API', 'user_id'=>$user[0]['user_id']));
 			if (!$success) $pageError .= "Unable to update API query threshold. ";
 			else {
 				// update log
@@ -76,13 +76,13 @@
 		elseif ($_POST['formName'] == 'apiForm') {
 
 			// delete old API key
-				deleteFromDb('user_keys', array('user_id'=>$user[0]['user_id'], 'name'=>'API'), null, null, null, null, 1);
+				deleteFromDb('user_keys', array('user_id'=>$user[0]['user_id'], 'user_key'=>'API'), null, null, null, null, 1);
 
 			// create API key
 				$newApiKey = $encrypter->quickEncrypt($user[0]['user_id'] . rand(100000, 999999));
 			
 			// save API key
-				insertIntoDb('user_keys', array('user_id'=>$user[0]['user_id'], 'name'=>'API', 'hash'=>$newApiKey, 'saved_on'=>date('Y-m-d H:i:s')));
+				insertIntoDb('user_keys', array('user_id'=>$user[0]['user_id'], 'user_key'=>'API', 'hash'=>$newApiKey, 'saved_on'=>date('Y-m-d H:i:s')));
 				
 			// update record of previous API calls (if an API was previously assigned)
 				if ($apiKey[0]['hash']) updateDb('api_calls_internal', array('api_key'=>$newApiKey), array('api_key'=>$apiKey[0]['hash']));

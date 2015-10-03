@@ -6,11 +6,19 @@
 
 	// parse query string
 		$key = $parameter1;
-		$pageStatus = $parameter2;
 
 	// validate query string
-		$doesKeyExist = retrieveSingleFromDb('user_keys', null, array('name'=>'Reset Password', 'hash'=>$key));
-		
+		$doesKeyExist = retrieveSingleFromDb('user_keys', null, array('user_key'=>'Reset Password', 'hash'=>$key));
+		if (!count($doesKeyExist)) {
+			header('Location: /login_register/bad_key');
+			exit();
+		}
+		$doesUserExist = retrieveUsers(array($tablePrefix . 'users.user_id'=>$doesKeyExist[0]['user_id'], $tablePrefix . 'users.enabled'=>'1'), null, null, null, 1);
+		if (!count($doesUserExist)) {
+			header('Location: /login_register/bad_user');
+			exit();
+		}
+
 /*	--------------------------------------
 	Execute only if a form post
 	-------------------------------------- */
@@ -30,26 +38,20 @@
 				if (strlen($hash) < 20) $pageError .= "There was a problem securing your password, so rather than save it without appropriate security, we've cancelled this operation. Please try again. ";
 			}
 			
-			$doesKeyExist = retrieveSingleFromDb('user_keys', null, array('name'=>'Reset Password', 'user_id'=>$doesKeyExist[0]['user_id']));
-			if (count($doesKeyExist) < 1) $pageError .= "Invalid key. Please check the link which brought you here. ";
-			else {
-				$logged_in = retrieveUsers(array($tablePrefix . 'users.user_id'=>$doesKeyExist[0]['user_id'], $tablePrefix . 'users.enabled'=>'1'), null, null, null, 1);
-				if (count($logged_in) < 1) $pageError = "There's something wrong with the user account you're trying to modify; it may have been inactivated. ";
-			}
-			
 		// retrieve user details and reset password if appropriate
 			if (!$pageError) {
 				// update user
-					updateDb('users', array('password_hash'=>$hash), array('user_id'=>$doesKeyExist[0]['user_id']), null, null, null, null, 1);
+					updateDbSingle('users', array('password_hash'=>$hash), array('user_id'=>$doesKeyExist[0]['user_id']));
 				// update log
-					$activity = $logged_in['full_name'] . " (user_id " . $doesKeyExist[0]['user_id'] . ") has successfully updated his/her password";
+					$activity = $doesUserExist[0]['full_name'] . " (user_id " . $doesKeyExist[0]['user_id'] . ") has successfully updated his/her password";
 					$logger->logItInDb($activity, null, array('user_id=' . $doesKeyExist[0]['user_id']));
 				// remove key
-					deleteFromDb('user_keys', array('name'=>'Reset Password', 'user_id'=>$doesKeyExist[0]['user_id']), null, null, null);
+					deleteFromDb('user_keys', array('user_key'=>'Reset Password', 'user_id'=>$doesKeyExist[0]['user_id']));
 				// redirect
-					header('Location: /reset_password/' . $key . '/success');
+					header('Location: /login_register/password_reset_successful');
 					exit();
 			}
+
 
 	}
 	

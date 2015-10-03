@@ -46,7 +46,8 @@
 	-------------------------------------- */
 		
 	if (count($_POST) > 0) {
-		
+
+
 		if ($_POST['formName'] == 'profileForm' && $_POST['deleteCurrentProfileImage'] == 'Y') {
 
 			// delete profile images (& verify deletion)
@@ -148,8 +149,8 @@
 								$emailKey = $encryption->quickEncrypt($_POST['email'], rand(10000,99999));
 								$expiryDate = date('Y-m-d', mktime(0, 0, 0, date('m'), date('d') + $systemPreferences['Email confirmation link active for'], date('Y'))); // one week
 								
-								deleteFromDb('user_keys', array('name'=>'Reset Email', 'user_id'=>$user_in[0]['user_id']), null, null, null);
-								insertIntoDb('user_keys', array('name'=>'Reset Email', 'user_id'=>$user_in[0]['user_id'], 'hash'=>$emailKey, 'value'=>$_POST['email'], 'saved_on'=>$expiryDate));
+								deleteFromDb('user_keys', array('user_key'=>'Reset Email', 'user_id'=>$user[0]['user_id']));
+								insertIntoDb('user_keys', array('user_key'=>'Reset Email', 'user_id'=>$user[0]['user_id'], 'hash'=>$emailKey, 'value'=>$_POST['email'], 'saved_on'=>date('Y-m-d H:i:s'), 'expiry'=>$expiryDate));
 								
 								$emailSent = emailNewEmailKey($logged_in['full_name'], addSlashes($_POST['email']), $emailKey);
 								if (!$emailSent) $pageError = "Unable to send your email reset link. Please try updating again, and if you continue to encounter difficulties, <a href='/contact' class='errorMessage'>let us know</a>. ";
@@ -182,8 +183,8 @@
 						}
 
 					// redirect
-						if ($logged_in['user_id'] == $user[0]['user_id'] && $_POST['email'] != $user[0]['email']) header('Location: /account/' . $_POST['username'] . '/account_updated_check_email');
-						else  header('Location: /account/' . $_POST['username'] . '/account_updated');
+						if ($logged_in['user_id'] == $user[0]['user_id'] && $_POST['email'] != $user[0]['email']) header('Location: /account/' . $_POST['username'] . '/profile_updated_check_email');
+						else  header('Location: /account/' . $_POST['username'] . '/profile_updated');
 						exit();
 				}
 				

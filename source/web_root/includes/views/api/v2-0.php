@@ -57,7 +57,7 @@
 	// authenticate key
 		if (!$apiKey) $errors[count($errors)] = 2; // missing API key
 		else {
-			$user = retrieveUserKeys(array('name'=>'API', 'hash'=>$apiKey), null, null, null, 1);
+			$user = retrieveUserKeys(array('user_key'=>'API', 'hash'=>$apiKey), null, null, null, 1);
 			if (count($user) < 1) $errors[count($errors)] = 3; // invalid API key
 		}
 

@@ -53,7 +53,7 @@
 		global $systemPreferences;
 		global $pseudonym;
 
-		$url = $environmentals['protocol'] . $environmentals['absoluteRoot'] . "reset_email/" . $key;
+		$url = $environmentals['protocol'] . $environmentals['absoluteRoot'] . "/reset_email/" . $key;
 		
 		$subject = "[" . (@$pseudonym['name'] ? $pseudonym['name'] : $systemPreferences['Name of this application']) . "] Update your email address";
 
