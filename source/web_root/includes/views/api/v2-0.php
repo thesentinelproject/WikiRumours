@@ -9,7 +9,7 @@
 		$apiKey = $parameter1;
 		$model = $parameter2;
 		$output = $parameter3;
-		if ($output != 'json') $output = 'xml';
+		if ($output != 'json' && $output != 'csv') $output = 'xml';
 
 		$parseFilters = explode('|', urldecode($parameter4));
 
@@ -105,8 +105,16 @@
 		}
 		
 	// display data
-		$xmlOutput = '';
-		
+		if ($output == 'csv') {
+			$csvOutput = fopen('php://output', 'w');
+			header("Content-type: text/csv");
+			header("Content-Disposition: attachment; filename=wikirumours.csv");
+			header("Pragma: no-cache");
+			header("Expires: 0");
+			fputcsv($csvOutput, array('RumourID', 'Rumour', 'Country_Abbreviation', 'Country', 'Region', 'Latitude', 'Longitude', 'Occurred_on', 'Status_ID', 'Status', 'Priority_ID', 'Priority', 'Findings', 'Number_of_Sightings'));
+		}
+
+		$xmlOutput = null;
 		$xmlOutput .= "<" . "?" . "xml version='1.0' encoding='ISO-8859-1'" . "?" . ">\n";
 		$xmlOutput .= "<wikirumours>\n";
 		$xmlOutput .= "  <version>1.0</version>\n";
@@ -133,9 +141,11 @@
 				$xmlOutput .= "    <datapoint>\n";
 				$xmlOutput .= "      <rumour_id><![CDATA[" . $data[$counter]['public_id'] . "]]></rumour_id>\n";
 				$xmlOutput .= "      <rumour><![CDATA[" . $data[$counter]['description'] . "]]></rumour>\n";
-				$xmlOutput .= "      <country_abbreviation><![CDATA[" . $data[$counter]['country'] . "]]></country_abbreviation>\n";
-				$xmlOutput .= "      <country><![CDATA[" . @$countries[$data[$counter]['country']] . "]]></country>\n";
-				$xmlOutput .= "      <region><![CDATA[" . $data[$counter]['region'] . "]]></region>\n";
+				$xmlOutput .= "      <country_abbreviation><![CDATA[" . $data[$counter]['country_id'] . "]]></country_abbreviation>\n";
+				$xmlOutput .= "      <country><![CDATA[" . @$countries_TL[$data[$counter]['country_id']] . "]]></country>\n";
+				$xmlOutput .= "      <region><![CDATA[" . $data[$counter]['city'] . "]]></region>\n";
+				$xmlOutput .= "      <latitude><![CDATA[" . $data[$counter]['latitude'] . "]]></latitude>\n";
+				$xmlOutput .= "      <longitude><![CDATA[" . $data[$counter]['longitude'] . "]]></longitude>\n";
 				$xmlOutput .= "      <occurred_on><![CDATA[" . $data[$counter]['occurred_on'] . "]]></occurred_on>\n";
 				$xmlOutput .= "      <status_id><![CDATA[" . $data[$counter]['status_id'] . "]]></status_id>\n";
 				$xmlOutput .= "      <status><![CDATA[" . $data[$counter]['status'] . "]]></status>\n";
@@ -144,13 +154,18 @@
 				$xmlOutput .= "      <findings><![CDATA[" . $data[$counter]['findings'] . "]]></findings>\n";
 				$xmlOutput .= "      <number_of_sightings>" . $data[$counter]['number_of_sightings'] . "</number_of_sightings>\n";
 				$xmlOutput .= "    </datapoint>\n";
+				if ($output == 'csv') fputcsv($csvOutput, array($data[$counter]['public_id'], $data[$counter]['description'], $data[$counter]['country_id'], @$countries_TL[$data[$counter]['country_id']], $data[$counter]['city'], $data[$counter]['latitude'], $data[$counter]['longitude'], $data[$counter]['occurred_on'], $data[$counter]['status_id'], $data[$counter]['status'], $data[$counter]['priority_id'], $data[$counter]['priority'], $data[$counter]['findings'], $data[$counter]['number_of_sightings']));
 			}
 			$xmlOutput .= "  </data>\n";
 		}
 		$xmlOutput .= "</wikirumours>\n";
-		
+
 		if ($output == 'xml') {
 			echo $xmlOutput;
+		}
+		elseif ($output == 'csv') {
+			echo $csvOutput;
+			fclose($csvOutput);
 		}
 		elseif ($output == 'json') {
 			$simpleXml = simplexml_load_string($xmlOutput, null, LIBXML_NOCDATA);
