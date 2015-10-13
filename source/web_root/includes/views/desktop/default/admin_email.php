@@ -28,10 +28,10 @@
 		echo $form->rowStart('recipient', 'Recipient');
 		echo "  <div class='row'>\n";
 		echo "    <div class='col-lg-5 col-md-5 col-sm-5 col-xs-5'>\n";
-		echo "      " . $form->input('text', 'recipient_name_add', @$_POST['recipient_name_add'], true, '|Name', 'form-control') . "\n";
+		echo "      " . $form->input('text', 'recipient_name_add', @$_POST['recipient_name_add'], false, '|Name', 'form-control') . "\n";
 		echo "    </div>\n";
 		echo "    <div class='col-lg-5 col-md-5 col-sm-5 col-xs-5'>\n";
-		echo "      " . $form->input('email', 'recipient_email_add', @$_POST['recipient_email_add'], true, '|Email', 'form-control') . "\n";
+		echo "      " . $form->input('email', 'recipient_email_add', @$_POST['recipient_email_add'], false, '|Email', 'form-control') . "\n";
 		echo "    </div>\n";
 		echo "  </div>\n";
 		echo $form->rowEnd();
