@@ -37,7 +37,7 @@
 			$tags = retrieveTags(array('rumour_id'=>$rumour[0]['rumour_id']), null, null, $tablePrefix . 'tags.tag ASC');
 
 		// sightings		
-			$sightings = retrieveSightings(array($tablePrefix . 'rumour_sightings.rumour_id'=>$rumour[0]['rumour_id']), null, null, $tablePrefix . 'rumour_sightings.entered_on ASC');
+			$sightings = retrieveSightings(array($tablePrefix . 'rumour_sightings.rumour_id'=>$rumour[0]['rumour_id']), null, null, $tablePrefix . 'rumour_sightings.heard_on DESC');
 
 		// watchlisted?
 			$result = countInDb('watchlist', 'created_by', array('rumour_id'=>$rumour[0]['rumour_id'], 'created_by'=>$logged_in['user_id']));

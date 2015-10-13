@@ -220,9 +220,9 @@
 			$pageJavaScript .= "  function populateMap() {\n";
 			$pageJavaScript .= "    var heatMapData = [\n";
 			if ($rumour[0]['latitude'] <> 0 && $rumour[0]['longitude'] <> 0) $mapCenter = $rumour[0]['latitude'] . "," . $rumour[0]['longitude'];
-			for ($counter = count($sightings) - 1; $counter >= 0; $counter--) {
-				if ($sightings[$counter]['sighting_latitude'] <> 0 && $sightings[$counter]['sighting_longitude'] <> 0) {
-					$pageJavaScript .= "      {location: new google.maps.LatLng(" . $sightings[$counter]['sighting_latitude'] . "," . $sightings[$counter]['sighting_longitude'] . "), weight: " . strtotime($sightings[$counter]['heard_on']) . "}" . ($counter > 0 ? "," : false) . "\n";
+			for ($counter = 0; $counter < count($sightings); $counter++) {
+				if ($sightings[$counter]['sighting_latitude'] <> 0 && $sightings[$counter]['sighting_longitude'] <> 0 && $sightings[$counter]['heard_on'] != '0000-00-00 00:00:00') {
+					$pageJavaScript .= "      {location: new google.maps.LatLng(" . $sightings[$counter]['sighting_latitude'] . "," . $sightings[$counter]['sighting_longitude'] . "), weight: " . ($counter + 20) . "}" . ($counter < count($sightings) - 1 ? "," : false) . " // heard in " . $sightings[$counter]['sighting_city'] . " on " . date('Y-m-d', strtotime($sightings[$counter]['heard_on'])) . "\n";
 					if (!@$mapCenter) $mapCenter = $sightings[$counter]['sighting_latitude'] . "," . $sightings[$counter]['sighting_longitude'];
 				}
 			}
@@ -240,6 +240,8 @@
 			$pageJavaScript .= "    });\n\n";
 
 			$pageJavaScript .= "    var heatmap = new google.maps.visualization.HeatmapLayer({\n";
+			$pageJavaScript .= "      opacity: 0,\n";
+			$pageJavaScript .= "      radius: 20,\n";
 			$pageJavaScript .= "      data: heatMapData\n";
 			$pageJavaScript .= "    });\n";
 			$pageJavaScript .= "    heatmap.setMap(map);\n";
