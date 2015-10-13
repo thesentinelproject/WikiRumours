@@ -28,6 +28,8 @@
 		elseif ($sort == 'priority_low') $sort = 'severity ASC';
 		elseif ($sort == 'status_up') $sort = $tablePrefix . 'rumours.status_id ASC';
 		elseif ($sort == 'status_down') $sort = $tablePrefix . 'rumours.status_id DESC';
+		elseif ($sort == 'occurred_date_low') $sort = $tablePrefix . 'rumours.occurred_on ASC';
+		elseif ($sort == 'occurred_date_high') $sort = $tablePrefix . 'rumours.occurred_on DESC';
 		elseif ($sort == 'date_low') $sort = $tablePrefix . 'rumours.updated_on ASC';
 		else {
 			$sort = $tablePrefix . 'rumours.updated_on DESC';

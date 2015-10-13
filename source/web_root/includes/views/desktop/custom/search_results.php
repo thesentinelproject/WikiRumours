@@ -21,6 +21,7 @@
 				echo "<table class='table table-hover table-condensed'>\n";
 				echo "<tr>\n";
 				echo "<th>Updated</th>\n";
+				echo "<th>Occurred</th>\n";
 				echo "<th>Rumour</th>\n";
 				echo "<th>Status</th>\n";
 				echo "<th>Sightings</th>\n";
@@ -28,7 +29,8 @@
 				for ($counter = 0; $counter < count($rumours); $counter++) {
 					echo "<tr>\n";
 					echo "<td class='nowrap'>" . date('j-M-Y', strtotime($rumours[$counter]['updated_on'])) . "</td>\n";
-					echo "<td><a href='/rumour/" . $rumours[$counter]['public_id'] . "/" . $parser->seoFriendlySuffix($rumours[$counter]['description']) . "'>" . $parser->truncate($rumours[$counter]['description'], 'c', 40) . "</a></td>\n";
+					echo "<td class='nowrap'>" . date('j-M-Y', strtotime($rumours[$counter]['occurred_on'])) . "</td>\n";
+					echo "<td><a href='/rumour/" . $rumours[$counter]['public_id'] . "/" . $parser->seoFriendlySuffix($rumours[$counter]['description']) . "'>" . $parser->truncate($rumours[$counter]['description'], 'c', 30) . "</a></td>\n";
 					echo "<td>" . $operators->firstTrue(@$rumours[$counter]['status'], '-') . "</td>\n";
 					echo "<td>" . floatval($rumours[$counter]['number_of_sightings']) . "</td>\n";
 					echo "</tr>\n";
@@ -38,18 +40,26 @@
 			else {
 				echo "<table class='table table-hover table-condensed'>\n";
 				echo "<tr>\n";
-				if ($filters['sort'] == 'date_high') echo "<th><a href='/search_results/" . $keyvalue_array->updateKeyValue($keyvalue_array->arrayToKeyValue($filters, '|'), 'sort', 'date_low', '|') . "'>Updated</a></th>\n";
-				else echo "<th><a href='/search_results/" . $keyvalue_array->updateKeyValue($keyvalue_array->arrayToKeyValue($filters, '|'), 'sort', 'date_high', '|') . "'>Updated</a></th>\n";
-				echo "<th>Rumour</th>\n";
-				if ($filters['sort'] == 'priority_high') echo "<th><a href='/search_results/" . $keyvalue_array->updateKeyValue($keyvalue_array->arrayToKeyValue($filters, '|'), 'sort', 'priority_low', '|') . "'>Priority</a></th>\n";
-				else echo "<th><a href='/search_results/" . $keyvalue_array->updateKeyValue($keyvalue_array->arrayToKeyValue($filters, '|'), 'sort', 'priority_high', '|') . "'>Priority</a></th>\n";
-				if ($filters['sort'] == 'status_down') echo "<th><a href='/search_results/" . $keyvalue_array->updateKeyValue($keyvalue_array->arrayToKeyValue($filters, '|'), 'sort', 'status_up', '|') . "'>Status</a></th>\n";
-				else echo "<th><a href='/search_results/" . $keyvalue_array->updateKeyValue($keyvalue_array->arrayToKeyValue($filters, '|'), 'sort', 'status_down', '|') . "'>Status</a></th>\n";
+				// Updated
+					if ($filters['sort'] == 'date_high') echo "<th><a href='/search_results/" . $keyvalue_array->updateKeyValue($keyvalue_array->arrayToKeyValue($filters, '|'), 'sort', 'date_low', '|') . "'>Updated</a></th>\n";
+					else echo "<th><a href='/search_results/" . $keyvalue_array->updateKeyValue($keyvalue_array->arrayToKeyValue($filters, '|'), 'sort', 'date_high', '|') . "'>Updated</a></th>\n";
+				// Occurred
+					if ($filters['sort'] == 'occurred_date_high') echo "<th><a href='/search_results/" . $keyvalue_array->updateKeyValue($keyvalue_array->arrayToKeyValue($filters, '|'), 'sort', 'occurred_date_low', '|') . "'>Occurred</a></th>\n";
+					else echo "<th><a href='/search_results/" . $keyvalue_array->updateKeyValue($keyvalue_array->arrayToKeyValue($filters, '|'), 'sort', 'occurred_date_high', '|') . "'>Occurred</a></th>\n";
+				// Rumour
+					echo "<th>Rumour</th>\n";
+				// Priority
+					if ($filters['sort'] == 'priority_high') echo "<th><a href='/search_results/" . $keyvalue_array->updateKeyValue($keyvalue_array->arrayToKeyValue($filters, '|'), 'sort', 'priority_low', '|') . "'>Priority</a></th>\n";
+					else echo "<th><a href='/search_results/" . $keyvalue_array->updateKeyValue($keyvalue_array->arrayToKeyValue($filters, '|'), 'sort', 'priority_high', '|') . "'>Priority</a></th>\n";
+				// Status
+					if ($filters['sort'] == 'status_down') echo "<th><a href='/search_results/" . $keyvalue_array->updateKeyValue($keyvalue_array->arrayToKeyValue($filters, '|'), 'sort', 'status_up', '|') . "'>Status</a></th>\n";
+					else echo "<th><a href='/search_results/" . $keyvalue_array->updateKeyValue($keyvalue_array->arrayToKeyValue($filters, '|'), 'sort', 'status_down', '|') . "'>Status</a></th>\n";
 				echo "</tr>\n";
 				for ($counter = 0; $counter < count($rumours); $counter++) {
 					echo "<tr>\n";
 					echo "<td class='nowrap'>" . date('j-M-Y', strtotime($rumours[$counter]['updated_on'])) . "</td>\n";
-					echo "<td><a href='/rumour/" . $rumours[$counter]['public_id'] . "/" . $parser->seoFriendlySuffix($rumours[$counter]['description']) . "'>" . $parser->truncate($rumours[$counter]['description'], 'c', 30) . "</a></td>\n";
+					echo "<td class='nowrap'>" . ($rumours[$counter]['occurred_on'] != '0000-00-00 00:00:00' ? date('j-M-Y', strtotime($rumours[$counter]['occurred_on'])) : false) . "</td>\n";
+					echo "<td><a href='/rumour/" . $rumours[$counter]['public_id'] . "/" . $parser->seoFriendlySuffix($rumours[$counter]['description']) . "'>" . $parser->truncate($rumours[$counter]['description'], 'c', 20) . "</a></td>\n";
 					echo "<td class='nowrap'>" . $operators->firstTrue(@$rumours[$counter]['priority'], '-') . "</td>\n";
 					echo "<td class='nowrap'>" . $operators->firstTrue(@$rumours[$counter]['status'], '-') . "</td>\n";
 					echo "</tr>\n";
