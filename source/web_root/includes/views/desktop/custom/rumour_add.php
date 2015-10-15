@@ -8,7 +8,7 @@
 			echo $form->input('hidden', 'step', @$step) . "\n";
 	
 			echo "<div class='row form-group'>\n";
-			/* Description */	echo "  <div class='col-md-12'>" . $form->input('textarea', 'description', @$_POST['description'], true, 'Rumour|Please be as concise as possible', 'form-control', null, null, array('rows'=>'10')) . "</div>\n";
+			/* Description */	echo "  <div class='col-md-12'>" . $form->input('textarea', 'description', @$_POST['description'], true, 'Rumour|Please be as concise as possible', 'form-control', null, 255, array('rows'=>'10')) . "</div>\n";
 			echo "</div>\n";
 			echo "<div class='row form-group'>\n";
 			/* Country */		echo "  <div class='col-md-6 col-xs-9'>" . $form->input('country', 'country', $operators->firstTrue(@$_POST['country'], @$pseudonym['country_id']), false, 'In which country did this occur?', 'form-control') . "</div>\n";

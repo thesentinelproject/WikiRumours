@@ -240,7 +240,6 @@
 			$pageJavaScript .= "    });\n\n";
 
 			$pageJavaScript .= "    var heatmap = new google.maps.visualization.HeatmapLayer({\n";
-			$pageJavaScript .= "      opacity: 0,\n";
 			$pageJavaScript .= "      radius: 20,\n";
 			$pageJavaScript .= "      data: heatMapData\n";
 			$pageJavaScript .= "    });\n";

@@ -7,11 +7,11 @@
 
 	/* Rumour */			echo $form->row('uneditable_static', 'description', "<a href='/rumour/" . $sighting[0]['public_id'] . "/" . $parser->seoFriendlySuffix($sighting[0]['description']) . "'>" . $sighting[0]['description'] . "</a>", false, 'Rumour');
 	/* Country */			echo $form->row('country', 'country', $operators->firstTrue(@$_POST['country'], $sighting[0]['sighting_country_id']), true, 'Country where heard', 'form-control');
-	/* Community */			echo $form->row('text', 'city', $operators->firstTrue(@$_POST['city'], $sighting[0]['sighting_city']), false, 'Community', 'form-control');
+	/* Community */			echo $form->row('text', 'city', $operators->firstTrue(@$_POST['city'], $sighting[0]['sighting_city']), false, 'Community', 'form-control', null, 50);
 							echo $form->rowStart('latLong');
 							echo "  <div class='row'>\n";
-							echo "    <div class='col-md-6'>" . $form->input('text', 'latitude', $operators->firstTrue(@$_POST['latitude'], (@$sighting[0]['sighting_latitude'] <> 0 ? $sighting[0]['sighting_latitude'] : false)), false, '|Latitude', 'form-control') . "</div>\n";
-							echo "    <div class='col-md-6'>" . $form->input('text', 'longitude', $operators->firstTrue(@$_POST['longitude'], (@$sighting[0]['sighting_longitude'] <> 0 ? $sighting[0]['sighting_longitude'] : false)), false, '|Longitude', 'form-control') . "</div>\n";
+							echo "    <div class='col-md-6'>" . $form->input('text', 'latitude', $operators->firstTrue(@$_POST['latitude'], (@$sighting[0]['sighting_latitude'] <> 0 ? $sighting[0]['sighting_latitude'] : false)), false, '|Latitude', 'form-control', null, 11) . "</div>\n";
+							echo "    <div class='col-md-6'>" . $form->input('text', 'longitude', $operators->firstTrue(@$_POST['longitude'], (@$sighting[0]['sighting_longitude'] <> 0 ? $sighting[0]['sighting_longitude'] : false)), false, '|Longitude', 'form-control', null, 11) . "</div>\n";
 							echo "  </div>\n";
 							echo $form->rowEnd();
 	/* Location type */		echo $form->row('select', 'location_type', $operators->firstTrue(@$_POST['location_type'], $sighting[0]['location_type']), false, 'Overheard at', 'select2', (@$locationTypes[$sighting[0]['location_type']] ? $locationTypes : $locationTypes + array($sighting[0]['location_type']=>$sighting[0]['location_type'])), null, array('data-placeholder'=>'Overheard at', 'data-tags'=>'true'));
