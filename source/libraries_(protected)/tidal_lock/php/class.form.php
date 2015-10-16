@@ -839,6 +839,8 @@
 							if ($eventHandlers) foreach ($eventHandlers as $event => $action) $field .= " " . $event . "='" . trim($action) . "'";
 							if ($mandatory) $field .= " required";
 							$field .= " />";
+							$field .= "<input type='hidden' name='" . $name . "_width' id='" . $name . "_width' />";
+							$field .= "<input type='hidden' name='" . $name . "_height' id='" . $name . "_height' />";
 							return $field;
 							break;
 				/* ------------------------- */
