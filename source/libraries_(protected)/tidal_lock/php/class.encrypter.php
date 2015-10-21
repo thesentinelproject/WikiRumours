@@ -40,7 +40,7 @@
 				for ($counter = 0; $counter < strlen($plainText); $counter++) {
 					$asciiCode = str_pad(ord(substr($plainText, $counter, 1)), 3, '0', STR_PAD_LEFT);
 					if ($asciiCode < 1 || $asciiCode > 255) {
-						$console .= __FUNCTION__ . ": Input string contains characters that aren't part of the standard or extended ASCII character sets.\n";
+						$console .= __CLASS__ . "->" . __FUNCTION__ . ": Input string contains characters that aren't part of the standard or extended ASCII character sets.\n";
 						return false;
 					}
 					else $convertedText .= $asciiCode;
@@ -115,7 +115,7 @@
 						$plainText .= chr(substr($unsaltedText, $counter, 3));
 					}
 					else {
-						$console .= __FUNCTION__ . ": Input string appears to contain characters that aren't part of the standard or extended ASCII character sets; please check that the identical salt was used for obfuscation and de-obfuscation.\n";
+						$console .= __CLASS__ . "->" . __FUNCTION__ . ": Input string appears to contain characters that aren't part of the standard or extended ASCII character sets; please check that the identical salt was used for obfuscation and de-obfuscation.\n";
 						return false;
 					}
 				}

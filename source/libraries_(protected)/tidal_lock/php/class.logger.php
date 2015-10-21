@@ -24,7 +24,7 @@
 	
 			// check for errors
 				if (!$activity) {
-					$console .= __FUNCTION__ . ": No activity specified.\n";
+					$console .= __CLASS__ . "->" . __FUNCTION__ . ": No activity specified.\n";
 					return false;
 				}
 				

@@ -7,7 +7,7 @@
 			global $console;
 			
 			if (!$keyValueString) {
-				$console .= __FUNCTION__ . ": No key values specified.\n";
+				$console .= __CLASS__ . "->" . __FUNCTION__ . ": No key values specified.\n";
 				return false;
 			}
 			
@@ -28,7 +28,7 @@
 			global $console;
 			
 			if (!is_array($array)) {
-				$console .= __FUNCTION__ . ": No array specified.\n";
+				$console .= __CLASS__ . "->" . __FUNCTION__ . ": No array specified.\n";
 				return false;
 			}
 			

@@ -7,7 +7,7 @@
 			global $console;
 
 			if (!$file) {
-				$console .= __FUNCTION__ . ": No file specified.\n";
+				$console .= __CLASS__ . "->" . __FUNCTION__ . ": No file specified.\n";
 				return false;
 			}
 			
@@ -22,12 +22,12 @@
 					@fclose($handle);
 					if ($contents) return $contents;
 					else {
-						$console .= __FUNCTION__ . ": The file " . $file . " appears to be empty.\n";
+						$console .= __CLASS__ . "->" . __FUNCTION__ . ": The file " . $file . " appears to be empty.\n";
 						return false;
 					}
 				}
 				else {
-					$console .= __FUNCTION__ . ": Can't locate the file " . $file . ".\n";
+					$console .= __CLASS__ . "->" . __FUNCTION__ . ": Can't locate the file " . $file . ".\n";
 					return false;
 				}
 	
@@ -40,7 +40,7 @@
 			global $console;
 			
 			if (!$file) {
-				$console .= __FUNCTION__ . ": No file specified.\n";
+				$console .= __CLASS__ . "->" . __FUNCTION__ . ": No file specified.\n";
 				return false;
 			}
 			
@@ -50,7 +50,7 @@
 	
 			if (file_exists($file)) return $contents;
 			else {
-				$console .= __FUNCTION__ . ": Unable to create file.\n";
+				$console .= __CLASS__ . "->" . __FUNCTION__ . ": Unable to create file.\n";
 				return false;
 			}
 			
@@ -100,12 +100,12 @@
 			global $console;
 
 			if (!$file) {
-				$console .= __FUNCTION__ . ": No file specified.\n";
+				$console .= __CLASS__ . "->" . __FUNCTION__ . ": No file specified.\n";
 				return false;
 			}
 
 			if (!file_exists($file)) {
-				$console .= __FUNCTION__ . ": Unable to locate the file " . $file . ".\n";
+				$console .= __CLASS__ . "->" . __FUNCTION__ . ": Unable to locate the file " . $file . ".\n";
 				return false;
 			}
 			
@@ -133,12 +133,12 @@
 			global $console;
 
 			if (!$file) {
-				$console .= __FUNCTION__ . ": No file specified.\n";
+				$console .= __CLASS__ . "->" . __FUNCTION__ . ": No file specified.\n";
 				return false;
 			}
 
 			if (!file_exists($file)) {
-				$console .= __FUNCTION__ . ": Unable to locate the file " . $file . ".\n";
+				$console .= __CLASS__ . "->" . __FUNCTION__ . ": Unable to locate the file " . $file . ".\n";
 				return false;
 			}
 			
@@ -161,12 +161,12 @@
 			global $console;
 
 			if (!$file) {
-				$console .= __FUNCTION__ . ": No file specified.\n";
+				$console .= __CLASS__ . "->" . __FUNCTION__ . ": No file specified.\n";
 				return false;
 			}
 
 			if (!file_exists($file)) {
-				$console .= __FUNCTION__ . ": Unable to locate the file " . $file . ".\n";
+				$console .= __CLASS__ . "->" . __FUNCTION__ . ": Unable to locate the file " . $file . ".\n";
 				return false;
 			}
 			
@@ -189,12 +189,12 @@
 			global $console;
 
 			if (!$file) {
-				$console .= __FUNCTION__ . ": No file specified.\n";
+				$console .= __CLASS__ . "->" . __FUNCTION__ . ": No file specified.\n";
 				return false;
 			}
 			
 			if (!file_exists($file)) {
-				$console .= __FUNCTION__ . ": Unable to find the file " . $file . ".\n";
+				$console .= __CLASS__ . "->" . __FUNCTION__ . ": Unable to find the file " . $file . ".\n";
 				return false;
 			}
 			

@@ -9,11 +9,11 @@
 			global $console;
 	
 			if (!$longUrl) {
-				$console .= __FUNCTION__ . ": No URL specified.\n";
+				$console .= __CLASS__ . "->" . __FUNCTION__ . ": No URL specified.\n";
 				return false;
 			}
 			if (!$bitlyApiKey || !$bitlyLogin) {
-				$console .= __FUNCTION__ . ": No bit.ly credentials specified in the configuration file.\n";
+				$console .= __CLASS__ . "->" . __FUNCTION__ . ": No bit.ly credentials specified in the configuration file.\n";
 				return false;
 			}
 			
@@ -28,7 +28,7 @@
 				return $shortUrl;
 			}
 			else {
-				$console .= __FUNCTION__ . ": Unable to retrieve and/or access shortened URL.\n";
+				$console .= __CLASS__ . "->" . __FUNCTION__ . ": Unable to retrieve and/or access shortened URL.\n";
 				return false;
 			}
 						
@@ -40,11 +40,11 @@
 			global $console;
 	
 			if (!$longUrl) {
-				$console .= __FUNCTION__ . ": No URL specified.\n";
+				$console .= __CLASS__ . "->" . __FUNCTION__ . ": No URL specified.\n";
 				return false;
 			}
 			if (!$owlyApiKey) {
-				$console .= __FUNCTION__ . ": No ow.ly credentials specified in the configuration file.\n";
+				$console .= __CLASS__ . "->" . __FUNCTION__ . ": No ow.ly credentials specified in the configuration file.\n";
 				return false;
 			}
 			
@@ -60,7 +60,7 @@
 				return $shortUrl['results']['shortUrl'];
 			}
 			else {
-				$console .= __FUNCTION__ . ": Unable to retrieve and/or access shortened URL.\n";
+				$console .= __CLASS__ . "->" . __FUNCTION__ . ": Unable to retrieve and/or access shortened URL.\n";
 				return false;
 			}
 			
@@ -74,11 +74,11 @@
 			
 			// check for errors
 				if ($type != 'a' && $type != 'n') {
-					$console .= __FUNCTION__ . ": Neither numeric nor alphanumeric specified.\n";
+					$console .= __CLASS__ . "->" . __FUNCTION__ . ": Neither numeric nor alphanumeric specified.\n";
 					return false;
 				}
 				if (intval($lengthInCharacters) < 1 ) {
-					$console .= __FUNCTION__ . ": String length not specified.\n";
+					$console .= __CLASS__ . "->" . __FUNCTION__ . ": String length not specified.\n";
 					return false;
 				}
 				

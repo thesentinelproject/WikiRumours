@@ -15,7 +15,7 @@
 				
 				// check for errors
 					if (!$url) {
-						$console .= __FUNCTION__ . ": No URL specified.\n";
+						$console .= __CLASS__ . "->" . __FUNCTION__ . ": No URL specified.\n";
 						return false;
 					}
 									
@@ -34,13 +34,13 @@
 					
 				// check if URL exists
 					if (!$fileManager->doesUrlExist($url)) {
-						$console .= __FUNCTION__ . ": Unable to retrieve webpage; URL may be invalid, or website might be down.\n";
+						$console .= __CLASS__ . "->" . __FUNCTION__ . ": Unable to retrieve webpage; URL may be invalid, or website might be down.\n";
 						return false;
 					}
 		
 				// check URL headers
 					if (!$fileManager->isHeaderValid($url)) {
-						$console .= __FUNCTION__ . ": URL headers are invalid; the webpage may be down or redirecting.\n";
+						$console .= __CLASS__ . "->" . __FUNCTION__ . ": URL headers are invalid; the webpage may be down or redirecting.\n";
 						return false;
 					}
 		
@@ -58,7 +58,7 @@
 						}
 						if ($sanitizeHtml) $html = htmlspecialchars($html, ENT_QUOTES);
 						if (!$html) {
-							$console .= __FUNCTION__ . ": No HTML found.\n";
+							$console .= __CLASS__ . "->" . __FUNCTION__ . ": No HTML found.\n";
 							return false;
 						}
 						
@@ -176,7 +176,7 @@
 			global $console;
 
 			if (!$inputString) {
-				$console .= __FUNCTION__ . ": No input specified.\n";
+				$console .= __CLASS__ . "->" . __FUNCTION__ . ": No input specified.\n";
 				return false;
 			}
 			
@@ -231,7 +231,7 @@
 			global $console;
 
 			if (!$inputString) {
-				$console .= __FUNCTION__ . ": No input specified.\n";
+				$console .= __CLASS__ . "->" . __FUNCTION__ . ": No input specified.\n";
 				return false;
 			}
 			
@@ -330,11 +330,11 @@
 						
 			// check for errors
 				if (!$ip) {
-					$console .= __FUNCTION__ . ": No IP specified.\n";
+					$console .= __CLASS__ . "->" . __FUNCTION__ . ": No IP specified.\n";
 					return false;
 				}
 				if ($type != 'ipv4' && $type != 'ipv6') {
-					$console .= __FUNCTION__ . ": Missing or invalid IP type.\n";
+					$console .= __CLASS__ . "->" . __FUNCTION__ . ": Missing or invalid IP type.\n";
 					return false;
 				}
 				
@@ -350,11 +350,11 @@
 						
 			// check for errors
 				if (!$ip) {
-					$console .= __FUNCTION__ . ": No IP specified.\n";
+					$console .= __CLASS__ . "->" . __FUNCTION__ . ": No IP specified.\n";
 					return false;
 				}
 				if ($type != 'ipv4' && $type != 'ipv6') {
-					$console .= __FUNCTION__ . ": Missing or invalid IP type.\n";
+					$console .= __CLASS__ . "->" . __FUNCTION__ . ": Missing or invalid IP type.\n";
 					return false;
 				}
 				
@@ -374,7 +374,7 @@
 
 			// check for errors
 				if (!$html) {
-					$console .= __FUNCTION__ . ": No HTML specified.\n";
+					$console .= __CLASS__ . "->" . __FUNCTION__ . ": No HTML specified.\n";
 					return false;
 				}
 			
@@ -382,7 +382,7 @@
 				if ($openingDelimiter) {
 					$startPoint = strpos($html, $openingDelimiter);
 					if ($startPoint === false) {
-						$console .= __FUNCTION__ . ": Unable to find opening delimiter.\n";
+						$console .= __CLASS__ . "->" . __FUNCTION__ . ": Unable to find opening delimiter.\n";
 						return false;
 					}
 					else $startPoint += strlen($openingDelimiter);
@@ -393,7 +393,7 @@
 				if ($closingDelimiter) {
 					$endPoint = strpos($html, $closingDelimiter, $startPoint);
 					if ($endPoint === false) {
-						$console .= __FUNCTION__ . ": Unable to find closing delimiter.\n";
+						$console .= __CLASS__ . "->" . __FUNCTION__ . ": Unable to find closing delimiter.\n";
 						return false;
 					}
 				}
@@ -413,7 +413,7 @@
 			global $console;
 
 			if (!$inputString) {
-				$console .= __FUNCTION__ . ": No input specified.\n";
+				$console .= __CLASS__ . "->" . __FUNCTION__ . ": No input specified.\n";
 				return false;
 			}
 			
@@ -471,7 +471,7 @@
 			global $console;
 
 			if (!$url && !$xmlStream) {
-				$console .= __FUNCTION__ . ": No input specified.\n";
+				$console .= __CLASS__ . "->" . __FUNCTION__ . ": No input specified.\n";
 				return false;
 			}
 			
@@ -494,7 +494,7 @@
 			global $console;
 
 			if (!$url && !$xmlStream) {
-				$console .= __FUNCTION__ . ": No input specified.\n";
+				$console .= __CLASS__ . "->" . __FUNCTION__ . ": No input specified.\n";
 				return false;
 			}
 			
@@ -648,7 +648,7 @@
 			global $console;
 
 			if (!$feed) {
-				$console .= __FUNCTION__ . ": No feed specified.\n";
+				$console .= __CLASS__ . "->" . __FUNCTION__ . ": No feed specified.\n";
 				return false;
 			}
 			
@@ -736,7 +736,7 @@
 			global $console;
 
 			if (!$resource) {
-				$console .= __FUNCTION__ . ": No resource specified.\n";
+				$console .= __CLASS__ . "->" . __FUNCTION__ . ": No resource specified.\n";
 				return false;
 			}
 			
@@ -764,7 +764,7 @@
 			global $console;
 
 			if (!$datetime) {
-				$console .= __FUNCTION__ . ": No date specified.\n";
+				$console .= __CLASS__ . "->" . __FUNCTION__ . ": No date specified.\n";
 				return false;
 			}
 			
@@ -792,7 +792,7 @@
 			global $console;
 
 			if (!$date) {
-				$console .= __FUNCTION__ . ": No date specified.\n";
+				$console .= __CLASS__ . "->" . __FUNCTION__ . ": No date specified.\n";
 				return false;
 			}
 			
@@ -819,7 +819,7 @@
 			global $console;
 
 			if (!floatval($number)) {
-				$console .= __FUNCTION__ . ": No number specified.\n";
+				$console .= __CLASS__ . "->" . __FUNCTION__ . ": No number specified.\n";
 				return false;
 			}
 			
@@ -835,7 +835,7 @@
 			global $console;
 
 			if (!floatval($filesizeInBytes)) {
-				$console .= __FUNCTION__ . ": No filesize specified.\n";
+				$console .= __CLASS__ . "->" . __FUNCTION__ . ": No filesize specified.\n";
 				return false;
 			}
 			
@@ -912,7 +912,7 @@
 		public function checkboxesToBinary($arrayOfIDs) {
 
 			if (!is_array($arrayOfIDs)) {
-				$console .= __FUNCTION__ . ": &quot;" . $arrayOfIDs . "&quot; is not an array.\n";
+				$console .= __CLASS__ . "->" . __FUNCTION__ . ": &quot;" . $arrayOfIDs . "&quot; is not an array.\n";
 				return false;
 			}
 
@@ -929,7 +929,7 @@
 			global $console;
 
 			if (!$inputText) {
-				$console .= __FUNCTION__ . ": No text specified.\n";
+				$console .= __CLASS__ . "->" . __FUNCTION__ . ": No text specified.\n";
 				return false;
 			}
 			

@@ -9,7 +9,7 @@
 			global $console;
 			
 			if (!$username) {
-				$console .= __FUNCTION__ . ": No username specified.\n";
+				$console .= __CLASS__ . "->" . __FUNCTION__ . ": No username specified.\n";
 				return false;
 			}
 			
@@ -41,11 +41,11 @@
 			global $console;
 			
 			if (!$username) {
-				$console .= __FUNCTION__ . ": No username specified.\n";
+				$console .= __CLASS__ . "->" . __FUNCTION__ . ": No username specified.\n";
 				return false;
 			}
 			if (!$sourceImage) {
-				$console .= __FUNCTION__ . ": No source image specified.\n";
+				$console .= __CLASS__ . "->" . __FUNCTION__ . ": No source image specified.\n";
 				return false;
 			}
 			
@@ -63,7 +63,7 @@
 			}
 			
 			if ($error) {
-				$console .= __FUNCTION__ . ": " . $error . ".\n";
+				$console .= __CLASS__ . "->" . __FUNCTION__ . ": " . $error . ".\n";
 				return false;
 			}
 			else return true;
@@ -77,7 +77,7 @@
 			global $console;
 	
 			if (!$username) {
-				$console .= __FUNCTION__ . ": No username specified.\n";
+				$console .= __CLASS__ . "->" . __FUNCTION__ . ": No username specified.\n";
 				return false;
 			}
 			
@@ -94,7 +94,7 @@
 			}
 			
 			if ($error) {
-				$console .= __FUNCTION__ . ": " . $error . ".\n";
+				$console .= __CLASS__ . "->" . __FUNCTION__ . ": " . $error . ".\n";
 				return false;
 			}
 			else return true;
@@ -106,12 +106,12 @@
 			global $console;
 
 			if (!$email) {
-				$console .= __FUNCTION__ . ": No email specified.\n";
+				$console .= __CLASS__ . "->" . __FUNCTION__ . ": No email specified.\n";
 				return false;
 			}
 			
 			if (!floatval($width)) {
-				$console .= __FUNCTION__ . ": No desired width specified.\n";
+				$console .= __CLASS__ . "->" . __FUNCTION__ . ": No desired width specified.\n";
 				return false;
 			}
 			

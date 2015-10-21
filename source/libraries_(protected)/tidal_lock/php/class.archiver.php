@@ -8,15 +8,15 @@
 
 			// validate existence of source and destination directories
 				if (!file_exists($sourcePath)) {
-					$console .= __FUNCTION__ . ": Unable to locate source directory " . $sourcePath . ".\n";
+					$console .= __CLASS__ . "->" . __FUNCTION__ . ": Unable to locate source directory " . $sourcePath . ".\n";
 					return false;
 				}
 				if (!file_exists($destinationPath)) {
-					$console .= __FUNCTION__ . ": Unable to locate destination directory " . $destinationPath . ".\n";
+					$console .= __CLASS__ . "->" . __FUNCTION__ . ": Unable to locate destination directory " . $destinationPath . ".\n";
 					return false;
 				}
 				if (!$this->isZipInstalled()) {
-					$console .= __FUNCTION__ . ": Zip does not appear to be installed on this server.\n";
+					$console .= __CLASS__ . "->" . __FUNCTION__ . ": Zip does not appear to be installed on this server.\n";
 					return false;
 				}
 
@@ -52,7 +52,7 @@
 
 			// validate the zip
 				if (!file_exists($destinationFile)) {
-					$console .= __FUNCTION__ . ": Unknown error attempting to create zip file.\n";
+					$console .= __CLASS__ . "->" . __FUNCTION__ . ": Unknown error attempting to create zip file.\n";
 					return false;
 				}
 				else {
@@ -60,7 +60,7 @@
 						rename($destinationFile, $destinationPath . str_replace($random . '_', '', $destinationFile));
 						if (!file_exists($destinationPath . str_replace($random . '_', '', $destinationFile))) {
 							unlink ($destinationFile);
-							$console .= __FUNCTION__ . ": Unable to move zip to destination directory.\n";
+							$console .= __CLASS__ . "->" . __FUNCTION__ . ": Unable to move zip to destination directory.\n";
 							return false;
 						}
 	
@@ -69,7 +69,7 @@
 							$fileManager = new directory_manager_TL();
 							$success = $directoryManager->remove($sourcePath);
 							if (!$success) {
-								$console .= __FUNCTION__ . ": Unable to delete source directory.\n";
+								$console .= __CLASS__ . "->" . __FUNCTION__ . ": Unable to delete source directory.\n";
 								return false;
 							}
 						}
@@ -86,17 +86,17 @@
 
 			// check for errors
 				if (!$this->isZipInstalled()) {
-					$console .= __FUNCTION__ . ": Zip does not appear to be installed on this server.\n";
+					$console .= __CLASS__ . "->" . __FUNCTION__ . ": Zip does not appear to be installed on this server.\n";
 					return false;
 				}
 				if (!file_exists($file)) {
-					$console .= __FUNCTION__ . ": There was a problem locating the archive " . $file . ".\n";
+					$console .= __CLASS__ . "->" . __FUNCTION__ . ": There was a problem locating the archive " . $file . ".\n";
 					return false;
 				}
 				if (!file_exists($destinationDirectory)) {
 					$success = mkdir($destinationDirectory);
 					if (!$success) {
-						$console .= __FUNCTION__ . ": Unable to locate or create destination directory.\n";
+						$console .= __CLASS__ . "->" . __FUNCTION__ . ": Unable to locate or create destination directory.\n";
 						return false;
 					}
 				}
@@ -119,19 +119,19 @@
 							$unarchivedContent = $directoryManager->read($destinationDirectory, true, true, true);
 							if (count($unarchivedContent) > 0) return true;
 							else {
-								$console .= __FUNCTION__ . ": Unable to retrieve files from archive, which could be because the archive is damaged or because the compression is incompatible with the unarchiving tools on the server.\n";
+								$console .= __CLASS__ . "->" . __FUNCTION__ . ": Unable to retrieve files from archive, which could be because the archive is damaged or because the compression is incompatible with the unarchiving tools on the server.\n";
 								return false;
 							}
 						}
 						else {
-							$console .= __FUNCTION__ . ": Unable to delete the file " . $file . ".\n";
+							$console .= __CLASS__ . "->" . __FUNCTION__ . ": Unable to delete the file " . $file . ".\n";
 							return false;
 						}
 					}
 				}
 				else {
 					rmdir($destinationDirectory);
-					$console .= __FUNCTION__ . ": " . strtoupper($fileExtension) . " is not a recognized archive file.\n";
+					$console .= __CLASS__ . "->" . __FUNCTION__ . ": " . strtoupper($fileExtension) . " is not a recognized archive file.\n";
 					return false;
 				}
 				

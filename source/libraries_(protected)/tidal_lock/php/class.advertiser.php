@@ -7,7 +7,7 @@
 			global $console;
 	
 			if (!$uacctID) {
-				$console .= __FUNCTION__ . ": No tracking ID specified.\n";
+				$console .= __CLASS__ . "->" . __FUNCTION__ . ": No tracking ID specified.\n";
 				return false;
 			}
 			
@@ -22,7 +22,7 @@
 			global $console;
 
 			if (!$adClientID || !$adSlot || !$width || !$height) {
-				$console .= __FUNCTION__ . ": Insufficient parameters specified.\n";
+				$console .= __CLASS__ . "->" . __FUNCTION__ . ": Insufficient parameters specified.\n";
 				return false;
 			}
 			

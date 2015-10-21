@@ -8,7 +8,7 @@
 
 	    	$directory = rtrim($directory, '/');
 	    	if (!$directory) {
-				$console .= __FUNCTION__ . ": No directory specified.\n";
+				$console .= __CLASS__ . "->" . __FUNCTION__ . ": No directory specified.\n";
 	    		return false;
 	    	}
 	    	
@@ -54,21 +54,21 @@
 
 			// check if paths exist
 				if (!$sourcePath) {
-					$console .= __FUNCTION__ . ": No source path specified.\n";
+					$console .= __CLASS__ . "->" . __FUNCTION__ . ": No source path specified.\n";
 					return false;
 				}
 				if (!file_exists($sourcePath)) {
-					$console .= __FUNCTION__ . ": Unable to locate the source path " . $sourcePath . ".\n";
+					$console .= __CLASS__ . "->" . __FUNCTION__ . ": Unable to locate the source path " . $sourcePath . ".\n";
 					return false;
 				}
 				if (!$destinationPath) {
-					$console .= __FUNCTION__ . ": No destination path specified.\n";
+					$console .= __CLASS__ . "->" . __FUNCTION__ . ": No destination path specified.\n";
 					return false;
 				}
 				if (!file_exists($destinationPath)) {
 					mkdir ($destinationPath);
 					if (!file_exists($destinationPath)) {
-						$console .= __FUNCTION__ . ": Unable to locate or create destination path.\n";
+						$console .= __CLASS__ . "->" . __FUNCTION__ . ": Unable to locate or create destination path.\n";
 						return false;
 					}
 				}
@@ -96,11 +96,11 @@
 			global $console;
 
 			if (!$dir) {
-				$console .= __FUNCTION__ . ": No directory specified.\n";
+				$console .= __CLASS__ . "->" . __FUNCTION__ . ": No directory specified.\n";
 				return false;
 			}
 			if (!file_exists($dir)) {
-				$console .= __FUNCTION__ . ": Unable to locate the directory " . $dir . ".\n";
+				$console .= __CLASS__ . "->" . __FUNCTION__ . ": Unable to locate the directory " . $dir . ".\n";
 				return false;
 			}
 			if (!is_dir($dir) || is_link($dir)) {
@@ -112,7 +112,7 @@
 				if (!$this->remove($dir . "/" . $item)) {
 					chmod($dir . "/" . $item, 0777);
 					if (!$this->remove($dir . "/" . $item)) {
-						$console .= __FUNCTION__ . ": Unable to delete the directory " . $dir . "/" . $item . ".\n";
+						$console .= __CLASS__ . "->" . __FUNCTION__ . ": Unable to delete the directory " . $dir . "/" . $item . ".\n";
 						return false;
 					}
 				};

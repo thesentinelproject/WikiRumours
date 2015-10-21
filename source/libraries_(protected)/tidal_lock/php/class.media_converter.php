@@ -16,7 +16,7 @@
 			
 			// validate incoming file (rudimentary validation only)
 				if (!file_exists($incomingFile) && !$fileManager->doesUrlExist($incomingFile)) {
-					$console .= __FUNCTION__ . ": Can't find source image.\n";
+					$console .= __CLASS__ . "->" . __FUNCTION__ . ": Can't find source image.\n";
 					return false;
 				}
 				
@@ -24,14 +24,14 @@
 				$outgoingPath = trim ($outgoingPath, '/') . '/';
 				if (file_exists($outgoingPath)) {
 					if (!is_dir($outgoingPath) || is_link($outgoingPath)) {
-						$console .= __FUNCTION__ . ": Destination directory is invalid.\n";
+						$console .= __CLASS__ . "->" . __FUNCTION__ . ": Destination directory is invalid.\n";
 						return false;
 					}
 				}
 				else {
 					mkdir($outgoingPath);
 					if (!file_exists($outgoingPath)) {
-						$console .= __FUNCTION__ . ": Unable to locate or create destination directory.\n";
+						$console .= __CLASS__ . "->" . __FUNCTION__ . ": Unable to locate or create destination directory.\n";
 						return false;
 					}
 				}
@@ -45,7 +45,7 @@
 					elseif (substr_count($outgoingMIME, 'image')) return $this->thumbnailVideo($incomingFile, $outgoingFilename, $outgoingPath, $desiredWidth, $desiredHeight);
 				}
 				else {
-					$console .= __FUNCTION__ . ": Unable to read incoming file and/or incompatible file format.\n";
+					$console .= __CLASS__ . "->" . __FUNCTION__ . ": Unable to read incoming file and/or incompatible file format.\n";
 					return false;
 				}
 			
@@ -72,7 +72,7 @@
 			
 			// check for errors
 				if (!$currentWidth || !$currentHeight) {
-					$console .= __FUNCTION__ . ": Unable to retrieve dimensions of current image.\n";
+					$console .= __CLASS__ . "->" . __FUNCTION__ . ": Unable to retrieve dimensions of current image.\n";
 					return false;
 				}
 				
@@ -134,7 +134,7 @@
 				if (file_exists($outgoingPath . $outgoingFilename)) return true;
 				else {
 					if ($desiredAngle) {
-						$console .= __FUNCTION__ . ": Unable to convert image using ImageMagick\n";
+						$console .= __CLASS__ . "->" . __FUNCTION__ . ": Unable to convert image using ImageMagick\n";
 						return false;
 					}
 					else {
@@ -143,7 +143,7 @@
 							elseif ($img = @imagecreatefromgif($incomingFile)) $img = imagecreatefromgif($incomingFile);
 							elseif ($img = @imagecreatefrompng($incomingFile)) $img = imagecreatefrompng($incomingFile);
 							else {
-								$console .= __FUNCTION__ . ": Unable to read image format.\n";
+								$console .= __CLASS__ . "->" . __FUNCTION__ . ": Unable to read image format.\n";
 								return false;
 							}
 							
@@ -159,14 +159,14 @@
 							elseif ($outgoingExt == 'png') imagepng($newImage, $outgoingPath . $outgoingFilename, 80);
 							elseif ($outgoingExt == 'gif') imagegif($newImage, $outgoingPath . $outgoingFilename);
 							else {
-								$console .= __FUNCTION__ . ": Unable to determine destination file type.\n";
+								$console .= __CLASS__ . "->" . __FUNCTION__ . ": Unable to determine destination file type.\n";
 								return false;
 							}
 							
 						// check for errors again
 							if (file_exists($outgoingPath . $outgoingFilename)) return true;
 							else {
-								$console .= __FUNCTION__ . ": Unknown problem attempting to create new image.\n";
+								$console .= __CLASS__ . "->" . __FUNCTION__ . ": Unknown problem attempting to create new image.\n";
 								return false;
 							}
 									
@@ -184,7 +184,7 @@
 
 			// check for errors
 				if (!$desiredWidth && !$desiredHeight) {
-					$console .= __FUNCTION__ . ": Missing desired dimensions.\n";
+					$console .= __CLASS__ . "->" . __FUNCTION__ . ": Missing desired dimensions.\n";
 					return false;
 				}
 			
@@ -209,7 +209,7 @@
 				
 						if (file_exists($outgoingPath . $outgoingFilename)) return true;
 						else {
-							$console .= __FUNCTION__ . ": Unknown problem attempting to create new preview video with ImageMagick.\n";
+							$console .= __CLASS__ . "->" . __FUNCTION__ . ": Unknown problem attempting to create new preview video with ImageMagick.\n";
 							return false;
 						}
 						
@@ -218,7 +218,7 @@
 					
 					// file extension must be lowercase
 						if (pathinfo($incomingFile, PATHINFO_EXTENSION) != strtolower(pathinfo($incomingFile, PATHINFO_EXTENSION))) {
-							$console .= __FUNCTION__ . ": Please make sure file extension of incoming file is lowercase.\n";
+							$console .= __CLASS__ . "->" . __FUNCTION__ . ": Please make sure file extension of incoming file is lowercase.\n";
 							return false; 
 						}
 						
@@ -239,13 +239,13 @@
 				
 						if (file_exists($outgoingPath . $outgoingFilename)) return true;
 						else {
-							$console .= __FUNCTION__ . ": Unknown problem attempting to create new preview video with FFmpeg.\n";
+							$console .= __CLASS__ . "->" . __FUNCTION__ . ": Unknown problem attempting to create new preview video with FFmpeg.\n";
 							return false;
 						}
 						
 				}
 				else {
-					$console .= __FUNCTION__ . ": No video converter found.\n";
+					$console .= __CLASS__ . "->" . __FUNCTION__ . ": No video converter found.\n";
 					return false;
 				}
 			
@@ -259,13 +259,13 @@
 			
 			// check for errors
 				if ($pathToImageMagick && !file_exists(rtrim($pathToImageMagick, '/') . '/convert')) {
-					$console .= __FUNCTION__ . ": Can't find ImageMagick on this server.\n";
+					$console .= __CLASS__ . "->" . __FUNCTION__ . ": Can't find ImageMagick on this server.\n";
 					return false;
 				}
 			
 			// check for errors
 				if (!$desiredWidth && !$desiredHeight) {
-					$console .= __FUNCTION__ . ": Missing desired dimensions.\n";
+					$console .= __CLASS__ . "->" . __FUNCTION__ . ": Missing desired dimensions.\n";
 					return false;
 				}
 			
@@ -283,7 +283,7 @@
 		
 				if (file_exists($outgoingPath . $outgoingFilename)) return true;
 				else {
-					$console .= __FUNCTION__ . ": Unknown problem attempting to thumbnail video.\n";
+					$console .= __CLASS__ . "->" . __FUNCTION__ . ": Unknown problem attempting to thumbnail video.\n";
 					return false;
 				}
 			

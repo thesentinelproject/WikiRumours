@@ -8,7 +8,7 @@
 	
 			// check input
 				if (!$webPropertyID) {
-					$console .= __FUNCTION__ . ": No ID specified.\n";
+					$console .= __CLASS__ . "->" . __FUNCTION__ . ": No ID specified.\n";
 					return false;
 				}
 	
@@ -42,7 +42,7 @@
 	
 			// check input
 				if (!$token) {
-					$console .= __FUNCTION__ . ": No token specified.\n";
+					$console .= __CLASS__ . "->" . __FUNCTION__ . ": No token specified.\n";
 					return false;
 				}
 				

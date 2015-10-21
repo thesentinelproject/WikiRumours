@@ -27,7 +27,7 @@
 			global $console;
 			
 			if (!$dateTime) {
-				$console .= __FUNCTION__ . ": No comparative date specified.\n";
+				$console .= __CLASS__ . "->" . __FUNCTION__ . ": No comparative date specified.\n";
 				return false;
 			}
 			if (!$currentDateTime) $currentDateTime = date('Y-m-d H:i:s');
@@ -83,7 +83,7 @@
 			global $console;
 			
 			if (!$dateTime) {
-				$console .= __FUNCTION__ . ": No comparative date specified.\n";
+				$console .= __CLASS__ . "->" . __FUNCTION__ . ": No comparative date specified.\n";
 				return false;
 			}
 			if (!$currentDateTime) $currentDateTime = date('Y-m-d H:i:s');

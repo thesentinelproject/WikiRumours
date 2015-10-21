@@ -14,7 +14,7 @@
 			global $console;
 
 			if (!$type) {
-				$console .= __FUNCTION__ . ": No element type specified.\n";
+				$console .= __CLASS__ . "->" . __FUNCTION__ . ": No element type specified.\n";
 				return false;
 			}
 			
@@ -42,7 +42,7 @@
 					case 'title':
 						// validate
 							if (!$name) {
-								$console .= __FUNCTION__ . ": No id/name specified for " . $type . " field.\n";
+								$console .= __CLASS__ . "->" . __FUNCTION__ . ": No id/name specified for " . $type . " field.\n";
 								return false;
 							}
 							if ($type == 'number' && $value && !is_numeric($value)) {
@@ -84,7 +84,7 @@
 					case 'textarea':
 						// validate
 							if (!$name) {
-								$console .= __FUNCTION__ . ": No id/name specified for " . $type . " field.\n";
+								$console .= __CLASS__ . "->" . __FUNCTION__ . ": No id/name specified for " . $type . " field.\n";
 								return false;
 							}
 							if ($otherAttributes && !is_array($otherAttributes)) {
@@ -109,7 +109,7 @@
 					case 'uneditable':
 						// validate
 							if (!$name) {
-								$console .= __FUNCTION__ . ": No id/name specified for " . $type . " field.\n";
+								$console .= __CLASS__ . "->" . __FUNCTION__ . ": No id/name specified for " . $type . " field.\n";
 								return false;
 							}
 							if (is_null($value)) {
@@ -136,7 +136,7 @@
 					case 'uneditable_static':
 						// validate
 							if (!$name) {
-								$console .= __FUNCTION__ . ": No id/name specified for " . $type . " field.\n";
+								$console .= __CLASS__ . "->" . __FUNCTION__ . ": No id/name specified for " . $type . " field.\n";
 								return false;
 							}
 							if (is_null($value)) {
@@ -164,7 +164,7 @@
 					case 'search':
 						// validate
 							if (!$name) {
-								$console .= __FUNCTION__ . ": No id/name specified for " . $type . " field.\n";
+								$console .= __CLASS__ . "->" . __FUNCTION__ . ": No id/name specified for " . $type . " field.\n";
 								return false;
 							}
 							if ($otherAttributes && !is_array($otherAttributes)) {
@@ -191,7 +191,7 @@
 					case 'password_with_preview':
 						// validate
 							if (!$name) {
-								$console .= __FUNCTION__ . ": No id/name specified for " . $type . " field.\n";
+								$console .= __CLASS__ . "->" . __FUNCTION__ . ": No id/name specified for " . $type . " field.\n";
 								return false;
 							}
 							if ($otherAttributes && !is_array($otherAttributes)) {
@@ -230,7 +230,7 @@
 					case 'password_with_health_meter':
 						// validate
 							if (!$name) {
-								$console .= __FUNCTION__ . ": No id/name specified for " . $type . " field.\n";
+								$console .= __CLASS__ . "->" . __FUNCTION__ . ": No id/name specified for " . $type . " field.\n";
 								return false;
 							}
 							if ($otherAttributes && !is_array($otherAttributes)) {
@@ -258,7 +258,7 @@
 						case 'select':
 						// validate
 							if (!$name) {
-								$console .= __FUNCTION__ . ": No id/name specified for " . $type . " field.\n";
+								$console .= __CLASS__ . "->" . __FUNCTION__ . ": No id/name specified for " . $type . " field.\n";
 								return false;
 							}
 							if (count($options) < 1) {
@@ -309,7 +309,7 @@
 						case 'yesno_bootstrap_switch':
 						// validate
 							if (!$name) {
-								$console .= __FUNCTION__ . ": No id/name specified for " . $type . " field.\n";
+								$console .= __CLASS__ . "->" . __FUNCTION__ . ": No id/name specified for " . $type . " field.\n";
 								return false;
 							}
 							if ($otherAttributes && !is_array($otherAttributes)) {
@@ -336,7 +336,7 @@
 					case 'percentage':
 						// validate
 							if (!$name) {
-								$console .= __FUNCTION__ . ": No id/name specified for " . $type . " field.\n";
+								$console .= __CLASS__ . "->" . __FUNCTION__ . ": No id/name specified for " . $type . " field.\n";
 								return false;
 							}
 							if ($value && !is_numeric($value)) {
@@ -369,7 +369,7 @@
 					case 'percentage_bootstrap':
 						// validate
 							if (!$name) {
-								$console .= __FUNCTION__ . ": No id/name specified for " . $type . " field.\n";
+								$console .= __CLASS__ . "->" . __FUNCTION__ . ": No id/name specified for " . $type . " field.\n";
 								return false;
 							}
 							if ($value && !is_numeric($value)) {
@@ -404,7 +404,7 @@
 					case 'dollars':
 						// validate
 							if (!$name) {
-								$console .= __FUNCTION__ . ": No id/name specified for " . $type . " field.\n";
+								$console .= __CLASS__ . "->" . __FUNCTION__ . ": No id/name specified for " . $type . " field.\n";
 								return false;
 							}
 							$value = str_replace(',', '', $value);
@@ -441,7 +441,7 @@
 					case 'dollars_bootstrap':
 						// validate
 							if (!$name) {
-								$console .= __FUNCTION__ . ": No id/name specified for " . $type . " field.\n";
+								$console .= __CLASS__ . "->" . __FUNCTION__ . ": No id/name specified for " . $type . " field.\n";
 								return false;
 							}
 							$value = str_replace(',', '', $value);
@@ -480,7 +480,7 @@
 					case 'pounds_bootstrap':
 						// validate
 							if (!$name) {
-								$console .= __FUNCTION__ . ": No id/name specified for " . $type . " field.\n";
+								$console .= __CLASS__ . "->" . __FUNCTION__ . ": No id/name specified for " . $type . " field.\n";
 								return false;
 							}
 							$value = str_replace(',', '', $value);
@@ -519,7 +519,7 @@
 					case 'yen_bootstrap':
 						// validate
 							if (!$name) {
-								$console .= __FUNCTION__ . ": No id/name specified for " . $type . " field.\n";
+								$console .= __CLASS__ . "->" . __FUNCTION__ . ": No id/name specified for " . $type . " field.\n";
 								return false;
 							}
 							$value = str_replace(',', '', $value);
@@ -559,7 +559,7 @@
 					case 'radio_stacked':
 						// validate
 							if (!$name) {
-								$console .= __FUNCTION__ . ": No id/name specified for " . $type . " field.\n";
+								$console .= __CLASS__ . "->" . __FUNCTION__ . ": No id/name specified for " . $type . " field.\n";
 								return false;
 							}
 							if (count($options) < 1) {
@@ -600,7 +600,7 @@
 					case 'checkbox':
 						// validate
 							if (!$name) {
-								$console .= __FUNCTION__ . ": No id/name specified for " . $type . " field.\n";
+								$console .= __CLASS__ . "->" . __FUNCTION__ . ": No id/name specified for " . $type . " field.\n";
 								return false;
 							}
 							if ($otherAttributes && !is_array($otherAttributes)) {
@@ -627,7 +627,7 @@
 					case 'checkbox_stacked_bootstrap':
 						// validate
 							if (!$name) {
-								$console .= __FUNCTION__ . ": No id/name specified for " . $type . " field.\n";
+								$console .= __CLASS__ . "->" . __FUNCTION__ . ": No id/name specified for " . $type . " field.\n";
 								return false;
 							}
 							if ($otherAttributes && !is_array($otherAttributes)) {
@@ -656,7 +656,7 @@
 					case 'date':
 						// validate
 							if (!$name) {
-								$console .= __FUNCTION__ . ": No id/name specified for " . $type . " field.\n";
+								$console .= __CLASS__ . "->" . __FUNCTION__ . ": No id/name specified for " . $type . " field.\n";
 								return false;
 							}
 							if ($otherAttributes && !is_array($otherAttributes)) {
@@ -683,7 +683,7 @@
 					case 'hoursminutes':
 						// validate
 							if (!$name) {
-								$console .= __FUNCTION__ . ": No id/name specified for " . $type . " field.\n";
+								$console .= __CLASS__ . "->" . __FUNCTION__ . ": No id/name specified for " . $type . " field.\n";
 								return false;
 							}
 							if ($otherAttributes && !is_array($otherAttributes)) {
@@ -709,7 +709,7 @@
 					case 'datetime_with_picker':
 						// validate
 							if (!$name) {
-								$console .= __FUNCTION__ . ": No id/name specified for " . $type . " field.\n";
+								$console .= __CLASS__ . "->" . __FUNCTION__ . ": No id/name specified for " . $type . " field.\n";
 								return false;
 							}
 							if ($otherAttributes && !is_array($otherAttributes)) {
@@ -737,7 +737,7 @@
 					case 'year':
 						// validate
 							if (!$name) {
-								$console .= __FUNCTION__ . ": No id/name specified for " . $type . " field.\n";
+								$console .= __CLASS__ . "->" . __FUNCTION__ . ": No id/name specified for " . $type . " field.\n";
 								return false;
 							}
 							if ($value && !is_numeric($value)) {
@@ -821,7 +821,7 @@
 					case 'file':
 						// validate
 							if (!$name) {
-								$console .= __FUNCTION__ . ": No id/name specified for " . $type . " field.\n";
+								$console .= __CLASS__ . "->" . __FUNCTION__ . ": No id/name specified for " . $type . " field.\n";
 								return false;
 							}
 							if ($otherAttributes && !is_array($otherAttributes)) {
@@ -861,7 +861,7 @@
 					case 'range':
 						// validate
 							if (!$name) {
-								$console .= __FUNCTION__ . ": No id/name specified for " . $type . " field.\n";
+								$console .= __CLASS__ . "->" . __FUNCTION__ . ": No id/name specified for " . $type . " field.\n";
 								return false;
 							}
 							if ($otherAttributes && !is_array($otherAttributes)) {
@@ -1012,7 +1012,7 @@
 					case 'multipicker':
 						// validate
 							if (!$name) {
-								$console .= __FUNCTION__ . ": No id/name specified for " . $type . " field.\n";
+								$console .= __CLASS__ . "->" . __FUNCTION__ . ": No id/name specified for " . $type . " field.\n";
 								return false;
 							}
 							if (count($options) < 1) {
@@ -1151,7 +1151,7 @@
 			global $console;
 
 			if (!$type) {
-				$console .= __FUNCTION__ . ": No element type specified.\n";
+				$console .= __CLASS__ . "->" . __FUNCTION__ . ": No element type specified.\n";
 				return false;
 			}
 
@@ -1256,7 +1256,7 @@
 		public function start($name = null, $action = null, $method = 'post', $class = null, $otherAttributes = null, $eventHandlers = null) {
 			
 			if (!$this->style) {
-				$console .= __FUNCTION__ . ": No form style specified.\n";
+				$console .= __CLASS__ . "->" . __FUNCTION__ . ": No form style specified.\n";
 				return false;
 			}
 			elseif ($this->style == 'horizontal') $class = trim('form-horizontal ' . $class);

@@ -7,7 +7,7 @@
 			global $console;
 			
 			if (!$location) {
-				$console .= __FUNCTION__ . ": No location specified.\n";
+				$console .= __CLASS__ . "->" . __FUNCTION__ . ": No location specified.\n";
 				return false;
 			}
 			
@@ -17,7 +17,7 @@
 			$googleUrl = 'http://maps.googleapis.com/maps/api/geocode/xml?sensor=false&address=' . urlencode($location);
 			
 			if (!$fileManager->doesUrlExist($googleUrl)) {
-				$console .= __FUNCTION__ . ": Unable to access Google Maps API.\n";
+				$console .= __CLASS__ . "->" . __FUNCTION__ . ": Unable to access Google Maps API.\n";
 				return false;
 			}
 			else {
@@ -31,7 +31,7 @@
 				if (!$geolocation['Latitude'] || !$geolocation['Longitude']) {
 					if ($result['GeocodeResponse']['status']) $geolocation['Error'] = $result['GeocodeResponse']['status'];
 					else {
-						$console .= __FUNCTION__ . ": Connected to Google Maps API, but was unable to successfully determine latitude and longitude.\n";
+						$console .= __CLASS__ . "->" . __FUNCTION__ . ": Connected to Google Maps API, but was unable to successfully determine latitude and longitude.\n";
 						return false;
 					}
 				}
@@ -50,18 +50,18 @@
 			global $console;
 			
 			if (!$coords) {
-				$console .= __FUNCTION__ . ": No geocoordinates specified.\n";
+				$console .= __CLASS__ . "->" . __FUNCTION__ . ": No geocoordinates specified.\n";
 				return false;
 			}
 			
 			if (!$fileManager->doesUrlExist($googleUrl)) {
-				$console .= __FUNCTION__ . ": Unable to access Google Maps API.\n";
+				$console .= __CLASS__ . "->" . __FUNCTION__ . ": Unable to access Google Maps API.\n";
 				return false;
 			}
 			else {
 				$result = $parser->parseXML($googleUrl, '');
 				if (!$result) {
-					$console .= __FUNCTION__ . ": Unable to parse results from Google.\n";
+					$console .= __CLASS__ . "->" . __FUNCTION__ . ": Unable to parse results from Google.\n";
 					return false;
 				}
 				else $location = $result;
