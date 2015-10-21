@@ -555,6 +555,50 @@
 							return $field;
 							break;
 				/* ------------------------- */
+					case 'currency':
+					case 'currency_full':
+						// validate
+							if ($otherAttributes && !is_array($otherAttributes)) {
+								$console .= __FUNCTION__ . " (" . $name . "): otherAttributes must be an array.\n";
+								return false;
+							}
+							if ($eventHandlers && !is_array($eventHandlers)) {
+								$console .= __FUNCTION__ . " (" . $name . "): eventHandlers must be an array.\n";
+								return false;
+							}
+							global $currencies_TL;
+							if (!count(@$currencies_TL)) {
+								$console .= __FUNCTION__ . " (" . $name . "): Unable to load currencies_TL.\n";
+								return false;
+							}
+						// initialize
+							if (!$name) $name = 'currency';
+						// return
+							$field = "<select name='" . $name . "' id='" . $name . "'";
+							if ($class) $field .= " class='" . $class . "'";
+							if ($otherAttributes) foreach ($otherAttributes as $attribute => $attributeValue) $field .= " " . $attribute . "='" . trim($attributeValue) . "'";
+							if ($eventHandlers) foreach ($eventHandlers as $event => $action) $field .= " " . $event . "='" . trim($action) . "'";
+							if ($mandatory) $field .= " required";
+							$field .= ">";
+							if ($label && !$mandatory) {
+								$field .= "<option value=''>" . $label . "</option>";
+								$field .= "<option value=''>--</option>";
+							}
+							foreach ($currencies_TL as $currencyID => $currency) {
+								$field .= "<option value='" . $currencyID . "'";
+								if ($value && $currencyID == $value) $field .= " selected";
+								$field .= ">";
+								if ($type == 'currency_full') {
+									if ($truncateLabel > strlen($currency) - 3) $currency = substr($currency, 0, $truncateLabel) . '...';
+									$field .= $currency;
+								}
+								else $field .= $currencyID;
+								$field .= "</option>";
+							}
+							$field .= "</select>";
+							return $field;
+							break;
+				/* ------------------------- */
 					case 'radio':
 					case 'radio_stacked':
 						// validate
