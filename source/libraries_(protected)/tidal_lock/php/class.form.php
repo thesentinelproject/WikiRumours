@@ -72,8 +72,8 @@
 							if ($otherAttributes) foreach ($otherAttributes as $attribute => $attributeValue) $field .= " " . $attribute . "='" . trim($attributeValue) . "'";
 							if ($type == 'number') {
 								$eventHandlers['onChange'] = "if (isNaN(this.value)) this.value = 0; " . $eventHandlers['onChange'];
-								if (!is_null(@$otherAttributes['max'])) $eventHandlers['onChange'] = "if (this.value && this.value > " . floatval($otherAttributes['max']) . ") this.value = " . floatval($otherAttributes['max']) . "; " . $eventHandlers['onChange'];
-								if (!is_null(@$otherAttributes['min'])) $eventHandlers['onChange'] = "if (this.value && this.value < " . floatval($otherAttributes['min']) . ") this.value = " . floatval($otherAttributes['min']) . "; " . $eventHandlers['onChange'];
+								if (!is_null(@$otherAttributes['max'])) $eventHandlers['onChange'] = "if (this.value && this.value > " . floatval($otherAttributes['max']) . ") { this.value = " . floatval($otherAttributes['max']) . "; } " . $eventHandlers['onChange'];
+								if (!is_null(@$otherAttributes['min'])) $eventHandlers['onChange'] = "if (this.value && this.value < " . floatval($otherAttributes['min']) . ") { this.value = " . floatval($otherAttributes['min']) . "; } " . $eventHandlers['onChange'];
 							}
 							if ($eventHandlers) foreach ($eventHandlers as $event => $action) $field .= " " . $event . "='" . trim($action) . "'";
 							if ($mandatory) $field .= " required";
@@ -125,7 +125,7 @@
 							if ($class) $field .= " class='" . $class . "'";
 							if ($otherAttributes) foreach ($otherAttributes as $attribute => $attributeValue) $field .= " " . $attribute . "='" . trim($attributeValue) . "'";
 							$field .= ">";
-							$field .= htmlspecialchars($value, ENT_QUOTES);
+							$field .= "<span name='" . $name . "_visible' id='" . $name . "_visible'>". htmlspecialchars($value, ENT_QUOTES) . "</span>";
 							$field .= "<input type='hidden' name='" . $name . "' id='" . $name . "'";
 							$field .= " value='" . htmlspecialchars($value, ENT_QUOTES) . "'";
 							$field .= " />";
@@ -153,7 +153,7 @@
 							$field .= "'";
 							if ($otherAttributes) foreach ($otherAttributes as $attribute => $attributeValue) $field .= " " . $attribute . "='" . trim($attributeValue) . "'";
 							$field .= ">";
-							$field .= $value;
+							$field .= "<span name='" . $name . "_visible' id='" . $name . "_visible'>". $value . "</span>";
 							$field .= "<input type='hidden' name='" . $name . "' id='" . $name . "'";
 							$field .= " value='" . htmlspecialchars($value, ENT_QUOTES) . "'";
 							$field .= " />";
