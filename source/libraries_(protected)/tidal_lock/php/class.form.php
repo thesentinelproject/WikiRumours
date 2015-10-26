@@ -99,6 +99,7 @@
 							$field = "<textarea name='" . $name . "' id='" . $name . "'";
 							if ($placeholder) $field .= " placeholder='" . htmlspecialchars($placeholder, ENT_QUOTES) . "'";
 							if ($class) $field .= " class='" . $class . "'";
+							if ($maxlength) $field .= " maxlength='" . $maxlength . "'";
 							if ($otherAttributes) foreach ($otherAttributes as $attribute => $attributeValue) $field .= " " . $attribute . "='" . trim($attributeValue) . "'";
 							if ($eventHandlers) foreach ($eventHandlers as $event => $action) $field .= " " . $event . "='" . trim($action) . "'";
 							if ($mandatory) $field .= " required";
