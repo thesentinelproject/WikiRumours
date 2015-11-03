@@ -1214,9 +1214,9 @@
 			if ($type == 'checkbox' || $type == 'checkbox_stacked_bootstrap' || $type == 'button' || $type == 'submit' || $type == 'cancel' || $type == 'cancel_and_return') $label = null;
 
 			if ($type == 'country_and_region') {
-				$row = $this->row('country', (@$name['country'] ? $name['country'] : 'country'), @$value['country_id'], $mandatory, 'Country', $class, null, null, $otherAttributes, $truncateLabel, array('onChange'=>'$(".' . (@$name['region'] ? $name['region'] . '_' : false) . 'regions_TL").hide(); if (document.getElementById("' . (@$name['region'] ? $name['region'] . '_' : false) . 'region_" + this.value)) { $("#' . (@$name['region'] ? $name['region'] . '_' : false) . 'region_" + this.value).show(); }'));
+				$row = $this->row('country', (@$name['country'] ? $name['country'] : 'country'), @$value['country_id'], $mandatory, 'Country', $class, null, null, $otherAttributes, $truncateLabel, array('onChange'=>'$(".' . (@$name['region'] ? $name['region'] . '_' : false) . 'regions_TL").hide(); if (document.getElementById("' . (@$name['region'] ? $name['region'] . '_' : false) . 'region_" + this.value)) { $("#' . (@$name['region'] ? $name['region'] . '_' : false) . 'region_" + this.value + "_container").show(); }'));
 				foreach ($regions_TL as $country => $regionArray) {
-					$row .= "<div id='" . (@$name['region'] ? $name['region'] . '_' : false) . "region_" . $country . "' class='" . (@$name['region'] ? $name['region'] . '_' : false) . "regions_TL collapse" .  ($country == @$value['country_id'] ? " in" : false) . "'>\n";
+					$row .= "<div id='" . (@$name['region'] ? $name['region'] . '_' : false) . "region_" . $country . "_container' class='" . (@$name['region'] ? $name['region'] . '_' : false) . "regions_TL collapse" .  ($country == @$value['country_id'] ? " in" : false) . "'>\n";
 					$row .= $this->row('region_' . $country, (@$name['region'] ? $name['region'] . '_' : false) . 'region_' . $country, @$value['region_id'], false, $operators->firstTrue(ucwords($regions_TL[$country]['subdivision']), 'Region'), $class, null, null, $otherAttributes, $truncateLabel, $eventHandlers);
 					$row .= "</div>\n";
 				}
