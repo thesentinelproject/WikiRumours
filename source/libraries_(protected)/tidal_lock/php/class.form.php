@@ -943,10 +943,13 @@
 								$console .= __FUNCTION__ . " (" . $name . "): eventHandlers must be an array.\n";
 								return false;
 							}
-							global $countries_TL;
-							if (!count(@$countries_TL)) {
-								$console .= __FUNCTION__ . " (" . $name . "): Unable to load countries_TL.\n";
-								return false;
+							if (!$options) {
+								global $countries_TL;
+								if (!count(@$countries_TL)) {
+									$console .= __FUNCTION__ . " (" . $name . "): Unable to load countries_TL.\n";
+									return false;
+								}
+								else $options = $countries_TL;
 							}
 						// initialize
 							if (!$name) $name = 'country';
@@ -961,7 +964,7 @@
 								$field .= "<option value=''>" . $label . "</option>";
 								$field .= "<option value=''>--</option>";
 							}
-							foreach ($countries_TL as $countryID => $country) {
+							foreach ($options as $countryID => $country) {
 								$field .= "<option value='" . $countryID . "'";
 								if ($value && $countryID == $value) $field .= " selected";
 								$field .= ">";
@@ -1214,7 +1217,7 @@
 			if ($type == 'checkbox' || $type == 'checkbox_stacked_bootstrap' || $type == 'button' || $type == 'submit' || $type == 'cancel' || $type == 'cancel_and_return') $label = null;
 
 			if ($type == 'country_and_region') {
-				$row = $this->row('country', (@$name['country'] ? $name['country'] : 'country'), @$value['country_id'], $mandatory, 'Country', $class, null, null, $otherAttributes, $truncateLabel, array('onChange'=>'$(".' . (@$name['region'] ? $name['region'] . '_' : false) . 'regions_TL").hide(); if (document.getElementById("' . (@$name['region'] ? $name['region'] . '_' : false) . 'region_" + this.value)) { $("#' . (@$name['region'] ? $name['region'] . '_' : false) . 'region_" + this.value + "_container").show(); }'));
+				$row = $this->row('country', (@$name['country'] ? $name['country'] : 'country'), @$value['country_id'], $mandatory, 'Country', $class, $options, null, $otherAttributes, $truncateLabel, array('onChange'=>'$(".' . (@$name['region'] ? $name['region'] . '_' : false) . 'regions_TL").hide(); if (document.getElementById("' . (@$name['region'] ? $name['region'] . '_' : false) . 'region_" + this.value)) { $("#' . (@$name['region'] ? $name['region'] . '_' : false) . 'region_" + this.value + "_container").show(); }'));
 				foreach ($regions_TL as $country => $regionArray) {
 					$row .= "<div id='" . (@$name['region'] ? $name['region'] . '_' : false) . "region_" . $country . "_container' class='" . (@$name['region'] ? $name['region'] . '_' : false) . "regions_TL collapse" .  ($country == @$value['country_id'] ? " in" : false) . "'>\n";
 					$row .= $this->row('region_' . $country, (@$name['region'] ? $name['region'] . '_' : false) . 'region_' . $country, @$value['region_id'], false, $operators->firstTrue(ucwords($regions_TL[$country]['subdivision']), 'Region'), $class, null, null, $otherAttributes, $truncateLabel, $eventHandlers);
