@@ -20,11 +20,11 @@
 		}
 
 		public function robustEncrypt($plaintext, $salt, $key) {
-			return base64_encode(@mcrypt_encrypt(MCRYPT_BLOWFISH, md5($key), $plaintext, MCRYPT_MODE_CBC, md5($salt)));
+			return base64_encode(@mcrypt_encrypt(MCRYPT_BLOWFISH, md5($key), $plaintext, MCRYPT_MODE_CBC, substr(md5($salt), 0, 8)));
 		}
 
 		public function robustDecrypt($cyphertext, $salt, $key) {
-			return @mcrypt_decrypt(MCRYPT_BLOWFISH, md5($key), base64_decode($cyphertext), MCRYPT_MODE_CBC, md5($salt));
+			return @mcrypt_decrypt(MCRYPT_BLOWFISH, md5($key), base64_decode($cyphertext), MCRYPT_MODE_CBC, substr(md5($salt), 0, 8));
 		}
 		
 		public function obfuscateID($plainText, $numericSalt) {
