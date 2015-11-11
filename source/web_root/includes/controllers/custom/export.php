@@ -120,6 +120,48 @@
 				exit();
 
 		}
+		elseif (@$filters['report'] == 'logs') {
+
+			// authenticate user
+				if (!$logged_in['is_administrator']) forceLoginThenRedirectHere();
+		
+			// retrieve data				
+				if (@$filters['keywords']) {
+					$otherCriteria = '';
+					$keywordExplode = explode(' ', $filters['keywords']);
+					foreach ($keywordExplode as $keyword) {
+						if ($keyword) {
+							if ($otherCriteria) $otherCriteria .= " AND";
+							$otherCriteria .= " " . $tablePrefix . "logs.activity LIKE '%" . addSlashes($keyword) . "%'";
+						}
+					}
+					$otherCriteria = trim($otherCriteria);
+				}
+
+				$result = retrieveFromDb('logs', null, null, null, null, null, @$otherCriteria, null, 'connected_on DESC');
+
+			// sanitize array
+				$desiredFields = array('connected_on', 'connection_type', 'activity', 'error_message', 'error', 'resolved', 'connection_released', 'connection_length_in_seconds');
+				$logs = array();
+				for ($counter = 0; $counter < count($result); $counter++) {
+					$logs[$counter] = array();
+					foreach ($desiredFields as $field) {
+						$logs[$counter][$field] = $result[$counter][$field];
+					}
+				}
+
+			// create CSV
+				header( 'Content-Type: text/csv' );
+				header( 'Content-Disposition: attachment;filename=logs.csv');
+				$csv = fopen('php://output', 'w');
+				fputcsv($csv, $desiredFields);
+				foreach ($logs as $log) {
+					fputcsv($csv, $log);
+				}
+				fclose($csv);
+				exit();
+
+		}
 		else {
 			header('Location: /404');
 			exit();

@@ -44,35 +44,7 @@
 			
 	if (count($_POST) > 0) {
 
-		if ($_POST['formName'] == 'adminLogsForm' && $_POST['exportData'] == 'Y') {
-
-			// retrieve data
-				$result = retrieveFromDb('logs', null, null, null, null, null, @$otherCriteria, null, 'connected_on DESC');
-
-			// sanitize array
-				$desiredFields = array('connected_on', 'connection_type', 'activity', 'error_message', 'error', 'resolved', 'connection_released', 'connection_length_in_seconds');
-				$users = array();
-				for ($counter = 0; $counter < count($result); $counter++) {
-					$users[$counter] = array();
-					foreach ($desiredFields as $field) {
-						$users[$counter][$field] = $result[$counter][$field];
-					}
-				}
-
-			// create CSV
-				header( 'Content-Type: text/csv' );
-				header( 'Content-Disposition: attachment;filename=logs.csv');
-				$csv = fopen('php://output', 'w');
-				fputcsv($csv, $desiredFields);
-				foreach ($users as $user) {
-					fputcsv($csv, $user);
-				}
-				fclose($csv);
-				exit();
-
-		}
-
-		elseif ($_POST['formName'] == 'adminLogsForm') {
+		if ($_POST['formName'] == 'adminLogsForm') {
 
 			$pageError = '';
 			

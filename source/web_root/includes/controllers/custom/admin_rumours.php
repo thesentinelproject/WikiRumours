@@ -57,35 +57,7 @@
 			
 	if (count($_POST) > 0) {
 		
-		if ($_POST['formName'] == 'adminRumoursForm' && $_POST['exportData'] == 'Y') {
-
-			// retrieve data
-				$result = retrieveRumours($matching, null, @$otherCriteria, $sortBy);
-
-			// sanitize array
-				$desiredFields = array('description', 'updated_on', 'country', 'city', 'status', 'assigned_to_username', 'number_of_sightings', 'number_of_comments', 'number_of_watchlists');
-				$rumours = array();
-				for ($counter = 0; $counter < count($result); $counter++) {
-					$rumours[$counter] = array();
-					foreach ($desiredFields as $field) {
-						$rumours[$counter][$field] = $result[$counter][$field];
-					}
-				}
-
-			// create CSV
-				header( 'Content-Type: text/csv' );
-				header( 'Content-Disposition: attachment;filename=rumours.csv');
-				$csv = fopen('php://output', 'w');
-				fputcsv($csv, $desiredFields);
-				foreach ($rumours as $rumour) {
-					fputcsv($csv, $rumour);
-				}
-				fclose($csv);
-				exit();
-
-		}
-
-		elseif ($_POST['formName'] == 'adminRumoursForm') {
+		if ($_POST['formName'] == 'adminRumoursForm') {
 			$parameter1 = $keyvalue_array->updateKeyValue($parameter1, 'keywords', $_POST['keywords'], '|');
 			$parameter1 = $keyvalue_array->updateKeyValue($parameter1, 'rumour_status', $_POST['rumour_status'], '|');
 			$parameter1 = $keyvalue_array->updateKeyValue($parameter1, 'rumour_country', $_POST['rumour_country'], '|');
