@@ -67,8 +67,8 @@
 			echo "      " . $form->input('submit', 'filter_button', null, false, 'Filter', 'btn btn-info btn-block') . "\n";
 			echo "    </div>\n";
 		// export button
-			echo "    <div class='col-lg-2 col-md-2 hidden-sm hidden-xs text-right'>\n";
-			echo "      " . $form->input('button', 'export_button', null, false, 'Export', 'btn btn-link', null, null, null, null, array('onClick'=>'exportUsers(); return false;')) . "\n";
+			echo "    <div class='col-lg-2 col-md-2 hidden-sm hidden-xs btn btn-link text-right'>\n";
+			echo "      <a href='/export/" . urlencode($keyvalue_array->updateKeyValue($parameter1, 'report', 'users', '|')) . "' target='_blank'>Export</a>\n";
 			echo "    </div>\n";
 		echo "  </div>\n";
 		echo $form->end() . "\n";
