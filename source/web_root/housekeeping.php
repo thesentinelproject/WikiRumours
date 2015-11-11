@@ -8,7 +8,7 @@
 		$logID = $logger->logItInDb($logger->retrieveLogFromMemory(false), null, null, array('connection_released'=>'0'));
 
 	// run monthly housekeeping tasks
-		$oneMonthAgo = date('Y-m-d', mktime(date('H'), date('i'), date('s'), date('m') - 1, date('d'), date('Y')));
+		$oneMonthAgo = date('Y-m-d H:i:s', mktime(date('H'), date('i'), date('s'), date('m') - 1, date('d'), date('Y')));
 		if ($handle = opendir(__DIR__ . '/../housekeeping/autoload/monthly/.')) {
 			while (false !== ($file = readdir($handle))) {
 				if (substr_count($file, '.php') > 0) {
@@ -27,7 +27,7 @@
 		}
 
 	// run weekly housekeeping tasks
-		$oneWeekAgo = date('Y-m-d', mktime(date('H'), date('i'), date('s'), date('m'), date('d') - 7, date('Y')));
+		$oneWeekAgo = date('Y-m-d H:i:s', mktime(date('H'), date('i'), date('s'), date('m'), date('d') - 7, date('Y')));
 		if ($handle = opendir(__DIR__ . '/../housekeeping/autoload/weekly/.')) {
 			while (false !== ($file = readdir($handle))) {
 				if (substr_count($file, '.php') > 0) {
@@ -46,7 +46,7 @@
 		}
 
 	// run daily housekeeping tasks
-		$oneDayAgo = date('Y-m-d', mktime(date('H'), date('i'), date('s'), date('m'), date('d') - 1, date('Y')));
+		$oneDayAgo = date('Y-m-d H:i:s', mktime(date('H'), date('i'), date('s'), date('m'), date('d') - 1, date('Y')));
 		if ($handle = opendir(__DIR__ . '/../housekeeping/autoload/daily/.')) {
 			while (false !== ($file = readdir($handle))) {
 				if (substr_count($file, '.php') > 0) {
@@ -65,7 +65,7 @@
 		}
 
 	// run hourly housekeeping tasks
-		$oneHourAgo = date('Y-m-d', mktime(date('H') - 1, date('i'), date('s'), date('m'), date('d'), date('Y')));
+		$oneHourAgo = date('Y-m-d H:i:s', mktime(date('H') - 1, date('i'), date('s'), date('m'), date('d'), date('Y')));
 		if ($handle = opendir(__DIR__ . '/../housekeeping/autoload/hourly/.')) {
 			while (false !== ($file = readdir($handle))) {
 				if (substr_count($file, '.php') > 0) {
