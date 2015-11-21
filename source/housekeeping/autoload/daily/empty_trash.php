@@ -5,12 +5,12 @@
 	
 	// make sure trash directory exists
 		if (!file_exists($trashPath)) {
-			$activity = "Can't find trash bin at " . $trashPath;
+			$activity = "Error encountered during " . pathinfo(__FILE__, PATHINFO_FILENAME) . ": Can't find trash bin at " . $trashPath;
 			
 			$logger->logItInMemory($activity);
 			$logger->logItInDb($logger->retrieveLogFromMemory(), $logID);
 			
-			$logger->logItInDb($activity, null, array('error'=>'1', 'resolved'=>'0'));
+			$logger->logItInDb($activity, null, null, array('error'=>'1', 'resolved'=>'0'), true);
 			emailSystemNotification($activity, 'Critical error');
 		}
 		else {
@@ -34,7 +34,7 @@
 								$logger->logItInMemory($activity);
 								$logger->logItInDb($logger->retrieveLogFromMemory(), $logID);
 								
-								$logger->logItInDb($activity, null, array('error'=>'1', 'resolved'=>'0'));
+								$logger->logItInDb($activity, null, null, array('error'=>'1', 'resolved'=>'0'), true);
 								emailSystemNotification($activity, 'Critical error');
 							}
 							

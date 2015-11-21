@@ -13,7 +13,7 @@
 			while (false !== ($file = readdir($handle))) {
 				if (substr_count($file, '.php') > 0) {
 					$taskName = str_replace('.php', '', $file);
-					$previousConnection = retrieveSingleFromDb('logs', array('log_id'), null, null, null, null, "activity LIKE '%Terminating " . $taskName . "%' AND connected_on >= '" . $oneMonthAgo . "'", null, "connected_on DESC");
+					$previousConnection = retrieveSingleFromDb('logs', array('log_id'), null, null, null, null, "activity LIKE '%Terminating " . $taskName . "%' AND activity NOT LIKE '%Error encountered during " . $taskName . "%' AND connected_on >= '" . $oneMonthAgo . "'", null, "connected_on DESC");
 					if (!count($previousConnection)) {
 						$logger->logItInMemory("Initiating " . $taskName);
 						$logger->logItInDb($logger->retrieveLogFromMemory(), $logID);
@@ -32,7 +32,7 @@
 			while (false !== ($file = readdir($handle))) {
 				if (substr_count($file, '.php') > 0) {
 					$taskName = str_replace('.php', '', $file);
-					$previousConnection = retrieveSingleFromDb('logs', array('log_id'), null, null, null, null, "activity LIKE '%Terminating " . $taskName . "%' AND connected_on >= '" . $oneWeekAgo . "'", null, "connected_on DESC");
+					$previousConnection = retrieveSingleFromDb('logs', array('log_id'), null, null, null, null, "activity LIKE '%Terminating " . $taskName . "%' AND activity NOT LIKE '%Error encountered during " . $taskName . "%' AND connected_on >= '" . $oneWeekAgo . "'", null, "connected_on DESC");
 					if (!count($previousConnection)) {
 						$logger->logItInMemory("Initiating " . $taskName);
 						$logger->logItInDb($logger->retrieveLogFromMemory(), $logID);
@@ -51,7 +51,7 @@
 			while (false !== ($file = readdir($handle))) {
 				if (substr_count($file, '.php') > 0) {
 					$taskName = str_replace('.php', '', $file);
-					$previousConnection = retrieveSingleFromDb('logs', array('log_id'), null, null, null, null, "activity LIKE '%Terminating " . $taskName . "%' AND connected_on >= '" . $oneDayAgo . "'", null, "connected_on DESC");
+					$previousConnection = retrieveSingleFromDb('logs', array('log_id'), null, null, null, null, "activity LIKE '%Terminating " . $taskName . "%' AND activity NOT LIKE '%Error encountered during " . $taskName . "%' AND connected_on >= '" . $oneDayAgo . "'", null, "connected_on DESC");
 					if (!count($previousConnection)) {
 						$logger->logItInMemory("Initiating " . $taskName);
 						$logger->logItInDb($logger->retrieveLogFromMemory(), $logID);
@@ -70,7 +70,7 @@
 			while (false !== ($file = readdir($handle))) {
 				if (substr_count($file, '.php') > 0) {
 					$taskName = str_replace('.php', '', $file);
-					$previousConnection = retrieveSingleFromDb('logs', array('log_id'), null, null, null, null, "activity LIKE '%Terminating " . $taskName . "%' AND connected_on >= '" . $oneHourAgo . "'", null, "connected_on DESC");
+					$previousConnection = retrieveSingleFromDb('logs', array('log_id'), null, null, null, null, "activity LIKE '%Terminating " . $taskName . "%' AND activity NOT LIKE '%Error encountered during " . $taskName . "%' AND connected_on >= '" . $oneHourAgo . "'", null, "connected_on DESC");
 					if (!count($previousConnection)) {
 						$logger->logItInMemory("Initiating " . $taskName);
 						$logger->logItInDb($logger->retrieveLogFromMemory(), $logID);

@@ -143,7 +143,7 @@
 			}
 			
 			$fp = @fopen($tmpFile, 'r');
-			if (fgets($fp, 4) == '%PDF') return true;
+			if (@fgets($fp, 4) == '%PDF') return true;
 			
 			$mime = $this->determineMIME($file);
 			if (substr_count($mime, 'pdf') > 0) return true;
