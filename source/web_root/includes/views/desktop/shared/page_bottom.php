@@ -170,6 +170,18 @@
 			echo "  </script>\n";
 		}
 		
+	// load console
+		if ($console && $logged_in['is_tester'] && $systemPreferences['Enable console for testers']) {
+			echo "  <!-- Activate console --><script type='text/javascript'>\n";
+			echo "    //<![CDATA[\n";
+			echo "      var console = " . '"' . "<h4><span class='label label-default'>CONSOLE</span></h4>" . '"' . ";\n";
+			echo "      console += " . '"' . addSlashes(nl2br($console)) . '"' . ";\n";
+			echo "      document.getElementById('console').innerHTML = console;\n";
+			echo "    //]]>\n";
+			echo "    $('#console').collapse('show');\n";
+			echo "  </script>\n";
+		}
+
 	// load AJAX
 		if (file_exists('includes/controllers/ajax/' . $templateName . '.php') && file_exists('resources/js/ajax_callbacks/' . $templateName . '.js')) {
 			echo "  <!-- AJAX --><script src='/resources/js/ajax_callbacks/" . $templateName . ".js'></script>\n";

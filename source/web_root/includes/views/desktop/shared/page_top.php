@@ -119,8 +119,7 @@
 				
 		// console
 			if ($console && $logged_in['is_tester'] && $systemPreferences['Enable console for testers']) {
-				echo "  <div id='console'>\n";
-				if ($console) echo "    <h4><span class='label label-default'>CONSOLE</span></h4>" . nl2br(str_replace(' ', '&nbsp;', $console)) . "\n";
+				echo "  <div id='console' class='collapse'>\n";
 				echo "  </div><!-- console -->\n";
 			}
 
