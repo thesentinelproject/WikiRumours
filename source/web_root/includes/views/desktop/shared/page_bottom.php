@@ -171,7 +171,7 @@
 		}
 		
 	// load console
-		if ($logged_in['is_tester'] && $systemPreferences['Enable console for testers']) {
+		if ($console && $logged_in['is_tester'] && $systemPreferences['Enable console for testers']) {
 			echo "  <!-- Activate console --><script type='text/javascript'>\n";
 			echo "    //<![CDATA[\n";
 			echo "      var console = " . '"' . "<h4><span class='label label-default'>CONSOLE</span></h4>" . '"' . ";\n";

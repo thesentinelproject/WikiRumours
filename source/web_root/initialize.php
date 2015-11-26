@@ -55,16 +55,23 @@
 				}
 				
 			// Load Tidal Lock PHP libraries and instantiate classes
-				if ($handle = opendir(__DIR__ . '/../libraries_(protected)/tidal_lock/php/.')) {
+				if ($handle = opendir(__DIR__ . '/../libraries_(protected)/tidal_lock/helpers/.')) {
 					while (false !== ($file = readdir($handle))) {
 						if (substr_count($file, '.php') > 0) {
 							// include file
-								include __DIR__ . '/../libraries_(protected)/tidal_lock/php/' . $file;
+								include __DIR__ . '/../libraries_(protected)/tidal_lock/helpers/' . $file;
 							// instantiate class
 								$instance = str_replace('.php', '', str_replace('class.', '', $file));
 								$class = $instance . '_TL';
 								${$instance} = new $class();
 						}
+					}
+					closedir($handle);
+				}
+
+				if ($handle = opendir(__DIR__ . '/../libraries_(protected)/tidal_lock/widgets/.')) {
+					while (false !== ($file = readdir($handle))) {
+						if (substr_count($file, '.php') > 0) include __DIR__ . '/../libraries_(protected)/tidal_lock/widgets/' . $file;
 					}
 					closedir($handle);
 				}
