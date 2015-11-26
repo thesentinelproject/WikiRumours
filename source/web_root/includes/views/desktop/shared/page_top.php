@@ -118,7 +118,7 @@
 			echo "  <div id='pageContainer'>\n\n";
 				
 		// console
-			if ($console && $logged_in['is_tester'] && $systemPreferences['Enable console for testers']) {
+			if ($logged_in['is_tester'] && $systemPreferences['Enable console for testers']) {
 				echo "  <div id='console' class='collapse'>\n";
 				echo "  </div><!-- console -->\n";
 			}

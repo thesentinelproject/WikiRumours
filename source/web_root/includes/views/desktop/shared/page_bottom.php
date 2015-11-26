@@ -171,11 +171,11 @@
 		}
 		
 	// load console
-		if ($console && $logged_in['is_tester'] && $systemPreferences['Enable console for testers']) {
+		if ($logged_in['is_tester'] && $systemPreferences['Enable console for testers']) {
 			echo "  <!-- Activate console --><script type='text/javascript'>\n";
 			echo "    //<![CDATA[\n";
 			echo "      var console = " . '"' . "<h4><span class='label label-default'>CONSOLE</span></h4>" . '"' . ";\n";
-			echo "      console += " . '"' . addSlashes(nl2br($console)) . '"' . ";\n";
+			echo "      console += " . '"' . addSlashes(str_replace('<br /><br />', '<br />', preg_replace('/(\r\n|\n|\r)/','<br />', nl2br($console)))) . '"' . ";\n";
 			echo "      document.getElementById('console').innerHTML = console;\n";
 			echo "    //]]>\n";
 			echo "    $('#console').collapse('show');\n";

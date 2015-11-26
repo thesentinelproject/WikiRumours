@@ -1349,9 +1349,9 @@
 				$paginate = "<!-- Pagination -->\n";
 				$paginate .= "  <div id='pagination' class='row'>\n";
 				
-				/* Back */		$paginate .= "    <div class='col-lg-5 col-md-5 col-sm-3 col-xs-3'>" . $this->input('button', 'paginateButtonBack', null, false, '<', 'btn btn-default btn-block', null, null, null, null, @$backEventHandler) . "</div>\n";
-				/* Select */	$paginate .= "    <div class='col-lg-2 col-md-2 col-sm-6 col-xs-6'>" . $this->input('select', 'selectPage', $currentPage, true, null, 'form-control', $allPages, null, null, null, array('onChange'=>'document.location.href="' . str_replace('#', '" + this.value + "', $urlStructure) . '"; return false;')) . "</div>\n";
-				/* Next */		$paginate .= "    <div class='col-lg-5 col-md-5 col-sm-3 col-xs-3'>" . $this->input('button', 'paginateButtonBack', null, false, '>', 'btn btn-default btn-block', null, null, null, null, @$nextEventHandler) . "</div>\n";
+				/* Back */		$paginate .= "    <div class='col-lg-4 col-md-4 col-sm-3 col-xs-3'>" . $this->input('button', 'paginateButtonBack', null, false, '<', 'btn btn-default btn-block', null, null, null, null, @$backEventHandler) . "</div>\n";
+				/* Select */	$paginate .= "    <div class='col-lg-4 col-md-4 col-sm-6 col-xs-6'>" . $this->input('select', 'selectPage', $currentPage, true, null, 'form-control', $allPages, null, null, null, array('onChange'=>'document.location.href="' . str_replace('#', '" + this.value + "', $urlStructure) . '"; return false;')) . "</div>\n";
+				/* Next */		$paginate .= "    <div class='col-lg-4 col-md-4 col-sm-3 col-xs-3'>" . $this->input('button', 'paginateButtonBack', null, false, '>', 'btn btn-default btn-block', null, null, null, null, @$nextEventHandler) . "</div>\n";
 					
 				$paginate .= "  </div>\n";
 
