@@ -12,7 +12,7 @@
 
 	// queries
 		// alerts
-			$alerts = retrieveFromDb('logs', null, array('error'=>'1', 'resolved'=>'0'), null, null, null, null, null, $tablePrefix . 'logs.connected_on DESC');
+			$alerts = retrieveFromDb('logs', null, array('is_error'=>'1', 'is_resolved'=>'0'), null, null, null, null, null, $tablePrefix . 'logs.connected_on DESC');
 
 		// comments
 			$flaggedComments = retrieveFlaggedComments();
@@ -45,7 +45,7 @@
 
 		if ($_POST['formName'] == 'dashboardAlertsForm' && $_POST['alertToResolve']) {
 			// resolve alert
-				$success = updateDb('logs', array('resolved'=>'1'), array('log_id'=>$_POST['alertToResolve']), null, null, null, null, 1);
+				$success = updateDb('logs', array('is_resolved'=>'1'), array('log_id'=>$_POST['alertToResolve']), null, null, null, null, 1);
 				if ($success) {
 					// update log
 						$activity = $logged_in['full_name'] . " (user_id " . $logged_in['user_id'] . ") has resolved log_id " . $_POST['log_id'];

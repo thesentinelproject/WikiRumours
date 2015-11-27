@@ -11,7 +11,7 @@
 				$logger->logItInMemory($activity);
 				$logger->logItInDb($logger->retrieveLogFromMemory(), $logID);
 				
-				$logger->logItInDb($activity, null, null, array('error'=>'1', 'resolved'=>'0'), true);
+				$logger->logItInDb($activity, null, null, array('is_error'=>'1', 'is_resolved'=>'0'), true);
 				emailSystemNotification($activity, 'Critical error');
 				return false;
 			}
@@ -41,7 +41,7 @@
 								$logger->logItInMemory($activity);
 								$logger->logItInDb($logger->retrieveLogFromMemory(), $logID);
 								
-								$logger->logItInDb($activity, null, null, array('error'=>'1', 'resolved'=>'0'), true);
+								$logger->logItInDb($activity, null, null, array('is_error'=>'1', 'is_resolved'=>'0'), true);
 								emailSystemNotification($activity, 'Critical error');
 							}
 							else {
@@ -55,7 +55,7 @@
 										$logger->logItInMemory($activity);
 										$logger->logItInDb($logger->retrieveLogFromMemory(), $logID);
 										
-										$logger->logItInDb($activity, null, null, array('error'=>'1', 'resolved'=>'0'), true);
+										$logger->logItInDb($activity, null, null, array('is_error'=>'1', 'is_resolved'=>'0'), true);
 										emailSystemNotification($activity, 'Critical error');
 									}
 

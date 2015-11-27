@@ -5,7 +5,7 @@
 	
 	// begin logging new connection
 		$logger->logItInMemory("Initiating housekeeping");
-		$logID = $logger->logItInDb($logger->retrieveLogFromMemory(false), null, null, array('connection_released'=>'0'));
+		$logID = $logger->logItInDb($logger->retrieveLogFromMemory(false), null, null, array('is_released'=>'0'));
 
 	// run monthly housekeeping tasks
 		$oneMonthAgo = date('Y-m-d H:i:s', mktime(date('H'), date('i'), date('s'), date('m') - 1, date('d'), date('Y')));
@@ -136,6 +136,6 @@
 		$endTimeInSeconds = time();
 		$connectionLengthInSeconds = max(1, $endTimeInSeconds - $startTimeInSeconds);
 		$logger->logItInMemory("Terminating housekeeping");
-		$logger->logItInDb($logger->retrieveLogFromMemory(), $logID, null, array('connection_released'=>'1', 'connection_length_in_seconds'=>$connectionLengthInSeconds));
+		$logger->logItInDb($logger->retrieveLogFromMemory(), $logID, null, array('is_released'=>'1', 'connection_length_in_seconds'=>$connectionLengthInSeconds));
 				
 ?>

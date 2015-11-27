@@ -211,7 +211,7 @@
 					$moderators = retrieveUsers(array('is_moderator'=>'1', 'ok_to_contact'=>'1'), null, $tablePrefix . "users.email != ''");
 					if (count($moderators) < 1) {
 						$activity = "Added a rumour, but no moderator has been designated to assign it.";
-						$logger->logItInDb($activity, null, null, array('error'=>'1', 'resolved'=>'0'));
+						$logger->logItInDb($activity, null, null, array('is_error'=>'1', 'is_resolved'=>'0'));
 					}
 					else {
 						for ($counter = 0; $counter < count($moderators); $counter++) {

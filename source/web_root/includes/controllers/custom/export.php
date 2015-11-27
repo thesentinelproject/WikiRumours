@@ -141,7 +141,7 @@
 				$result = retrieveFromDb('logs', null, null, null, null, null, @$otherCriteria, null, 'connected_on DESC');
 
 			// sanitize array
-				$desiredFields = array('connected_on', 'connection_type', 'activity', 'error_message', 'error', 'resolved', 'connection_released', 'connection_length_in_seconds');
+				$desiredFields = array('connected_on', 'connection_type', 'activity', 'error_message', 'is_error', 'is_resolved', 'is_released', 'connection_length_in_seconds');
 				$logs = array();
 				for ($counter = 0; $counter < count($result); $counter++) {
 					$logs[$counter] = array();

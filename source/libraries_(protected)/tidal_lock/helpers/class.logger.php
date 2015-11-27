@@ -30,7 +30,7 @@
 				
 			// check if activity has already been reported but not acknowledged
 				if ($skipIfReported) {
-					$previouslyReported = retrieveFromDb('logs', null, array('activity'=>$activity, 'resolved'=>'0'));
+					$previouslyReported = retrieveFromDb('logs', null, array('activity'=>$activity, 'is_resolved'=>'0'));
 			        if (count($previouslyReported) > 0) return false;
 			    }
 			    

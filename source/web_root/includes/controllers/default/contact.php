@@ -48,7 +48,7 @@
 					}
 					else {
 						$pageError = "Unknown error attempting to send email. Please try again.";
-						$logger->logItInDb("Contact form failed to send email.", null, null, array('error'=>'1', 'resolved'=>'0'));
+						$logger->logItInDb("Contact form failed to send email.", null, null, array('is_error'=>'1', 'is_resolved'=>'0'));
 					}
 				}
 			}

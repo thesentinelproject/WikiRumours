@@ -30,7 +30,7 @@
 					echo "  <td>" . @$connectionTypes[$logs[$counter]['connection_type']] . "</td>\n";
 				// Length
 					echo "  <td>\n";
-					if (!@$logs[$counter]['connection_released']) echo "    Timed out\n";
+					if (!@$logs[$counter]['is_released']) echo "    Timed out\n";
 					else echo floatval(@$logs[$counter]['connection_length_in_seconds']) . "&nbsp;s";
 					echo "  </td>\n";
 				// Activity
