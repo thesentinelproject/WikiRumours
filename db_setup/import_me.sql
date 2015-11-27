@@ -3,9 +3,9 @@
 -- http://www.phpmyadmin.net
 --
 -- Host: mysql.wikirumours.org
--- Generation Time: Jun 16, 2015 at 06:33 PM
--- Server version: 5.1.56
--- PHP Version: 5.3.29
+-- Generation Time: Nov 27, 2015 at 01:08 PM
+-- Server version: 5.6.25
+-- PHP Version: 5.5.26
 
 SET SQL_MODE="NO_AUTO_VALUE_ON_ZERO";
 
@@ -8382,9 +8382,9 @@ CREATE TABLE IF NOT EXISTS `wr_logs` (
   `task_counter` int(2) NOT NULL,
   `activity` text COLLATE utf8_unicode_ci NOT NULL,
   `error_message` varchar(255) COLLATE utf8_unicode_ci NOT NULL,
-  `error` tinyint(1) NOT NULL,
-  `resolved` tinyint(1) NOT NULL DEFAULT '1',
-  `connection_released` tinyint(1) NOT NULL DEFAULT '1',
+  `is_error` tinyint(1) NOT NULL,
+  `is_resolved` tinyint(1) NOT NULL DEFAULT '1',
+  `is_released` tinyint(1) NOT NULL DEFAULT '1',
   `connection_length_in_seconds` int(3) NOT NULL,
   PRIMARY KEY (`log_id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci AUTO_INCREMENT=1 ;
@@ -8404,7 +8404,7 @@ CREATE TABLE IF NOT EXISTS `wr_log_relationships` (
   `log_id` int(9) NOT NULL,
   `relationship_name` varchar(15) COLLATE utf8_unicode_ci NOT NULL,
   `relationship_value` int(9) NOT NULL,
-  PRIMARY KEY (`log_id`,`relationship_name`)
+  PRIMARY KEY (`log_id`,`relationship_name`,`relationship_value`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
 
 --

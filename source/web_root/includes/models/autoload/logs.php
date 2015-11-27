@@ -6,7 +6,7 @@
 		global $tablePrefix;
 		
 		// build query
-			if ($matching['relationship_name'] || $matching['relationship_value']) {
+			if (@$matching['relationship_name'] || @$matching['relationship_value']) {
 				$query = "SELECT " . $tablePrefix . "log_relationships.*,";
 				$query .= " " . $tablePrefix . "logs.*";
 				$query .= " FROM " . $tablePrefix . "log_relationships";
