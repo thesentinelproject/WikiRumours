@@ -64,7 +64,7 @@
 			$notifications = retrieveFromDb('notifications', null, array('new_registrations'=>'1'));
 			
 			for ($counter = 0; $counter < count($notifications); $counter++) {
-				$emailSent = emailAdministratorAboutSuccessfulRegistrant($notifications[$counter]['recipient_email'], $name);
+				$emailSent = emailAdministratorAboutSuccessfulRegistrant($notifications[$counter]['notification_email'], $name);
 			}
 
 		return $userID;

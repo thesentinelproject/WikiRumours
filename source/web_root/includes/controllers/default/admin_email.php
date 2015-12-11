@@ -58,26 +58,26 @@
 			// check for errors
 				// check edit
 					for ($counter = 0; $counter < count($notifications); $counter++) {
-						if (!$_POST['recipient_name_' . $notifications[$counter]['notification_id']]) $pageError .= "Please specify a recipient name. ";
-						if (!$_POST['recipient_email_' . $notifications[$counter]['notification_id']] || !$input_validator->validateEmailBasic($_POST['recipient_email_' . $notifications[$counter]['notification_id']])) $pageError .= "Please provide a valid recipient email. ";
+						if (!$_POST['notification_name_' . $notifications[$counter]['notification_id']]) $pageError .= "Please specify a recipient name. ";
+						if (!$_POST['notification_email_' . $notifications[$counter]['notification_id']] || !$input_validator->validateEmailBasic($_POST['notification_email_' . $notifications[$counter]['notification_id']])) $pageError .= "Please provide a valid recipient email. ";
 					}
 				// check add
-					if ($_POST['recipient_email_add'] && !$_POST['recipient_name_add']) $pageError .= "Please specify a recipient name. ";
-					if (($_POST['recipient_name_add'] && !$_POST['recipient_email_add']) || ($_POST['recipient_email_add'] && !$input_validator->validateEmailBasic($_POST['recipient_email_add']))) $pageError .= "Please provide a valid recipient email. ";
+					if ($_POST['notification_email_add'] && !$_POST['notification_name_add']) $pageError .= "Please specify a recipient name. ";
+					if (($_POST['notification_name_add'] && !$_POST['notification_email_add']) || ($_POST['notification_email_add'] && !$input_validator->validateEmailBasic($_POST['recipient_email_add']))) $pageError .= "Please provide a valid recipient email. ";
 
 			if (!$pageError) {
 				
 				// update database
 					// update edit
 						for ($counter = 0; $counter < count($notifications); $counter++) {
-							updateDb('notifications', array('recipient_name'=>$_POST['recipient_name_' . $notifications[$counter]['notification_id']], 'recipient_email'=>$_POST['recipient_email_' . $notifications[$counter]['notification_id']]), array('notification_id'=>$notifications[$counter]['notification_id']), null, null, null, null, 1);
+							updateDb('notifications', array('notification_name'=>$_POST['notification_name_' . $notifications[$counter]['notification_id']], 'notification_email'=>$_POST['notification_email_' . $notifications[$counter]['notification_id']]), array('notification_id'=>$notifications[$counter]['notification_id']), null, null, null, null, 1);
 							foreach ($checkboxesToParse as $checkbox) {
 								updateDb('notifications', array($checkbox=>$_POST[$checkbox . '_' . $notifications[$counter]['notification_id']]), array('notification_id'=>$notifications[$counter]['notification_id']), null, null, null, null, 1);
 							}
 						}
 					// update add
-						if ($_POST['recipient_name_add'] && $_POST['recipient_email_add']) {
-							$notificationID = insertIntoDb('notifications', array('recipient_name'=>$_POST['recipient_name_add'], 'recipient_email'=>$_POST['recipient_email_add']));
+						if ($_POST['notification_name_add'] && $_POST['notification_email_add']) {
+							$notificationID = insertIntoDb('notifications', array('notification_name'=>$_POST['notification_name_add'], 'notification_email'=>$_POST['notification_email_add']));
 							foreach ($checkboxesToParse as $checkbox) {
 								updateDb('notifications', array($checkbox=>$_POST[$checkbox . '_add']), array('notification_id'=>$notificationID), null, null, null, null, 1);
 							}

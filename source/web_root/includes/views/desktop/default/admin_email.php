@@ -10,10 +10,10 @@
 			echo $form->rowStart('recipient', 'Recipient');
 			echo "  <div class='row'>\n";
 			echo "    <div class='col-lg-5 col-md-5 col-sm-5 col-xs-5'>\n";
-			echo "      " . $form->input('text', 'recipient_name_' . $notifications[$counter]['notification_id'], $operators->firstTrue(@$_POST['recipient_name_' . $notifications[$counter]['notification_id']], @$notifications[$counter]['recipient_name']), true, '|Name', 'form-control') . "\n";
+			echo "      " . $form->input('text', 'notification_name_' . $notifications[$counter]['notification_id'], $operators->firstTrue(@$_POST['notification_name_' . $notifications[$counter]['notification_id']], @$notifications[$counter]['notification_name']), true, '|Name', 'form-control') . "\n";
 			echo "    </div>\n";
 			echo "    <div class='col-lg-5 col-md-5 col-sm-5 col-xs-5'>\n";
-			echo "      " . $form->input('email', 'recipient_email_' . $notifications[$counter]['notification_id'], $operators->firstTrue(@$_POST['recipient_email_' . $notifications[$counter]['notification_id']], @$notifications[$counter]['recipient_email']), true, '|Email', 'form-control') . "\n";
+			echo "      " . $form->input('email', 'notification_email_' . $notifications[$counter]['notification_id'], $operators->firstTrue(@$_POST['notification_email_' . $notifications[$counter]['notification_id']], @$notifications[$counter]['notification_email']), true, '|Email', 'form-control') . "\n";
 			echo "    </div>\n";
 			echo "    <div class='col-lg-2 col-md-2 col-sm-2 col-xs-2'>\n";
 			echo "      " . $form->input('button', null, null, false, 'Delete', 'btn btn-link', null, null, null, null, array('onClick'=>'validateDeleteNotification("' . $notifications[$counter]['notification_id'] . '"); return false;')) . "\n";
@@ -28,10 +28,10 @@
 		echo $form->rowStart('recipient', 'Recipient');
 		echo "  <div class='row'>\n";
 		echo "    <div class='col-lg-5 col-md-5 col-sm-5 col-xs-5'>\n";
-		echo "      " . $form->input('text', 'recipient_name_add', @$_POST['recipient_name_add'], false, '|Name', 'form-control') . "\n";
+		echo "      " . $form->input('text', 'notification_name_add', @$_POST['notification_name_add'], false, '|Name', 'form-control') . "\n";
 		echo "    </div>\n";
 		echo "    <div class='col-lg-5 col-md-5 col-sm-5 col-xs-5'>\n";
-		echo "      " . $form->input('email', 'recipient_email_add', @$_POST['recipient_email_add'], false, '|Email', 'form-control') . "\n";
+		echo "      " . $form->input('email', 'notification_email_add', @$_POST['notification_email_add'], false, '|Email', 'form-control') . "\n";
 		echo "    </div>\n";
 		echo "  </div>\n";
 		echo $form->rowEnd();
