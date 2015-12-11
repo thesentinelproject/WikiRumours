@@ -208,13 +208,17 @@
 
 	function emailFromUser($name, $email, $username, $telephone, $message, $adminEmail) {
 		
-		if (!$name || !$email || !$message || !$adminEmail) return false;
-		
 		global $mail_TL;
 		global $environmentals;
 		global $systemPreferences;
 		global $pseudonym;
+		global $console;
 
+		if (!$name || !$email || !$message || !$adminEmail) {
+			$console .= "Missing email parameters.\n";
+			return false;
+		}
+		
 		$subject = "[" . (@$pseudonym['name'] ? $pseudonym['name'] : $systemPreferences['Name of this application']) . "] Message from user";
 
 		$messagePlain = $name . " (" . $email;

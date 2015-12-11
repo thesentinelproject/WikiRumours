@@ -36,7 +36,7 @@
 			if (!$pageError) {
 				
 				for ($counter = 0; $counter < count($recipients); $counter++) {
-					$emailSent = emailFromUser($_POST['name'], $_POST['email'], $_POST['username'], $_POST['telephone'], $_POST['message'], $recipients[$counter]['email']);
+					$emailSent = emailFromUser($_POST['name'], $_POST['email'], $_POST['username'], $_POST['telephone'], $_POST['message'], $recipients[$counter]['recipient_email']);
 					if ($emailSent) {
 						// update log
 							$activity = $_POST['name'] . " (";

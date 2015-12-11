@@ -10,11 +10,11 @@
 		echo "          <div id='siteNavLiner'>\n";
 
 		// side navigation
-			if ($logged_in) {
+			if (@$logged_in) {
 				echo "            <div id='salutation'>\n";
 				echo "              Welcome, <strong><a href='/profile/" . $logged_in['username'] . "'>" . $logged_in['full_name'] . "</a></strong>\n";
 				echo "            </div><!-- salutation -->\n";
-				if ($logged_in['rumours_assigned'] > 0) {
+				if (@$logged_in['rumours_assigned'] > 0) {
 					echo "            <div id='rumourAlert'>\n";
 					echo "              <span class='label label-danger pull-right'><a href='/my_rumours' class='inverse'>" . floatval($logged_in['rumours_assigned']) . "</a></span>\n";
 					echo "              <a href='/my_rumours'>Rumours requiring your attention</a>\n";

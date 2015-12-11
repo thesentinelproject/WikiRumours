@@ -1,6 +1,6 @@
 <?php
 
-	if ($logged_in) {
+	if (@$logged_in) {
 		// My Rumours
 			echo "            <li class='hideBullets";
 			if ($templateName == 'my_rumours') echo " verticalPillActive";
