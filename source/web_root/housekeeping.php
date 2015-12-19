@@ -8,6 +8,8 @@
 		$logID = $logger->logItInDb($logger->retrieveLogFromMemory(false), null, null, array('is_released'=>'0'));
 
 	// run monthly housekeeping tasks
+		$logger->logItInMemory("Looking for monthly housekeeping tasks");
+		$logger->logItInDb($logger->retrieveLogFromMemory(), $logID);
 		$oneMonthAgo = date('Y-m-d H:i:s', mktime(date('H'), date('i'), date('s'), date('m') - 1, date('d'), date('Y')));
 		if ($handle = opendir(__DIR__ . '/../housekeeping/autoload/monthly/.')) {
 			while (false !== ($file = readdir($handle))) {
@@ -27,6 +29,8 @@
 		}
 
 	// run weekly housekeeping tasks
+		$logger->logItInMemory("Looking for weekly housekeeping tasks");
+		$logger->logItInDb($logger->retrieveLogFromMemory(), $logID);
 		$oneWeekAgo = date('Y-m-d H:i:s', mktime(date('H'), date('i'), date('s'), date('m'), date('d') - 7, date('Y')));
 		if ($handle = opendir(__DIR__ . '/../housekeeping/autoload/weekly/.')) {
 			while (false !== ($file = readdir($handle))) {
@@ -46,6 +50,8 @@
 		}
 
 	// run daily housekeeping tasks
+		$logger->logItInMemory("Looking for daily housekeeping tasks");
+		$logger->logItInDb($logger->retrieveLogFromMemory(), $logID);
 		$oneDayAgo = date('Y-m-d H:i:s', mktime(date('H'), date('i'), date('s'), date('m'), date('d') - 1, date('Y')));
 		if ($handle = opendir(__DIR__ . '/../housekeeping/autoload/daily/.')) {
 			while (false !== ($file = readdir($handle))) {
@@ -65,6 +71,8 @@
 		}
 
 	// run hourly housekeeping tasks
+		$logger->logItInMemory("Looking for hourly housekeeping tasks");
+		$logger->logItInDb($logger->retrieveLogFromMemory(), $logID);
 		$oneHourAgo = date('Y-m-d H:i:s', mktime(date('H') - 1, date('i'), date('s'), date('m'), date('d'), date('Y')));
 		if ($handle = opendir(__DIR__ . '/../housekeeping/autoload/hourly/.')) {
 			while (false !== ($file = readdir($handle))) {
@@ -84,6 +92,8 @@
 		}
 
 	// run rotating housekeeping tasks
+		$logger->logItInMemory("Looking for rotating housekeeping tasks");
+		$logger->logItInDb($logger->retrieveLogFromMemory(), $logID);
 		$tasks = array();
 		if ($handle = opendir(__DIR__ . '/../housekeeping/autoload/rotation/.')) {
 			while (false !== ($file = readdir($handle))) {
@@ -117,6 +127,8 @@
 		}
 
 	// run ASAP housekeeping tasks
+		$logger->logItInMemory("Looking for immediate housekeeping tasks");
+		$logger->logItInDb($logger->retrieveLogFromMemory(), $logID);
 		if ($handle = opendir(__DIR__ . '/../housekeeping/autoload/asap/.')) {
 			while (false !== ($file = readdir($handle))) {
 				if (substr_count($file, '.php') > 0) {
