@@ -4,6 +4,7 @@
 
 		public $numberOfLogs = null;
 		public $logs = null;
+		public $allLogs = null;
 		public $html = null;
 		public $js = null;
 
@@ -88,8 +89,8 @@
 				}
 
 				if (@$params['paginate']) {
-					$result = countInDb('logs', 'log_id', (@$connection_type ? [$tablePrefix . 'logs.connection_type'=>$connection_type] : false), null, null, null, $otherCriteria);
-					$this->numberOfLogs = floatval($result[0]['count']);
+					$this->allLogs = retrieveLogs((@$connection_type ? [$tablePrefix . 'logs.connection_type'=>$connection_type] : false), null, null, null, $otherCriteria);
+					$this->numberOfLogs = count($this->allLogs);
 
 					$numberOfPages = max(1, ceil($this->numberOfLogs / $params['rows_per_page']));
 					if ($currentPage > $numberOfPages) $currentPage = $numberOfPages;
@@ -97,14 +98,30 @@
 					$this->logs = retrieveLogs((@$connection_type ? [$tablePrefix . 'logs.connection_type'=>$connection_type] : false), null, @$otherCriteria, @$sort, floatval(($currentPage * $params['rows_per_page']) - $params['rows_per_page']) . ',' . $params['rows_per_page']);
 				}
 				elseif (@$params['limit']) {
-					$result = countInDb('logs', 'log_id', (@$connection_type ? [$tablePrefix . 'logs.connection_type'=>$connection_type] : false), null, null, null, $otherCriteria);
-					$this->numberOfLogs = floatval($result[0]['count']);
+					$this->allLogs = retrieveLogs((@$connection_type ? [$tablePrefix . 'logs.connection_type'=>$connection_type] : false), null, null, null, $otherCriteria);
+					$this->numberOfLogs = count($this->allLogs);
 
 					$this->logs = retrieveLogs((@$connection_type ? [$tablePrefix . 'logs.connection_type'=>$connection_type] : false), null, @$otherCriteria, @$sort, $params['limit']);
 				}
 				else {
 					$this->logs = retrieveLogs((@$connection_type ? [$tablePrefix . 'logs.connection_type'=>$connection_type] : false), null, @$otherCriteria, @$sort);
+					$this->allLogs = $this->logs;
 					$this->numberOfLogs = count($this->logs);
+				}
+
+			// create export
+				$export = null;
+
+				foreach ($params['columns'] as $column => $icon) {
+					$export.= $column . ",";
+				}
+				$export = substr($export, 0, strlen($export) - 1) . "\n";
+
+				for ($counter = 0; $counter < count($this->allLogs); $counter++) {
+					foreach ($params['columns'] as $column => $icon) {
+						$export .= '"' . $this->allLogs[$counter][$column] . '"' . ",";
+					}
+					$export = substr($export, 0, strlen($export) - 1) . "\n";
 				}
 
 			// create view
@@ -197,22 +214,53 @@
 						$this->html .= "<div class='row'>\n";
 						if (@$params['filterable']) {
 							if (@$params['connection_type_filter']) {
-								$this->html .= "  <div class='col-lg-6 col-md-6 col-sm-5 col-xs-6'>" . $form->input('text', 'keywords', @$keywords, false, null, 'form-control', null, 60) . "</div>\n";
-								$this->html .= "  <div class='col-lg-4 col-md-4 col-sm-5 col-xs-6'>" . $form->input('select', 'connection_type', @$connection_type, false, "Initiated by", 'form-control', $connectionTypes) . "</div>\n";
+								$this->html .= "  <div class='col-lg-6 col-md-4 col-sm-4 col-xs-6'>" . $form->input('text', 'keywords', @$keywords, false, null, 'form-control', null, 60) . "</div>\n";
+								$this->html .= "  <div class='col-lg-4 col-md-4 col-sm-4 col-xs-6'>" . $form->input('select', 'connection_type', @$connection_type, false, "Initiated by", 'form-control', $connectionTypes) . "</div>\n";
 							}
 							else {
-								$this->html .= "  <div class='col-lg-10 col-md-10 col-sm-10 col-xs-8'>" . $form->input('text', 'keywords', @$keywords, false, null, 'form-control', null, 60) . "</div>\n";
+								$this->html .= "  <div class='col-lg-10 col-md-8 col-sm-8 col-xs-8'>" . $form->input('text', 'keywords', @$keywords, false, null, 'form-control', null, 60) . "</div>\n";
 							}
 						}
 						if (@$params['exportable']) {
-							$this->html .= "  <div class='col-lg-1 col-md-1 col-sm-1 col-xs-2'>" . $form->input('submit', 'submitButton', null, false, 'Filter', 'btn btn-primary btn-block') . "</div>\n";
-							$this->html .= "  <div class='col-lg-1 col-md-1 col-sm-1 col-xs-2'>" . $form->input('button', 'exportButton', null, false, 'Export', 'btn btn-default btn-block', null, null, null, null, ['onClick'=>'document.logsForm.exportData.value="Y"; rebuildURL(); return false;']) . "</div>\n";
+							$this->html .= "  <div class='col-lg-1 col-md-2 col-sm-2 col-xs-2'>" . $form->input('submit', 'submitButton', null, false, 'Filter', 'btn btn-primary btn-block') . "</div>\n";
+							$this->html .= "  <div class='col-lg-1 col-md-2 col-sm-2 col-xs-2'>" . $form->input('button', 'exportButton', null, false, 'Export', 'btn btn-default btn-block', null, null, array('data-toggle'=>'modal', 'data-target'=>'#exportModal')) . "</div>\n";
 						}
 						elseif (@$params['filterable']) {
 							$this->html .= "  <div class='col-lg-2 col-md-2 col-sm-2 col-xs-4'>" . $form->input('submit', 'submitButton', null, false, 'Filter', 'btn btn-primary btn-block') . "</div>\n";
 						}
 						$this->html .= "</div>\n";
 					}
+
+				//export modal
+					$this->html .= "<!- export modal ->\n";
+					$this->html .= "  <div class='modal fade' id='exportModal' tabindex='-1' role='dialog' aria-labelledby='exportModalLabel' aria-hidden='true'>\n";
+					$this->html .= "    <div class='modal-dialog'>\n";
+					$this->html .= "      <div class='modal-content'>\n";
+					$this->html .= "        <div class='modal-header'>\n";
+					$this->html .= "          <button type='button' class='close' data-dismiss='modal'><span aria-hidden='true'>&times;</span><span class='sr-only'>Close</span></button>\n";
+					$this->html .= "          <h4 class='modal-title' id='exportModalLabel'>Export as CSV</h4>\n";
+					$this->html .= "        </div>\n";
+					$this->html .= "        <div class='modal-body'>\n";
+					$this->html .= "          <div>" . $form->input('textarea', 'export', $export, false, null, 'form-control', null, null, array('rows'=>'7')) . "</div>\n";
+					$this->html .= "          <br /><div>" . $form->input('button', 'clipboardButton', null, false, "Copy to clipboard", 'btn btn-primary') . "</div>\n";
+					$this->html .= "        </div>\n";
+					$this->html .= "      </div>\n";
+					$this->html .= "    </div>\n";
+					$this->html .= "  </div>\n\n";
+
+					$this->js .= "// copy to clipboard\n";
+					$this->js .= "	document.querySelector('#clipboardButton').addEventListener('click', function(event) {\n";
+					$this->js .= "		// select text\n";
+					$this->js .= "			document.querySelector('#export').select();\n";
+					$this->js .= "		// copy text\n";
+					$this->js .= "			try {\n";
+					$this->js .= "				if (document.execCommand('copy')) {\n";
+					$this->js .= "					alert('Successfully copied to clipboard');\n";
+					$this->js .= "				}\n";
+					$this->js .= "			} catch (err) {\n";
+					$this->js .= "				alert(err);\n";
+					$this->js .= "			}\n";
+					$this->js .= "	})\n\n";
 
 				// column resort
 					if (@$params['resortable']) {
