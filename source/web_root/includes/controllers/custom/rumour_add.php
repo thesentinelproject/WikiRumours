@@ -203,7 +203,11 @@
 						if (!count($latLong)) $latLong = retrieveSingleFromDB('rumours', null, array('country_id'=>@$_POST['country_heard'], 'city'=>@$_POST['city_heard']), null, null, null, "latitude <> 0 AND longitude <> 0");
 						
 						$sightingID = insertIntoDb('rumour_sightings', array('created_by'=>$heardBy, 'rumour_id'=>$operators->firstTrue(@$rumourID, @$rumour[0]['rumour_id']), 'entered_by'=>$logged_in['user_id'], 'entered_on'=>date('Y-m-d H:i:s'), 'heard_on'=>$_POST['heard_on'], 'country_id'=>@$_POST['country_heard'], 'city'=>@$_POST['city_heard'], 'latitude'=>@$latLong[0]['latitude'], 'longitude'=>@$latLong[0]['longitude'], 'location_type'=>$_POST['location_type'], 'source_id'=>@$_POST['source_id'], 'ipv4'=>@$ipv4, 'ipv6'=>@$ipv6));
-						
+				
+					// automatically watchlist rumour on behalf of creator
+						deleteFromDbSingle('watchlist', array('rumour_id'=>$operators->firstTrue(@$rumourID, @$rumour[0]['rumour_id']), 'created_by'=>$heardBy));
+						insertIntoDb('watchlist', array('rumour_id'=>$operators->firstTrue(@$rumourID, @$rumour[0]['rumour_id']), 'notify_of_updates'=>'1', 'created_by'=>$heardBy, 'created_on'=>date('Y-m-d H:i:s')));
+
 				}
 				
 			// notify moderator
