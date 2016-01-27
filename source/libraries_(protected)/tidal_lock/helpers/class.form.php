@@ -1229,7 +1229,7 @@
 			}
 			else {
 
-				$row = $this->rowStart($name, $label, null, $class);
+				$row = $this->rowStart($name, $label);
 				$row .= "      " . $this->input($type, $name, $value, $mandatory, $labelPlaceholder, $class, $options, $maxlength, $otherAttributes, $truncateLabel, $eventHandlers) . "\n";
 				
 				if ($duplicateRows) {
@@ -1275,7 +1275,7 @@
 			if (floatval($truncate)) $label = $parser->truncate($label, 'character', $truncate, '', '', '');
 			
 			$row = "<!-- " . $operators->firstTrue($label, $name) . " -->\n";
-			$row .= "  <div class='form-group'>\n";
+			$row .= "  <div id='" . trim('formContainer_' . $name, '_') . "' class='form-group" . ($class ? ' ' . $class : false) . "'>\n";
 
 			if ($this->style == 'horizontal') {
 				$row .= "    <label for='" . $name . "' id='" . trim('formLabel_' . $name, '_') . "' class='col-lg-3 col-md-3 col-sm-4 col-xs-12 control-label'>" . $label . "</label>\n";

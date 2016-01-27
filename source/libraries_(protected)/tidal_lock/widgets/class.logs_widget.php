@@ -27,9 +27,14 @@
 
 			global $tablePrefix;
 			global $connectionTypes;
+			global $systemPreferences;
+			global $pageStatus;
+			global $pageError;
+
 			$keyvalue_array = new keyvalue_array_TL();
 			$parser = new parser_TL();
 			$form = new form_TL();
+			$file_manager = new file_manager_TL();
 
 			// check for errors
 				if ($params && !is_array($params)) {
@@ -70,6 +75,7 @@
 						elseif ($explodedPair[0] == 'sort') $sort = $explodedPair[1];
 						elseif ($explodedPair[0] == 'connection_type') $connection_type = $explodedPair[1];
 						elseif ($explodedPair[0] == 'keywords') $keywords = $explodedPair[1];
+						elseif ($explodedPair[0] == 'output') $output = $explodedPair[1];
 					}
 				}
 				if (@$params['paginate'] && !@$currentPage) $currentPage = 1;
@@ -89,7 +95,7 @@
 				}
 
 				if (@$params['paginate']) {
-					$this->allLogs = retrieveLogs((@$connection_type ? [$tablePrefix . 'logs.connection_type'=>$connection_type] : false), null, null, null, $otherCriteria);
+					$this->allLogs = retrieveLogs((@$connection_type ? [$tablePrefix . 'logs.connection_type'=>$connection_type] : false), null, $otherCriteria);
 					$this->numberOfLogs = count($this->allLogs);
 
 					$numberOfPages = max(1, ceil($this->numberOfLogs / $params['rows_per_page']));
@@ -98,7 +104,7 @@
 					$this->logs = retrieveLogs((@$connection_type ? [$tablePrefix . 'logs.connection_type'=>$connection_type] : false), null, @$otherCriteria, @$sort, floatval(($currentPage * $params['rows_per_page']) - $params['rows_per_page']) . ',' . $params['rows_per_page']);
 				}
 				elseif (@$params['limit']) {
-					$this->allLogs = retrieveLogs((@$connection_type ? [$tablePrefix . 'logs.connection_type'=>$connection_type] : false), null, null, null, $otherCriteria);
+					$this->allLogs = retrieveLogs((@$connection_type ? [$tablePrefix . 'logs.connection_type'=>$connection_type] : false), null, $otherCriteria);
 					$this->numberOfLogs = count($this->allLogs);
 
 					$this->logs = retrieveLogs((@$connection_type ? [$tablePrefix . 'logs.connection_type'=>$connection_type] : false), null, @$otherCriteria, @$sort, $params['limit']);
@@ -110,18 +116,35 @@
 				}
 
 			// create export
-				$export = null;
-
-				foreach ($params['columns'] as $column => $icon) {
-					$export.= $column . ",";
-				}
-				$export = substr($export, 0, strlen($export) - 1) . "\n";
-
-				for ($counter = 0; $counter < count($this->allLogs); $counter++) {
-					foreach ($params['columns'] as $column => $icon) {
-						$export .= '"' . $this->allLogs[$counter][$column] . '"' . ",";
-					}
-					$export = substr($export, 0, strlen($export) - 1) . "\n";
+				if (@$output == 'csv') {
+					// create content
+						$export = null;
+						// header
+							foreach ($params['columns'] as $column => $icon) {
+								$export.= $column . ",";
+							}
+							$export = substr($export, 0, strlen($export) - 1) . "\n";
+						// rows
+							for ($logCounter = 0; $logCounter < count($this->allLogs); $logCounter++) {
+								$increment = 0;
+								foreach ($params['columns'] as $column => $icon) {
+									$export .= '"' . $this->allLogs[$logCounter][$column] . '"';
+									if ($increment < count($params['columns']) - 1) $export .= ",";
+									else $export .= "\n";
+									$increment++;
+								}
+							}
+					// create folder
+						$path = 'downloads/' . date('Y-m-d_H-i-s');
+						mkdir($path);
+						if (!file_exists($path)) $pageError .= "Unable to create download directory. ";
+						else {
+							// create file
+								$file = 'logs.csv';
+								$file_manager->writeTextFile($path . '/' . $file, $export);
+								if (!file_exists($path . '/' . $file)) $pageError .= "Unable to create file export. ";
+								else $exportPath = $path . '/' . $file;
+						}
 				}
 
 			// create view
@@ -214,53 +237,47 @@
 						$this->html .= "<div class='row'>\n";
 						if (@$params['filterable']) {
 							if (@$params['connection_type_filter']) {
-								$this->html .= "  <div class='col-lg-6 col-md-4 col-sm-4 col-xs-6'>" . $form->input('text', 'keywords', @$keywords, false, null, 'form-control', null, 60) . "</div>\n";
-								$this->html .= "  <div class='col-lg-4 col-md-4 col-sm-4 col-xs-6'>" . $form->input('select', 'connection_type', @$connection_type, false, "Initiated by", 'form-control', $connectionTypes) . "</div>\n";
+								$this->html .= "  <div class='col-lg-5 col-md-3 col-sm-3 col-xs-3'>" . $form->input('text', 'keywords', @$keywords, false, null, 'form-control', null, 60) . "</div>\n";
+								$this->html .= "  <div class='col-lg-3 col-md-3 col-sm-3 col-xs-3'>" . $form->input('select', 'connection_type', @$connection_type, false, "Initiated by", 'form-control', $connectionTypes) . "</div>\n";
 							}
 							else {
-								$this->html .= "  <div class='col-lg-10 col-md-8 col-sm-8 col-xs-8'>" . $form->input('text', 'keywords', @$keywords, false, null, 'form-control', null, 60) . "</div>\n";
+								$this->html .= "  <div class='col-lg-8 col-md-6 col-sm-6 col-xs-6'>" . $form->input('text', 'keywords', @$keywords, false, null, 'form-control', null, 60) . "</div>\n";
 							}
 						}
+
 						if (@$params['exportable']) {
-							$this->html .= "  <div class='col-lg-1 col-md-2 col-sm-2 col-xs-2'>" . $form->input('submit', 'submitButton', null, false, 'Filter', 'btn btn-primary btn-block') . "</div>\n";
-							$this->html .= "  <div class='col-lg-1 col-md-2 col-sm-2 col-xs-2'>" . $form->input('button', 'exportButton', null, false, 'Export', 'btn btn-default btn-block', null, null, array('data-toggle'=>'modal', 'data-target'=>'#exportModal')) . "</div>\n";
+							$this->html .= "  <div class='col-lg-2 col-md-3 col-sm-3 col-xs-3'>" . $form->input('submit', 'submitButton', null, false, 'Filter', 'btn btn-primary btn-block') . "</div>\n";
+							$this->html .= "  <div class='col-lg-2 col-md-3 col-sm-3 col-xs-3'>" . $form->input('button', 'exportButton', null, false, 'Export', 'btn btn-default btn-block', null, null, null, null, array('onClick'=>'document.getElementById("exportData").value = "Y"; rebuildURL();')) . "</div>\n";
 						}
 						elseif (@$params['filterable']) {
-							$this->html .= "  <div class='col-lg-2 col-md-2 col-sm-2 col-xs-4'>" . $form->input('submit', 'submitButton', null, false, 'Filter', 'btn btn-primary btn-block') . "</div>\n";
+							$this->html .= "  <div class='col-lg-4 col-md-6 col-sm-6 col-xs-6'>" . $form->input('submit', 'submitButton', null, false, 'Filter', 'btn btn-primary btn-block') . "</div>\n";
 						}
 						$this->html .= "</div>\n";
 					}
 
 				//export modal
-					$this->html .= "<!- export modal ->\n";
-					$this->html .= "  <div class='modal fade' id='exportModal' tabindex='-1' role='dialog' aria-labelledby='exportModalLabel' aria-hidden='true'>\n";
-					$this->html .= "    <div class='modal-dialog'>\n";
-					$this->html .= "      <div class='modal-content'>\n";
-					$this->html .= "        <div class='modal-header'>\n";
-					$this->html .= "          <button type='button' class='close' data-dismiss='modal'><span aria-hidden='true'>&times;</span><span class='sr-only'>Close</span></button>\n";
-					$this->html .= "          <h4 class='modal-title' id='exportModalLabel'>Export as CSV</h4>\n";
-					$this->html .= "        </div>\n";
-					$this->html .= "        <div class='modal-body'>\n";
-					$this->html .= "          <div>" . $form->input('textarea', 'export', $export, false, null, 'form-control', null, null, array('rows'=>'7')) . "</div>\n";
-					$this->html .= "          <br /><div>" . $form->input('button', 'clipboardButton', null, false, "Copy to clipboard", 'btn btn-primary') . "</div>\n";
-					$this->html .= "        </div>\n";
-					$this->html .= "      </div>\n";
-					$this->html .= "    </div>\n";
-					$this->html .= "  </div>\n\n";
+					if (@$exportPath) {
+						$this->html .= "<!- export modal ->\n";
+						$this->html .= "  <div class='modal fade' id='exportModal' tabindex='-1' role='dialog' aria-labelledby='exportModalLabel' aria-hidden='true'>\n";
+						$this->html .= "    <div class='modal-dialog'>\n";
+						$this->html .= "      <div class='modal-content'>\n";
+						$this->html .= "        <div class='modal-header'>\n";
+						$this->html .= "          <button type='button' class='close' data-dismiss='modal'><span aria-hidden='true'>&times;</span><span class='sr-only'>Close</span></button>\n";
+						$this->html .= "          <h4 class='modal-title' id='exportModalLabel'>Your export is complete!</h4>\n";
+						$this->html .= "        </div>\n";
+						$this->html .= "        <div class='modal-body'>\n";
+						if (@$systemPreferences['Delete downloadables after']) $this->html .= "          <p>This download will be automatically deleted from the server within " . ($systemPreferences['Delete downloadables after'] == 1 ? "1 day" : $systemPreferences['Delete downloadables after'] . " days") . ".</p>\n";
+						$this->html .= "          <a href='/" . $exportPath . "' target='_blank' class='btn btn-primary'>Download now</a>\n";
+						$this->html .= "        </div>\n";
+						$this->html .= "      </div>\n";
+						$this->html .= "    </div>\n";
+						$this->html .= "  </div>\n\n";
 
-					$this->js .= "// copy to clipboard\n";
-					$this->js .= "	document.querySelector('#clipboardButton').addEventListener('click', function(event) {\n";
-					$this->js .= "		// select text\n";
-					$this->js .= "			document.querySelector('#export').select();\n";
-					$this->js .= "		// copy text\n";
-					$this->js .= "			try {\n";
-					$this->js .= "				if (document.execCommand('copy')) {\n";
-					$this->js .= "					alert('Successfully copied to clipboard');\n";
-					$this->js .= "				}\n";
-					$this->js .= "			} catch (err) {\n";
-					$this->js .= "				alert(err);\n";
-					$this->js .= "			}\n";
-					$this->js .= "	})\n\n";
+						$this->js .= "// autoload modal window\n";
+						$this->js .= "  $(window).load(function(){\n";
+						$this->js .= "    $('#exportModal').modal('show');\n";
+						$this->js .= "  });\n\n";
+ 					}
 
 				// column resort
 					if (@$params['resortable']) {
@@ -274,16 +291,13 @@
 				// URL processing
 					$this->js .= "function rebuildURL() {\n";
 					$this->js .= "  var path = '/" . $params['template_name'] . "';\n";
-					$this->js .= "  var queryString = '" . @$params['query_string'] . "';\n";
-					$this->js .= "  if (document.logsForm.exportData.value == 'Y') document.location.href = '/export/' + encodeURI('report=logs|' + queryString);\n";
-					$this->js .= "  else {\n";
-					$this->js .= "    var queryString = '';\n";
-					if (@$params['resortable']) $this->js .= "    if (document.logsForm.sort.value) queryString += '|sort=' + document.logsForm.sort.value;\n";
-					if (@$params['filterable']) $this->js .= "    if (document.logsForm.keywords.value) queryString += '|keywords=' + document.logsForm.keywords.value;\n";
-					if (@$params['filterable'] && @$params['connection_type_filter']) $this->js .= "    if (document.logsForm.connection_type.value) queryString += '|connection_type=' + document.logsForm.connection_type.value;\n";
-					$this->js .= "    queryString = queryString.substring(1);\n";
-					$this->js .= "    document.location.href = path + '/' + queryString;\n";
-					$this->js .= "  }\n";
+					$this->js .= "  var queryString = '';\n";
+					if (@$params['resortable']) $this->js .= "  if (document.logsForm.sort.value) queryString += '|sort=' + document.logsForm.sort.value;\n";
+					if (@$params['filterable']) $this->js .= "  if (document.logsForm.keywords.value) queryString += '|keywords=' + document.logsForm.keywords.value;\n";
+					if (@$params['filterable'] && @$params['connection_type_filter']) $this->js .= "  if (document.logsForm.connection_type.value) queryString += '|connection_type=' + document.logsForm.connection_type.value;\n";
+					if (@$params['exportable']) $this->js .= "  if (document.logsForm.exportData.value == 'Y') queryString += '|output=csv';\n";
+					$this->js .= "  queryString = queryString.substring(1);\n";
+					$this->js .= "  document.location.href = path + '/' + encodeURI(queryString);\n";
 					$this->js .= "}\n\n";
 
 				$this->html .= $form->end() . "\n";

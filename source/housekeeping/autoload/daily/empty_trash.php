@@ -16,7 +16,7 @@
 		else {
 		
 			// retrieve list of backups
-				$trashBin = $directory_manager->read($trashPath, false, true);
+				$trashBin = $directory_manager->read($trashPath, false, true, false);
 				
 			// delete expired backups
 				for ($counter = 0; $counter < count($trashBin); $counter++) {
@@ -24,12 +24,12 @@
 					if ($trashBin[$counter] < date('Y-m-d_H-i-s')) {
 						
 						// delete folder
-							$success = $directory_manager->remove('../trash/' . $trashBin[$counter]);
+							$success = $directory_manager->remove($trashPath . '/' . $trashBin[$counter]);
 							
 						// check if successful
 							if ($success) $numberOfItemsDeleted++;
 							else {
-								$activity = "Unknown error attempting to delete the trash folder " . $trashBin[$counter];
+								$activity = "Error encountered during " . pathinfo(__FILE__, PATHINFO_FILENAME) . ": Unknown error attempting to delete the folder " . $trashBin[$counter];
 								
 								$logger->logItInMemory($activity);
 								$logger->logItInDb($logger->retrieveLogFromMemory(), $logID);
@@ -41,10 +41,10 @@
 					}
 				}
 				
+			// update log
+				$logger->logItInMemory("Removed " . floatval($numberOfItemsDeleted) . " item(s)");
+				$logger->logItInDb($logger->retrieveLogFromMemory(), $logID);
+
 		}
 		
-	// update log
-		$logger->logItInMemory("Removed " . floatval($numberOfItemsDeleted) . " item(s) from trash");
-		$logger->logItInDb($logger->retrieveLogFromMemory(), $logID);
-
 ?>
