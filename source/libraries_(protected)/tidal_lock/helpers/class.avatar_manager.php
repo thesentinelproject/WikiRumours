@@ -6,10 +6,10 @@
 			
 			global $salts_TL;
 			global $profileImageSizes;
-			global $console;
+			global $tl;
 			
 			if (!$username) {
-				$console .= __CLASS__ . "->" . __FUNCTION__ . ": No username specified.\n";
+				$tl->page['console'] .= __CLASS__ . "->" . __FUNCTION__ . ": No username specified.\n";
 				return false;
 			}
 			
@@ -38,14 +38,14 @@
 			
 			global $salts_TL;
 			global $profileImageSizes;
-			global $console;
+			global $tl;
 			
 			if (!$username) {
-				$console .= __CLASS__ . "->" . __FUNCTION__ . ": No username specified.\n";
+				$tl->page['console'] .= __CLASS__ . "->" . __FUNCTION__ . ": No username specified.\n";
 				return false;
 			}
 			if (!$sourceImage) {
-				$console .= __CLASS__ . "->" . __FUNCTION__ . ": No source image specified.\n";
+				$tl->page['console'] .= __CLASS__ . "->" . __FUNCTION__ . ": No source image specified.\n";
 				return false;
 			}
 			
@@ -63,7 +63,7 @@
 			}
 			
 			if ($error) {
-				$console .= __CLASS__ . "->" . __FUNCTION__ . ": " . $error . ".\n";
+				$tl->page['console'] .= __CLASS__ . "->" . __FUNCTION__ . ": " . $error . ".\n";
 				return false;
 			}
 			else return true;
@@ -74,10 +74,10 @@
 			
 			global $salts_TL;
 			global $profileImageSizes;
-			global $console;
+			global $tl;
 	
 			if (!$username) {
-				$console .= __CLASS__ . "->" . __FUNCTION__ . ": No username specified.\n";
+				$tl->page['console'] .= __CLASS__ . "->" . __FUNCTION__ . ": No username specified.\n";
 				return false;
 			}
 			
@@ -94,7 +94,7 @@
 			}
 			
 			if ($error) {
-				$console .= __CLASS__ . "->" . __FUNCTION__ . ": " . $error . ".\n";
+				$tl->page['console'] .= __CLASS__ . "->" . __FUNCTION__ . ": " . $error . ".\n";
 				return false;
 			}
 			else return true;
@@ -103,15 +103,15 @@
 		
 		public function retrieveGravatar($email, $width, $destination = false) {
 			
-			global $console;
+			global $tl;
 
 			if (!$email) {
-				$console .= __CLASS__ . "->" . __FUNCTION__ . ": No email specified.\n";
+				$tl->page['console'] .= __CLASS__ . "->" . __FUNCTION__ . ": No email specified.\n";
 				return false;
 			}
 			
 			if (!floatval($width)) {
-				$console .= __CLASS__ . "->" . __FUNCTION__ . ": No desired width specified.\n";
+				$tl->page['console'] .= __CLASS__ . "->" . __FUNCTION__ . ": No desired width specified.\n";
 				return false;
 			}
 			

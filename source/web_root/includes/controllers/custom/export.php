@@ -5,13 +5,13 @@
 	-------------------------------------- */
 
 	// parse query string
-		if ($parameter1) $filters = $keyvalue_array->keyValueToArray(urldecode($parameter1), '|');
+		if ($tl->page['parameter1']) $filters = $keyvalue_array->keyValueToArray(urldecode($tl->page['parameter1']), '|');
 
 	// create export
 		if (@$filters['report'] == 'users') {
 
 			// authenticate access
-				if (!$logged_in['is_administrator'] || !$logged_in['can_edit_users']) forceLoginThenRedirectHere();
+				if (!$logged_in['is_administrator'] || !$logged_in['can_edit_users']) $authentication_manager->forceLoginThenRedirectHere();
 
 			// retrieve data
 				if (@$filters['keywords']) {
@@ -67,7 +67,7 @@
 		elseif (@$filters['report'] == 'rumours') {
 
 			// authenticate user
-				if (!$logged_in['is_administrator']) forceLoginThenRedirectHere();
+				if (!$logged_in['is_administrator']) $authentication_manager->forceLoginThenRedirectHere();
 
 			// retrieve data				
 				if (@$filters['keywords']) {
@@ -87,7 +87,7 @@
 				// status
 					if (@$filters['rumour_status']) $matching += array($tablePrefix . 'rumours.status_id'=>$filters['rumour_status']);
 				// country
-					if (@$filters['rumour_country'] && @$countries_TL[$filters['rumour_country']]) $matching += array($tablePrefix . 'rumours.country_id'=>$filters['rumour_country']);
+					if (@$filters['rumour_country']) $matching += array($tablePrefix . 'rumours.country_id'=>$filters['rumour_country']);
 				// sort by
 					if (@$filters['sort_by'] == 'rumour') $sortBy = 'description ' . $operators->firstTrue(@$filters['sort_by_direction'], 'ASC');
 					elseif (@$filters['sort_by'] == 'date') $sortBy = 'updated_on ' . $operators->firstTrue(@$filters['sort_by_direction'], 'ASC') . ', city ' . $operators->firstTrue(@$filters['sort_by_direction'], 'ASC');
@@ -123,7 +123,7 @@
 		elseif (@$filters['report'] == 'logs') {
 
 			// authenticate user
-				if (!$logged_in['is_administrator']) forceLoginThenRedirectHere();
+				if (!$logged_in['is_administrator']) $authentication_manager->forceLoginThenRedirectHere();
 		
 			// retrieve data				
 				if (@$filters['keywords']) {
@@ -150,6 +150,9 @@
 					}
 				}
 
+			// clear session in DB
+				deleteFromDbSingle('sessions', array('session_id'=>$sessionID));
+
 			// create CSV
 				header( 'Content-Type: text/csv' );
 				header( 'Content-Disposition: attachment;filename=logs.csv');
@@ -162,10 +165,7 @@
 				exit();
 
 		}
-		else {
-			header('Location: /404');
-			exit();
-		}
+		else $authentication_manager->forceRedirect('/404');
 
 /*	--------------------------------------
 	Execute only if a form post

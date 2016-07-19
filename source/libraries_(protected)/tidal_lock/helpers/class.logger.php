@@ -19,12 +19,12 @@
 		
 		public function logItInDb($activity, $id = null, $relationships = null, $otherAttributes = null, $skipIfReported = false) {
 
-			global $console;
+			global $tl;
 			global $connectionType;
 	
 			// check for errors
 				if (!$activity) {
-					$console .= __CLASS__ . "->" . __FUNCTION__ . ": No activity specified.\n";
+					$tl->page['console'] .= __CLASS__ . "->" . __FUNCTION__ . ": No activity specified.\n";
 					return false;
 				}
 				
@@ -49,9 +49,9 @@
 								deleteFromDbSingle('log_relationships', array('log_id'=>$id, 'relationship_name'=>$relationship[0], 'relationship_value'=>$relationship[1]));
 								insertIntoDb('log_relationships', array('log_id'=>$id, 'relationship_name'=>$relationship[0], 'relationship_value'=>$relationship[1]));
 							}
-							else $console .= "Malformed relationships attribute in logging query. ";
+							else $tl->page['console'] .= "Malformed relationships attribute in logging query. ";
 						}
-						else $console .= "Malformed relationships attribute in logging query. ";
+						else $tl->page['console'] .= "Malformed relationships attribute in logging query. ";
 					}
 				}
 	
@@ -70,6 +70,15 @@
 			}
 			
 			return $output;
+			
+		}
+
+		function dumpToConsole($input, $excludePrior = false) {
+			
+			global $tl;
+			
+			if ($excludePrior) $tl->page['console'] = $input;
+			else $tl->page['console'] .= $input;
 			
 		}
 		

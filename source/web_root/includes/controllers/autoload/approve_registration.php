@@ -2,33 +2,33 @@
 
 	function approveRegistration($registrationID, $registeredBy = false) {
 
-		global $console;
+		global $tl;
 		global $profileImageSizes;
 		global $avatar_manager;
 		global $logger;
 
 		// check for errors
 			if (!$registrationID) {
-				$console .= "No registration ID provided. ";
+				$tl->page['console'] .= "No registration ID provided. ";
 				return false;
 			}
 
 			$registration = retrieveSingleFromDb('registrations', null, array('registration_id'=>$registrationID));
 			if (!count($registration)) {
-				$console .= "No registrant found. ";
+				$tl->page['console'] .= "No registrant found. ";
 				return false;
 			}
 
 			$matchingUsers = retrieveSingleFromDb('users', null, null, null, null, null, "username = '" . $registration[0]['username'] . "' OR email = '" . $registration[0]['email'] . "'");
 			if (count($matchingUsers)) {
-				$console .= "Existing username and/or email address found in users. ";
+				$tl->page['console'] .= "Existing username and/or email address found in users. ";
 				return false;
 			}
 
 		// copy registrant to user table
 			$userID = insertIntoDb('users', array('username'=>$registration[0]['username'], 'password_hash'=>$registration[0]['password_hash'], 'first_name'=>$registration[0]['first_name'], 'last_name'=>$registration[0]['last_name'], 'email'=>$registration[0]['email'], 'primary_phone'=>$registration[0]['primary_phone'], 'primary_phone_sms'=>$registration[0]['primary_phone_sms'], 'secondary_phone'=>$registration[0]['secondary_phone'], 'secondary_phone_sms'=>$registration[0]['secondary_phone_sms'], 'country_id'=>$registration[0]['country_id'], 'region_id'=>$registration[0]['region_id'], 'other_region'=>$registration[0]['other_region'], 'city'=>$registration[0]['city'], 'registered_on'=>$registration[0]['registered_on'], 'ok_to_contact'=>'1', 'enabled'=>'1', 'referred_by'=>$registration[0]['referred_by'], 'registered_by'=>$registeredBy));
 			if (!$userID) {
-				$console .= "Unable to create user record for some reason. ";
+				$tl->page['console'] .= "Unable to create user record for some reason. ";
 				return false;
 			}
 				

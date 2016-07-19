@@ -2,7 +2,7 @@
 
 	echo "<h2>Housekeeping</h2>\n";
 	
-	if (!$pageError && $action == 'run') {
+	if (!$tl->page['error'] && $action == 'run') {
 		$output = retrieveSingleFromDb('logs', null, array('log_id'=>$logID));
 		if ($output[0]['activity']) echo nl2br($output[0]['activity']);
 		else echo "<p>There was an unexpected error attempting to retrieve this log.</p>\n";
@@ -11,13 +11,13 @@
 		echo "  " . $form->input('button', 'logs', null, null, 'See all logs', 'btn btn-link', null, null, null, null, array('onClick'=>'document.location.href = "/logs";')) . "\n";
 		echo "</p>\n";
 	}
-	elseif ($action == 'source_code' && !$pageError) {
+	elseif ($action == 'source_code' && !$tl->page['error']) {
 		echo "<div class='container'>\n";
 		highlight_file($url);
 		echo "</div>\n";
 		echo "<br /><div>" . $form->input('cancel_and_return', 'cancel_button', null, null, 'Return', 'btn btn-info') . "</div>\n";
 	}
-	elseif (!$pageError) {
+	elseif (!$tl->page['error']) {
 
 		echo "<p>Although housekeeping is intended to be run via cron job, you can run the housekeeping bot manually (which will update the logs as if an actual cron job had been run).</p>";
 
@@ -53,7 +53,7 @@
 	}
 	else {
 		echo "<h2>Error</h2>\n\n";
-		echo $pageError;
+		echo $tl->page['error'];
 	}
 	
 ?>

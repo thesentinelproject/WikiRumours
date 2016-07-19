@@ -4,11 +4,11 @@
 
 		public function read($directory, $recursive = true, $returnDirectories = false, $returnFiles = true, $excludeRegex = '') {
 	
-			global $console;
+			global $tl;
 
 	    	$directory = rtrim($directory, '/');
 	    	if (!$directory) {
-				$console .= __CLASS__ . "->" . __FUNCTION__ . ": No directory specified.\n";
+				$tl->page['console'] .= __CLASS__ . "->" . __FUNCTION__ . ": No directory specified.\n";
 	    		return false;
 	    	}
 	    	
@@ -50,25 +50,25 @@
 		
 		public function copy($sourcePath, $destinationPath) {
 	
-			global $console;
+			global $tl;
 
 			// check if paths exist
 				if (!$sourcePath) {
-					$console .= __CLASS__ . "->" . __FUNCTION__ . ": No source path specified.\n";
+					$tl->page['console'] .= __CLASS__ . "->" . __FUNCTION__ . ": No source path specified.\n";
 					return false;
 				}
 				if (!file_exists($sourcePath)) {
-					$console .= __CLASS__ . "->" . __FUNCTION__ . ": Unable to locate the source path " . $sourcePath . ".\n";
+					$tl->page['console'] .= __CLASS__ . "->" . __FUNCTION__ . ": Unable to locate the source path " . $sourcePath . ".\n";
 					return false;
 				}
 				if (!$destinationPath) {
-					$console .= __CLASS__ . "->" . __FUNCTION__ . ": No destination path specified.\n";
+					$tl->page['console'] .= __CLASS__ . "->" . __FUNCTION__ . ": No destination path specified.\n";
 					return false;
 				}
 				if (!file_exists($destinationPath)) {
 					mkdir ($destinationPath);
 					if (!file_exists($destinationPath)) {
-						$console .= __CLASS__ . "->" . __FUNCTION__ . ": Unable to locate or create destination path.\n";
+						$tl->page['console'] .= __CLASS__ . "->" . __FUNCTION__ . ": Unable to locate or create destination path.\n";
 						return false;
 					}
 				}
@@ -93,14 +93,14 @@
 
 		public function remove($dir) {
 			
-			global $console;
+			global $tl;
 
 			if (!$dir) {
-				$console .= __CLASS__ . "->" . __FUNCTION__ . ": No directory specified.\n";
+				$tl->page['console'] .= __CLASS__ . "->" . __FUNCTION__ . ": No directory specified.\n";
 				return false;
 			}
 			if (!file_exists($dir)) {
-				$console .= __CLASS__ . "->" . __FUNCTION__ . ": Unable to locate the directory " . $dir . ".\n";
+				$tl->page['console'] .= __CLASS__ . "->" . __FUNCTION__ . ": Unable to locate the directory " . $dir . ".\n";
 				return false;
 			}
 			if (!is_dir($dir) || is_link($dir)) {
@@ -112,7 +112,7 @@
 				if (!$this->remove($dir . "/" . $item)) {
 					chmod($dir . "/" . $item, 0777);
 					if (!$this->remove($dir . "/" . $item)) {
-						$console .= __CLASS__ . "->" . __FUNCTION__ . ": Unable to delete the directory " . $dir . "/" . $item . ".\n";
+						$tl->page['console'] .= __CLASS__ . "->" . __FUNCTION__ . ": Unable to delete the directory " . $dir . "/" . $item . ".\n";
 						return false;
 					}
 				};

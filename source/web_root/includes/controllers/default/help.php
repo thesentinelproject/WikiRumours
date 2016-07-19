@@ -5,7 +5,7 @@
 	-------------------------------------- */
 
 	// parse query string
-		$keywords = trim(urldecode($parameter1));
+		$keywords = trim(urldecode($tl->page['parameter1']));
 
 	// queries
 		if ($keywords) {
@@ -53,19 +53,16 @@
 
 	if (count($_POST) > 0) {
 
-		$pageError = '';
+		$tl->page['error'] = '';
 		
 		// clean input
 			$_POST = $parser->trimAll($_POST);
 
 		// check for errors
-			if (!$input_validator->isStringValid($_POST['keywords'], "abcdefghijklmnopqrstuvwxyz0123456789-' ", '')) $pageError .= "Please specify only alphanumeric characters. ";
+			if (!$input_validator->isStringValid($_POST['keywords'], "abcdefghijklmnopqrstuvwxyz0123456789-' ", '')) $tl->page['error'] .= "Please specify only alphanumeric characters. ";
 			
 		// redirect URL
-			if (!$pageError) {
-				header('Location: /help/' . urlencode($_POST['keywords']));
-				exit();
-			}
+			if (!$tl->page['error']) $authentication_manager->forceRedirect('/help/' . urlencode($_POST['keywords']));
 	}
 		
 /*	--------------------------------------

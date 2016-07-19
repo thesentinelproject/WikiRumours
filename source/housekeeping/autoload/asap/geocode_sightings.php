@@ -1,5 +1,9 @@
 <?php
 
+/*
+	REMOVING GEOCODING:
+	------------------
+
 	if ($currentDatabase != 'production') {
 		$logger->logItInMemory("Can geocode only from production due to Google IP restrictions.");
 		$logger->logItInDb($logger->retrieveLogFromMemory(), $logID);
@@ -97,5 +101,7 @@
 			}
 
 	}
+
+*/
 
 ?>

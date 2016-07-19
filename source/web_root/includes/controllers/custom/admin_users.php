@@ -5,10 +5,10 @@
 	-------------------------------------- */
 
 	// parse query string
-		if ($parameter1) $filters = $keyvalue_array->keyValueToArray(urldecode($parameter1), '|');
+		if ($tl->page['parameter1']) $filters = $keyvalue_array->keyValueToArray(urldecode($tl->page['parameter1']), '|');
 		
 	// authenticate user
-		if (!$logged_in['is_administrator'] || !$logged_in['can_edit_users']) forceLoginThenRedirectHere();
+		if (!$logged_in['is_administrator'] || !$logged_in['can_edit_users']) $authentication_manager->forceLoginThenRedirectHere(true);
 		
 	// queries
 		$rowsPerPage = 50;
@@ -48,8 +48,8 @@
 		
 		$users = retrieveUsers($matching, null, @$otherCriteria, $sortBy, floatval(($filters['page'] * $rowsPerPage) - $rowsPerPage) . ',' . $rowsPerPage);
 		
-	$pageTitle = "All Users";
-	$sectionTitle = "Administration";
+	$tl->page['title'] = "All Users";
+	$tl->page['section'] = "Administration";
 			
 /*	--------------------------------------
 	Execute only if a form post
@@ -58,13 +58,12 @@
 	if (count($_POST) > 0) {
 
 		if ($_POST['formName'] == 'adminUsersFilterForm') {
-			$parameter1 = $keyvalue_array->updateKeyValue($parameter1, 'keywords', $_POST['keywords'], '|');
-			$parameter1 = $keyvalue_array->updateKeyValue($parameter1, 'user_type', $_POST['user_type'], '|');
-			$parameter1 = $keyvalue_array->updateKeyValue($parameter1, 'hide_anonymous', $_POST['hide_anonymous'], '|');
-			$parameter1 = $keyvalue_array->updateKeyValue($parameter1, 'sort_by', $_POST['sort_by'], '|');
-			$parameter1 = $keyvalue_array->updateKeyValue($parameter1, 'sort_by_direction', $_POST['sort_by_direction'], '|');
-			header('Location: /admin_users/' . urlencode($parameter1));
-			exit();
+			$tl->page['parameter1'] = $keyvalue_array->updateKeyValue($tl->page['parameter1'], 'keywords', $_POST['keywords'], '|');
+			$tl->page['parameter1'] = $keyvalue_array->updateKeyValue($tl->page['parameter1'], 'user_type', $_POST['user_type'], '|');
+			$tl->page['parameter1'] = $keyvalue_array->updateKeyValue($tl->page['parameter1'], 'hide_anonymous', $_POST['hide_anonymous'], '|');
+			$tl->page['parameter1'] = $keyvalue_array->updateKeyValue($tl->page['parameter1'], 'sort_by', $_POST['sort_by'], '|');
+			$tl->page['parameter1'] = $keyvalue_array->updateKeyValue($tl->page['parameter1'], 'sort_by_direction', $_POST['sort_by_direction'], '|');
+			$authentication_manager->forceRedirect('/admin_users/' . urlencode($tl->page['parameter1']));
 		}
 
 	}

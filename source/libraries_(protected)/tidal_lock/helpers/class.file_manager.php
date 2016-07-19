@@ -4,10 +4,10 @@
 
 		public function readTextFile($file) {
 
-			global $console;
+			global $tl;
 
 			if (!$file) {
-				$console .= __CLASS__ . "->" . __FUNCTION__ . ": No file specified.\n";
+				$tl->page['console'] .= __CLASS__ . "->" . __FUNCTION__ . ": No file specified.\n";
 				return false;
 			}
 			
@@ -22,12 +22,12 @@
 					@fclose($handle);
 					if ($contents) return $contents;
 					else {
-						$console .= __CLASS__ . "->" . __FUNCTION__ . ": The file " . $file . " appears to be empty.\n";
+						$tl->page['console'] .= __CLASS__ . "->" . __FUNCTION__ . ": The file " . $file . " appears to be empty.\n";
 						return false;
 					}
 				}
 				else {
-					$console .= __CLASS__ . "->" . __FUNCTION__ . ": Can't locate the file " . $file . ".\n";
+					$tl->page['console'] .= __CLASS__ . "->" . __FUNCTION__ . ": Can't locate the file " . $file . ".\n";
 					return false;
 				}
 	
@@ -37,10 +37,10 @@
 		
 		public function writeTextFile($file, $contents) {
 
-			global $console;
+			global $tl;
 			
 			if (!$file) {
-				$console .= __CLASS__ . "->" . __FUNCTION__ . ": No file specified.\n";
+				$tl->page['console'] .= __CLASS__ . "->" . __FUNCTION__ . ": No file specified.\n";
 				return false;
 			}
 			
@@ -50,7 +50,7 @@
 	
 			if (file_exists($file)) return $contents;
 			else {
-				$console .= __CLASS__ . "->" . __FUNCTION__ . ": Unable to create file.\n";
+				$tl->page['console'] .= __CLASS__ . "->" . __FUNCTION__ . ": Unable to create file.\n";
 				return false;
 			}
 			
@@ -97,15 +97,15 @@
 		
 		public function isImage($file) {
 
-			global $console;
+			global $tl;
 
 			if (!$file) {
-				$console .= __CLASS__ . "->" . __FUNCTION__ . ": No file specified.\n";
+				$tl->page['console'] .= __CLASS__ . "->" . __FUNCTION__ . ": No file specified.\n";
 				return false;
 			}
 
 			if (!file_exists($file)) {
-				$console .= __CLASS__ . "->" . __FUNCTION__ . ": Unable to locate the file " . $file . ".\n";
+				$tl->page['console'] .= __CLASS__ . "->" . __FUNCTION__ . ": Unable to locate the file " . $file . ".\n";
 				return false;
 			}
 			
@@ -130,15 +130,15 @@
 		
 		public function isPDF($file, $separatelySavedFilename = false, $acceptWeakerValidation = false) {
 
-			global $console;
+			global $tl;
 
 			if (!$file) {
-				$console .= __CLASS__ . "->" . __FUNCTION__ . ": No file specified.\n";
+				$tl->page['console'] .= __CLASS__ . "->" . __FUNCTION__ . ": No file specified.\n";
 				return false;
 			}
 
 			if (!file_exists($file)) {
-				$console .= __CLASS__ . "->" . __FUNCTION__ . ": Unable to locate the file " . $file . ".\n";
+				$tl->page['console'] .= __CLASS__ . "->" . __FUNCTION__ . ": Unable to locate the file " . $file . ".\n";
 				return false;
 			}
 			
@@ -158,20 +158,20 @@
 		
 		public function determineMIME($file) {
 
-			global $console;
+			global $tl;
 
 			if (!$file) {
-				$console .= __CLASS__ . "->" . __FUNCTION__ . ": No file specified.\n";
+				$tl->page['console'] .= __CLASS__ . "->" . __FUNCTION__ . ": No file specified.\n";
 				return false;
 			}
 
 			if (!file_exists($file)) {
-				$console .= __CLASS__ . "->" . __FUNCTION__ . ": Unable to locate the file " . $file . ".\n";
+				$tl->page['console'] .= __CLASS__ . "->" . __FUNCTION__ . ": Unable to locate the file " . $file . ".\n";
 				return false;
 			}
 			
 			ob_start();
-			system("file -i -b {$file}");
+			system("file -i -b " . escapeshellarg($file));
 			$mime = trim(ob_get_clean());
 			if ($mime) return $mime;
 			else {
@@ -186,15 +186,15 @@
 		
 		public function extractFileMetadata($file) {
 
-			global $console;
+			global $tl;
 
 			if (!$file) {
-				$console .= __CLASS__ . "->" . __FUNCTION__ . ": No file specified.\n";
+				$tl->page['console'] .= __CLASS__ . "->" . __FUNCTION__ . ": No file specified.\n";
 				return false;
 			}
 			
 			if (!file_exists($file)) {
-				$console .= __CLASS__ . "->" . __FUNCTION__ . ": Unable to find the file " . $file . ".\n";
+				$tl->page['console'] .= __CLASS__ . "->" . __FUNCTION__ . ": Unable to find the file " . $file . ".\n";
 				return false;
 			}
 			
@@ -249,7 +249,8 @@
 						if (@$exifData['COMPUTED']['ApertureFNumber']) $metadata['Aperture'] = @$exifData['COMPUTED']['ApertureFNumber'];
 
 					// ISO
-						if (@$exifData['ISOSpeedRatings']) $metadata['ISO'] = @$exifData['ISOSpeedRatings'];
+						if (@$exifData['ISOSpeedRatings'][0]) $metadata['ISO'] = @$exifData['ISOSpeedRatings'][0];
+						elseif (floatval(@$exifData['ISOSpeedRatings'][0])) $metadata['ISO'] = @$exifData['ISOSpeedRatings'][0];
 						
 					// datetime taken
 						$captured = $operators->firstTrue(

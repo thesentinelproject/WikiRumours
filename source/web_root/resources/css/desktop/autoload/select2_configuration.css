@@ -1,2 +1,3 @@
 
 	.select2-selection__choice { margin-bottom: 5px; }
+	li.select2-selection__choice, li.select2-search { list-style-type: none; }

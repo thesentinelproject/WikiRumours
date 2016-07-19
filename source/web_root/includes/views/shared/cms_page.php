@@ -27,7 +27,7 @@
 			}
 			echo "  </div>\n";
 			echo "  <div class='col-lg-1 col-md-1 col-sm-2 col-xs-3 text-right'>\n";
-			if ($logged_in['can_edit_content']) echo "    <a href='/content/" . $cms[0]['cms_id'] . "' class='btn btn-link'>Edit</a>\n";
+			if ($logged_in['can_edit_content']) echo "    <a href='/admin_content/" . urlencode("screen=edit|id=" . $cms[0]['cms_id']) . "' class='btn btn-link'>Edit</a>\n";
 			echo "  </div>\n";
 			echo "</div>\n";
 		}

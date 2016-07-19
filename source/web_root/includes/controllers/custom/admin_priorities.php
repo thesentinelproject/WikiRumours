@@ -5,17 +5,14 @@
 	-------------------------------------- */
 
 	// authenticate user
-		if (!$logged_in['is_administrator'] || !$logged_in['can_edit_settings']) forceLoginThenRedirectHere();
-		
-	// parse query string
-		$pageStatus = $parameter1;
+		if (!$logged_in['is_administrator'] || !$logged_in['can_edit_settings']) $authentication_manager->forceLoginThenRedirectHere(true);
 		
 	// queries
 		$priorities = retrievePriorities(null, null, null, $sortBy = 'severity ASC');
 		$numberOfPriorities = floatval(count($priorities));
 		
-	$pageTitle = "Priorities";
-	$sectionTitle = "Administration";
+	$tl->page['title'] = "Priorities";
+	$tl->page['section'] = "Administration";
 
 /*	--------------------------------------
 	Execute only if a form post
@@ -23,14 +20,14 @@
 			
 	if (count($_POST) > 0) {
 
-		$pageError = null;
+		$tl->page['error'] = null;
 
 		if ($_POST['formName'] == 'editPrioritiesForm' && $_POST['priorityToDelete']) {
 
 			// validate
 				$priority = retrievePriorities(array('priority_id'=>$_POST['priorityToDelete']), null, null, null, 1);
-				if (!count($priority)) $pageError .= "Unable to find priority to delete. ";
-				elseif ($priority[0]['number_of_rumours'] > 0) $pageError .= "Unable to delete because there are " . $priority[0]['number_of_rumours'] . " rumours set to this priority. Please modify those rumours and then try again. ";
+				if (!count($priority)) $tl->page['error'] .= "Unable to find priority to delete. ";
+				elseif ($priority[0]['number_of_rumours'] > 0) $tl->page['error'] .= "Unable to delete because there are " . $priority[0]['number_of_rumours'] . " rumours set to this priority. Please modify those rumours and then try again. ";
 				else {
 
 					// delete priority
@@ -41,8 +38,7 @@
 						$logger->logItInDb($activity, null, array('user_id=' . $logged_in['user_id'], 'priority_id=' . $priority[0]['priority_id']));
 
 					// redirect
-						header('Location: /admin_priorities/priority_deleted');
-						exit();
+						$authentication_manager->forceRedirect('/admin_priorities/success=priority_deleted');
 
 				}
 
@@ -61,12 +57,12 @@
 			// check for errors
 				// check edit
 					for ($counter = 0; $counter < count($priorities); $counter++) {
-						if (!$_POST['priority_' . $priorities[$counter]['priority_id']]) $pageError .= "Please specify a priority name. ";
+						if (!$_POST['priority_' . $priorities[$counter]['priority_id']]) $tl->page['error'] .= "Please specify a priority name. ";
 					}
 				// check add
-					if (($_POST['severity_add'] || $_POST['action_required_in_add']) && !$_POST['priority_add']) $pageError .= "Please specify a new priority name. ";
+					if (($_POST['severity_add'] || $_POST['action_required_in_add']) && !$_POST['priority_add']) $tl->page['error'] .= "Please specify a new priority name. ";
 
-			if (!$pageError) {
+			if (!$tl->page['error']) {
 				
 				// update edit
 					for ($counter = 0; $counter < count($priorities); $counter++) {
@@ -82,8 +78,7 @@
 					$logger->logItInDb($activity, null, array('user_id=' . $logged_in['user_id']));
 				
 				// redirect
-					header('Location: /admin_priorities/priorities_updated');
-					exit();
+					$authentication_manager->forceRedirect('/admin_priorities/success=priorities_updated');
 
 			}
 
@@ -96,7 +91,7 @@
 	-------------------------------------- */
 		
 	else {
-		if (!$pageStatus) $pageWarning = "Please be cautious. Any changes made here will impact rumours which are already saved in the system.";
+		if (!$tl->page['success']) $tl->page['warning'] = "Please be cautious. Any changes made here will impact rumours which are already saved in the system.";
 	}
 		
 ?>

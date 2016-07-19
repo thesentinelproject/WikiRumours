@@ -1,39 +1,13 @@
 <?php
 
 	// alerts
-		if (count($alerts) > 0) {
+		if ($logs->numberOfLogs) {
 			echo "<div class='pageModule'>\n";
-			echo "  <h2>Alerts</h2>\n";
-			echo "  " . $form->start('dashboardAlertsForm', null, 'post', null, null, array('onSubmit'=>'return false;')) . "\n";
-			echo "  " . $form->input('hidden', 'alertToResolve') . "\n";
-			echo "  <table class='table table-condensed table-hover'>\n";
-			echo "  <thead>\n";
-			echo "  <tr>\n";
-			echo "  <th>Date</th>\n";
-			echo "  <th>Activity</th>\n";
-			echo "  <th>Resolve</th>\n";
-			echo "  </tr>\n";
-			echo "  </thead>\n";
-			echo "  <tbody>\n";
-			for ($counter = 0; $counter < count($alerts); $counter++) {
-				echo "  <tr>\n";
-				echo "  <td class='nowrap'>\n";
-				echo "    " . date('j-M-Y', strtotime($alerts[$counter]['connected_on'])) . "<br />\n";
-				echo "    <div class='text-muted'><small>" . date('g:i:s A', strtotime($alerts[$counter]['connected_on'])) . "</small></div>\n";
-				echo "  </td>\n";
-				echo "  <td>";
-				echo str_replace(';', '<br />', $alerts[$counter]['activity']);
-				if ($alerts[$counter]['error_message']) echo "<br />(" . $alerts[$counter]['error_message'] . ")";
-				echo "</td>\n";
-				echo "  <td><div class='tableButtonAlignment'>" . $form->input('button', null, null, false, 'Resolved', 'btn btn-default btn-sm', null, null, null, null, array('onClick'=>'resolveAlert("' . $alerts[$counter]['log_id'] . '"); return false;')) . "</div></td>\n";
-				echo "  </tr>\n";
-			}
-			echo "  </tbody>\n";
-			echo "  </table>\n";
-			echo "  " . $form->end() . "\n";
+			echo $logs->html;
+			$pageJavaScript .= $logs->js;
 			echo "</div>\n";
 		}
-		
+
 	// unsent mail
 		if (count($unsentMail)) {
 			echo "<div class='pageModule'>\n";

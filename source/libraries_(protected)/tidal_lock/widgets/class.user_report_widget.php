@@ -27,8 +27,7 @@
 
 			global $tablePrefix;
 			global $systemPreferences;
-			global $pageStatus;
-			global $pageError;
+			global $tl;
 
 			$keyvalue_array = new keyvalue_array_TL();
 			$form = new form_TL();
@@ -36,30 +35,18 @@
 
 			// check for errors
 				if ($params && !is_array($params)) {
-					$console .= __CLASS__ . "->" . __FUNCTION__ . ": Incorrectly formatted parameters.\n";
+					$tl->page['console'] .= __CLASS__ . "->" . __FUNCTION__ . ": Incorrectly formatted parameters.\n";
 					return false;
 				}
 
 				if (!trim(@$params['template_name'])) {
-					$console .= __CLASS__ . "->" . __FUNCTION__ . ": Unknown URI.\n";
+					$tl->page['console'] .= __CLASS__ . "->" . __FUNCTION__ . ": Unknown URI.\n";
 					return false;
 				}
 
 				if (!@$params['columns'] || !is_array(@$params['columns'])) {
-					$console .= __CLASS__ . "->" . __FUNCTION__ . ": Unclear which columns to be displayed.\n";
+					$tl->page['console'] .= __CLASS__ . "->" . __FUNCTION__ . ": Unclear which columns to be displayed.\n";
 					return false;
-				}
-
-			// clean input
-				$allowableParameters = array('filterable', 'country_filter', 'exportable', 'paginate', 'rows_per_page', 'template_name', 'query_string', 'columns', 'resortable', 'limit');
-				if ($params) {
-					foreach ($params as $param=>$value) {
-						$foundIt = false;
-						foreach ($allowableParameters as $allowable) {
-							if ($param == $allowable) $foundIt = true;
-						}
-						if (!$foundIt) unset($params[$param]);
-					}
 				}
 
 				$params['rows_per_page'] = floatval(@$params['rows_per_page']);
@@ -134,12 +121,12 @@
 					// create folder
 						$path = 'downloads/' . date('Y-m-d_H-i-s');
 						mkdir($path);
-						if (!file_exists($path)) $pageError .= "Unable to create download directory. ";
+						if (!file_exists($path)) $tl->page['error'] .= "Unable to create download directory. ";
 						else {
 							// create file
 								$file = 'users.csv';
 								$file_manager->writeTextFile($path . '/' . $file, $export);
-								if (!file_exists($path . '/' . $file)) $pageError .= "Unable to create file export. ";
+								if (!file_exists($path . '/' . $file)) $tl->page['error'] .= "Unable to create file export. ";
 								else $exportPath = $path . '/' . $file;
 						}
 				}

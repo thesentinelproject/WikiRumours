@@ -61,7 +61,7 @@
 			echo "  </table>\n";
 			
 			if ($numberOfPages > 1) {
-				echo $form->paginate($page, $numberOfPages, '/my_rumours/#');
+				echo $form->paginate($filters['page'], $numberOfPages, '/my_rumours/#');
 			}
 		}
 		

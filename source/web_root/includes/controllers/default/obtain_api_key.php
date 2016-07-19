@@ -5,22 +5,14 @@
 	-------------------------------------- */
 
 	// parse query string
-		$username = $parameter1;
-		if (!$username) {
-			header('Location: /obtain_api_key/' . $logged_in['username']);
-			exit();
-		}
+		$username = $tl->page['parameter1'];
+		if (!$username) $authentication_manager->forceRedirect('/obtain_api_key/' . $logged_in['username']);
 				
-		$pageStatus = $parameter2;
-		
 	// authenticate user
-		if (!$logged_in) forceLoginThenRedirectHere();
+		if (!$logged_in) $authentication_manager->forceLoginThenRedirectHere();
 		
 		if ($username != $logged_in['username']) {
-			if (!$logged_in['is_administrator'] || !$logged_in['can_edit_users']) {
-				header ('Location: /404');
-				exit;
-			}
+			if (!$logged_in['is_administrator'] || !$logged_in['can_edit_users']) $authentication_manager->forceRedirect('/404');
 		}
 
 	// queries
@@ -30,10 +22,7 @@
 		}
 		else {
 			$user = retrieveUsers(array('username'=>$username, 'enabled'=>'1'), null, null, null, 1);
-			if (count($user) < 1) {
-				header('Location: /404');
-				exit();
-			}
+			if (count($user) < 1) $authentication_manager->forceRedirect('/404');
 		}
 		
 		$apiKey = retrieveSingleFromDb('user_keys', null, array('user_id'=>$user[0]['user_id'], 'user_key'=>'API'));
@@ -51,26 +40,24 @@
 
 		if ($_POST['formName'] == 'apiForm' && @$_POST['allowUnlimited'] == 'Y') {
 			$success = updateDb('user_keys', array('value'=>'u'), array('user_key'=>'API', 'user_id'=>$user[0]['user_id']));
-			if (!$success) $pageError .= "Unable to update API query threshold. ";
+			if (!$success) $tl->page['error'] .= "Unable to update API query threshold. ";
 			else {
 				// update log
 					$activity = $logged_in['full_name'] . " (user_id " . $logged_in['user_id'] . ") has provided unlimited API downloads for " . $username;
 					$logger->logItInDb($activity, null, array('user_id=' . $logged_in['user_id']));
 				// redirect
-					header('Location: /obtain_api_key/' . $username . '/query_threshold_updated');
-					exit();
+					$authentication_manager->forceRedirect('/obtain_api_key/' . $username . '/success=query_threshold_updated');
 			}
 		}
 		elseif ($_POST['formName'] == 'apiForm' && @$_POST['removeUnlimited'] == 'Y') {
 			$success = updateDb('user_keys', array('value'=>''), array('user_key'=>'API', 'user_id'=>$user[0]['user_id']));
-			if (!$success) $pageError .= "Unable to update API query threshold. ";
+			if (!$success) $tl->page['error'] .= "Unable to update API query threshold. ";
 			else {
 				// update log
 					$activity = $logged_in['full_name'] . " (user_id " . $logged_in['user_id'] . ") has terminated unlimited API downloads for " . $username;
 					$logger->logItInDb($activity, null, array('user_id=' . $logged_in['user_id']));
 				// redirect
-					header('Location: /obtain_api_key/' . $username . '/query_threshold_updated');
-					exit();
+					$authentication_manager->forceRedirect('/obtain_api_key/' . $username . '/success=query_threshold_updated');
 			}
 		}
 		elseif ($_POST['formName'] == 'apiForm') {
@@ -98,8 +85,7 @@
 				}
 
 			// redirect
-				header('Location: /obtain_api_key/' . $username . '/key_generated');
-				exit();
+				$authentication_manager->forceRedirect('/obtain_api_key/' . $username . '/success=key_generated');
 				
 		}
 

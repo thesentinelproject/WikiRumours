@@ -102,7 +102,7 @@
 			if ($limit) $query .= " LIMIT " . $dbConnection->escape_string($limit);
 
 			$dbConnection->query($query) or die('Unable to execute ' . __FUNCTION__ . '(' . addSlashes($table) . '): ' . $dbConnection->error . '<br /><br />' . $query);
-			
+
 			return $dbConnection->affected_rows;
 		
 	}
@@ -248,6 +248,125 @@
 					return $items;
 					
 			}
+		
+	}
+
+	function retrieveDbKeys($table, $matching = null) {
+
+		global $dbConnection;
+		global $tablePrefix;
+
+		// validate input
+			if (!$table) return false; // no table specified
+			
+		// build query
+			$query = "SHOW KEYS FROM " . $tablePrefix . $table;
+			$query .= " WHERE 1=1";
+			if ($matching) foreach ($matching as $field => $value) $query .= " AND " . $field . " = '" . $dbConnection->escape_string($value) . "'";
+
+			$result = $dbConnection->query($query) or die('Unable to execute ' . __FUNCTION__ . '(' . addSlashes($table) . '): ' . $dbConnection->error . '<br /><br />' . $query);
+
+		// create array
+			$parser = new parser_TL();
+			$items = $parser->mySqliResourceToArray($result);
+
+		// clear memory
+			$result->free();
+
+		// return array
+			return $items;
+
+	}
+
+	function retrieveColumns($dbName, $table) {
+
+		global $dbConnection;
+		global $tablePrefix;
+
+		// validate input
+			if (!$dbName) return false; // no database specified
+			if (!$table) return false; // no table specified
+			
+		// build query
+			$query = "SELECT *";
+			$query .= " FROM INFORMATION_SCHEMA.COLUMNS";
+			$query .= " WHERE TABLE_SCHEMA = '" . $dbName . "'";
+			$query .= " AND TABLE_NAME = '" . $tablePrefix . $table . "'";
+
+			$result = $dbConnection->query($query) or die('Unable to execute ' . __FUNCTION__ . '(' . addSlashes($table) . '): ' . $dbConnection->error . '<br /><br />' . $query);
+
+		// create array
+			$parser = new parser_TL();
+			$items = $parser->mySqliResourceToArray($result);
+
+		// clear memory
+			$result->free();
+
+		// return array
+			return $items;
+
+	}
+
+	function retrieveTables_TL($host = null, $dbName = null, $user = null, $password = null) {
+
+		global $dbConnection;
+		global $db_TL;
+
+		if (!$host || !$dbName || !$user || !$password) {
+			$connection = $dbConnection;
+			$dbName = $db_TL['Name'];
+		}
+		else {
+			$connection = @new mysqli($host, $user, $password, $dbName);
+			if ($connection->connect_errno > 0) return false;
+		}
+		
+		// build query
+			$query = "SELECT table_name,";
+			$query .= " ROUND(((data_length + index_length) / 1024)) AS size_kb";
+			$query .= " FROM information_schema.TABLES";
+			$query .= " WHERE table_schema = '" . $dbName . "'";
+			$result = $connection->query($query) or die('Unable to execute ' . __FUNCTION__ . ': ' . $connection->error . '<br /><br />' . $query);
+			if ($connection != $dbConnection) $connection->close();
+
+		// create array
+			$parser = new parser_TL();
+			$items = $parser->mySqliResourceToArray($result);
+
+		// return array
+			return $items;
+
+	}
+	
+	function retrieveDbSize_TL($host = null, $dbName = null, $user = null, $password = null) {
+
+		global $dbConnection;
+		global $db_TL;
+		
+		if (!$host || !$dbName || !$user || !$password) {
+			$connection = $dbConnection;
+			$dbName = $db_TL['Name'];
+		}
+		else {
+			$connection = @new mysqli(trim($host), trim($user), trim($password), trim($dbName));
+			if ($connection->connect_errno > 0) return false;
+		}
+
+		// build query
+			$query = "SELECT table_schema AS name,";
+			$query .= " ROUND(SUM(DATA_LENGTH + INDEX_LENGTH) / 1024) as size_kb";
+			$query .= " FROM information_schema.tables";
+			$query .= " WHERE table_schema = '" . $dbName . "'";
+			$query .= " GROUP BY table_schema";
+			$result = $connection->query($query) or die('Unable to execute ' . __FUNCTION__ . ': ' . $connection->error . '<br /><br />' . $query);
+			if ($connection != $dbConnection) $connection->close();
+
+		// create array
+			$parser = new parser_TL();
+			$items = $parser->mySqliResourceToArray($result);
+
+		// return array
+			return $items;
 		
 	}
 	

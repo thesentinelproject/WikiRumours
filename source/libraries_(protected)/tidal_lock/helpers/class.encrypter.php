@@ -31,7 +31,7 @@
 			
 			/* Performs rudimentary two-way encryption to obfuscate a value requiring only minimal security (e.g. a database ID or a URL that you want to transmit by GET) */
 			
-			global $console;
+			global $tl;
 
 			// ensure salt is numeric
 				$numericSalt = intval($numericSalt);
@@ -40,7 +40,7 @@
 				for ($counter = 0; $counter < strlen($plainText); $counter++) {
 					$asciiCode = str_pad(ord(substr($plainText, $counter, 1)), 3, '0', STR_PAD_LEFT);
 					if ($asciiCode < 1 || $asciiCode > 255) {
-						$console .= __CLASS__ . "->" . __FUNCTION__ . ": Input string contains characters that aren't part of the standard or extended ASCII character sets.\n";
+						$tl->page['console'] .= __CLASS__ . "->" . __FUNCTION__ . ": Input string contains characters that aren't part of the standard or extended ASCII character sets.\n";
 						return false;
 					}
 					else $convertedText .= $asciiCode;
@@ -81,7 +81,7 @@
 		
 		public function deobfuscateID($obfuscatedText, $numericSalt) {
 
-			global $console;
+			global $tl;
 			
 			// ensure salt is numeric
 			// (note that same salt must be used as when text was obfuscated)
@@ -115,7 +115,7 @@
 						$plainText .= chr(substr($unsaltedText, $counter, 3));
 					}
 					else {
-						$console .= __CLASS__ . "->" . __FUNCTION__ . ": Input string appears to contain characters that aren't part of the standard or extended ASCII character sets; please check that the identical salt was used for obfuscation and de-obfuscation.\n";
+						$tl->page['console'] .= __CLASS__ . "->" . __FUNCTION__ . ": Input string appears to contain characters that aren't part of the standard or extended ASCII character sets; please check that the identical salt was used for obfuscation and de-obfuscation.\n";
 						return false;
 					}
 				}

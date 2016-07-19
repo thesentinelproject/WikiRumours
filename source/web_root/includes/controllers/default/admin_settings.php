@@ -5,44 +5,37 @@
 	-------------------------------------- */
 
 	// parse query string
-		$screen = @$parameter1;
+		$screen = @$tl->page['parameter1'];
 		if (!$screen) $screen = 'all';
 
-		if ($screen == 'update' || $screen == 'edit') $id = floatval(@$parameter2);
-		else $pageStatus = @$parameter2;
+		if ($screen == 'update' || $screen == 'edit') $id = floatval(@$tl->page['parameter2']);
 
 	// authenticate user
-		if (!$logged_in['is_administrator']) forceLoginThenRedirectHere();
+		if (!$logged_in['is_administrator']) $authentication_manager->forceLoginThenRedirectHere(true);
 		
-		if (!$logged_in['can_update_settings']) forceLoginThenRedirectHere();
-		elseif (($screen == 'edit' || $screen == 'add') && !$logged_in['can_edit_settings']) {
-			header('Location: /admin_settings/all');
-			exit();
-		}
+		if (!$logged_in['can_update_settings']) $authentication_manager->forceLoginThenRedirectHere();
+		elseif (($screen == 'edit' || $screen == 'add') && !$logged_in['can_edit_settings']) $authentication_manager->forceRedirect('/admin_settings/all');
 
 	// queries
 		if ($screen == 'all') {
 			$settings = retrieveFromDb('preferences', null, array('user_id'=>'0'), null, null, null, null, null, 'preference ASC');
-			$pageTitle = "System settings";
+			$tl->page['title'] = "System settings";
 		}
 		elseif (($screen == 'update' || $screen == 'edit') && $id) {
 			$setting = retrieveSingleFromDb('preferences', null, array('user_id'=>'0', 'preference_id'=>$id));
-			if (!count($setting)) {
-				header('Location: /admin_settings/all');
-				exit();
-			}
-			else $pageTitle = ucwords($screen) . " &quot;" . $setting[0]['preference'] . "&quot;";
-			if ($screen == 'edit') $pageWarning = "Changing setting attributes <strong>will not update</strong> these attributes in the source code, so please exercise caution.";
+			if (!count($setting)) $authentication_manager->forceRedirect('/admin_settings/all');
+			else $tl->page['title'] = ucwords($screen) . " &quot;" . $setting[0]['preference'] . "&quot;";
+			if ($screen == 'edit') $tl->page['warning'] = "Changing setting attributes <strong>will not update</strong> these attributes in the source code, so please exercise caution.";
 		}
 		elseif ($screen == 'add') {
-			$pageTitle = "Add setting";
+			$tl->page['title'] = "Add setting";
 		}
-		else {
-			header('Location: /admin_settings/all');
-			exit();
-		}
+		else $authentication_manager->forceRedirect('/admin_settings/all');
 
-	$sectionTitle = "Administration";
+		$localization_manager->populateCountries();
+		$localization_manager->populateLanguages();
+
+	$tl->page['section'] = "Administration";
 		
 /*	--------------------------------------
 	Execute only if a form post
@@ -50,13 +43,13 @@
 			
 	if (count($_POST) > 0) {
 		
-		$pageError = '';
+		$tl->page['error'] = '';
 
 		if ($_POST['formName'] == 'updateSettingForm') {
 
 			// retrieve record
 				$setting = retrieveSingleFromDb('preferences', null, array('user_id'=>'0', 'preference_id'=>$id));
-				if (!count($setting)) $pageError .= "Unable to retrieve setting for some reason. ";
+				if (!count($setting)) $tl->page['error'] .= "Unable to retrieve setting for some reason. ";
 				else {
 
 					// clean input
@@ -73,8 +66,7 @@
 						$logger->logItInDb($activity, null, array('user_id=' . $logged_in['user_id'], 'preference_id=' . $setting[0]['preference_id']));
 					
 					// redirect
-						header('Location: /admin_settings/all/setting_updated');
-						exit();
+						$authentication_manager->forceRedirect('/admin_settings/all/success=setting_updated');
 
 				}
 
@@ -84,7 +76,7 @@
 
 			// retrieve record
 				$setting = retrieveSingleFromDb('preferences', null, array('user_id'=>'0', 'preference_id'=>$id));
-				if (!count($setting)) $pageError .= "Unable to retrieve setting for some reason. ";
+				if (!count($setting)) $tl->page['error'] .= "Unable to retrieve setting for some reason. ";
 				else {
 
 					// update DB
@@ -95,8 +87,7 @@
 						$logger->logItInDb($activity, null, array('user_id=' . $logged_in['user_id'], 'preference_id=' . $setting[0]['preference_id']));
 					
 					// redirect
-						header('Location: /admin_settings/all/setting_deleted');
-						exit();
+						$authentication_manager->forceRedirect('/admin_settings/all/success=setting_deleted');
 
 				}
 
@@ -106,7 +97,7 @@
 
 			// retrieve record
 				$setting = retrieveSingleFromDb('preferences', null, array('user_id'=>'0', 'preference_id'=>$id));
-				if (!count($setting)) $pageError .= "Unable to retrieve setting for some reason. ";
+				if (!count($setting)) $tl->page['error'] .= "Unable to retrieve setting for some reason. ";
 				else {
 
 					// clean input
@@ -122,8 +113,7 @@
 						$logger->logItInDb($activity, null, array('user_id=' . $logged_in['user_id'], 'preference_id=' . $setting[0]['preference_id']));
 					
 					// redirect
-						header('Location: /admin_settings/all/setting_edited');
-						exit();
+						$authentication_manager->forceRedirect('/admin_settings/all/success=setting_edited');
 
 				}
 
@@ -144,8 +134,7 @@
 				$logger->logItInDb($activity, null, array('user_id=' . $logged_in['user_id'], 'preference_id=' . $preferenceID));
 			
 			// redirect
-				header('Location: /admin_settings/all/setting_added');
-				exit();
+				$authentication_manager->forceRedirect('/admin_settings/all/success=setting_added');
 
 		}
 

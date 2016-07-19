@@ -4,7 +4,7 @@
 	Execute immediately upon load
 	-------------------------------------- */
 
-	$noPageTitle = true;
+	$tl->page['title'] = null;
 		
 /*	--------------------------------------
 	Execute only if a form post

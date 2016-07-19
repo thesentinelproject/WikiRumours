@@ -5,15 +5,11 @@
 	-------------------------------------- */
 
 	// authenticate user
-		if (!$logged_in) forceLoginThenRedirectHere();
-
-		if (!$logged_in['is_tester']) {
-			header ('Location: /404');
-			exit();
-		}
+		if (!$logged_in) $authentication_manager->forceLoginThenRedirectHere();
+		if (!$logged_in['is_tester']) $authentication_manager->forceRedirect('/404');
 		
-	$pageTitle = "Sandbox";
-	$sectionTitle = "Administration";
+	$tl->page['title'] = "Sandbox";
+	$tl->page['section'] = "Administration";
 		
 /*	--------------------------------------
 	Execute only if a form post

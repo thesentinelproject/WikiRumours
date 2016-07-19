@@ -1,7 +1,7 @@
 <?php
 
 	// retrieve input parameters
-		$output = $parameter3;
+		$output = $tl->page['parameter3'];
 		if ($output != 'json') $output = 'xml';
 
 	// display data
@@ -32,7 +32,4 @@
 			echo $jsonOutput;
 		}
 
-	// close DB connection
-		$dbConnection->close();
-		
 ?>

@@ -8,8 +8,8 @@
 	Execute only if a form post
 	-------------------------------------- */
 			
-	if (count($_POST) > 0 && $_POST['formName'] == 'searchForm') {
-		
+	if (count(@$_POST) > 0 && @$_POST['formName'] == 'searchForm') {
+
 		// clean input
 			$parser = new parser_TL();
 			$_POST = $parser->trimAll($_POST);
@@ -24,8 +24,7 @@
 
 			$filters = trim($filters, '|');
 			
-			header ('Location: /search_results/' . urlencode($filters));
-			exit();
+			$authentication_manager->forceRedirect ('/search_results/' . urlencode($filters));
 	}
 		
 /*	--------------------------------------

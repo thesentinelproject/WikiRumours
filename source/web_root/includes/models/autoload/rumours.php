@@ -120,10 +120,12 @@
 			$query .= " " . $tablePrefix . "rumours.city as city_occurred,";
 			$query .= " " . $tablePrefix . "rumours.latitude as latitude_occurred,";
 			$query .= " " . $tablePrefix . "rumours.longitude as longitude_occurred,";
+			$query .= " " . $tablePrefix . "rumours.public_id as rumour_public_id,";
 			$query .= " " . $tablePrefix . "statuses.status,";
 			$query .= " " . $tablePrefix . "priorities.priority,";
 			$query .= " " . $tablePrefix . "priorities.severity,";
-			$query .= " " . $tablePrefix . "sources.source as source";
+			$query .= " " . $tablePrefix . "sources.source as source,";
+			$query .= " " . $tablePrefix . "rumour_sightings.public_id as public_id";
 			$query .= " FROM " . $tablePrefix . "rumour_sightings";
 			$query .= " LEFT JOIN " . $tablePrefix . "users ON " . $tablePrefix . "rumour_sightings.created_by = " . $tablePrefix . "users.user_id";
 			$query .= " LEFT JOIN " . $tablePrefix . "rumours ON " . $tablePrefix . "rumour_sightings.rumour_id = " . $tablePrefix . "rumours.rumour_id";

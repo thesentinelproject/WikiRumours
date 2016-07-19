@@ -31,7 +31,8 @@
 							echo "    <div class='col-md-6'>" . $form->input('text', 'last_name', @$_POST['last_name'], false, 'Last|Last', 'form-control', '', 30) . "</div>\n";
 							echo "  </div>\n";
 							echo $form->rowEnd();
-		/* Location */		echo $form->row('country_and_region', null, array('country_id'=>$operators->firstTrue(@$_POST['country'], @$pseudonym['country_id']), 'region_id'=>@$_POST['region_id'], 'other_region'=>@$_POST['other_region']), false, null, 'form-control') . "\n";
+		/* Country */		echo $form->row('country', 'country_id', $operators->firstTrue(@$_POST['country_id'], @$pseudonym[0]['country_id']), false, "Country", 'form-control') . "\n";
+		/* Region */		echo $form->row('region', 'region', ['country_id'=>$operators->firstTrue(@$_POST['country_id'], @$pseudonym[0]['country_id']), 'region_id'=>@$_POST['region_id'], 'region_other'=>@$_POST['region_other']], false, "Region", 'form-control', null, null, ['link-to'=>'country_id']) . "\n";
 		/* Community */		echo $form->row('text', 'city', @$_POST['city'], false, 'Community', 'form-control', '', 50) . "\n";
 		/* Phone */			echo $form->rowStart('primary_phone', 'Primary Phone');
 							echo "  <div class='row'>\n";

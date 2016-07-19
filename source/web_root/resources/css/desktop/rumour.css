@@ -6,9 +6,10 @@
 	#rumourTitle { font-size: 18pt; margin-top: 0px; padding-top: 0px; padding-bottom: 7px; line-height: 1.25em; }
 	#rumourAttribution { text-align: right; font-size: 10pt; padding-bottom: 5px; }
 	#rumourTagList { margin-bottom: 10px; }
-	#photoEvidence { margin-bottom: 10px; }
 	#rumourStatus { color: #27aae1; font-size: 12pt; padding-bottom: 10px; }
 	#rumourFindings { padding-bottom: 15px; }
+	#rumourAttachments { padding-bottom: 15px; }
+	.rumourAttachment { margin-right: 25px; }
 	#rumourActions { margin-bottom: 15px; }
 
 	#sightingsMap, #sightingsTable { padding-top: 15px; }

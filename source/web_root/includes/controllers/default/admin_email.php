@@ -4,17 +4,14 @@
 	Execute immediately upon load
 	-------------------------------------- */
 
-	// parse query string
-		$pageStatus = $parameter1;
-
 	// authenticate user
-		if (!$logged_in['is_administrator']) forceLoginThenRedirectHere();
+		if (!$logged_in['is_administrator']) $authentication_manager->forceLoginThenRedirectHere(true);
 		
 	// queries
 		$notifications = retrieveFromDb('notifications');
 
-	$pageTitle = "Email";
-	$sectionTitle = "Administration";
+	$tl->page['title'] = "Email";
+	$tl->page['section'] = "Administration";
 		
 /*	--------------------------------------
 	Execute only if a form post
@@ -22,7 +19,7 @@
 			
 	if (count($_POST) > 0) {
 		
-		$pageError = '';
+		$tl->page['error'] = '';
 
 		if ($_POST['formName'] == 'editNotificationsForm' && $_POST['notificationEmailToDelete']) {
 			
@@ -34,8 +31,7 @@
 				$logger->logItInDb($activity, null, array('user_id=' . $logged_in['user_id'], 'notification_id=' . $_POST['notificationEmailToDelete']));
 				
 			// redirect
-				header('Location: /admin_email/notification_deleted');
-				exit();
+				$authentication_manager->forceRedirect('/admin_email/success=notification_deleted');
 				
 		}
 		
@@ -58,14 +54,14 @@
 			// check for errors
 				// check edit
 					for ($counter = 0; $counter < count($notifications); $counter++) {
-						if (!$_POST['notification_name_' . $notifications[$counter]['notification_id']]) $pageError .= "Please specify a recipient name. ";
-						if (!$_POST['notification_email_' . $notifications[$counter]['notification_id']] || !$input_validator->validateEmailBasic($_POST['notification_email_' . $notifications[$counter]['notification_id']])) $pageError .= "Please provide a valid recipient email. ";
+						if (!$_POST['notification_name_' . $notifications[$counter]['notification_id']]) $tl->page['error'] .= "Please specify a recipient name. ";
+						if (!$_POST['notification_email_' . $notifications[$counter]['notification_id']] || !$input_validator->validateEmailBasic($_POST['notification_email_' . $notifications[$counter]['notification_id']])) $tl->page['error'] .= "Please provide a valid recipient email. ";
 					}
 				// check add
-					if ($_POST['notification_email_add'] && !$_POST['notification_name_add']) $pageError .= "Please specify a recipient name. ";
-					if (($_POST['notification_name_add'] && !$_POST['notification_email_add']) || ($_POST['notification_email_add'] && !$input_validator->validateEmailBasic($_POST['recipient_email_add']))) $pageError .= "Please provide a valid recipient email. ";
+					if ($_POST['notification_email_add'] && !$_POST['notification_name_add']) $tl->page['error'] .= "Please specify a recipient name. ";
+					if (($_POST['notification_name_add'] && !$_POST['notification_email_add']) || ($_POST['notification_email_add'] && !$input_validator->validateEmailBasic($_POST['recipient_email_add']))) $tl->page['error'] .= "Please provide a valid recipient email. ";
 
-			if (!$pageError) {
+			if (!$tl->page['error']) {
 				
 				// update database
 					// update edit
@@ -88,8 +84,7 @@
 					$logger->logItInDb($activity, null, array('user_id=' . $logged_in['user_id']));
 				
 				// redirect
-					header('Location: /admin_email/notifications_updated');
-					exit();
+					$authentication_manager->forceRedirect('/admin_email/success=notifications_updated');
 					
 			}
 			
@@ -101,23 +96,22 @@
 				$_POST = $parser->trimAll($_POST);
 				
 			// check for errors
-				if (!$_POST['name']) $pageError .= "Please provide a name for the recipient of your email. ";
-				if (!$input_validator->validateEmailRobust($_POST['email'])) $pageError .= "Please provide a valid email address for the recipient of your email. ";
-				if ($_POST['reply_to_email'] && !$input_validator->validateEmailRobust($_POST['reply_to_email'])) $pageError .= "Please provide a valid email address for the sender of your email. ";
-				if (!$_POST['subject']) $pageError .= "Please provide a subject for the email. ";
-				if (!$_POST['message']) $pageError .= "Please provide a message for the email. ";
+				if (!$_POST['name']) $tl->page['error'] .= "Please provide a name for the recipient of your email. ";
+				if (!$input_validator->validateEmailRobust($_POST['email'])) $tl->page['error'] .= "Please provide a valid email address for the recipient of your email. ";
+				if ($_POST['reply_to_email'] && !$input_validator->validateEmailRobust($_POST['reply_to_email'])) $tl->page['error'] .= "Please provide a valid email address for the sender of your email. ";
+				if (!$_POST['subject']) $tl->page['error'] .= "Please provide a subject for the email. ";
+				if (!$_POST['message']) $tl->page['error'] .= "Please provide a message for the email. ";
 				
 			// send email
-				if (!$pageError) {
+				if (!$tl->page['error']) {
 					$success = emailToUser($_POST['name'], $_POST['email'], $_POST['reply_to_name'], $_POST['reply_to_email'], $_POST['subject'], $_POST['message']);
-					if (!$success) $pageError = "Email failed for unknown reason.";
+					if (!$success) $tl->page['error'] = "Email failed for unknown reason.";
 					else {
 						// update log
 							$activity = $logged_in['full_name'] . " (user_id " . $logged_in['user_id'] . ") sent an email to " . $_POST['name'] . " (" . $_POST['email'] . ") with the subject &quot;" . $_POST['subject'] . "&quot;";
 							$logger->logItInDb($activity, null, array('user_id=' . $logged_in['user_id']));
 						// redirect
-							header('Location: /admin_email/email_queued');
-							exit();
+							$authentication_manager->forceRedirect('/admin_email/success=email_queued');
 					}
 				}
 				

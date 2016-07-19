@@ -1,7 +1,7 @@
 <?php
 
 	$startTimeInSeconds = time();
-	$console = '';
+	$tl->page['console'] = '';
 	
 	// begin logging new connection
 		$logger->logItInMemory("Initiating housekeeping");

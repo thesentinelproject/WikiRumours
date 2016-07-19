@@ -5,10 +5,10 @@
 	-------------------------------------- */
 
 	// parse query string
-		if ($parameter1) $filters = $keyvalue_array->keyValueToArray(urldecode($parameter1), '|');
+		if ($tl->page['parameter1']) $filters = $keyvalue_array->keyValueToArray(urldecode($tl->page['parameter1']), '|');
 		
 	// authentication
-		if (!$logged_in) forceLoginThenRedirectHere();
+		if (!$logged_in) $authentication_manager->forceLoginThenRedirectHere();
 		
 	// queries
 

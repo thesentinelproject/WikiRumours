@@ -22,12 +22,18 @@
 			
 		}
 
+		public function flipCoin() {
+			$time = time() * rand(1,9);
+			if (($time / 2) == intval($time / 2)) return true;
+			else return false;
+		}
+
 		public function howLongAgo($dateTime, $currentDateTime = null) {
 
-			global $console;
+			global $tl;
 			
 			if (!$dateTime) {
-				$console .= __CLASS__ . "->" . __FUNCTION__ . ": No comparative date specified.\n";
+				$tl->page['console'] .= __CLASS__ . "->" . __FUNCTION__ . ": No comparative date specified.\n";
 				return false;
 			}
 			if (!$currentDateTime) $currentDateTime = date('Y-m-d H:i:s');
@@ -80,10 +86,10 @@
 		
 		public function inHowLong($currentDateTime, $dateTime) {
 
-			global $console;
+			global $tl;
 			
 			if (!$dateTime) {
-				$console .= __CLASS__ . "->" . __FUNCTION__ . ": No comparative date specified.\n";
+				$tl->page['console'] .= __CLASS__ . "->" . __FUNCTION__ . ": No comparative date specified.\n";
 				return false;
 			}
 			if (!$currentDateTime) $currentDateTime = date('Y-m-d H:i:s');

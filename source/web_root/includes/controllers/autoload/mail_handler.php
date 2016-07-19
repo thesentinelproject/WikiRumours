@@ -9,11 +9,11 @@
 		if (!$name || !$email || !$key) return false;
 		
 		global $mail_TL;
-		global $environmentals;
+		global $tl;
 		global $systemPreferences;
 		global $pseudonym;
 		
-		$url = $environmentals['protocol'] . $environmentals['absoluteRoot'] . "/confirm_registration/" . $key;
+		$url = $tl->page['protocol'] . $tl->page['root'] . "/confirm_registration/" . $key;
 		
 		$subject = "[" . (@$pseudonym['name'] ? $pseudonym['name'] : $systemPreferences['Name of this application']) . "] Please confirm your registration";
 
@@ -29,11 +29,11 @@
 		if (!$name || !$email || !$key) return false;
 		
 		global $mail_TL;
-		global $environmentals;
+		global $tl;
 		global $systemPreferences;
 		global $pseudonym;
 
-		$url = $environmentals['protocol'] . $environmentals['absoluteRoot'] . "/reset_password/" . $key;
+		$url = $tl->page['protocol'] . $tl->page['root'] . "/reset_password/" . $key;
 		
 		$subject = "[" . (@$pseudonym['name'] ? $pseudonym['name'] : $systemPreferences['Name of this application']) . "] Reset your password";
 
@@ -49,11 +49,11 @@
 		if (!$name || !$email || !$key) return false;
 		
 		global $mail_TL;
-		global $environmentals;
+		global $tl;
 		global $systemPreferences;
 		global $pseudonym;
 
-		$url = $environmentals['protocol'] . $environmentals['absoluteRoot'] . "/reset_email/" . $key;
+		$url = $tl->page['protocol'] . $tl->page['root'] . "/reset_email/" . $key;
 		
 		$subject = "[" . (@$pseudonym['name'] ? $pseudonym['name'] : $systemPreferences['Name of this application']) . "] Update your email address";
 
@@ -69,11 +69,11 @@
 		if (!$name || !$email) return false;
 		
 		global $mail_TL;
-		global $environmentals;
+		global $tl;
 		global $systemPreferences;
 		global $pseudonym;
 		
-		$url = $environmentals['protocol'] . $environmentals['absoluteRoot'];
+		$url = $tl->page['protocol'] . $tl->page['root'];
 		
 		$subject = "[" . (@$pseudonym['name'] ? $pseudonym['name'] : $systemPreferences['Name of this application']) . "] Welcome aboard!";
 
@@ -89,7 +89,6 @@
 		if (!$adminEmail || !$registrant) return false;
 		
 		global $mail_TL;
-		global $environmentals;
 		global $systemPreferences;
 		global $pseudonym;
 
@@ -101,6 +100,25 @@
 		return insertIntoDb('mail_queue', array('to_name'=>(@$pseudonym['name'] ? $pseudonym['name'] : $systemPreferences['Name of this application']), 'to_email'=>$adminEmail, 'from_name'=>(@$pseudonym['name'] ? $pseudonym['name'] : $systemPreferences['Name of this application']), 'from_email'=>(@$pseudonym['outgoing_email'] ? $pseudonym['outgoing_email'] : $mail_TL['OutgoingAddress']), 'subject'=>$subject, 'message_html'=>$messageHtml, 'message_text'=>$messagePlain, 'queued_on'=>date('Y-m-d H:i:s')));
 		
 	}
+
+	function warnAdministratorOfDuplicateUserPhoneNumber($adminEmail, $firstUsername, $secondUsername) {
+		
+		if (!$adminEmail || !$firstUsername || !$secondUsername) return false;
+		
+		global $mail_TL;
+		global $tl;
+		global $systemPreferences;
+		global $pseudonym;
+
+		$subject = "[" . (@$pseudonym['name'] ? $pseudonym['name'] : $systemPreferences['Name of this application']) . "] Possible duplicate user";
+
+		$messagePlain = "The registrant/user " . '"' . $firstUsername . '"' . " has registered with a phone number similar to that of the user " . '"' . $secondUsername . '"' . " (" . $tl->page['protocol'] . $tl->page['root'] . "/profile/" . $secondUsername . "). Please check both users and, if duplicates, consider disabling one of them.";
+		$messageHtml = "The registrant/user &quot;" . $firstUsername . "&quot; has registered with a phone number similar to that of the user <a href='" . $tl->page['protocol'] . $tl->page['root'] . "/profile/" . $secondUsername . "'>" . $secondUsername . "</a>. Please check both users and, if duplicates, consider disabling one of them.";
+
+		return insertIntoDb('mail_queue', array('to_name'=>(@$pseudonym['name'] ? $pseudonym['name'] : $systemPreferences['Name of this application']), 'to_email'=>$adminEmail, 'from_name'=>(@$pseudonym['name'] ? $pseudonym['name'] : $systemPreferences['Name of this application']), 'from_email'=>(@$pseudonym['outgoing_email'] ? $pseudonym['outgoing_email'] : $mail_TL['OutgoingAddress']), 'subject'=>$subject, 'message_html'=>$messageHtml, 'message_text'=>$messagePlain, 'queued_on'=>date('Y-m-d H:i:s')));
+		
+	}
+
 	
 /*	--------------------------------------
 	Watchlist notifications
@@ -111,12 +129,12 @@
 		if (!$name || !$email || !$publicID || !$description || !$status) return false;
 		
 		global $mail_TL;
-		global $environmentals;
+		global $tl;
 		global $systemPreferences;
 		global $parser;
 		global $pseudonym;
 
-		$url = $environmentals['protocol'] . $environmentals['absoluteRoot'] . "/rumour/" . $publicID . "/" . $parser->seoFriendlySuffix($description);
+		$url = $tl->page['protocol'] . $tl->page['root'] . "/rumour/" . $publicID . "/" . $parser->seoFriendlySuffix($description);
 		
 		$subject = "[" . (@$pseudonym['name'] ? $pseudonym['name'] : $systemPreferences['Name of this application']) . "] Status update on a rumour you're watching";
 
@@ -133,12 +151,12 @@
 		if (!$name || !$email || !$publicID || !$description || !$comment || !$author) return false;
 		
 		global $mail_TL;
-		global $environmentals;
+		global $tl;
 		global $systemPreferences;
 		global $parser;
 		global $pseudonym;
 		
-		$url = $environmentals['protocol'] . $environmentals['absoluteRoot'] . "/rumour/" . $publicID . "/" . $parser->seoFriendlySuffix($description);
+		$url = $tl->page['protocol'] . $tl->page['root'] . "/rumour/" . $publicID . "/" . $parser->seoFriendlySuffix($description);
 		
 		$subject = "[" . (@$pseudonym['name'] ? $pseudonym['name'] : $systemPreferences['Name of this application']) . "] New comment on a rumour you're watching";
 
@@ -159,13 +177,13 @@
 		if (!$name || !$email || !$publicID || !$description) return false;
 				
 		global $mail_TL;
-		global $environmentals;
+		global $tl;
 		global $systemPreferences;
 		global $phpmailerWrapper;
 		global $parser;
 		global $pseudonym;
 		
-		$url = $environmentals['protocol'] . $environmentals['absoluteRoot'] . "/rumour/" . $publicID . "/" . $parser->seoFriendlySuffix($description);
+		$url = $tl->page['protocol'] . $tl->page['root'] . "/rumour/" . $publicID . "/" . $parser->seoFriendlySuffix($description);
 		
 		if ($assignedToMe) $subject = "[" . (@$pseudonym['name'] ? $pseudonym['name'] : $systemPreferences['Name of this application']) . "] You've been assigned a rumour";
 		else $subject = "[" . (@$pseudonym['name'] ? $pseudonym['name'] : $systemPreferences['Name of this application']) . "] New rumour";
@@ -209,13 +227,12 @@
 	function emailFromUser($name, $email, $username, $telephone, $message, $adminEmail) {
 		
 		global $mail_TL;
-		global $environmentals;
 		global $systemPreferences;
 		global $pseudonym;
-		global $console;
+		global $tl;
 
 		if (!$name || !$email || !$message || !$adminEmail) {
-			$console .= "Missing email parameters.\n";
+			$tl->page['console'] .= "Missing email parameters.\n";
 			return false;
 		}
 		
@@ -224,7 +241,7 @@
 		$messagePlain = $name . " (" . $email;
 		if ($username) $messagePlain .= " / " . $username;
 		if ($telephone) $messagePlain .= " / " . $telephone;
-		$messagePlain .= ") writes:\n\n" . $message . "\n\nSystem diagnostics: " . $environmentals['client'] . " / Cookies: " . $environmentals['acceptsCookies'];
+		$messagePlain .= ") writes:\n\n" . $message;
 		$messageHtml = createHtmlEmail(str_replace("\n", "<br />", $messagePlain));
 
 		return insertIntoDb('mail_queue', array('to_name'=>(@$pseudonym['name'] ? $pseudonym['name'] : $systemPreferences['Name of this application']), 'to_email'=>$adminEmail, 'from_name'=>(@$pseudonym['name'] ? $pseudonym['name'] : $systemPreferences['Name of this application']), 'from_email'=>(@$pseudonym['outgoing_email'] ? $pseudonym['outgoing_email'] : $mail_TL['OutgoingAddress']), 'subject'=>$subject, 'message_html'=>$messageHtml, 'message_text'=>$messagePlain, 'reply_name'=>$from, 'reply_email'=>$email, 'queued_on'=>date('Y-m-d H:i:s')));
@@ -259,14 +276,18 @@
 	function createHtmlEmail($content) {
 
 		global $systemPreferences;
-		global $environmentals;
+		global $tl;
 		global $pseudonym;
 		global $file_manager;
 
+		if (@$tl->page['root']) $root = trim((@$tl->page['protocol'] ? $tl->page['protocol'] : 'http://') . $tl->page['root'], ' /');
+		else $root = trim((@$tl->page['protocol'] ? $tl->page['protocol'] : 'http://') . $systemPreferences['Root URL'], ' /');
+
+		$fileManager = new file_manager_TL();
 		$html = $file_manager->readTextFile(__DIR__ . '../../../views/shared/email.html');
 
-		$html = str_replace('{URL}', $environmentals['protocol'] . $environmentals['absoluteRoot'], $html);
-		$html = str_replace('{LOGO}', trim($environmentals['protocol'] . $environmentals['absoluteRoot'], ' /') . '/' . (@$pseudonym['pseudonym_id'] ? 'assets/pseudonym_logos/' . $pseudonym['pseudonym_id'] . '.' . $pseudonym['logo_ext']: 'resources/img/logo.png'), $html);
+		$html = str_replace('{URL}', $root, $html);
+		$html = str_replace('{LOGO}', $root . '/' . (@$pseudonym['pseudonym_id'] ? 'assets/pseudonym_logos/' . $pseudonym['pseudonym_id'] . '.' . $pseudonym['logo_ext']: 'resources/img/logo.png'), $html);
 		$html = str_replace('{CONTENT}', $content, $html);
 
 		return $html;

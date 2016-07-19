@@ -5,4 +5,7 @@
 		'U'=>'User'
 	);
 
+	// Populate global arrays from database
+		populateStatusesTagsAndSources();
+
 ?>

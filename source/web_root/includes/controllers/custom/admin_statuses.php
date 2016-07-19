@@ -5,17 +5,14 @@
 	-------------------------------------- */
 
 	// authenticate user
-		if (!$logged_in['is_administrator'] || !$logged_in['can_edit_settings']) forceLoginThenRedirectHere();
-		
-	// parse query string
-		$pageStatus = $parameter1;
+		if (!$logged_in['is_administrator'] || !$logged_in['can_edit_settings']) $authentication_manager->forceLoginThenRedirectHere(true);
 		
 	// queries
 		$statuses = retrieveStatuses();
 		$numberOfStatuses = floatval(count($statuses));
 		
-	$pageTitle = "Statuses";
-	$sectionTitle = "Administration";
+	$tl->page['title'] = "Statuses";
+	$tl->page['section'] = "Administration";
 
 /*	--------------------------------------
 	Execute only if a form post
@@ -23,15 +20,15 @@
 			
 	if (count($_POST) > 0) {
 
-		$pageError = null;
+		$tl->page['error'] = null;
 
 		if ($_POST['formName'] == 'editStatusesForm' && $_POST['statusToDelete']) {
 
 			// validate
 				$status = retrieveStatuses(array('status_id'=>$_POST['statusToDelete']), null, null, null, 1);
-				if (!count($status)) $pageError .= "Unable to find status to delete. ";
-				elseif ($status[0]['delete_prohibited']) $pageError .= "Delete prohibited for this status. ";
-				elseif ($status[0]['number_of_rumours'] > 0) $pageError .= "Unable to delete because there are " . $priority[0]['number_of_rumours'] . " statuses set to this priority. Please modify those rumours and then try again. ";
+				if (!count($status)) $tl->page['error'] .= "Unable to find status to delete. ";
+				elseif ($status[0]['delete_prohibited']) $tl->page['error'] .= "Delete prohibited for this status. ";
+				elseif ($status[0]['number_of_rumours'] > 0) $tl->page['error'] .= "Unable to delete because there are " . $priority[0]['number_of_rumours'] . " statuses set to this priority. Please modify those rumours and then try again. ";
 				else {
 
 					// delete priority
@@ -42,8 +39,7 @@
 						$logger->logItInDb($activity, null, array('user_id=' . $logged_in['user_id'], 'status_id=' . $status[0]['status_id']));
 
 					// redirect
-						header('Location: /admin_statuses/status_deleted');
-						exit();
+						$authentication_manager->forceRedirect('/admin_statuses/success=status_deleted');
 
 				}
 
@@ -64,10 +60,10 @@
 			// check for errors
 				// check edit
 					for ($counter = 0; $counter < count($statuses); $counter++) {
-						if (!$_POST['status_' . $statuses[$counter]['status_id']]) $pageError .= "Please specify a status name. ";
+						if (!$_POST['status_' . $statuses[$counter]['status_id']]) $tl->page['error'] .= "Please specify a status name. ";
 					}
 
-			if (!$pageError) {
+			if (!$tl->page['error']) {
 				
 				// update edit
 					for ($counter = 0; $counter < count($statuses); $counter++) {
@@ -81,8 +77,7 @@
 					$logger->logItInDb($activity, null, array('user_id=' . $logged_in['user_id']));
 				
 				// redirect
-					header('Location: /admin_statuses/statuses_updated');
-					exit();
+					$authentication_manager->forceRedirect('/admin_statuses/success=statuses_updated');
 
 			}
 
@@ -95,7 +90,7 @@
 	-------------------------------------- */
 		
 	else {
-		if (!$pageStatus) $pageWarning = "Please be cautious. Any changes made here will impact rumours which are already saved in the system.";
+		if (!$tl->page['success']) $tl->page['warning'] = "Please be cautious. Any changes made here will impact rumours which are already saved in the system.";
 	}
 		
 ?>

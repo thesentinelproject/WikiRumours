@@ -6,14 +6,14 @@
 			
 			global $bitlyApiKey;
 			global $bitlyLogin;
-			global $console;
+			global $tl;
 	
 			if (!$longUrl) {
-				$console .= __CLASS__ . "->" . __FUNCTION__ . ": No URL specified.\n";
+				$tl->page['console'] .= __CLASS__ . "->" . __FUNCTION__ . ": No URL specified.\n";
 				return false;
 			}
 			if (!$bitlyApiKey || !$bitlyLogin) {
-				$console .= __CLASS__ . "->" . __FUNCTION__ . ": No bit.ly credentials specified in the configuration file.\n";
+				$tl->page['console'] .= __CLASS__ . "->" . __FUNCTION__ . ": No bit.ly credentials specified in the configuration file.\n";
 				return false;
 			}
 			
@@ -28,7 +28,7 @@
 				return $shortUrl;
 			}
 			else {
-				$console .= __CLASS__ . "->" . __FUNCTION__ . ": Unable to retrieve and/or access shortened URL.\n";
+				$tl->page['console'] .= __CLASS__ . "->" . __FUNCTION__ . ": Unable to retrieve and/or access shortened URL.\n";
 				return false;
 			}
 						
@@ -37,14 +37,14 @@
 		public function owly($longUrl) {
 			
 			global $owlyApiKey;
-			global $console;
+			global $tl;
 	
 			if (!$longUrl) {
-				$console .= __CLASS__ . "->" . __FUNCTION__ . ": No URL specified.\n";
+				$tl->page['console'] .= __CLASS__ . "->" . __FUNCTION__ . ": No URL specified.\n";
 				return false;
 			}
 			if (!$owlyApiKey) {
-				$console .= __CLASS__ . "->" . __FUNCTION__ . ": No ow.ly credentials specified in the configuration file.\n";
+				$tl->page['console'] .= __CLASS__ . "->" . __FUNCTION__ . ": No ow.ly credentials specified in the configuration file.\n";
 				return false;
 			}
 			
@@ -60,7 +60,7 @@
 				return $shortUrl['results']['shortUrl'];
 			}
 			else {
-				$console .= __CLASS__ . "->" . __FUNCTION__ . ": Unable to retrieve and/or access shortened URL.\n";
+				$tl->page['console'] .= __CLASS__ . "->" . __FUNCTION__ . ": Unable to retrieve and/or access shortened URL.\n";
 				return false;
 			}
 			
@@ -70,15 +70,15 @@
 
 			/* Creates a unique Bitly-like whitelist identifier */
 
-			global $console;
+			global $tl;
 			
 			// check for errors
 				if ($type != 'a' && $type != 'n') {
-					$console .= __CLASS__ . "->" . __FUNCTION__ . ": Neither numeric nor alphanumeric specified.\n";
+					$tl->page['console'] .= __CLASS__ . "->" . __FUNCTION__ . ": Neither numeric nor alphanumeric specified.\n";
 					return false;
 				}
 				if (intval($lengthInCharacters) < 1 ) {
-					$console .= __CLASS__ . "->" . __FUNCTION__ . ": String length not specified.\n";
+					$tl->page['console'] .= __CLASS__ . "->" . __FUNCTION__ . ": String length not specified.\n";
 					return false;
 				}
 				

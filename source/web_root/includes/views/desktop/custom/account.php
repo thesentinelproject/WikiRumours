@@ -36,7 +36,8 @@
 						echo "    <div class='col-md-6'>" . $form->input('text', 'last_name', $operators->firstTrue(@$_POST['last_name'], @$user[0]['last_name']), false, '|Last', 'form-control', '', 30) . "</div>\n";
 						echo "  </div>\n";
 						echo $form->rowEnd();
-	/* Location */		echo $form->row('country_and_region', null, array('country_id'=>$operators->firstTrue(@$_POST['country'], @$user[0]['country_id']), 'region_id'=>$operators->firstTrue(@$_POST['region_id'], @$user[0]['region_id']), 'other_region'=>$operators->firstTrue(@$_POST['other_region'], @$user[0]['other_region'])), false, null, 'form-control') . "\n";
+	/* Country */		echo $form->row('country', 'country_id', $operators->firstTrue(@$_POST['country_id'], @$user[0]['country_id']), false, "Country", 'form-control') . "\n";
+	/* Region */		echo $form->row('region', 'region', ['country_id'=>$operators->firstTrue(@$_POST['country_id'], @$user[0]['country_id']), 'region_id'=>$operators->firstTrue(@$_POST['region_id'], @$user[0]['region_id']), 'region_other'=>$operators->firstTrue(@$_POST['region_other'], @$user[0]['other_region'])], false, "Region", 'form-control', null, null, ['link-to'=>'country_id']) . "\n";
 	/* Community */		echo $form->row('text', 'city', $operators->firstTrue(@$_POST['city'], @$user[0]['city']), false, 'Community', 'form-control', '', 50) . "\n";
 	/* Profile Image */	echo $form->rowStart('profile_image', "Profile image");
 						$image = $avatar_manager->retrieveProfileImage($user[0]['username']);

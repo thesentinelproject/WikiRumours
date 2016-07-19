@@ -1,6 +1,6 @@
 <?php
 
-	echo "<h2>" . $pageTitle . "</h2>\n";
+	echo "<h2>" . $tl->page['title'] . "</h2>\n";
 
 	if ($screen == 'all') {
 
@@ -24,8 +24,8 @@
 					echo "<td><a href='/admin_settings/update/" . $settings[$counter]['preference_id'] . "'" . (@$settings[$counter]['tooltip'] ? " class='tooltips' onClick='return false' data-toggle='tooltip' title='" . htmlspecialchars($settings[$counter]['tooltip'], ENT_QUOTES) . "'" : false) . ">" . $settings[$counter]['preference'] . "</a></td>\n";
 				// value
 					if ($settings[$counter]['input_type'] == 'yesno_bootstrap_switch') echo "<td>" . ($settings[$counter]['value'] == 1 ? 'Yes' : 'No') . "</td>\n";
-					elseif ($settings[$counter]['input_type'] == 'country') echo "<td>" . $countries_TL[$settings[$counter]['value']] . "</td>\n";
-					elseif ($settings[$counter]['input_type'] == 'language') echo "<td>" . $languages_TL[$settings[$counter]['value']] . "</td>\n";
+					elseif ($settings[$counter]['input_type'] == 'country') echo "<td>" . @$localization_manager->countries[$settings[$counter]['value']] . "</td>\n";
+					elseif ($settings[$counter]['input_type'] == 'language' || $settings[$counter]['input_type'] == 'language_common') echo "<td>" . @$localization_manager->languages[$settings[$counter]['value']] . "</td>\n";
 					else echo "<td>" . trim($settings[$counter]['prepend'] . " " . $settings[$counter]['value'] . " " . $settings[$counter]['append']) . "</td>\n";
 				// actions
 					echo "<td class='text-right'><a href='/admin_settings/update/" . $settings[$counter]['preference_id'] . "'>Update</a></td>\n";

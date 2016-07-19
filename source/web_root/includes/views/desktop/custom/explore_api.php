@@ -48,7 +48,7 @@
 	<br />
 	<div class="tabbable">
 		<ul class="nav nav-tabs">
-			<li class="active"><a href="#v2" data-toggle="tab">Version 2.0</a></li>
+			<li class="active"><a href="#v2" data-toggle="tab">Version 2.1</a></li>
 			<li><a href="#v1" data-toggle="tab">Version 1.0</a></li>
 			<li><a href="#codes" data-toggle="tab">Warning, error and status codes</a></li>
 		</ul>

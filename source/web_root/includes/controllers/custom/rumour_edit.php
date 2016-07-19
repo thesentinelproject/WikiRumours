@@ -5,27 +5,17 @@
 	-------------------------------------- */
 
 	// parse query string
-		$publicID = $parameter1;
-		if (!$publicID) {
-			header('Location: /404');
-			exit();
-		}
-		$pageStatus = $parameter2;
+		$publicID = $tl->page['parameter1'];
+		if (!$publicID) $authentication_manager->forceRedirect('/404');
 		
 	// query
 		$rumour = retrieveRumours(array('public_id'=>$publicID), null, null, null, 1);
-		if (count($rumour) < 1) {
-			header('Location: /404');
-			exit();
-		}
+		if (count($rumour) < 1) $authentication_manager->forceRedirect('/404');
 		
 	// authenticate user
 		if (!$logged_in['is_administrator'] || !$logged_in['can_edit_content']) {
 			if (!$logged_in['is_moderator']) {
-				if (!$logged_in['is_community_liaison'] || $rumour[0]['assigned_to'] != $logged_in['user_id']) {
-					header('Location: /404');
-					exit();
-				}
+				if (!$logged_in['is_community_liaison'] || $rumour[0]['assigned_to'] != $logged_in['user_id']) $authentication_manager->forceRedirect('/404');
 			}
 		}
 		
@@ -58,10 +48,7 @@
 		}
 		if (!@$allModeratorsAndCommunityLiaisons[$rumour[0]['created_by']]) $allModeratorsAndCommunityLiaisons[$rumour[0]['created_by']] = $rumour[0]['created_by_full_name'];
 
-		if (@$rumour[0]['photo_evidence_file_ext']) {
-			$photoEvidence = 'assets/photo_evidence/' . $rumour[0]['rumour_id'] . '.' . $rumour[0]['photo_evidence_file_ext'];
-			if (!file_exists($photoEvidence)) $photoEvidence = null;
-		}
+		if (file_exists('assets/rumour_attachments/' . $publicID)) $attachments = $directory_manager->read('assets/rumour_attachments/' . $publicID, false, false, true);
 
 		
 /*	--------------------------------------
@@ -76,7 +63,7 @@
 				$success = deleteFromDb('rumours', array('public_id'=>$publicID), null, null, null, null, 1);
 				
 			// redirect
-				if (!$success) $pageError .= "Unable to delete rumour for some reason. ";
+				if (!$success) $tl->page['error'] .= "Unable to delete rumour for some reason. ";
 				else {
 					deleteFromDb('rumour_sightings', array('rumour_id'=>$rumour[0]['rumour_id']));
 					deleteFromDb('rumours_x_tags', array('rumour_id'=>$rumour[0]['rumour_id']));
@@ -87,32 +74,7 @@
 						$logger->logItInDb($activity, null, array('user_id=' . $logged_in['user_id'], 'rumour_id=' . $rumour[0]['rumour_id']));
 
 					// redirect
-						header ('Location: /index/rumour_removed');
-						exit();
-				}
-			
-		}
-		if ($_POST['formName'] == 'addEditRumourForm' && $_POST['deleteThisPhoto'] == 'Y') {
-			
-			// check for errors
-				if (!@$photoEvidence) $pageError = "Unable to locate photo to delete. ";
-				else {
-
-					// remove from server
-						if (@$photoEvidence) $success = unlink ($photoEvidence);
-						if (!$success || file_exists($photoEvidence)) $pageError .= "Unable to delete photo for some reason. ";
-						else {
-
-							// update logs
-								$activity = $logged_in['full_name'] . " (user_id " . $logged_in['user_id'] . ") has removed the photographic evidence from the rumour &quot;" . $rumour[0]['description'] . "&quot; (rumour_id " . $rumour[0]['rumour_id'] . ")";
-								$logger->logItInDb($activity, null, array('user_id=' . $logged_in['user_id'], 'rumour_id=' . $rumour[0]['rumour_id']));
-
-							// redirect
-								header('Location: /rumour_edit/' . $publicID . '/photographic_evidence_deleted');
-								exit();
-
-						}
-
+						$authentication_manager->forceRedirect('/index/success=rumour_removed');
 				}
 			
 		}
@@ -136,40 +98,31 @@
 				
 			// check for errors
 				if ($logged_in['is_administrator'] && $logged_in['can_edit_content']) {
-					if (!@$_POST['description']) $pageError .= "Please enter a rumour. ";
-					if (!$_POST['country']) $pageError .= "Please specify a country. ";
+					if (!@$_POST['description']) $tl->page['error'] .= "Please enter a rumour. ";
+					if (!$_POST['country']) $tl->page['error'] .= "Please specify a country. ";
 				}
 
-				if (!@$_POST['priority_id']) $pageError .= "Please specify a priority for this rumour. ";
+				if (!@$_POST['priority_id']) $tl->page['error'] .= "Please specify a priority for this rumour. ";
 				$result = retrieveStatuses(array('status_id'=>@$_POST['status_id']), null, null, false, 1);
-				if (!count($result)) $pageError .= "Please specify a status. ";
-				elseif ($result[0]['is_closed'] && !@$_POST['findings']) $pageError .= "Please specify findings before finalizing status on this rumour. ";
+				if (!count($result)) $tl->page['error'] .= "Please specify a status. ";
+				elseif ($result[0]['is_closed'] && !@$_POST['findings']) $tl->page['error'] .= "Please specify findings before finalizing status on this rumour. ";
 
-				if ($_FILES['photo_evidence']['tmp_name']) {
-					$fileExtension = strtolower($file_manager->isImage($_FILES['photo_evidence']['tmp_name']));
-					if (!$fileExtension) $pageError .= "An invalid image was uploaded; please upload a JPG, PNG or GIF. ";
-					else {
-						$dimensions = getimagesize($_FILES['photo_evidence']['tmp_name']);
-						if ($dimensions[0] > $maxWidthForPhotographicEvidence || $dimensions[1] > $maxWidthForPhotographicEvidence) $pageError .= "Your uploaded photo is too big. Please make sure that the width or height is no more than 3000 pixels. ";
-						else {
-							$filesize = $file_manager->getFilesize($_FILES['photo_evidence']['tmp_name']);
-							if ($filesize > $maxFilesizeForPhotographicEvidence) $pageError .= "Your uploaded photo is too big. Please make sure that the file is no larger than 2 MB. ";
-						}
-					}
-				}
-				
 			// edit rumour
-				if (!$pageError) {
+				if (!$tl->page['error']) {
 
 					// update rumour					
 						if ($logged_in['is_administrator'] && $logged_in['can_edit_content']) {
 
-							if (!$_POST['latitude'] || !$_POST['longitude']) { // faux geocode
+/*
+						REMOVING FAUX GEOCODING:
+						-----------------------
+
+							if (!$_POST['occurred_at_latitude'] || !$_POST['occurred_at_longitude']) { // faux geocode
 								$latLong = retrieveSingleFromDB('rumour_sightings', null, array('country_id'=>@$_POST['country'], 'city'=>@$_POST['city']), null, null, null, "latitude <> 0 AND longitude <> 0");
 								if (!count($latLong)) $latLong = retrieveSingleFromDB('rumours', null, array('country_id'=>@$_POST['country'], 'city'=>@$_POST['city']), null, null, null, "latitude <> 0 AND longitude <> 0");
 							}
-
-							updateDb('rumours', array('description'=>$_POST['description'], 'enabled'=>$_POST['enabled'], 'status_id'=>$_POST['status_id'], 'findings'=>$_POST['findings'], 'verified_with'=>$_POST['verified_with'], 'priority_id'=>$_POST['priority_id'], 'assigned_to'=>$_POST['assigned_to'], 'country_id'=>$_POST['country'], 'city'=>$_POST['city'], 'latitude'=>(@$_POST['latitude'] <> 0 ? $_POST['latitude'] : $latLong[0]['latitude']), 'longitude'=>(@$_POST['longitude'] <> 0 ? $_POST['longitude'] : $latLong[0]['longitude']), 'unable_to_geocode'=>'0', 'occurred_on'=>$_POST['occurred_on'], 'updated_on'=>date('Y-m-d H:i:s'), 'updated_by'=>$logged_in['user_id']), array('public_id'=>$publicID), null, null, null, null, 1);
+*/
+							updateDb('rumours', array('description'=>$_POST['description'], 'enabled'=>$_POST['enabled'], 'status_id'=>$_POST['status_id'], 'findings'=>$_POST['findings'], 'verified_with'=>$_POST['verified_with'], 'priority_id'=>$_POST['priority_id'], 'assigned_to'=>$_POST['assigned_to'], 'country_id'=>$_POST['country'], 'city'=>$_POST['city'], 'latitude'=>@$_POST['occurred_at_latitude'], 'longitude'=>@$_POST['occurred_at_longitude'], 'unable_to_geocode'=>'0', 'occurred_on'=>$_POST['occurred_on'], 'updated_on'=>date('Y-m-d H:i:s'), 'updated_by'=>$logged_in['user_id']), array('public_id'=>$publicID), null, null, null, null, 1);
 
 						}
 						else updateDb('rumours', array('enabled'=>$_POST['enabled'], 'status_id'=>$_POST['status_id'], 'findings'=>$_POST['findings'], 'verified_with'=>$_POST['verified_with'], 'priority_id'=>$_POST['priority_id'], 'assigned_to'=>$_POST['assigned_to'], 'updated_on'=>date('Y-m-d H:i:s'), 'updated_by'=>$logged_in['user_id']), array('public_id'=>$publicID), null, null, null, null, 1);
@@ -194,24 +147,31 @@
 							deleteFromDbSingle('tags', array('tag_id'=>$result[$counter]['tag_id']));
 						}
 
-					// update photo
-						if ($_FILES['photo_evidence']['tmp_name']) {
-							$destination = 'assets/photo_evidence/' . $rumour[0]['rumour_id'] . '.' . $fileExtension;
-							// delete old
-								@unlink ($destination);
-								if (file_exists($destination)) $pageError .= "Unable to delete previous photo evidence for some reason. ";
-								else {
-									// save new
-										$success = move_uploaded_file($_FILES['photo_evidence']['tmp_name'], $destination);
-										if (!$success || !file_exists($destination)) $pageError .= "Unable to save photo evidence for some reason. ";
-										else updateDb('rumours', array('photo_evidence_file_ext'=>$fileExtension), array('public_id'=>$publicID), null, null, null, null, 1);
-								}
+					// evidence and other attachments
+						if (@$_POST['file_evidence']) {
+							foreach ($_POST['file_evidence'] as $uploadedFile) {
+								$filename = substr($uploadedFile, strrpos($uploadedFile, '/') + 1);
+								$uploadedFile = __DIR__ . '/../../../../' . $uploadedFile;
+								$destinationPath = 'assets/rumour_attachments/' . $publicID;
+								if (!file_exists($destinationPath)) mkdir($destinationPath);
+								$success = rename($uploadedFile, $destinationPath . '/' . $filename);
+								if (!$success || !file_exists($destinationPath . '/' . $filename)) $tl->page['error'] .= "Unable to retrieve uploaded file for some reason. ";
+							}
 						}
-						
+
+						if (count($attachments)) {
+							for ($counter = 0; $counter < count($attachments); $counter++) {
+								if (isset($_POST['delete_' . $counter])) {
+									$success = @unlink ($_POST['filepath_' . $counter]);
+									if (!$success || file_exists($_POST['filepath_' . $counter])) $tl->page['error'] .= "Unable to delete an attachment. ";
+								}
+							}
+						}
+
 				}
 
 			// watchlist notifications (email)
-				if (!$pageError) {
+				if (!$tl->page['error']) {
 					if ($_POST['status_id'] != $rumour[0]['status_id']) {
 						$notify = retrieveWatchlist(array($tablePrefix . 'watchlist.rumour_id'=>$rumour[0]['rumour_id'], 'notify_of_updates'=>'1'), null, $tablePrefix . "users.email != '' AND " . $tablePrefix . "users.ok_to_contact = '1'");
 						for ($counter = 0; $counter < count($notify); $counter++) {
@@ -221,7 +181,7 @@
 				}
 
 			// notify assignee
-				if (!$pageError) {
+				if (!$tl->page['error']) {
 					if ($_POST['assigned_to'] != $rumour[0]['assigned_to']) {
 						$assignedTo = retrieveUsers(array($tablePrefix . 'users.user_id'=>$_POST['assigned_to'], 'ok_to_contact'=>'1'), null, $tablePrefix . "users.email != ''", null, 1);
 						if (count($assignedTo) == 1) {
@@ -235,10 +195,7 @@
 				$logger->logItInDb($activity, null, array('user_id=' . $logged_in['user_id'], 'rumour_id=' . $rumour[0]['rumour_id']));
 				
 			// redirect
-				if (!$pageError) {
-					header ('Location: /rumour/' . $publicID . '/' . $parser->seoFriendlySuffix($_POST['description']) . '/page=1/rumour_updated');
-					exit();
-				}
+				if (!$tl->page['error']) $authentication_manager->forceRedirect('/rumour/' . $publicID . '/' . $parser->seoFriendlySuffix($_POST['description']) . '/' . urlencode('page=1|success=rumour_updated'));
 								
 		}
 

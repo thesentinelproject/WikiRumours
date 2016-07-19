@@ -9,6 +9,7 @@
 		public function initialize() {
 
 			global $systemPreferences;
+			global $tl;
 
 			$directory_manager = new directory_manager_TL();
 
@@ -16,7 +17,7 @@
 
 			// check for errors
 				if (!file_exists($downloadPath)) {
-					$console .= __CLASS__ . "->" . __FUNCTION__ . ": Unable to locate downloads directory.\n";
+					$tl->page['console'] .= __CLASS__ . "->" . __FUNCTION__ . ": Unable to locate downloads directory.\n";
 					return false;
 				}
 

@@ -1,6 +1,6 @@
 <?php
 
-	echo "<h2>" . $pageTitle . "</h2>\n";
+	echo "<h2>" . $tl->page['title'] . "</h2>\n";
 			
 	if (count($rumours) < 1) {
 		echo "<p>No matching rumours found.</p>\n";

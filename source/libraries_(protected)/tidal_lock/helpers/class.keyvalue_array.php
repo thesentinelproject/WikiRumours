@@ -4,10 +4,10 @@
 
 		public function keyValueToArray($keyValueString, $delimiter = '&') {
 
-			global $console;
+			global $tl;
 			
 			if (!$keyValueString) {
-				$console .= __CLASS__ . "->" . __FUNCTION__ . ": No key values specified.\n";
+				$tl->page['console'] .= __CLASS__ . "->" . __FUNCTION__ . ": No key values specified.\n";
 				return false;
 			}
 			
@@ -25,10 +25,10 @@
 		
 		public function arrayToKeyValue($array, $delimiter = '&') {
 
-			global $console;
+			global $tl;
 			
 			if (!is_array($array)) {
-				$console .= __CLASS__ . "->" . __FUNCTION__ . ": No array specified.\n";
+				$tl->page['console'] .= __CLASS__ . "->" . __FUNCTION__ . ": No array specified.\n";
 				return false;
 			}
 			

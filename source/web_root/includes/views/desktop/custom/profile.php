@@ -2,14 +2,17 @@
 
 	// tabs
 		echo "<ul class='nav nav-tabs'>\n";
-		echo "  <li class='active'><a href='#profile' data-toggle='tab'><span" . (!$user[0]['enabled'] || $user[0]['anonymous'] ? " class='muted'" : false) . "><strong>" . $user[0]['username'] . "</strong>" . (!$user[0]['enabled'] ? " (account disabled)" : false) . ($user[0]['anonymous'] ? " (profile hidden)" : false) . "</span></a></li>\n";
-		echo "  <li><a href='#rumours' data-toggle='tab'>Rumours reported" . (count($rumours) ? " (" . count($rumours) . ")" : false) . "</a></li>\n";
-		echo "  <li><a href='#comments' data-toggle='tab'>Comments" . (count($comments) ? " (" . count($comments) . ")" : false) . "</a></li>\n";
-		if ($logged_in['is_administrator']) echo "  <li><a href='#activities' data-toggle='tab'>Recent activities" . (count($recentActivities) ? " (" . count($recentActivities) . ")" : false) . "</a></li>\n";
+		echo "  <li role='presentation' class='active'><a href='#profile' data-toggle='tab'><span" . (!$user[0]['enabled'] || $user[0]['anonymous'] ? " class='muted'" : false) . "><strong>" . $user[0]['username'] . "</strong>" . (!$user[0]['enabled'] ? " (account disabled)" : false) . ($user[0]['anonymous'] ? " (profile hidden)" : false) . "</span></a></li>\n";
+		echo "  <li role='presentation'><a href='#rumours' data-toggle='tab'>Rumours reported" . (count($rumours) ? " (" . count($rumours) . ")" : false) . "</a></li>\n";
+		echo "  <li role='presentation'><a href='#comments' data-toggle='tab'>Comments" . (count($comments) ? " (" . count($comments) . ")" : false) . "</a></li>\n";
+		if ($logged_in['is_administrator']) {
+			echo "  <li role='presentation'><a href='#logins' aria-controls='logins' role='tab' data-toggle='tab'>Logins" . (count($logins) ? " (" . count($logins) . ")" : false) . "</a></li>\n";
+			echo "  <li role='presentation'><a href='#activities' data-toggle='tab'>Recent activities" . (count($recentActivities) ? " (" . count($recentActivities) . ")" : false) . "</a></li>\n";
+		}
 		echo "</ul><br />\n\n";
 
 	echo "<div class='tab-content'>\n";
-	echo "  <div class='tab-pane active' id='profile'>\n";
+	echo "  <div role='tabpanel' class='tab-pane active' id='profile'>\n";
 
 /*	--------------------------------------
 	Profile tab
@@ -26,6 +29,11 @@
 		echo "  <div class='col-md-8 col-md-pull-4 col-sm-8 col-sm-pull-4'>\n";
 		echo "    " . $form->start() . "\n";
 		/* Name */				if ($user[0]['full_name']) echo $form->row('uneditable_static', 'full_name', $user[0]['full_name'], false, 'Name');
+		/* Password */			if ($user[0]['user_id'] == $logged_in['user_id'] || @$logged_in['is_administrator']) {
+									echo $form->rowStart('password_score', "Password Score");
+									echo "  " . $form->input('uneditable_static', 'password_score_' . $user[0]['public_id'], $user[0]['password_score'] . "%" . (floatval($user[0]['password_score']) < 70 && $user[0]['user_id'] == $logged_in['user_id'] ? "  <small><a href='/update_password'>Strengthen now</a></small>" : false)) . "\n";
+									echo $form->rowEnd();
+								}
 		/* Location */			$locationMap = trim(trim(@$user[0]['city'] . ', ' . @$user[0]['other_region'], ', ') . ', ' . @$user[0]['country'], ',- ');
 								$locationLabel = trim(@$user[0]['city'] . ', ' . @$user[0]['country'], ', ');
 								echo $form->row('uneditable_static', 'location', "<a href='https://maps.google.com/maps?q=" . urlencode($locationMap) . "' target='_blank'>" . $locationLabel . "</a>", false, 'Location');
@@ -67,7 +75,7 @@
 		echo "</div>\n";
 		
 	echo "  </div>\n";
-	echo "  <div class='tab-pane' id='rumours'>\n";
+	echo "  <div role='tabpanel' class='tab-pane' id='rumours'>\n";
 
 /*	--------------------------------------
 	Rumours tab
@@ -120,7 +128,43 @@
 
 	if ($logged_in['is_administrator']) {
 
-		echo "  <div class='tab-pane' id='activities'>\n";
+		echo "  <div role='tabpanel' class='tab-pane' id='logins'>\n\n";
+
+/*	--------------------------------------
+	Logins tab
+	-------------------------------------- */
+
+		if (!count($logins)) echo "None yet\n";
+		else {
+
+			echo "    <table class='table table-condensed'>\n";
+			echo "    <thead>\n";
+			echo "    <tr>\n";
+			echo "    <th>Date</th>\n";
+			echo "    <th>Country</th>\n";
+			echo "    <th>Browser</th>\n";
+			echo "    </tr>\n";
+			echo "    </thead>\n";
+			echo "    <tbody>\n";
+			for ($counter = 0; $counter < count($logins); $counter++) {
+				echo "    <tr>\n";
+				// connected on
+					echo "    <td>" . date('j-M-Y', strtotime($logins[$counter]['connected_on'])) . " <small class='text-muted'>" . str_replace(' ', '&nbsp;', date('g:i:s A', strtotime($logins[$counter]['connected_on']))) . "</small></td>\n";
+				// country
+					echo "    <td>" . @$localization_manager->countries[$logins[$counter]['country_id']] . "</td>\n";
+				// browser
+					$agent = new detector_TL();
+					$result = $agent->parseUserAgent($logins[$counter]['user_agent']);
+					echo "    <td>" . $result['browser'] . " " . $result['browser_version'] . " on " . $result['os'] . " " . $result['os_version'] . "</td>\n";
+				echo "    </tr>\n";
+			}
+			echo "    </tbody>\n";
+			echo "    </table>\n\n";
+
+		}
+
+		echo "  </div>\n";
+		echo "  <div role='tabpanel' class='tab-pane' id='activities'>\n";
 
 /*		--------------------------------------
 		Recent activities tab

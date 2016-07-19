@@ -4,9 +4,6 @@
 	Execute immediately upon load
 	-------------------------------------- */
 
-	// parse query string
-		$pageStatus = $parameter1;
-		
 /*	--------------------------------------
 	Execute only if a form post
 	-------------------------------------- */
@@ -17,10 +14,10 @@
 			$_POST = $parser->trimAll($_POST);
 									
 		// check for errors
-			if (!$input_validator->validateEmailRobust($_POST['email'])) $pageError .= "There appears to be a problem with your email address. ";
+			if (!$input_validator->validateEmailRobust($_POST['email'])) $tl->page['error'] .= "There appears to be a problem with your email address. ";
 			
 		// retrieve user details and send reset email if appropriate
-			if (!$pageError) {
+			if (!$tl->page['error']) {
 				$doesUserExist = retrieveUsers(array('email'=>$_POST['email'], 'enabled'=>'1'), null, null, null, 1);
 				if (count($doesUserExist) > 0) {
 					// create key and expiry
@@ -35,7 +32,7 @@
 						$logger->logItInDb($activity, null, array('user_id=' . $doesUserExist[0]['user_id']));
 					// email user
 						$emailSent = emailPasswordResetKey(trim($doesUserExist[0]['first_name'] . ' ' . $doesUserExist[0]['last_name']), addSlashes($_POST['email']), $key);
-						if (!$emailSent) $pageError = "Unable to email your password reset link. Please try again, and if you continue to encounter difficulties, <a href='/contact' class='errorMessage'>let us know</a>. ";
+						if (!$emailSent) $tl->page['error'] = "Unable to email your password reset link. Please try again, and if you continue to encounter difficulties, <a href='/contact' class='errorMessage'>let us know</a>. ";
 					
 				}
 				else {
@@ -46,10 +43,7 @@
 				
 			}
 
-			if (!$pageError) {
-				header ('Location: /forgot_password/password_reset_link_sent');
-				exit();
-			}
+			if (!$tl->page['error']) $authentication_manager->forceRedirect('/forgot_password/success=password_reset_link_sent');
 
 	}
 	

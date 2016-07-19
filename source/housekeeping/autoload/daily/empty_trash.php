@@ -20,7 +20,7 @@
 				
 			// delete expired backups
 				for ($counter = 0; $counter < count($trashBin); $counter++) {
-					$trashBin[$counter] = substr($trashBin[$counter], 14); // strip off parent folders
+					$trashBin[$counter] = substr($trashBin[$counter], strpos($trashBin[$counter], 'trash/') + 6); // strip off parent folders
 					if ($trashBin[$counter] < date('Y-m-d_H-i-s')) {
 						
 						// delete folder

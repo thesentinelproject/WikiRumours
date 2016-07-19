@@ -11,11 +11,11 @@
 				$metadata = array();
 				$metadata['error'] = '';
 				$fileManager = new file_manager_TL();
-				global $console;
+				global $tl;
 				
 				// check for errors
 					if (!$url) {
-						$console .= __CLASS__ . "->" . __FUNCTION__ . ": No URL specified.\n";
+						$tl->page['console'] .= __CLASS__ . "->" . __FUNCTION__ . ": No URL specified.\n";
 						return false;
 					}
 									
@@ -34,13 +34,13 @@
 					
 				// check if URL exists
 					if (!$fileManager->doesUrlExist($url)) {
-						$console .= __CLASS__ . "->" . __FUNCTION__ . ": Unable to retrieve webpage; URL may be invalid, or website might be down.\n";
+						$tl->page['console'] .= __CLASS__ . "->" . __FUNCTION__ . ": Unable to retrieve webpage; URL may be invalid, or website might be down.\n";
 						return false;
 					}
 		
 				// check URL headers
 					if (!$fileManager->isHeaderValid($url)) {
-						$console .= __CLASS__ . "->" . __FUNCTION__ . ": URL headers are invalid; the webpage may be down or redirecting.\n";
+						$tl->page['console'] .= __CLASS__ . "->" . __FUNCTION__ . ": URL headers are invalid; the webpage may be down or redirecting.\n";
 						return false;
 					}
 		
@@ -58,7 +58,7 @@
 						}
 						if ($sanitizeHtml) $html = htmlspecialchars($html, ENT_QUOTES);
 						if (!$html) {
-							$console .= __CLASS__ . "->" . __FUNCTION__ . ": No HTML found.\n";
+							$tl->page['console'] .= __CLASS__ . "->" . __FUNCTION__ . ": No HTML found.\n";
 							return false;
 						}
 						
@@ -173,10 +173,10 @@
 			
 		public function activateURLs($inputString, $newBrowser = false, $class = false) {
 
-			global $console;
+			global $tl;
 
 			if (!$inputString) {
-				$console .= __CLASS__ . "->" . __FUNCTION__ . ": No input specified.\n";
+				$tl->page['console'] .= __CLASS__ . "->" . __FUNCTION__ . ": No input specified.\n";
 				return false;
 			}
 			
@@ -228,10 +228,10 @@
 		
 		public function activateTwitterHashesAndIDs($inputString, $newBrowser = false, $class = false) {
 			
-			global $console;
+			global $tl;
 
 			if (!$inputString) {
-				$console .= __CLASS__ . "->" . __FUNCTION__ . ": No input specified.\n";
+				$tl->page['console'] .= __CLASS__ . "->" . __FUNCTION__ . ": No input specified.\n";
 				return false;
 			}
 			
@@ -326,15 +326,15 @@
 		
 		function encodeIP($ip, $type = 'ipv4') {
 
-			global $console;
+			global $tl;
 						
 			// check for errors
 				if (!$ip) {
-					$console .= __CLASS__ . "->" . __FUNCTION__ . ": No IP specified.\n";
+					$tl->page['console'] .= __CLASS__ . "->" . __FUNCTION__ . ": No IP specified.\n";
 					return false;
 				}
 				if ($type != 'ipv4' && $type != 'ipv6') {
-					$console .= __CLASS__ . "->" . __FUNCTION__ . ": Missing or invalid IP type.\n";
+					$tl->page['console'] .= __CLASS__ . "->" . __FUNCTION__ . ": Missing or invalid IP type.\n";
 					return false;
 				}
 				
@@ -346,15 +346,15 @@
 		
 		function decodeIP($ip, $type = 'ipv4') {
 			
-			global $console;
+			global $tl;
 						
 			// check for errors
 				if (!$ip) {
-					$console .= __CLASS__ . "->" . __FUNCTION__ . ": No IP specified.\n";
+					$tl->page['console'] .= __CLASS__ . "->" . __FUNCTION__ . ": No IP specified.\n";
 					return false;
 				}
 				if ($type != 'ipv4' && $type != 'ipv6') {
-					$console .= __CLASS__ . "->" . __FUNCTION__ . ": Missing or invalid IP type.\n";
+					$tl->page['console'] .= __CLASS__ . "->" . __FUNCTION__ . ": Missing or invalid IP type.\n";
 					return false;
 				}
 				
@@ -370,11 +370,11 @@
 		
 		public function extractFromHTML($html, $openingDelimiter, $closingDelimiter) {
 	
-			global $console;
+			global $tl;
 
 			// check for errors
 				if (!$html) {
-					$console .= __CLASS__ . "->" . __FUNCTION__ . ": No HTML specified.\n";
+					$tl->page['console'] .= __CLASS__ . "->" . __FUNCTION__ . ": No HTML specified.\n";
 					return false;
 				}
 			
@@ -382,7 +382,7 @@
 				if ($openingDelimiter) {
 					$startPoint = strpos($html, $openingDelimiter);
 					if ($startPoint === false) {
-						$console .= __CLASS__ . "->" . __FUNCTION__ . ": Unable to find opening delimiter.\n";
+						$tl->page['console'] .= __CLASS__ . "->" . __FUNCTION__ . ": Unable to find opening delimiter.\n";
 						return false;
 					}
 					else $startPoint += strlen($openingDelimiter);
@@ -393,7 +393,7 @@
 				if ($closingDelimiter) {
 					$endPoint = strpos($html, $closingDelimiter, $startPoint);
 					if ($endPoint === false) {
-						$console .= __CLASS__ . "->" . __FUNCTION__ . ": Unable to find closing delimiter.\n";
+						$tl->page['console'] .= __CLASS__ . "->" . __FUNCTION__ . ": Unable to find closing delimiter.\n";
 						return false;
 					}
 				}
@@ -410,10 +410,10 @@
 				Any tags specified for $tagsToRemove should be in the following format: 'br,img,h1'
 				To remove all tags, pass an empty value into $tagsToRemove */
 	
-			global $console;
+			global $tl;
 
 			if (!$inputString) {
-				$console .= __CLASS__ . "->" . __FUNCTION__ . ": No input specified.\n";
+				$tl->page['console'] .= __CLASS__ . "->" . __FUNCTION__ . ": No input specified.\n";
 				return false;
 			}
 			
@@ -468,10 +468,10 @@
 			/*	this is simply a wrapper for parseXML() which
 				correctly interprets a single-item RSS feed */
 			
-			global $console;
+			global $tl;
 
 			if (!$url && !$xmlStream) {
-				$console .= __CLASS__ . "->" . __FUNCTION__ . ": No input specified.\n";
+				$tl->page['console'] .= __CLASS__ . "->" . __FUNCTION__ . ": No input specified.\n";
 				return false;
 			}
 			
@@ -491,10 +491,10 @@
 	
 		public function parseXML($url, $xmlStream, $get_attributes = 1, $priority = 'tag') {
 
-			global $console;
+			global $tl;
 
 			if (!$url && !$xmlStream) {
-				$console .= __CLASS__ . "->" . __FUNCTION__ . ": No input specified.\n";
+				$tl->page['console'] .= __CLASS__ . "->" . __FUNCTION__ . ": No input specified.\n";
 				return false;
 			}
 			
@@ -645,10 +645,10 @@
 		
 		public function importFeedWithSimplePie($feed, $checkForEnclosures = false, $enclosuresMustBeImages = false, $maximumNumberOfResults = null, $minimumLengthOfPosts = null) {
 	
-			global $console;
+			global $tl;
 
 			if (!$feed) {
-				$console .= __CLASS__ . "->" . __FUNCTION__ . ": No feed specified.\n";
+				$tl->page['console'] .= __CLASS__ . "->" . __FUNCTION__ . ": No feed specified.\n";
 				return false;
 			}
 			
@@ -733,10 +733,10 @@
 		
 		public function mySqliResourceToArray($resource, $htmlentities = false) {
 	
-			global $console;
+			global $tl;
 
 			if (!$resource) {
-				$console .= __CLASS__ . "->" . __FUNCTION__ . ": No resource specified.\n";
+				$tl->page['console'] .= __CLASS__ . "->" . __FUNCTION__ . ": No resource specified.\n";
 				return false;
 			}
 			
@@ -761,10 +761,10 @@
 		
 		public function calendarPageDate($datetime) {
 
-			global $console;
+			global $tl;
 
 			if (!$datetime) {
-				$console .= __CLASS__ . "->" . __FUNCTION__ . ": No date specified.\n";
+				$tl->page['console'] .= __CLASS__ . "->" . __FUNCTION__ . ": No date specified.\n";
 				return false;
 			}
 			
@@ -789,10 +789,10 @@
 		
 		public function bubbleDate($date) {
 			
-			global $console;
+			global $tl;
 
 			if (!$date) {
-				$console .= __CLASS__ . "->" . __FUNCTION__ . ": No date specified.\n";
+				$tl->page['console'] .= __CLASS__ . "->" . __FUNCTION__ . ": No date specified.\n";
 				return false;
 			}
 			
@@ -816,10 +816,10 @@
 		
 		public function addOrdinalSuffix($number) {
 
-			global $console;
+			global $tl;
 
 			if (!floatval($number)) {
-				$console .= __CLASS__ . "->" . __FUNCTION__ . ": No number specified.\n";
+				$tl->page['console'] .= __CLASS__ . "->" . __FUNCTION__ . ": No number specified.\n";
 				return false;
 			}
 			
@@ -832,10 +832,10 @@
 	    
 		public function addFileSizeSuffix($filesizeInBytes) {
 
-			global $console;
+			global $tl;
 
 			if (!floatval($filesizeInBytes)) {
-				$console .= __CLASS__ . "->" . __FUNCTION__ . ": No filesize specified.\n";
+				$tl->page['console'] .= __CLASS__ . "->" . __FUNCTION__ . ": No filesize specified.\n";
 				return false;
 			}
 			
@@ -911,8 +911,10 @@
 
 		public function checkboxesToBinary($arrayOfIDs) {
 
+			global $tl;
+
 			if (!is_array($arrayOfIDs)) {
-				$console .= __CLASS__ . "->" . __FUNCTION__ . ": &quot;" . $arrayOfIDs . "&quot; is not an array.\n";
+				$tl->page['console'] .= __CLASS__ . "->" . __FUNCTION__ . ": &quot;" . $arrayOfIDs . "&quot; is not an array.\n";
 				return false;
 			}
 
@@ -926,10 +928,10 @@
 
 		public function truncate($inputText, $charactersOrWords = 'c', $desiredLength = 50, $moreLink = false, $moreClass = false, $moreLabel = false) {
 
-			global $console;
+			global $tl;
 
 			if (!$inputText) {
-				$console .= __CLASS__ . "->" . __FUNCTION__ . ": No text specified.\n";
+				$tl->page['console'] .= __CLASS__ . "->" . __FUNCTION__ . ": No text specified.\n";
 				return false;
 			}
 			

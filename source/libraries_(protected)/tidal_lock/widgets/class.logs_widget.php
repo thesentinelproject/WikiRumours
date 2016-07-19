@@ -20,7 +20,7 @@
 				rows_per_page: int
 				template_name: URI
 				query_string: string of pairs (delimited with =), each pair delimited with a |
-				  (includes page, sort, keywords)
+				  (includes page, sort, keywords, alerts_only)
 				columns: array(field_name => Bootstrap_icon_suffix)
 				limit: int
 			*/
@@ -28,40 +28,33 @@
 			global $tablePrefix;
 			global $connectionTypes;
 			global $systemPreferences;
-			global $pageStatus;
-			global $pageError;
+			global $tl;
 
 			$keyvalue_array = new keyvalue_array_TL();
 			$parser = new parser_TL();
 			$form = new form_TL();
 			$file_manager = new file_manager_TL();
+			$operators = new operators_TL();
+			$authentication_manager = new authentication_manager_TL();
+
+			// clean data
+				$params['rows_per_page'] = floatval(@$params['rows_per_page']);
+				$params['limit'] = floatval(@$params['limit']);
 
 			// check for errors
 				if ($params && !is_array($params)) {
-					$console .= __CLASS__ . "->" . __FUNCTION__ . ": Incorrectly formatted parameters.\n";
+					$tl->page['console'] .= __CLASS__ . "->" . __FUNCTION__ . ": Incorrectly formatted parameters.\n";
 					return false;
 				}
 
 				if (!trim(@$params['template_name'])) {
-					$console .= __CLASS__ . "->" . __FUNCTION__ . ": Unknown URI.\n";
+					$tl->page['console'] .= __CLASS__ . "->" . __FUNCTION__ . ": Unknown URI.\n";
 					return false;
 				}
 
 				if (!@$params['columns'] || !is_array(@$params['columns'])) {
-					$console .= __CLASS__ . "->" . __FUNCTION__ . ": Unclear which columns to be displayed.\n";
+					$tl->page['console'] .= __CLASS__ . "->" . __FUNCTION__ . ": Unclear which columns to be displayed.\n";
 					return false;
-				}
-
-			// clean input
-				$allowableParameters = array('filterable', 'connection_type_filter', 'exportable', 'paginate', 'rows_per_page', 'template_name', 'query_string', 'columns', 'resortable', 'limit');
-				if ($params) {
-					foreach ($params as $param=>$value) {
-						$foundIt = false;
-						foreach ($allowableParameters as $allowable) {
-							if ($param == $allowable) $foundIt = true;
-						}
-						if (!$foundIt) unset($params[$param]);
-					}
 				}
 
 				$params['rows_per_page'] = floatval(@$params['rows_per_page']);
@@ -74,14 +67,30 @@
 						if ($explodedPair[0] == 'page') $currentPage = floatval($explodedPair[1]);
 						elseif ($explodedPair[0] == 'sort') $sort = $explodedPair[1];
 						elseif ($explodedPair[0] == 'connection_type') $connection_type = $explodedPair[1];
+						elseif ($explodedPair[0] == 'alerts_only') $alerts_only = $explodedPair[1];
+						elseif ($explodedPair[0] == 'alert_to_resolve') $alert_to_resolve = $explodedPair[1];
 						elseif ($explodedPair[0] == 'keywords') $keywords = $explodedPair[1];
 						elseif ($explodedPair[0] == 'output') $output = $explodedPair[1];
 					}
 				}
 				if (@$params['paginate'] && !@$currentPage) $currentPage = 1;
 				if (!@$sort) $sort = 'connected_on DESC';
+				if (!@$alerts_only === 'false') $alerts_only = false;
+
+			// resolve alert, if required
+				if (floatval(@$alert_to_resolve)) {
+					$success = updateDbSingle('logs', ['is_resolved'=>'1'], ['log_id'=>$alert_to_resolve]);
+					if ($success) $authentication_manager->forceRedirect('/' . $params['template_name'] . '/' . $keyvalue_array->updateKeyValue($keyvalue_array->updateKeyValue(@$params['query_string'], 'success', 'alert_resolved', '|'), 'alert_to_resolve', null, '|'));
+					else $tl->page['error'] .= "Unable to resolve alert. ";
+				}
 
 			// build query
+				if(@$connection_type) $matching[$tablePrefix . 'logs.connection_type'] = $connection_type;
+				if(@$alerts_only) {
+					$matching[$tablePrefix . 'logs.is_error'] = '1';
+					$matching[$tablePrefix . 'logs.is_resolved'] = '0';
+				}
+
 				$otherCriteria = '';
 				if (@$keywords) {
 					$keywordExplode = explode(' ', $keywords);
@@ -95,22 +104,22 @@
 				}
 
 				if (@$params['paginate']) {
-					$this->allLogs = retrieveLogs((@$connection_type ? [$tablePrefix . 'logs.connection_type'=>$connection_type] : false), null, $otherCriteria);
+					$this->allLogs = $this->retrieveLogs(@$matching, null, $otherCriteria);
 					$this->numberOfLogs = count($this->allLogs);
 
 					$numberOfPages = max(1, ceil($this->numberOfLogs / $params['rows_per_page']));
 					if ($currentPage > $numberOfPages) $currentPage = $numberOfPages;
 					
-					$this->logs = retrieveLogs((@$connection_type ? [$tablePrefix . 'logs.connection_type'=>$connection_type] : false), null, @$otherCriteria, @$sort, floatval(($currentPage * $params['rows_per_page']) - $params['rows_per_page']) . ',' . $params['rows_per_page']);
+					$this->logs = $this->retrieveLogs(@$matching, null, @$otherCriteria, @$sort, floatval(($currentPage * $params['rows_per_page']) - $params['rows_per_page']) . ',' . $params['rows_per_page']);
 				}
 				elseif (@$params['limit']) {
-					$this->allLogs = retrieveLogs((@$connection_type ? [$tablePrefix . 'logs.connection_type'=>$connection_type] : false), null, $otherCriteria);
+					$this->allLogs = $this->retrieveLogs(@$matching, null, $otherCriteria);
 					$this->numberOfLogs = count($this->allLogs);
 
-					$this->logs = retrieveLogs((@$connection_type ? [$tablePrefix . 'logs.connection_type'=>$connection_type] : false), null, @$otherCriteria, @$sort, $params['limit']);
+					$this->logs = $this->retrieveLogs(@$matching, null, @$otherCriteria, @$sort, $params['limit']);
 				}
 				else {
-					$this->logs = retrieveLogs((@$connection_type ? [$tablePrefix . 'logs.connection_type'=>$connection_type] : false), null, @$otherCriteria, @$sort);
+					$this->logs = $this->retrieveLogs(@$matching, null, @$otherCriteria, @$sort);
 					$this->allLogs = $this->logs;
 					$this->numberOfLogs = count($this->logs);
 				}
@@ -137,18 +146,18 @@
 					// create folder
 						$path = 'downloads/' . date('Y-m-d_H-i-s');
 						mkdir($path);
-						if (!file_exists($path)) $pageError .= "Unable to create download directory. ";
+						if (!file_exists($path)) $tl->page['error'] .= "Unable to create download directory. ";
 						else {
 							// create file
 								$file = 'logs.csv';
 								$file_manager->writeTextFile($path . '/' . $file, $export);
-								if (!file_exists($path . '/' . $file)) $pageError .= "Unable to create file export. ";
+								if (!file_exists($path . '/' . $file)) $tl->page['error'] .= "Unable to create file export. ";
 								else $exportPath = $path . '/' . $file;
 						}
 				}
 
 			// create view
-				$title = "<h2><span class='label label-default'>" . number_format(floatval($this->numberOfLogs)) . "</span> Logs</h2>";
+				$title = "<h2><span class='label label-default'>" . number_format(floatval($this->numberOfLogs)) . "</span> " . (@$alerts_only ? "Alerts" : "Logs") . "</h2>";
 
 				if (!@$numberOfPages) {
 					$this->html .= $title . "\n";
@@ -166,6 +175,7 @@
 				$this->html .= $form->start('logsForm', null, 'post', null, null, ['onSubmit'=>'rebuildURL(); return false;']) . "\n";
 				$this->html .= $form->input('hidden', 'sort', @$sort) . "\n";
 				$this->html .= $form->input('hidden', 'exportData') . "\n";
+				$this->html .= $form->input('hidden', 'alert_to_resolve') . "\n";
 
 				$this->html .= "<table class='table table-condensed'>\n";
 				$this->html .= "<thead>\n";
@@ -188,7 +198,7 @@
 				$this->html .= "</thead>\n";
 				$this->html .= "<tbody>\n";
 				for ($counter = 0; $counter < count($this->logs); $counter++) {
-					$this->html .= "<tr" . ($this->logs[$counter]['is_error'] === '1' && $this->logs[$counter]['is_resolved'] === '0' ? " class='danger'" : false) . ">\n";
+					$this->html .= "<tr" . (!@$alerts_only && $this->logs[$counter]['is_error'] === '1' && $this->logs[$counter]['is_resolved'] === '0' ? " class='danger'" : false) . ">\n";
 					foreach ($params['columns'] as $column => $icon) {
 						if (@$this->logs[$counter][$column] === '') $this->html .= "<td></td>\n"; // empty value or nonexistent column
 						elseif ($column == 'connection_type') $this->html .= "<td>" . $connectionTypes[$this->logs[$counter][$column]] . "</td>\n";
@@ -227,6 +237,11 @@
 						$this->html .= "        " . str_replace('|', '<br />', nl2br($this->logs[$counter]['activity'])) . "\n";
 						if ($this->logs[$counter]['error_message']) $this->html .= "        <hr />" . $this->logs[$counter]['error_message'] . "\n";
 						$this->html .= "      </div>\n";
+						if ($this->logs[$counter]['is_error'] && !$this->logs[$counter]['is_resolved']) {
+							$this->html .= "      <div class='modal-footer'>\n";
+							$this->html .= "        " . $form->input('button', 'resolve_button', null, false, "Resolve", 'btn btn-primary', null, null, null, null, ['onClick'=>'document.getElementById("alert_to_resolve").value = "' . $this->logs[$counter]['log_id'] . '"; rebuildURL();']) . "</td>\n";
+							$this->html .= "      </div>\n";
+						}
 						$this->html .= "    </div>\n";
 						$this->html .= "  </div>\n";
 						$this->html .= "</div>\n\n";
@@ -291,16 +306,39 @@
 				// URL processing
 					$this->js .= "function rebuildURL() {\n";
 					$this->js .= "  var path = '/" . $params['template_name'] . "';\n";
-					$this->js .= "  var queryString = '';\n";
-					if (@$params['resortable']) $this->js .= "  if (document.logsForm.sort.value) queryString += '|sort=' + document.logsForm.sort.value;\n";
-					if (@$params['filterable']) $this->js .= "  if (document.logsForm.keywords.value) queryString += '|keywords=' + document.logsForm.keywords.value;\n";
-					if (@$params['filterable'] && @$params['connection_type_filter']) $this->js .= "  if (document.logsForm.connection_type.value) queryString += '|connection_type=' + document.logsForm.connection_type.value;\n";
-					if (@$params['exportable']) $this->js .= "  if (document.logsForm.exportData.value == 'Y') queryString += '|output=csv';\n";
-					$this->js .= "  queryString = queryString.substring(1);\n";
+					$this->js .= "  var queryString = '" . @$params['query_string'] . "';\n";
+					if (@$params['resortable']) $this->js .= "  if (document.logsForm.sort.value) queryString = updateKeyValue_TL(queryString, 'sort', document.logsForm.sort.value, '|');\n";
+					if (@$params['filterable']) $this->js .= "  if (document.logsForm.keywords.value) queryString = updateKeyValue_TL(queryString, 'keywords', document.logsForm.keywords.value, '|');\n";
+					if (@$params['filterable'] && @$params['connection_type_filter']) $this->js .= "  if (document.logsForm.connection_type.value) queryString = updateKeyValue_TL(queryString, 'connection_type', document.logsForm.connection_type.value, '|');\n";
+					if (@$params['exportable']) $this->js .= "  if (document.logsForm.exportData.value == 'Y') queryString = updateKeyValue_TL(queryString, 'output', 'csv', '|');\n";
+					$this->js .= "  queryString = updateKeyValue_TL(queryString, 'alert_to_resolve', document.logsForm.alert_to_resolve.value, '|');\n";
 					$this->js .= "  document.location.href = path + '/' + encodeURI(queryString);\n";
 					$this->js .= "}\n\n";
 
 				$this->html .= $form->end() . "\n";
+
+		}
+
+		public function retrieveLogs($matching = null, $containing = null, $otherCriteria = null, $sortBy = false, $limit = false) {
+			
+			global $tablePrefix;
+			
+			if (@$matching['relationship_name'] || @$matching['relationship_value']) {
+				$query = "SELECT " . $tablePrefix . "log_relationships.*,";
+				$query .= " " . $tablePrefix . "logs.*";
+				$query .= " FROM " . $tablePrefix . "log_relationships";
+				$query .= " LEFT JOIN " . $tablePrefix . "logs ON " . $tablePrefix . "log_relationships.log_id = " . $tablePrefix . "logs.log_id";
+				$query .= " WHERE 1=1";
+				if ($matching) foreach ($matching as $field => $value) $query .= " AND " . $field . " = '" . addSlashes($value) . "'";
+				if ($containing) foreach ($containing as $field => $value) $query .= " AND " . $field . " LIKE '%" . addSlashes($value) . "%'";
+				if ($otherCriteria) $query .= " AND (" . $otherCriteria . ")";
+				if ($sortBy) $query .= " ORDER BY " . $sortBy;
+				if ($limit) $query .= " LIMIT " . addSlashes($limit);
+
+				return directlyQueryDb($query);
+
+			}
+			else return retrieveFromDb('logs', null, $matching, $containing, null, null, $otherCriteria, null, $sortBy, $limit);
 
 		}
 

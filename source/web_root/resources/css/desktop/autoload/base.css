@@ -17,6 +17,8 @@
 	#footerNav { margin: 0 auto; font-size: 10pt; }
 	#footerContainer { padding: 0px; margin: 0px; line-height: 0; }
 	#cmsPageBottomNav { margin-top: 15px; }
+	#maintenanceWarning { background-color: #F9F2F4; color: #D02572; font-family: Helvetica, Arial, sans-serif; font-size: 10pt; font-weight: normal; padding: 10px; }
+	#environmentWarning { background-color: #dfdfdf; color: #aaaaaa; font-family: Helvetica, Arial, sans-serif; font-size: 8pt; font-weight: bold; padding: 1px; }
 	#console { background-color: #aaa; color: #333; font-family: Helvetica, Arial, sans-serif; font-size: 8pt; font-weight: normal; padding: 10px; }
 	
 	#siteNavLiner { padding-right: 20px; }

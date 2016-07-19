@@ -6,7 +6,7 @@
 	}
 	else {
 		echo "<h2>Unable to Confirm Registration</h2>\n";
-		if ($pageError) echo $pageError;
+		if ($tl->page['error']) echo $tl->page['error'];
 		else echo "Please <a href='/contact'>let us know</a> so that we can help resolve this problem.";
 	}
 	

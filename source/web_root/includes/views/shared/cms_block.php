@@ -1,7 +1,7 @@
 <?php
 
-			$cms = retrieveContent(array('slug'=>$slug, 'cms_type'=>'b', $tablePrefix . 'cms.language_id'=>$operators->firstTrue(@$pseudonym['language_id'], @$systemPreferences['Default language']), $tablePrefix . 'cms.pseudonym_id'=>@$pseudonym['pseudonym_id']));
-			if (!count($cms)) $cms = retrieveContent(array('slug'=>$slug, 'cms_type'=>'b', $tablePrefix . 'cms.language_id'=>$operators->firstTrue(@$pseudonym['language_id'], @$systemPreferences['Default language']), $tablePrefix . 'cms.pseudonym_id'=>'0'));
+			$cms = retrieveContent(array('slug'=>$slug, 'content_type'=>'b', $tablePrefix . 'cms.language_id'=>$operators->firstTrue(@$pseudonym['language_id'], @$systemPreferences['Default language']), $tablePrefix . 'cms.pseudonym_id'=>@$pseudonym['pseudonym_id']));
+			if (!count($cms)) $cms = retrieveContent(array('slug'=>$slug, 'content_type'=>'b', $tablePrefix . 'cms.language_id'=>$operators->firstTrue(@$pseudonym['language_id'], @$systemPreferences['Default language']), $tablePrefix . 'cms.pseudonym_id'=>'0'));
 			if (count($cms)) {
 
 				$otherLanguages = retrieveContent(array('slug'=>$cms[0]['slug'], $tablePrefix . 'cms.pseudonym_id'=>$cms[0]['pseudonym_id']), null, "cms_id != '" . $cms[0]['cms_id'] . "'");

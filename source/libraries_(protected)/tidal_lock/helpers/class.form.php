@@ -10,11 +10,13 @@
 
 		public function input($type, $name, $value = null, $mandatory = false, $labelPlaceholder = null, $class = null, $options = null, $maxlength = null, $otherAttributes = null, $truncateLabel = null, $eventHandlers = null) {
 
+			global $tl;
 			global $parser;
-			global $console;
+			global $localization_manager;
+			global $pageJavaScript;
 
 			if (!$type) {
-				$console .= __CLASS__ . "->" . __FUNCTION__ . ": No element type specified.\n";
+				$tl->page['console'] .= __CLASS__ . "->" . __FUNCTION__ . ": No element type specified.\n";
 				return false;
 			}
 			
@@ -35,6 +37,9 @@
 					case 'password':
 					case 'hidden':
 					case 'number':
+					case 'decimal':
+					case 'latitude':
+					case 'longitude':
 					case 'number_without_spin_buttons':
 					case 'url':
 					case 'email':
@@ -42,27 +47,29 @@
 					case 'title':
 						// validate
 							if (!$name) {
-								$console .= __CLASS__ . "->" . __FUNCTION__ . ": No id/name specified for " . $type . " field.\n";
+								$tl->page['console'] .= __CLASS__ . "->" . __FUNCTION__ . ": No id/name specified for " . $type . " field.\n";
 								return false;
 							}
 							if ($type == 'number' && $value && !is_numeric($value)) {
-								$console .= __FUNCTION__ . " (" . $name . "): Number field must contain a numeric value.\n";
+								$tl->page['console'] .= __FUNCTION__ . " (" . $name . "): Number field must contain a numeric value.\n";
 								return false;
 							}
 							if ($type == 'email' && $value && substr_count($value, '@') < 1 && substr_count($value, '.') < 1) {
-								$console .= __FUNCTION__ . " (" . $name . "): Email value is invalid.\n";
+								$tl->page['console'] .= __FUNCTION__ . " (" . $name . "): Email value is invalid.\n";
 								return false;
 							}
 							if ($otherAttributes && !is_array($otherAttributes)) {
-								$console .= __FUNCTION__ . " (" . $name . "): otherAttributes must be an array.\n";
+								$tl->page['console'] .= __FUNCTION__ . " (" . $name . "): otherAttributes must be an array.\n";
 								return false;
 							}
 							if ($eventHandlers && !is_array($eventHandlers)) {
-								$console .= __FUNCTION__ . " (" . $name . "): eventHandlers must be an array.\n";
+								$tl->page['console'] .= __FUNCTION__ . " (" . $name . "): eventHandlers must be an array.\n";
 								return false;
 							}
 						// return
 							if ($type == 'number_without_spin_buttons' || $type == 'title') $field = "<input type='text' name='" . $name . "' id='" . $name . "'";
+							elseif ($type == 'decimal') $field = "<input type='number' " . (!@$otherAttributes['step'] ? "step='.01' " : false) . "name='" . $name . "' id='" . $name . "'";
+							elseif ($type == 'latitude' || $type == 'longitude') $field = "<input type='number' " . (!@$otherAttributes['step'] ? "step='.0001' " : false) . "name='" . $name . "' id='" . $name . "'";
 							else $field = "<input type='" . $type . "' name='" . $name . "' id='" . $name . "'";
 							if ($placeholder) $field .= " placeholder='" . htmlspecialchars($placeholder, ENT_QUOTES) . "'";
 							if ($type == 'title') $field .= " class='" . trim('autoCapitalize ' . $class) . "'";
@@ -84,15 +91,15 @@
 					case 'textarea':
 						// validate
 							if (!$name) {
-								$console .= __CLASS__ . "->" . __FUNCTION__ . ": No id/name specified for " . $type . " field.\n";
+								$tl->page['console'] .= __CLASS__ . "->" . __FUNCTION__ . ": No id/name specified for " . $type . " field.\n";
 								return false;
 							}
 							if ($otherAttributes && !is_array($otherAttributes)) {
-								$console .= __FUNCTION__ . " (" . $name . "): otherAttributes must be an array.\n";
+								$tl->page['console'] .= __FUNCTION__ . " (" . $name . "): otherAttributes must be an array.\n";
 								return false;
 							}
 							if ($eventHandlers && !is_array($eventHandlers)) {
-								$console .= __FUNCTION__ . " (" . $name . "): eventHandlers must be an array.\n";
+								$tl->page['console'] .= __FUNCTION__ . " (" . $name . "): eventHandlers must be an array.\n";
 								return false;
 							}
 						// return
@@ -110,15 +117,15 @@
 					case 'uneditable':
 						// validate
 							if (!$name) {
-								$console .= __CLASS__ . "->" . __FUNCTION__ . ": No id/name specified for " . $type . " field.\n";
+								$tl->page['console'] .= __CLASS__ . "->" . __FUNCTION__ . ": No id/name specified for " . $type . " field.\n";
 								return false;
 							}
 							if (is_null($value)) {
-								$console .= __FUNCTION__ . " (" . $name . "): No value specified.\n";
+								$tl->page['console'] .= __FUNCTION__ . " (" . $name . "): No value specified.\n";
 								return false;
 							}
 							if ($otherAttributes && !is_array($otherAttributes)) {
-								$console .= __FUNCTION__ . " (" . $name . "): otherAttributes must be an array.\n";
+								$tl->page['console'] .= __FUNCTION__ . " (" . $name . "): otherAttributes must be an array.\n";
 								return false;
 							}
 						// return
@@ -137,15 +144,15 @@
 					case 'uneditable_static':
 						// validate
 							if (!$name) {
-								$console .= __CLASS__ . "->" . __FUNCTION__ . ": No id/name specified for " . $type . " field.\n";
+								$tl->page['console'] .= __CLASS__ . "->" . __FUNCTION__ . ": No id/name specified for " . $type . " field.\n";
 								return false;
 							}
 							if (is_null($value)) {
-								$console .= __FUNCTION__ . " (" . $name . "): No value specified.\n";
+								$tl->page['console'] .= __FUNCTION__ . " (" . $name . "): No value specified.\n";
 								return false;
 							}
 							if ($otherAttributes && !is_array($otherAttributes)) {
-								$console .= __FUNCTION__ . " (" . $name . "): otherAttributes must be an array.\n";
+								$tl->page['console'] .= __FUNCTION__ . " (" . $name . "): otherAttributes must be an array.\n";
 								return false;
 							}
 						// return
@@ -165,15 +172,15 @@
 					case 'search':
 						// validate
 							if (!$name) {
-								$console .= __CLASS__ . "->" . __FUNCTION__ . ": No id/name specified for " . $type . " field.\n";
+								$tl->page['console'] .= __CLASS__ . "->" . __FUNCTION__ . ": No id/name specified for " . $type . " field.\n";
 								return false;
 							}
 							if ($otherAttributes && !is_array($otherAttributes)) {
-								$console .= __FUNCTION__ . " (" . $name . "): otherAttributes must be an array.\n";
+								$tl->page['console'] .= __FUNCTION__ . " (" . $name . "): otherAttributes must be an array.\n";
 								return false;
 							}
 							if ($eventHandlers && !is_array($eventHandlers)) {
-								$console .= __FUNCTION__ . " (" . $name . "): eventHandlers must be an array.\n";
+								$tl->page['console'] .= __FUNCTION__ . " (" . $name . "): eventHandlers must be an array.\n";
 								return false;
 							}
 						// return
@@ -192,15 +199,15 @@
 					case 'password_with_preview':
 						// validate
 							if (!$name) {
-								$console .= __CLASS__ . "->" . __FUNCTION__ . ": No id/name specified for " . $type . " field.\n";
+								$tl->page['console'] .= __CLASS__ . "->" . __FUNCTION__ . ": No id/name specified for " . $type . " field.\n";
 								return false;
 							}
 							if ($otherAttributes && !is_array($otherAttributes)) {
-								$console .= __FUNCTION__ . " (" . $name . "): otherAttributes must be an array.\n";
+								$tl->page['console'] .= __FUNCTION__ . " (" . $name . "): otherAttributes must be an array.\n";
 								return false;
 							}
 							if ($eventHandlers && !is_array($eventHandlers)) {
-								$console .= __FUNCTION__ . " (" . $name . "): eventHandlers must be an array.\n";
+								$tl->page['console'] .= __FUNCTION__ . " (" . $name . "): eventHandlers must be an array.\n";
 								return false;
 							}
 						// return
@@ -231,15 +238,15 @@
 					case 'password_with_health_meter':
 						// validate
 							if (!$name) {
-								$console .= __CLASS__ . "->" . __FUNCTION__ . ": No id/name specified for " . $type . " field.\n";
+								$tl->page['console'] .= __CLASS__ . "->" . __FUNCTION__ . ": No id/name specified for " . $type . " field.\n";
 								return false;
 							}
 							if ($otherAttributes && !is_array($otherAttributes)) {
-								$console .= __FUNCTION__ . " (" . $name . "): otherAttributes must be an array.\n";
+								$tl->page['console'] .= __FUNCTION__ . " (" . $name . "): otherAttributes must be an array.\n";
 								return false;
 							}
 							if ($eventHandlers && !is_array($eventHandlers)) {
-								$console .= __FUNCTION__ . " (" . $name . "): eventHandlers must be an array.\n";
+								$tl->page['console'] .= __FUNCTION__ . " (" . $name . "): eventHandlers must be an array.\n";
 								return false;
 							}
 						// return
@@ -259,19 +266,15 @@
 						case 'select':
 						// validate
 							if (!$name) {
-								$console .= __CLASS__ . "->" . __FUNCTION__ . ": No id/name specified for " . $type . " field.\n";
-								return false;
-							}
-							if (count($options) < 1) {
-								$console .= __FUNCTION__ . " (" . $name . "): No options to display in select box.\n";
+								$tl->page['console'] .= __CLASS__ . "->" . __FUNCTION__ . ": No id/name specified for " . $type . " field.\n";
 								return false;
 							}
 							if ($otherAttributes && !is_array($otherAttributes)) {
-								$console .= __FUNCTION__ . " (" . $name . "): otherAttributes must be an array.\n";
+								$tl->page['console'] .= __FUNCTION__ . " (" . $name . "): otherAttributes must be an array.\n";
 								return false;
 							}
 							if ($eventHandlers && !is_array($eventHandlers)) {
-								$console .= __FUNCTION__ . " (" . $name . "): eventHandlers must be an array.\n";
+								$tl->page['console'] .= __FUNCTION__ . " (" . $name . "): eventHandlers must be an array.\n";
 								return false;
 							}
 						// return
@@ -310,15 +313,15 @@
 						case 'yesno_bootstrap_switch':
 						// validate
 							if (!$name) {
-								$console .= __CLASS__ . "->" . __FUNCTION__ . ": No id/name specified for " . $type . " field.\n";
+								$tl->page['console'] .= __CLASS__ . "->" . __FUNCTION__ . ": No id/name specified for " . $type . " field.\n";
 								return false;
 							}
 							if ($otherAttributes && !is_array($otherAttributes)) {
-								$console .= __FUNCTION__ . " (" . $name . "): otherAttributes must be an array.\n";
+								$tl->page['console'] .= __FUNCTION__ . " (" . $name . "): otherAttributes must be an array.\n";
 								return false;
 							}
 							if ($eventHandlers && !is_array($eventHandlers)) {
-								$console .= __FUNCTION__ . " (" . $name . "): eventHandlers must be an array.\n";
+								$tl->page['console'] .= __FUNCTION__ . " (" . $name . "): eventHandlers must be an array.\n";
 								return false;
 							}
 						// initialize
@@ -337,19 +340,19 @@
 					case 'percentage':
 						// validate
 							if (!$name) {
-								$console .= __CLASS__ . "->" . __FUNCTION__ . ": No id/name specified for " . $type . " field.\n";
+								$tl->page['console'] .= __CLASS__ . "->" . __FUNCTION__ . ": No id/name specified for " . $type . " field.\n";
 								return false;
 							}
 							if ($value && !is_numeric($value)) {
-								$console .= __FUNCTION__ . " (" . $name . "): Percentage must be a numeric value.\n";
+								$tl->page['console'] .= __FUNCTION__ . " (" . $name . "): Percentage must be a numeric value.\n";
 								return false;
 							}
 							if ($otherAttributes && !is_array($otherAttributes)) {
-								$console .= __FUNCTION__ . " (" . $name . "): otherAttributes must be an array.\n";
+								$tl->page['console'] .= __FUNCTION__ . " (" . $name . "): otherAttributes must be an array.\n";
 								return false;
 							}
 							if ($eventHandlers && !is_array($eventHandlers)) {
-								$console .= __FUNCTION__ . " (" . $name . "): eventHandlers must be an array.\n";
+								$tl->page['console'] .= __FUNCTION__ . " (" . $name . "): eventHandlers must be an array.\n";
 								return false;
 							}
 						// initialize
@@ -370,19 +373,19 @@
 					case 'percentage_bootstrap':
 						// validate
 							if (!$name) {
-								$console .= __CLASS__ . "->" . __FUNCTION__ . ": No id/name specified for " . $type . " field.\n";
+								$tl->page['console'] .= __CLASS__ . "->" . __FUNCTION__ . ": No id/name specified for " . $type . " field.\n";
 								return false;
 							}
 							if ($value && !is_numeric($value)) {
-								$console .= __FUNCTION__ . " (" . $name . "): Percentage must be a numeric value.\n";
+								$tl->page['console'] .= __FUNCTION__ . " (" . $name . "): Percentage must be a numeric value.\n";
 								return false;
 							}
 							if ($otherAttributes && !is_array($otherAttributes)) {
-								$console .= __FUNCTION__ . " (" . $name . "): otherAttributes must be an array.\n";
+								$tl->page['console'] .= __FUNCTION__ . " (" . $name . "): otherAttributes must be an array.\n";
 								return false;
 							}
 							if ($eventHandlers && !is_array($eventHandlers)) {
-								$console .= __FUNCTION__ . " (" . $name . "): eventHandlers must be an array.\n";
+								$tl->page['console'] .= __FUNCTION__ . " (" . $name . "): eventHandlers must be an array.\n";
 								return false;
 							}
 						// initialize
@@ -402,175 +405,25 @@
 							return $field;
 							break;
 				/* ------------------------- */
-					case 'dollars':
+					case 'currency_select':
+					case 'currency_select_short':
 						// validate
-							if (!$name) {
-								$console .= __CLASS__ . "->" . __FUNCTION__ . ": No id/name specified for " . $type . " field.\n";
-								return false;
-							}
-							$value = str_replace(',', '', $value);
-							if ($value && !is_numeric($value)) {
-								$console .= __FUNCTION__ . " (" . $name . "): Currency must be a numeric value.\n";
-								return false;
-							}
 							if ($otherAttributes && !is_array($otherAttributes)) {
-								$console .= __FUNCTION__ . " (" . $name . "): otherAttributes must be an array.\n";
+								$tl->page['console'] .= __FUNCTION__ . " (" . $name . "): otherAttributes must be an array.\n";
 								return false;
 							}
 							if ($eventHandlers && !is_array($eventHandlers)) {
-								$console .= __FUNCTION__ . " (" . $name . "): eventHandlers must be an array.\n";
+								$tl->page['console'] .= __FUNCTION__ . " (" . $name . "): eventHandlers must be an array.\n";
 								return false;
 							}
-						// initialize
-							if (!$eventHandlers) $eventHandlers = array();
-							$eventHandlers['onChange'] = "this.value = this.value.replace(/,/g, " . '""' . "); if (isNaN(this.value)) { this.value = " . '"0.00"' . "; } " . @$eventHandlers['onChange'];
-							if (!is_null(@$otherAttributes['max'])) $eventHandlers['onChange'] = "if (this.value && this.value > " . floatval($otherAttributes['max']) . ") { this.value = " . '"' . number_format($otherAttributes['max'], 2) . '"' . "; } " . @$eventHandlers['onChange'];
-							if (!is_null(@$otherAttributes['min'])) $eventHandlers['onChange'] = "if (this.value && this.value < " . floatval($otherAttributes['min']) . ") { this.value = " . '"' . number_format($otherAttributes['min'], 2) . '"' . "; } " . @$eventHandlers['onChange'];
-						// return
-							$field .= "<input type='text' name='" . $name . "' id='" . $name . "'";
-							if ($placeholder) $field .= " placeholder='" . htmlspecialchars($placeholder, ENT_QUOTES) . "'";
-							if ($class) $field .= " class='" . $class . "'";
-							if ($value) $field .= " value='" . number_format($value, 2) . "'";
-							else $field .= " value='0.00'";
-							if ($otherAttributes) foreach ($otherAttributes as $attribute => $attributeValue) $field .= " " . $attribute . "='" . trim($attributeValue) . "'";
-							foreach ($eventHandlers as $event => $action) $field .= " " . $event . "='" . trim($action) . "'";
-							if ($mandatory) $field .= " required";
-							$field .= " />";
-							return $field;
-							break;
-				/* ------------------------- */
-					case 'dollars_bootstrap':
-						// validate
-							if (!$name) {
-								$console .= __CLASS__ . "->" . __FUNCTION__ . ": No id/name specified for " . $type . " field.\n";
-								return false;
-							}
-							$value = str_replace(',', '', $value);
-							if ($value && !is_numeric($value)) {
-								$console .= __FUNCTION__ . " (" . $name . "): Currency must be a numeric value.\n";
-								return false;
-							}
-							if ($otherAttributes && !is_array($otherAttributes)) {
-								$console .= __FUNCTION__ . " (" . $name . "): otherAttributes must be an array.\n";
-								return false;
-							}
-							if ($eventHandlers && !is_array($eventHandlers)) {
-								$console .= __FUNCTION__ . " (" . $name . "): eventHandlers must be an array.\n";
-								return false;
-							}
-						// initialize
-							if (!$eventHandlers) $eventHandlers = array();
-							$eventHandlers['onChange'] = "this.value = this.value.replace(/,/g, " . '""' . "); if (isNaN(this.value)) { this.value = " . '"0.00"' . "; } " . @$eventHandlers['onChange'];
-							if (!is_null(@$otherAttributes['max'])) $eventHandlers['onChange'] = "if (this.value && this.value > " . floatval($otherAttributes['max']) . ") { this.value = " . '"' . number_format($otherAttributes['max'], 2) . '"' . "; } " . @$eventHandlers['onChange'];
-							if (!is_null(@$otherAttributes['min'])) $eventHandlers['onChange'] = "if (this.value && this.value < " . floatval($otherAttributes['min']) . ") { this.value = " . '"' . number_format($otherAttributes['min'], 2) . '"' . "; } " . @$eventHandlers['onChange'];
-						// return
-							$field = "<div class='input-group'><span class='input-group-addon'>$</span>";
-							$field .= "<input type='text' name='" . $name . "' id='" . $name . "'";
-							if ($placeholder) $field .= " placeholder='" . htmlspecialchars($placeholder, ENT_QUOTES) . "'";
-							$field .= " class='" . trim('form-control ' . $class) . "'";
-							if ($value) $field .= " value='" . number_format($value, 2) . "'";
-							else $field .= " value='0.00'";
-							if ($otherAttributes) foreach ($otherAttributes as $attribute => $attributeValue) $field .= " " . $attribute . "='" . trim($attributeValue) . "'";
-							foreach ($eventHandlers as $event => $action) $field .= " " . $event . "='" . trim($action) . "'";
-							if ($mandatory) $field .= " required";
-							$field .= " />";
-							$field .= "</div>";
-							return $field;
-							break;
-				/* ------------------------- */
-					case 'pounds_bootstrap':
-						// validate
-							if (!$name) {
-								$console .= __CLASS__ . "->" . __FUNCTION__ . ": No id/name specified for " . $type . " field.\n";
-								return false;
-							}
-							$value = str_replace(',', '', $value);
-							if ($value && !is_numeric($value)) {
-								$console .= __FUNCTION__ . " (" . $name . "): Currency must be a numeric value.\n";
-								return false;
-							}
-							if ($otherAttributes && !is_array($otherAttributes)) {
-								$console .= __FUNCTION__ . " (" . $name . "): otherAttributes must be an array.\n";
-								return false;
-							}
-							if ($eventHandlers && !is_array($eventHandlers)) {
-								$console .= __FUNCTION__ . " (" . $name . "): eventHandlers must be an array.\n";
-								return false;
-							}
-						// initialize
-							if (!$eventHandlers) $eventHandlers = array();
-							$eventHandlers['onChange'] = "this.value = this.value.replace(/,/g, " . '""' . "); if (isNaN(this.value)) { this.value = " . '"0.00"' . "; } " . @$eventHandlers['onChange'];
-							if (!is_null(@$otherAttributes['max'])) $eventHandlers['onChange'] = "if (this.value && this.value > " . floatval($otherAttributes['max']) . ") { this.value = " . '"' . number_format($otherAttributes['max'], 2) . '"' . "; } " . @$eventHandlers['onChange'];
-							if (!is_null(@$otherAttributes['min'])) $eventHandlers['onChange'] = "if (this.value && this.value < " . floatval($otherAttributes['min']) . ") { this.value = " . '"' . number_format($otherAttributes['min'], 2) . '"' . "; } " . @$eventHandlers['onChange'];
-						// return
-							$field = "<div class='input-group'><span class='input-group-addon'>&pound;</span>";
-							$field .= "<input type='text' name='" . $name . "' id='" . $name . "'";
-							if ($placeholder) $field .= " placeholder='" . htmlspecialchars($placeholder, ENT_QUOTES) . "'";
-							$field .= " class='" . trim('form-control ' . $class) . "'";
-							if ($value) $field .= " value='" . number_format($value, 2) . "'";
-							else $field .= " value='0.00'";
-							if ($otherAttributes) foreach ($otherAttributes as $attribute => $attributeValue) $field .= " " . $attribute . "='" . trim($attributeValue) . "'";
-							foreach ($eventHandlers as $event => $action) $field .= " " . $event . "='" . trim($action) . "'";
-							if ($mandatory) $field .= " required";
-							$field .= " />";
-							$field .= "</div>";
-							return $field;
-							break;
-				/* ------------------------- */
-					case 'yen_bootstrap':
-						// validate
-							if (!$name) {
-								$console .= __CLASS__ . "->" . __FUNCTION__ . ": No id/name specified for " . $type . " field.\n";
-								return false;
-							}
-							$value = str_replace(',', '', $value);
-							if ($value && !is_numeric($value)) {
-								$console .= __FUNCTION__ . " (" . $name . "): Currency must be a numeric value.\n";
-								return false;
-							}
-							if ($otherAttributes && !is_array($otherAttributes)) {
-								$console .= __FUNCTION__ . " (" . $name . "): otherAttributes must be an array.\n";
-								return false;
-							}
-							if ($eventHandlers && !is_array($eventHandlers)) {
-								$console .= __FUNCTION__ . " (" . $name . "): eventHandlers must be an array.\n";
-								return false;
-							}
-						// initialize
-							if (!$eventHandlers) $eventHandlers = array();
-							$eventHandlers['onChange'] = "this.value = this.value.replace(/,/g, " . '""' . "); if (isNaN(this.value)) { this.value = " . '"0.00"' . "; } " . @$eventHandlers['onChange'];
-							if (!is_null(@$otherAttributes['max'])) $eventHandlers['onChange'] = "if (this.value && this.value > " . floatval($otherAttributes['max']) . ") { this.value = " . '"' . number_format($otherAttributes['max'], 2) . '"' . "; } " . @$eventHandlers['onChange'];
-							if (!is_null(@$otherAttributes['min'])) $eventHandlers['onChange'] = "if (this.value && this.value < " . floatval($otherAttributes['min']) . ") { this.value = " . '"' . number_format($otherAttributes['min'], 2) . '"' . "; } " . @$eventHandlers['onChange'];
-						// return
-							$field = "<div class='input-group'><span class='input-group-addon'>&yen;</span>";
-							$field .= "<input type='text' name='" . $name . "' id='" . $name . "'";
-							if ($placeholder) $field .= " placeholder='" . htmlspecialchars($placeholder, ENT_QUOTES) . "'";
-							$field .= " class='" . trim('form-control ' . $class) . "'";
-							if ($value) $field .= " value='" . floatval($value) . "'";
-							else $field .= " value='0.00'";
-							if ($otherAttributes) foreach ($otherAttributes as $attribute => $attributeValue) $field .= " " . $attribute . "='" . trim($attributeValue) . "'";
-							foreach ($eventHandlers as $event => $action) $field .= " " . $event . "='" . trim($action) . "'";
-							if ($mandatory) $field .= " required";
-							$field .= " />";
-							$field .= "</div>";
-							return $field;
-							break;
-				/* ------------------------- */
-					case 'currency':
-					case 'currency_full':
-						// validate
-							if ($otherAttributes && !is_array($otherAttributes)) {
-								$console .= __FUNCTION__ . " (" . $name . "): otherAttributes must be an array.\n";
-								return false;
-							}
-							if ($eventHandlers && !is_array($eventHandlers)) {
-								$console .= __FUNCTION__ . " (" . $name . "): eventHandlers must be an array.\n";
-								return false;
-							}
-							global $currencies_TL;
-							if (!count(@$currencies_TL)) {
-								$console .= __FUNCTION__ . " (" . $name . "): Unable to load currencies_TL.\n";
-								return false;
+							if (!$options) {
+								global $localization_manager;
+								if ($localization_manager->currencies) $options = $localization_manager->currencies;
+								else {
+									$localization_manager = new localization_manager_TL();
+									$localization_manager->populateCurrencies();
+									$options = $localization_manager->currencies;
+								}
 							}
 						// initialize
 							if (!$name) $name = 'currency';
@@ -585,11 +438,11 @@
 								$field .= "<option value=''>" . $label . "</option>";
 								$field .= "<option value=''>--</option>";
 							}
-							foreach ($currencies_TL as $currencyID => $currency) {
+							foreach ($options as $currencyID => $currency) {
 								$field .= "<option value='" . $currencyID . "'";
 								if ($value && $currencyID == $value) $field .= " selected";
 								$field .= ">";
-								if ($type == 'currency_full') {
+								if ($type == 'currency_select') {
 									if ($truncateLabel > strlen($currency) - 3) $currency = substr($currency, 0, $truncateLabel) . '...';
 									$field .= $currency;
 								}
@@ -600,23 +453,69 @@
 							return $field;
 							break;
 				/* ------------------------- */
+					case 'currency_number':
+						// validate
+							if (@$value && !is_array($value)) {
+								$tl->page['console'] .= __FUNCTION__ . " (" . $name . "): Value must be an array containing amount and/or currency.\n";
+								return false;
+							}
+							if (@$value['amount']) $value['amount'] = str_replace(',', '', $value['amount']);
+							if (@$value['amount'] && !is_numeric(@$value['amount'])) {
+								$tl->page['console'] .= __FUNCTION__ . " (" . $name . "): Amount must be a numeric value.\n";
+								return false;
+							}
+							if ($otherAttributes && !is_array($otherAttributes)) {
+								$tl->page['console'] .= __FUNCTION__ . " (" . $name . "): otherAttributes must be an array.\n";
+								return false;
+							}
+							if ($eventHandlers && !is_array($eventHandlers)) {
+								$tl->page['console'] .= __FUNCTION__ . " (" . $name . "): eventHandlers must be an array.\n";
+								return false;
+							}
+						// initialize
+							if (!$name) $name = 'amount';
+							if (!$eventHandlers) $eventHandlers = array();
+							$eventHandlers['onChange'] = trim("this.value = this.value.replace(/,/g, " . '""' . "); if (isNaN(this.value)) { this.value = " . '"0.00"' . "; } " . @$eventHandlers['onChange']);
+							if (!@$otherAttributes['step']) $otherAttributes['step'] = '.01';
+							if (!is_null(@$otherAttributes['max'])) $eventHandlers['onChange'] = "if (this.value && this.value > " . floatval($otherAttributes['max']) . ") { this.value = " . '"' . number_format($otherAttributes['max'], 2) . '"' . "; } " . @$eventHandlers['onChange'];
+							if (!is_null(@$otherAttributes['min'])) $eventHandlers['onChange'] = "if (this.value && this.value < " . floatval($otherAttributes['min']) . ") { this.value = " . '"' . number_format($otherAttributes['min'], 2) . '"' . "; } " . @$eventHandlers['onChange'];
+							if (@$otherAttributes['display_currency'] && @$value['currency']) {
+								$displaySymbol = true;
+								unset($otherAttributes['display_currency']);
+
+								global $localization_manager;
+								$localization_manager = new localization_manager_TL();
+								$localization_manager->populateCurrencies($value['currency']);
+							}
+						// return
+							if (!@$displaySymbol) $field = $this->input('number', $name, (floatval(@$value['amount']) ? number_format(floatval(@$value['amount']), 2) : '0.00'), $mandatory, $labelPlaceholder, $class, null, $maxlength, $otherAttributes, $truncateLabel, $eventHandlers);
+							else {
+								$field = "<div class='input-group'>";
+								if ($localization_manager->currency_symbols[@$value['currency']]) $field .= "<span class='input-group-addon'>" . $localization_manager->currency_symbols[$value['currency']] . "</span>";
+								$field .= $this->input('number', $name, floatval(@$value['amount']), $mandatory, $labelPlaceholder, trim('form-control ' . $class), null, $maxlength, $otherAttributes, $truncateLabel, $eventHandlers);
+								$field .= "<span class='input-group-addon'>" . $value['currency'] . "</span>";
+								$field .= "</div>";
+							}
+							return $field;
+							break;
+				/* ------------------------- */
 					case 'radio':
 					case 'radio_stacked':
 						// validate
 							if (!$name) {
-								$console .= __CLASS__ . "->" . __FUNCTION__ . ": No id/name specified for " . $type . " field.\n";
+								$tl->page['console'] .= __CLASS__ . "->" . __FUNCTION__ . ": No id/name specified for " . $type . " field.\n";
 								return false;
 							}
 							if (count($options) < 1) {
-								$console .= __FUNCTION__ . " (" . $name . "): No options to display as radio buttons.\n";
+								$tl->page['console'] .= __FUNCTION__ . " (" . $name . "): No options to display as radio buttons.\n";
 								return false;
 							}
 							if ($otherAttributes && !is_array($otherAttributes)) {
-								$console .= __FUNCTION__ . " (" . $name . "): otherAttributes must be an array.\n";
+								$tl->page['console'] .= __FUNCTION__ . " (" . $name . "): otherAttributes must be an array.\n";
 								return false;
 							}
 							if ($eventHandlers && !is_array($eventHandlers)) {
-								$console .= __FUNCTION__ . " (" . $name . "): eventHandlers must be an array.\n";
+								$tl->page['console'] .= __FUNCTION__ . " (" . $name . "): eventHandlers must be an array.\n";
 								return false;
 							}
 						// initialize
@@ -645,15 +544,15 @@
 					case 'checkbox':
 						// validate
 							if (!$name) {
-								$console .= __CLASS__ . "->" . __FUNCTION__ . ": No id/name specified for " . $type . " field.\n";
+								$tl->page['console'] .= __CLASS__ . "->" . __FUNCTION__ . ": No id/name specified for " . $type . " field.\n";
 								return false;
 							}
 							if ($otherAttributes && !is_array($otherAttributes)) {
-								$console .= __FUNCTION__ . " (" . $name . "): otherAttributes must be an array.\n";
+								$tl->page['console'] .= __FUNCTION__ . " (" . $name . "): otherAttributes must be an array.\n";
 								return false;
 							}
 							if ($eventHandlers && !is_array($eventHandlers)) {
-								$console .= __FUNCTION__ . " (" . $name . "): eventHandlers must be an array.\n";
+								$tl->page['console'] .= __FUNCTION__ . " (" . $name . "): eventHandlers must be an array.\n";
 								return false;
 							}
 						// initialize
@@ -672,15 +571,15 @@
 					case 'checkbox_stacked_bootstrap':
 						// validate
 							if (!$name) {
-								$console .= __CLASS__ . "->" . __FUNCTION__ . ": No id/name specified for " . $type . " field.\n";
+								$tl->page['console'] .= __CLASS__ . "->" . __FUNCTION__ . ": No id/name specified for " . $type . " field.\n";
 								return false;
 							}
 							if ($otherAttributes && !is_array($otherAttributes)) {
-								$console .= __FUNCTION__ . " (" . $name . "): otherAttributes must be an array.\n";
+								$tl->page['console'] .= __FUNCTION__ . " (" . $name . "): otherAttributes must be an array.\n";
 								return false;
 							}
 							if ($eventHandlers && !is_array($eventHandlers)) {
-								$console .= __FUNCTION__ . " (" . $name . "): eventHandlers must be an array.\n";
+								$tl->page['console'] .= __FUNCTION__ . " (" . $name . "): eventHandlers must be an array.\n";
 								return false;
 							}
 						// initialize
@@ -701,15 +600,15 @@
 					case 'date':
 						// validate
 							if (!$name) {
-								$console .= __CLASS__ . "->" . __FUNCTION__ . ": No id/name specified for " . $type . " field.\n";
+								$tl->page['console'] .= __CLASS__ . "->" . __FUNCTION__ . ": No id/name specified for " . $type . " field.\n";
 								return false;
 							}
 							if ($otherAttributes && !is_array($otherAttributes)) {
-								$console .= __FUNCTION__ . " (" . $name . "): otherAttributes must be an array.\n";
+								$tl->page['console'] .= __FUNCTION__ . " (" . $name . "): otherAttributes must be an array.\n";
 								return false;
 							}
 							if ($eventHandlers && !is_array($eventHandlers)) {
-								$console .= __FUNCTION__ . " (" . $name . "): eventHandlers must be an array.\n";
+								$tl->page['console'] .= __FUNCTION__ . " (" . $name . "): eventHandlers must be an array.\n";
 								return false;
 							}
 						// initialize
@@ -728,15 +627,15 @@
 					case 'hoursminutes':
 						// validate
 							if (!$name) {
-								$console .= __CLASS__ . "->" . __FUNCTION__ . ": No id/name specified for " . $type . " field.\n";
+								$tl->page['console'] .= __CLASS__ . "->" . __FUNCTION__ . ": No id/name specified for " . $type . " field.\n";
 								return false;
 							}
 							if ($otherAttributes && !is_array($otherAttributes)) {
-								$console .= __FUNCTION__ . " (" . $name . "): otherAttributes must be an array.\n";
+								$tl->page['console'] .= __FUNCTION__ . " (" . $name . "): otherAttributes must be an array.\n";
 								return false;
 							}
 							if ($eventHandlers && !is_array($eventHandlers)) {
-								$console .= __FUNCTION__ . " (" . $name . "): eventHandlers must be an array.\n";
+								$tl->page['console'] .= __FUNCTION__ . " (" . $name . "): eventHandlers must be an array.\n";
 								return false;
 							}
 						// initialize
@@ -754,15 +653,15 @@
 					case 'datetime_with_picker':
 						// validate
 							if (!$name) {
-								$console .= __CLASS__ . "->" . __FUNCTION__ . ": No id/name specified for " . $type . " field.\n";
+								$tl->page['console'] .= __CLASS__ . "->" . __FUNCTION__ . ": No id/name specified for " . $type . " field.\n";
 								return false;
 							}
 							if ($otherAttributes && !is_array($otherAttributes)) {
-								$console .= __FUNCTION__ . " (" . $name . "): otherAttributes must be an array.\n";
+								$tl->page['console'] .= __FUNCTION__ . " (" . $name . "): otherAttributes must be an array.\n";
 								return false;
 							}
 							if ($eventHandlers && !is_array($eventHandlers)) {
-								$console .= __FUNCTION__ . " (" . $name . "): eventHandlers must be an array.\n";
+								$tl->page['console'] .= __FUNCTION__ . " (" . $name . "): eventHandlers must be an array.\n";
 								return false;
 							}
 						// return
@@ -782,19 +681,19 @@
 					case 'year':
 						// validate
 							if (!$name) {
-								$console .= __CLASS__ . "->" . __FUNCTION__ . ": No id/name specified for " . $type . " field.\n";
+								$tl->page['console'] .= __CLASS__ . "->" . __FUNCTION__ . ": No id/name specified for " . $type . " field.\n";
 								return false;
 							}
 							if ($value && !is_numeric($value)) {
-								$console .= __FUNCTION__ . " (" . $name . "): Year must be a numeric value.\n";
+								$tl->page['console'] .= __FUNCTION__ . " (" . $name . "): Year must be a numeric value.\n";
 								return false;
 							}
 							if ($otherAttributes && !is_array($otherAttributes)) {
-								$console .= __FUNCTION__ . " (" . $name . "): otherAttributes must be an array.\n";
+								$tl->page['console'] .= __FUNCTION__ . " (" . $name . "): otherAttributes must be an array.\n";
 								return false;
 							}
 							if ($eventHandlers && !is_array($eventHandlers)) {
-								$console .= __FUNCTION__ . " (" . $name . "): eventHandlers must be an array.\n";
+								$tl->page['console'] .= __FUNCTION__ . " (" . $name . "): eventHandlers must be an array.\n";
 								return false;
 							}
 						// initialize
@@ -815,11 +714,11 @@
 					case 'timezone':
 						// validate
 							if ($otherAttributes && !is_array($otherAttributes)) {
-								$console .= __FUNCTION__ . " (" . $name . "): otherAttributes must be an array.\n";
+								$tl->page['console'] .= __FUNCTION__ . " (" . $name . "): otherAttributes must be an array.\n";
 								return false;
 							}
 							if ($eventHandlers && !is_array($eventHandlers)) {
-								$console .= __FUNCTION__ . " (" . $name . "): eventHandlers must be an array.\n";
+								$tl->page['console'] .= __FUNCTION__ . " (" . $name . "): eventHandlers must be an array.\n";
 								return false;
 							}
 						// initialize
@@ -866,15 +765,15 @@
 					case 'file':
 						// validate
 							if (!$name) {
-								$console .= __CLASS__ . "->" . __FUNCTION__ . ": No id/name specified for " . $type . " field.\n";
+								$tl->page['console'] .= __CLASS__ . "->" . __FUNCTION__ . ": No id/name specified for " . $type . " field.\n";
 								return false;
 							}
 							if ($otherAttributes && !is_array($otherAttributes)) {
-								$console .= __FUNCTION__ . " (" . $name . "): otherAttributes must be an array.\n";
+								$tl->page['console'] .= __FUNCTION__ . " (" . $name . "): otherAttributes must be an array.\n";
 								return false;
 							}
 							if ($eventHandlers && !is_array($eventHandlers)) {
-								$console .= __FUNCTION__ . " (" . $name . "): eventHandlers must be an array.\n";
+								$tl->page['console'] .= __FUNCTION__ . " (" . $name . "): eventHandlers must be an array.\n";
 								return false;
 							}
 						// return
@@ -903,24 +802,65 @@
 							return $field;
 							break;
 				/* ------------------------- */
-					case 'range':
+					case 'file_dropzone':
 						// validate
 							if (!$name) {
-								$console .= __CLASS__ . "->" . __FUNCTION__ . ": No id/name specified for " . $type . " field.\n";
+								$tl->page['console'] .= __CLASS__ . "->" . __FUNCTION__ . ": No id/name specified for " . $type . " field.\n";
 								return false;
 							}
 							if ($otherAttributes && !is_array($otherAttributes)) {
-								$console .= __FUNCTION__ . " (" . $name . "): otherAttributes must be an array.\n";
+								$tl->page['console'] .= __FUNCTION__ . " (" . $name . "): otherAttributes must be an array.\n";
+								return false;
+							}
+							if (!@$otherAttributes['post_path']) {
+								$otherAttributes['post_path'] = '/includes/controllers/ajax/process_upload.php';
+							}
+							if (!@$otherAttributes['destination_path']) {
+								$tl->page['console'] .= __FUNCTION__ . " (" . $name . "): no destination path found.\n";
 								return false;
 							}
 							if ($eventHandlers && !is_array($eventHandlers)) {
-								$console .= __FUNCTION__ . " (" . $name . "): eventHandlers must be an array.\n";
+								$tl->page['console'] .= __FUNCTION__ . " (" . $name . "): eventHandlers must be an array.\n";
+								return false;
+							}
+						// return
+							$dropzone = new drag_and_drop_widget_TL();
+							$dropzone->initialize([
+								'id' => $name,
+								'message' => @$otherAttributes['message'],
+								'post_path' => $otherAttributes['post_path'],
+								'destination_path' => $otherAttributes['destination_path'],
+								'upload_multiple' => @$otherAttributes['upload_multiple'],
+								'parallel_uploads' => @$otherAttributes['parallel_uploads'],
+								'max_files' => @$otherAttributes['max_files'],
+								'thumbnail_width' => @$otherAttributes['thumbnail_width'],
+								'thumbnail_height' => @$otherAttributes['thumbnail_height'],
+								'events' => @$otherAttributes['events'],
+								'acceptable_mime_types' => @$otherAttributes['acceptable_mime_types']
+							]);
+							$field = $dropzone->html;
+							$pageJavaScript .= $dropzone->js;
+							return $field;
+							break;
+				/* ------------------------- */
+					case 'range':
+						// validate
+							if (!$name) {
+								$tl->page['console'] .= __CLASS__ . "->" . __FUNCTION__ . ": No id/name specified for " . $type . " field.\n";
+								return false;
+							}
+							if ($otherAttributes && !is_array($otherAttributes)) {
+								$tl->page['console'] .= __FUNCTION__ . " (" . $name . "): otherAttributes must be an array.\n";
+								return false;
+							}
+							if ($eventHandlers && !is_array($eventHandlers)) {
+								$tl->page['console'] .= __FUNCTION__ . " (" . $name . "): eventHandlers must be an array.\n";
 								return false;
 							}
 							$max = @$otherAttributes['max'];
 							unset($otherAttributes['max']);
 							if (!$max) {
-								$console .= __FUNCTION__ . " (" . $name . "): Range requires a maximum value.\n";
+								$tl->page['console'] .= __FUNCTION__ . " (" . $name . "): Range requires a maximum value.\n";
 								return false;
 							}
 						// return
@@ -936,20 +876,20 @@
 					case 'country':
 						// validate
 							if ($otherAttributes && !is_array($otherAttributes)) {
-								$console .= __FUNCTION__ . " (" . $name . "): otherAttributes must be an array.\n";
+								$tl->page['console'] .= __FUNCTION__ . " (" . $name . "): otherAttributes must be an array.\n";
 								return false;
 							}
 							if ($eventHandlers && !is_array($eventHandlers)) {
-								$console .= __FUNCTION__ . " (" . $name . "): eventHandlers must be an array.\n";
+								$tl->page['console'] .= __FUNCTION__ . " (" . $name . "): eventHandlers must be an array.\n";
 								return false;
 							}
 							if (!$options) {
-								global $countries_TL;
-								if (!count(@$countries_TL)) {
-									$console .= __FUNCTION__ . " (" . $name . "): Unable to load countries_TL.\n";
-									return false;
+								if ($localization_manager->countries) $options = $localization_manager->countries;
+								else {
+									$localization_manager = new localization_manager_TL();
+									$localization_manager->populateCountries();
+									$options = $localization_manager->countries;
 								}
-								else $options = $countries_TL;
 							}
 						// initialize
 							if (!$name) $name = 'country';
@@ -976,63 +916,145 @@
 							return $field;
 							break;
 				/* ------------------------- */
-					case 'region' . substr($type, -3):
+					case 'region':
 						// validate
+							if (@$value && !is_array(@$value)) {
+								$tl->page['console'] .= __FUNCTION__ . " (" . $name . "): Value must be an array.\n";
+								return false;
+							}
 							if ($otherAttributes && !is_array($otherAttributes)) {
-								$console .= __FUNCTION__ . " (" . $name . "): otherAttributes must be an array.\n";
+								$tl->page['console'] .= __FUNCTION__ . " (" . $name . "): otherAttributes must be an array.\n";
 								return false;
 							}
 							if ($eventHandlers && !is_array($eventHandlers)) {
-								$console .= __FUNCTION__ . " (" . $name . "): eventHandlers must be an array.\n";
-								return false;
-							}
-							global $regions_TL;
-							$country = substr($type, -2);
-							if (!count(@$regions_TL[$country])) {
-								$console .= __FUNCTION__ . " (" . $name . "): Unable to load regions_TL[country].\n";
+								$tl->page['console'] .= __FUNCTION__ . " (" . $name . "): eventHandlers must be an array.\n";
 								return false;
 							}
 						// initialize
 							if (!$name) $name = $type;
+							if (@$otherAttributes['link-to']) {
+								$linkTo = $otherAttributes['link-to'];
+								unset($otherAttributes['link-to']);
+								if (!file_exists(__DIR__ . '/../../../web_root/includes/controllers/ajax/retrieve_regions.php')) {
+									$tl->page['console'] .= __FUNCTION__ . " (" . $name . "): Unable to locate AJAX destination.\n";
+									return false;
+								}
+							}
+							if (@$value['country_id']) {
+								$localization_manager = new localization_manager_TL();
+								$localization_manager->populateRegions($value['country_id']);
+								if (count(@$localization_manager->regions[$value['country_id']]['regions'])) {
+									$options = array();
+									foreach ($localization_manager->regions[$value['country_id']]['regions'] as $region) {
+										$options[$region['region_id']] = $region['region'];
+									}
+								}
+								$subdivision = ucwords(@$localization_manager->regions[$value['country_id']]['region_type']);
+							}
+							if (!@$subdivision) $subdivision = "Region";
 						// return
-							$field = "<select name='" . $name . "' id='" . $name . "'";
-							if ($class) $field .= " class='" . $class . "'";
-							if ($otherAttributes) foreach ($otherAttributes as $attribute => $attributeValue) $field .= " " . $attribute . "='" . trim($attributeValue) . "'";
-							if ($eventHandlers) foreach ($eventHandlers as $event => $action) $field .= " " . $event . "='" . trim($action) . "'";
-							if ($mandatory) $field .= " required";
-							$field .= ">";
-							if ($label && !$mandatory) {
-								$field .= "<option value=''>" . $label . "</option>";
-								$field .= "<option value=''>--</option>";
+							$field = "<div id='regionContainer_" . $name . "'>";
+							if (!@$options) $field .= $this->input('text', $name . '_other', @$value['region_other'], $mandatory, $labelPlaceholder, $class, null, $maxlength, $otherAttributes, $truncateLabel, $eventHandlers);
+							else $field .= $this->input('select', $name . '_id', @$value['region_id'], $mandatory, $labelPlaceholder, $class, $options, $maxlength, $otherAttributes, $truncateLabel, $eventHandlers);
+							$field .= "</div>";
+
+							if (@$linkTo) {
+								$pageJavaScript .= "// update region selector label\n";
+								$pageJavaScript .= "  if ($('#formLabel_" . $name . "').length) document.getElementById('formLabel_" . $name . "').innerHTML = " . '"' . $subdivision . '"' . ";\n";
+								$pageJavaScript .= "// connect region selector with country selector\n";
+								$pageJavaScript .= "  $('#" . $linkTo . "').change(function() {\n";
+								$pageJavaScript .= "    $.ajax({\n";
+								$pageJavaScript .= "      type: 'POST',\n";
+								$pageJavaScript .= "      url: '/includes/controllers/ajax/retrieve_regions.php',\n";
+								$pageJavaScript .= "      data: {\n";
+								$pageJavaScript .= "        country_id : document.getElementById('" . $linkTo . "').value,\n";
+								$pageJavaScript .= "        region_id : " . intval($value['region_id']) . ",\n";
+								$pageJavaScript .= "        region_other : " . '"' . ($value['region_other'] ? $value['region_other'] : null) . '"' . ",\n";
+								$pageJavaScript .= "        name : " . '"' . $name . '"' . ",\n";
+								$pageJavaScript .= "        class : " . '"' . ($class ? $class : null) . '"' . ",\n";
+								$pageJavaScript .= "        labelPlaceholder : " . '"' . ($labelPlaceholder ? $labelPlaceholder : null) . '"' . ",\n";
+								$pageJavaScript .= "        mandatory : " . '"' . ($mandatory ? true : false) . '"' . ",\n";
+								$pageJavaScript .= "        maxlength : " . '"' . ($maxlength ? floatval($maxlength) : null) . '"' . ",\n";
+								$pageJavaScript .= "        truncateLabel : " . '"' . ($truncateLabel ? floatval($truncateLabel) : null) . '"' . "\n";
+								$pageJavaScript .= "      },\n";
+								$pageJavaScript .= "      success: function(data) {\n";
+								$pageJavaScript .= "        document.getElementById('regionContainer_" . $name . "').innerHTML = data;\n";
+								$pageJavaScript .= "        if ($('#formLabel_" . $name . "').length) document.getElementById('formLabel_" . $name . "').innerHTML = document.getElementById('regionType').value;\n";
+								$pageJavaScript .= "      },\n";
+								$pageJavaScript .= "      error: function(errorData) {\n";
+								$pageJavaScript .= "        console += errorData + " . '"\n"' . ";\n";
+								$pageJavaScript .= "      }\n";
+								$pageJavaScript .= "	});\n";
+								$pageJavaScript .= "  });\n\n";
 							}
-							for ($counter = 0; $counter < count($regions_TL[$country]['regions']); $counter++) {
-								$field .= "<option value='" . $regions_TL[$country]['regions'][$counter]['region_id'] . "'";
-								if ($value && $regions_TL[$country]['regions'][$counter]['region_id'] == $value) $field .= " selected";
-								$field .= ">";
-								if ($truncateLabel > strlen($regions_TL[$country]['regions'][$counter]['region']) - 3) $regions_TL[$country]['regions'][$counter]['region'] = substr($regions_TL[$country]['regions'][$counter]['region'], 0, $truncateLabel) . '...';
-								$field .= $regions_TL[$country]['regions'][$counter]['region'];
-								$field .= "</option>";
-							}
-							$field .= "</select>";
+
+							return $field;
+							break;
+				/* ------------------------- */
+					case 'latlongmap':
+						// initialize
+							if (!$name) $name = 'latlongmap';
+							if (!trim($value)) $value = '0,0';
+							$coords = explode(',', $value);
+							$lat = floatval($coords[0]);
+							$long = floatval($coords[1]);
+							$granularity = (@$otherAttributes['step'] ? strlen(substr(strrchr(@$otherAttributes['step'], "."), 1)) : 4);
+							$canvas = $name . "_mapcanvas";
+							$map = $name . "_mapobject";
+						// return
+							$field = "<div class='row'>";
+							$field .= "<div class='col-lg-12 col-md-12 col-sm-12 col-xs-12'><div id='" . $canvas . "' style='width: 100%; height: 400px; margin-bottom: 15px;' class='img-rounded'>Loading map...</div></div>";
+							$field .= "</div>";
+							$field .= "<div class='row'>";
+							$field .= "<div class='col-lg-4 col-md-4 col-sm-4 col-xs-4'>" . $this->input('latitude', $name . "_latitude", @$lat, false, "|Latitude", 'form-control', null, null, @$otherAttributes['step']) . "</div>";
+							$field .= "<div class='col-lg-4 col-md-4 col-sm-4 col-xs-4'>" . $this->input('longitude', $name . "_longitude", @$long, false, "|Longitude", 'form-control', null, null, @$otherAttributes['step']) . "</div>";
+							$field .= "<div class='col-lg-4 col-md-4 col-sm-4 col-xs-4'>" . $this->input('button', "reset_button", null, false, "Reset", 'btn btn-default btn-block', null, null, null, null, array('onClick'=>'window["' . $map . '"].setCenter(new google.maps.LatLng(' . $value . '));')) . "</div>";
+							$field .= "</div>";
+
+							$pageJavaScript .= "// initialize latlongmap\n";
+							$pageJavaScript .= "  $(document).ready(function() {\n";
+							$pageJavaScript .= "    var myLatlng = new google.maps.LatLng(" . $value . ");\n";
+							$pageJavaScript .= "    var myOptions = {\n";
+					 		$pageJavaScript .= "      zoom: 2,\n";
+					 		$pageJavaScript .= "      zoomControl: true,\n";
+							$pageJavaScript .= "      mapTypeControl: true,\n";
+							$pageJavaScript .= "      scaleControl: true,\n";
+							$pageJavaScript .= "      streetViewControl: true,\n";
+							$pageJavaScript .= "      rotateControl: true,\n";
+							$pageJavaScript .= "      center: myLatlng,\n";
+							$pageJavaScript .= "      mapTypeId: google.maps.MapTypeId.TERRAIN\n";
+							$pageJavaScript .= "    };\n\n";
+							$pageJavaScript .= "    window['" . $map . "'] = new google.maps.Map(document.getElementById('" . $canvas . "'), myOptions);\n\n";
+							$pageJavaScript .= "    var marker_crosshair = new google.maps.Marker({ map: window['" . $map . "'], icon: '/resources/img/icons/crosshair.gif' });\n";
+							$pageJavaScript .= "    marker_crosshair.bindTo('position', window['" . $map . "'], 'center');\n";
+							$pageJavaScript .= "    google.maps.event.addListener(window['" . $map . "'], 'center_changed', function() {\n";
+							$pageJavaScript .= "      mapCenter = window['" . $map . "'].getCenter();\n";
+							$pageJavaScript .= "      document.getElementById('" . $name . "_latitude').value = Math.round(mapCenter.lat() * " . (pow(10, floatval($granularity))) . ") / " . (pow(10, floatval($granularity))) . ";\n";
+							$pageJavaScript .= "      document.getElementById('" . $name . "_longitude').value = Math.round(mapCenter.lng() * " . (pow(10, floatval($granularity))) . ") / " . (pow(10, floatval($granularity))) . ";\n";
+							$pageJavaScript .= "    });\n";
+							$pageJavaScript .= "  });\n\n";
+
 							return $field;
 							break;
 				/* ------------------------- */
 					case 'language':
+					case 'language_common':
 						// validate
 							if ($otherAttributes && !is_array($otherAttributes)) {
-								$console .= __FUNCTION__ . " (" . $name . "): otherAttributes must be an array.\n";
+								$tl->page['console'] .= __FUNCTION__ . " (" . $name . "): otherAttributes must be an array.\n";
 								return false;
 							}
 							if ($eventHandlers && !is_array($eventHandlers)) {
-								$console .= __FUNCTION__ . " (" . $name . "): eventHandlers must be an array.\n";
-								return false;
-							}
-							global $languages_TL;
-							if (!count(@$languages_TL)) {
-								$console .= __FUNCTION__ . " (" . $name . "): Unable to load languages_TL.\n";
+								$tl->page['console'] .= __FUNCTION__ . " (" . $name . "): eventHandlers must be an array.\n";
 								return false;
 							}
 						// initialize
+							if (!$options) {
+								$localization_manager = new localization_manager_TL();
+								if ($type == 'language_common') $localization_manager->populateLanguages(true);
+								else $localization_manager->populateLanguages();
+								$options = $localization_manager->languages;
+							}
 							if (!$name) $name = 'language';
 						// return
 							$field = "<select name='" . $name . "' id='" . $name . "'";
@@ -1045,7 +1067,7 @@
 								$field .= "<option value=''>" . $label . "</option>";
 								$field .= "<option value=''>--</option>";
 							}
-							foreach ($languages_TL as $languageID => $language) {
+							foreach ($options as $languageID => $language) {
 								$field .= "<option value='" . $languageID . "'";
 								if ($value && $languageID == $value) $field .= " selected";
 								$field .= ">";
@@ -1060,19 +1082,19 @@
 					case 'multipicker':
 						// validate
 							if (!$name) {
-								$console .= __CLASS__ . "->" . __FUNCTION__ . ": No id/name specified for " . $type . " field.\n";
+								$tl->page['console'] .= __CLASS__ . "->" . __FUNCTION__ . ": No id/name specified for " . $type . " field.\n";
 								return false;
 							}
 							if (count($options) < 1) {
-								$console .= __FUNCTION__ . " (" . $name . "): No options to display in multipicker.\n";
+								$tl->page['console'] .= __FUNCTION__ . " (" . $name . "): No options to display in multipicker.\n";
 								return false;
 							}
 							if ($otherAttributes && !is_array($otherAttributes)) {
-								$console .= __FUNCTION__ . " (" . $name . "): otherAttributes must be an array.\n";
+								$tl->page['console'] .= __FUNCTION__ . " (" . $name . "): otherAttributes must be an array.\n";
 								return false;
 							}
 							if ($eventHandlers && !is_array($eventHandlers)) {
-								$console .= __FUNCTION__ . " (" . $name . "): eventHandlers must be an array.\n";
+								$tl->page['console'] .= __FUNCTION__ . " (" . $name . "): eventHandlers must be an array.\n";
 								return false;
 							}
 						// initialize
@@ -1107,16 +1129,24 @@
 					case 'reset':
 						// validate
 							if ($otherAttributes && !is_array($otherAttributes)) {
-								$console .= __FUNCTION__ . " (" . $name . "): otherAttributes must be an array.\n";
+								$tl->page['console'] .= __FUNCTION__ . " (" . $name . "): otherAttributes must be an array.\n";
 								return false;
 							}
 							if ($eventHandlers && !is_array($eventHandlers)) {
-								$console .= __FUNCTION__ . " (" . $name . "): eventHandlers must be an array.\n";
+								$tl->page['console'] .= __FUNCTION__ . " (" . $name . "): eventHandlers must be an array.\n";
+								return false;
+							}
+							if (@$otherAttributes['spinner'] && !file_exists($otherAttributes['spinner'])) {
+								$tl->page['console'] .= __FUNCTION__ . " (" . $name . "): unable to locate spinner image.\n";
 								return false;
 							}
 						// initialize
 							if (!$label && $type == 'button') $label = 'Go';
 							if (!$label && $type == 'submit') $label = 'Submit';
+							if (@$otherAttributes['spinner']) {
+								@$eventHandlers['onClick'] = trim('this.innerHTML=' . '"' . @$otherAttributes['spinner_text'] . '&nbsp;<img src=\"' . $otherAttributes['spinner'] .  '\" />&nbsp;"; ' . @$eventHandlers['onClick']);
+								unset($otherAttributes['spinner']);
+							}
 						// return
 							$field = "<button type='" . $type . "'";
 							if ($name) $field .= " name='" . $name . "' id='" . $name . "'";
@@ -1132,15 +1162,15 @@
 					case 'image':
 						// validate
 							if (!$otherAttributes['src']) {
-								$console .= __FUNCTION__ . " (" . $name . "): No image for submit button.\n";
+								$tl->page['console'] .= __FUNCTION__ . " (" . $name . "): No image for submit button.\n";
 								return false;
 							}
 							if ($otherAttributes && !is_array($otherAttributes)) {
-								$console .= __FUNCTION__ . " (" . $name . "): otherAttributes must be an array.\n";
+								$tl->page['console'] .= __FUNCTION__ . " (" . $name . "): otherAttributes must be an array.\n";
 								return false;
 							}
 							if ($eventHandlers && !is_array($eventHandlers)) {
-								$console .= __FUNCTION__ . " (" . $name . "): eventHandlers must be an array.\n";
+								$tl->page['console'] .= __FUNCTION__ . " (" . $name . "): eventHandlers must be an array.\n";
 								return false;
 							}
 						// return
@@ -1194,12 +1224,11 @@
 	
 		public function row($type, $name, $value = null, $mandatory = false, $labelPlaceholder = null, $class = null, $options = null, $maxlength = null, $otherAttributes = null, $truncateLabel = null, $eventHandlers = null, $duplicateRows = null) {
 
-			global $regions_TL;
+			global $tl;
 			global $operators;
-			global $console;
 
 			if (!$type) {
-				$console .= __CLASS__ . "->" . __FUNCTION__ . ": No element type specified.\n";
+				$tl->page['console'] .= __CLASS__ . "->" . __FUNCTION__ . ": No element type specified.\n";
 				return false;
 			}
 
@@ -1216,50 +1245,35 @@
 			
 			if ($type == 'checkbox' || $type == 'checkbox_stacked_bootstrap' || $type == 'button' || $type == 'submit' || $type == 'cancel' || $type == 'cancel_and_return') $label = null;
 
-			if ($type == 'country_and_region') {
-				$row = $this->row('country', (@$name['country'] ? $name['country'] : 'country'), @$value['country_id'], $mandatory, 'Country', $class, $options, null, $otherAttributes, $truncateLabel, array('onChange'=>'$(".' . (@$name['region'] ? $name['region'] . '_' : false) . 'regions_TL").hide(); if (document.getElementById("' . (@$name['region'] ? $name['region'] . '_' : false) . 'region_" + this.value)) { $("#' . (@$name['region'] ? $name['region'] . '_' : false) . 'region_" + this.value + "_container").show(); }'));
-				foreach ($regions_TL as $country => $regionArray) {
-					$row .= "<div id='" . (@$name['region'] ? $name['region'] . '_' : false) . "region_" . $country . "_container' class='" . (@$name['region'] ? $name['region'] . '_' : false) . "regions_TL collapse" .  ($country == @$value['country_id'] ? " in" : false) . "'>\n";
-					$row .= $this->row('region_' . $country, (@$name['region'] ? $name['region'] . '_' : false) . 'region_' . $country, @$value['region_id'], false, $operators->firstTrue(ucwords($regions_TL[$country]['subdivision']), 'Region'), $class, null, null, $otherAttributes, $truncateLabel, $eventHandlers);
-					$row .= "</div>\n";
-				}
-				$row .= "<div id='region_other'>\n";
-				$row .= $this->row('text', (@$name['region'] ? $name['region'] . '_' : false) . 'other_region', @$value['other_region'], false, 'Other region', $class, null, null, $otherAttributes, $truncateLabel, $eventHandlers);
-				$row .= "</div>\n";
-			}
-			else {
-
-				$row = $this->rowStart($name, $label);
-				$row .= "      " . $this->input($type, $name, $value, $mandatory, $labelPlaceholder, $class, $options, $maxlength, $otherAttributes, $truncateLabel, $eventHandlers) . "\n";
-				
-				if ($duplicateRows) {
-					for ($counter = 1; $counter <= $duplicateRows; $counter++) {
-						$row .= "      <div id='expandingRow_" . $counter . "'></div>\n";
-					}
-					
-					$row .= "      <div id='rowLink'>\n";
-					$row .= "        <a href='javascript:void(0)' onClick='addRow(" . $duplicateRows . "); return false;'>Add more...</a>\n";
-					$row .= "        <input type='hidden' name='numberOfRows' id='numberOfRows' value='0' />\n";
-					$row .= "      </div>\n";
-					
-					$row .= "      <script type='text/javascript'>\n";
-					$row .= "        function addRow(maxRows) {\n";
-					$row .= "          document.getElementById('numberOfRows').value++;\n";
-					$row .= "          if (document.getElementById('numberOfRows').value > maxRows) alert('Maximum number of rows reached.');\n";
-					$row .= "          else {\n";
-					$row .= "            var field =\n";
-					$row .= "              " . '"' . $this->input($type, $name, $value, $mandatory, $labelPlaceholder, $class, $options, $maxlength, $otherAttributes, $truncateLabel, $eventHandlers) . '"' . ";\n";
-					$row .= "            document.getElementById('expandingRow_' + document.getElementById('numberOfRows').value).innerHTML = field.replace(" . '"' . $name . '", "' . $name . '"' . " + " . '"_"' . " + document.getElementById('numberOfRows').value);\n";
-					$row .= "          }\n";
-					$row .= "        }\n";
-					$row .= "      </script>\n";
-		
-				}
-
-				$row .= $this->rowEnd();
-
-			}
+			$row = $this->rowStart($name, $label);
+			$row .= "      " . $this->input($type, $name, $value, $mandatory, $labelPlaceholder, $class, $options, $maxlength, $otherAttributes, $truncateLabel, $eventHandlers) . "\n";
 			
+			if ($duplicateRows) {
+				for ($counter = 1; $counter <= $duplicateRows; $counter++) {
+					$row .= "      <div id='expandingRow_" . $counter . "'></div>\n";
+				}
+				
+				$row .= "      <div id='rowLink'>\n";
+				$row .= "        <a href='javascript:void(0)' onClick='addRow(" . $duplicateRows . "); return false;'>Add more...</a>\n";
+				$row .= "        <input type='hidden' name='numberOfRows' id='numberOfRows' value='0' />\n";
+				$row .= "      </div>\n";
+				
+				$row .= "      <script type='text/javascript'>\n";
+				$row .= "        function addRow(maxRows) {\n";
+				$row .= "          document.getElementById('numberOfRows').value++;\n";
+				$row .= "          if (document.getElementById('numberOfRows').value > maxRows) alert('Maximum number of rows reached.');\n";
+				$row .= "          else {\n";
+				$row .= "            var field =\n";
+				$row .= "              " . '"' . $this->input($type, $name, $value, $mandatory, $labelPlaceholder, $class, $options, $maxlength, $otherAttributes, $truncateLabel, $eventHandlers) . '"' . ";\n";
+				$row .= "            document.getElementById('expandingRow_' + document.getElementById('numberOfRows').value).innerHTML = field.replace(" . '"' . $name . '", "' . $name . '"' . " + " . '"_"' . " + document.getElementById('numberOfRows').value);\n";
+				$row .= "          }\n";
+				$row .= "        }\n";
+				$row .= "      </script>\n";
+	
+			}
+
+			$row .= $this->rowEnd();
+
 			return $row;
 
 		}
@@ -1303,8 +1317,10 @@
 		
 		public function start($name = null, $action = null, $method = 'post', $class = null, $otherAttributes = null, $eventHandlers = null) {
 			
+			global $tl;
+
 			if (!$this->style) {
-				$console .= __CLASS__ . "->" . __FUNCTION__ . ": No form style specified.\n";
+				$tl->page['console'] .= __CLASS__ . "->" . __FUNCTION__ . ": No form style specified.\n";
 				return false;
 			}
 			elseif ($this->style == 'horizontal') $class = trim('form-horizontal ' . $class);
@@ -1334,10 +1350,10 @@
 				page number will appear */
 			
 			// Calculations
-				if ($currentPage > 1) $backEventHandler = array('onClick'=>'document.location.href="' . str_replace('#', $currentPage - 1, $urlStructure) . '"; return false;');
+				if (floatval($currentPage) > 1) $backEventHandler = array('onClick'=>'document.location.href="' . str_replace('#', floatval($currentPage) - 1, $urlStructure) . '"; return false;');
 				else $backEventHandler = null;
 									
-				if ($currentPage < $numberOfPages) $nextEventHandler = array('onClick'=>'document.location.href="' . str_replace('#', $currentPage + 1, $urlStructure) . '"; return false;');
+				if (floatval($currentPage) < $numberOfPages) $nextEventHandler = array('onClick'=>'document.location.href="' . str_replace('#', floatval($currentPage) + 1, $urlStructure) . '"; return false;');
 				else $nextEventHandler = null;
 									
 				$allPages = array();
@@ -1350,7 +1366,7 @@
 				$paginate .= "  <div id='pagination' class='row'>\n";
 				
 				/* Back */		$paginate .= "    <div class='col-lg-4 col-md-4 col-sm-3 col-xs-3'>" . $this->input('button', 'paginateButtonBack', null, false, '<', 'btn btn-default btn-block', null, null, null, null, @$backEventHandler) . "</div>\n";
-				/* Select */	$paginate .= "    <div class='col-lg-4 col-md-4 col-sm-6 col-xs-6'>" . $this->input('select', 'selectPage', $currentPage, true, null, 'form-control', $allPages, null, null, null, array('onChange'=>'document.location.href="' . str_replace('#', '" + this.value + "', $urlStructure) . '"; return false;')) . "</div>\n";
+				/* Select */	$paginate .= "    <div class='col-lg-4 col-md-4 col-sm-6 col-xs-6'>" . $this->input('select', 'selectPage', floatval($currentPage), true, null, 'form-control', $allPages, null, null, null, array('onChange'=>'document.location.href="' . str_replace('#', '" + this.value + "', $urlStructure) . '"; return false;')) . "</div>\n";
 				/* Next */		$paginate .= "    <div class='col-lg-4 col-md-4 col-sm-3 col-xs-3'>" . $this->input('button', 'paginateButtonBack', null, false, '>', 'btn btn-default btn-block', null, null, null, null, @$nextEventHandler) . "</div>\n";
 					
 				$paginate .= "  </div>\n";

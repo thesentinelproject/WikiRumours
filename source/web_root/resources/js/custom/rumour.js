@@ -1,7 +1,7 @@
 
 	errorMessage = '';
 
-	// jump to sightings tab
+  	// jump to sightings tab
 		$('#jumpToSightingsTab').click(function () {
 			$('#rumourTabs a[href="#sightings"]').tab('show');
 		});

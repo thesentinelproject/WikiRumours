@@ -3,9 +3,9 @@
 /*	--------------------------------------
 	Execute immediately upon load
 	-------------------------------------- */
-
+	
 	// parse query string
-		if ($parameter1) $filters = $keyvalue_array->keyValueToArray(urldecode($parameter1), '|');
+		if ($tl->page['parameter1']) $filters = $keyvalue_array->keyValueToArray(urldecode($tl->page['parameter1']), '|');
 
 	// clean input
 		$allowableFilters = array('keywords', 'country_id', 'priority_id', 'status_id', 'tag_id', 'report', 'page', 'sort', 'view');
@@ -16,7 +16,7 @@
 		}
 		
 	// build query
-		$page = floatval(@$filters['page']);
+		$filters['page'] = floatval(@$filters['page']);
 
 		if (@$filters['view'] != 'map') $filters['view'] = 'table';
 
@@ -63,10 +63,10 @@
 
 			$numberOfPages = max(1, ceil($numberOfRumours / $rowsPerPage));
 			if ($report == 'recent' || $report == 'common') $numberOfPages = 1;
-			if ($page < 1) $page = 1;
-			elseif ($page > $numberOfPages) $page = $numberOfPages;
+			if ($filters['page'] < 1) $filters['page'] = 1;
+			elseif ($filters['page'] > $numberOfPages) $filters['page'] = $numberOfPages;
 			
-			$rumours = retrieveRumours(array('tag_id'=>$filters['tag_id'], $tablePrefix . "rumours.enabled"=>'1'), null, @$otherCriteria, $sort, floatval(($page * $rowsPerPage) - $rowsPerPage) . ',' . $rowsPerPage);
+			$rumours = retrieveRumours(array('tag_id'=>$filters['tag_id'], $tablePrefix . "rumours.enabled"=>'1'), null, @$otherCriteria, $sort, floatval(($filters['page'] * $rowsPerPage) - $rowsPerPage) . ',' . $rowsPerPage);
 
 			$map = retrieveRumours(array('tag_id'=>$filters['tag_id'], $tablePrefix . "rumours.enabled"=>'1'), null, @$otherCriteria . " AND " . $tablePrefix . "rumours.latitude <> 0 AND " . $tablePrefix . "rumours.longitude <> 0", $sort, @$limit);
 		}
@@ -76,18 +76,18 @@
 		
 			$numberOfPages = max(1, ceil($numberOfRumours / $rowsPerPage));
 			if ($report == 'recent' || $report == 'common') $numberOfPages = 1;
-			if ($page < 1) $page = 1;
-			elseif ($page > $numberOfPages) $page = $numberOfPages;
+			if ($filters['page'] < 1) $filters['page'] = 1;
+			elseif ($filters['page'] > $numberOfPages) $filters['page'] = $numberOfPages;
 			
-			$rumours = retrieveRumours(array($tablePrefix . "rumours.enabled"=>'1'), null, @$otherCriteria, $sort, floatval(($page * $rowsPerPage) - $rowsPerPage) . ',' . $rowsPerPage);
+			$rumours = retrieveRumours(array($tablePrefix . "rumours.enabled"=>'1'), null, @$otherCriteria, $sort, floatval(($filters['page'] * $rowsPerPage) - $rowsPerPage) . ',' . $rowsPerPage);
 
 			$map = retrieveRumours(array($tablePrefix . "rumours.enabled"=>'1'), null, @$otherCriteria . " AND " . $tablePrefix . "rumours.latitude <> 0 AND " . $tablePrefix . "rumours.longitude <> 0", $sort, @$limit);
 		}
 
 	if (@$filters['view'] == 'map') $pageLoadEvents = "populateMap();";
-	if ($report == 'recent') $pageTitle = "Recent Rumours";
-	elseif ($report == 'common') $pageTitle = "Most Common Rumours";
-	else $pageTitle = "Search Results";
+	if ($report == 'recent') $tl->page['title'] = "Recent Rumours";
+	elseif ($report == 'common') $tl->page['title'] = "Most Common Rumours";
+	else $tl->page['title'] = "Search Results";
 	
 /*	--------------------------------------
 	Execute only if a form post

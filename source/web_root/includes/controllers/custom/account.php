@@ -5,31 +5,20 @@
 	-------------------------------------- */
 
 	// parse query string
-		$username = $parameter1;
-		if (!$username) {
-			header('Location: /account/' . $logged_in['username']);
-			exit();
-		}
-				
-		$pageStatus = $parameter2;
+		$username = $tl->page['parameter1'];
+		if (!$username && $logged_in) $authentication_manager->forceRedirect('/account/' . $logged_in['username']);
 		
 	// authenticate user
-		if (!$logged_in) forceLoginThenRedirectHere();
+		if (!$logged_in) $authentication_manager->forceLoginThenRedirectHere();
 		
 		if ($username != $logged_in['username']) {
-			if (!$logged_in['can_edit_users']) {
-				header ('Location: /404');
-				exit;
-			}
+			if (!$logged_in['can_edit_users']) $authentication_manager->forceRedirect('/404');
 		}
 
 	// queries
 		if ($logged_in['is_administrator']) $user = retrieveUsers(array('username'=>$username), null, null, null, 1);
 		else $user = retrieveUsers(array('username'=>$username, 'enabled'=>'1'), null, null, null, 1);
-		if (count($user) < 1) {
-			header('Location: /404');
-			exit();
-		}
+		if (count($user) < 1) $authentication_manager->forceRedirect('/404');
 		
 		$termination = retrieveSingleFromDb('user_terminations', null, array('user_id'=>$user[0]['user_id']));
 		
@@ -38,8 +27,8 @@
 			if ($width > $minimumProfileImageWidth) $minimumProfileImageWidth = $width;
 		}
 		
-	$pageTitle = "My Account";
-	$sectionTitle = "Profile";
+	$tl->page['title'] = "My Account";
+	$tl->page['section'] = "Profile";
 		
 /*	--------------------------------------
 	Execute only if a form post
@@ -52,7 +41,7 @@
 
 			// delete profile images (& verify deletion)
 				$success = $avatar_manager->deleteProfileImage($user[0]['username']);
-				if (!$success) $pageError .= "There was a problem deleting this profile image. ";
+				if (!$success) $tl->page['error'] .= "There was a problem deleting this profile image. ";
 				else {
 					// update log
 						if ($logged_in['user_id'] != $user[0]['user_id']) {
@@ -65,8 +54,7 @@
 						}
 
 					// redirect
-						header('Location: /account/' . $_POST['username'] . '/profile_image_deleted');
-						exit();
+						$authentication_manager->forceRedirect('/account/' . $_POST['username'] . '/success=profile_image_deleted');
 
 				}
 									
@@ -82,32 +70,32 @@
 				}
 				
 			// check for errors
-				if (!$_POST['username']) $pageError .= "Please provide a username. ";
-				if (!$input_validator->isStringValid($_POST['username'], 'abcdefghijklmnopqrstuvwxyz0123456789-_', '')) $pageError .= "Your username can only contain alphanumeric characters. ";
-				if ($_POST['email'] && !$input_validator->validateEmailRobust($_POST['email'])) $pageError .= "There appears to be a problem with your email address. ";
+				if (!$_POST['username']) $tl->page['error'] .= "Please provide a username. ";
+				if (!$input_validator->isStringValid($_POST['username'], 'abcdefghijklmnopqrstuvwxyz0123456789-_', '')) $tl->page['error'] .= "Your username can only contain alphanumeric characters. ";
+				if ($_POST['email'] && !$input_validator->validateEmailRobust($_POST['email'])) $tl->page['error'] .= "There appears to be a problem with your email address. ";
 				if ($_POST['username'] != $user[0]['username']) {
 					$numberOfExistingUsers = countInDb('users', 'user_id', array('username'=>$_POST['username']), null, null, null);
 					$numberOfExistingRegistrants = countInDb('registrations', 'registration_id', array('username'=>$_POST['username']), null, null, null);
-					if ($numberOfExistingUsers[0]['count'] + $numberOfExistingRegistrants[0]['count'] > 0) $pageError .= "The username you've specified already belongs to another user. ";
+					if ($numberOfExistingUsers[0]['count'] + $numberOfExistingRegistrants[0]['count'] > 0) $tl->page['error'] .= "The username you've specified already belongs to another user. ";
 				}
 				if ($_POST['email'] && ($_POST['email'] != $user[0]['email'])) {
 					$numberOfExistingUsers = countInDb('users', 'user_id', array('email'=>$_POST['email']), null, null, null);
 					$numberOfExistingRegistrants = countInDb('registrations', 'registration_id', array('email'=>$_POST['email']), null, null, null);
-					if ($numberOfExistingUsers[0]['count'] + $numberOfExistingRegistrants[0]['count'] > 0) $pageError .= "The email address you've specified already belongs to another user. ";
+					if ($numberOfExistingUsers[0]['count'] + $numberOfExistingRegistrants[0]['count'] > 0) $tl->page['error'] .= "The email address you've specified already belongs to another user. ";
 				}
-				if (!$_POST['country']) $pageError .= "Please provide a country. ";
+				if (!$_POST['country_id']) $tl->page['error'] .= "Please provide a country. ";
 				
 				if ($_FILES['profile_image']['tmp_name']) {
-					if (!$file_manager->isImage($_FILES['profile_image']['tmp_name'])) $pageError .= "An invalid image was uploaded; please upload a JPG, PNG or GIF. ";
+					if (!$file_manager->isImage($_FILES['profile_image']['tmp_name'])) $tl->page['error'] .= "An invalid image was uploaded; please upload a JPG, PNG or GIF. ";
 					else {
 						$dimensions = getimagesize($_FILES['profile_image']['tmp_name']);
-						if ($dimensions[0] > 3000) $pageError .= "Your uploaded profile image appears to be too large. Please make sure that the width is no more than 3000 pixels. ";
-						elseif ($dimensions[0] < $profileImageSizes['verysmall']) $pageError .= "Your uploaded profile image appears to be too small. Please make sure that the width is no less than " . floatval($profileImageSizes['verysmall']) . " pixels. ";
+						if ($dimensions[0] > 3000) $tl->page['error'] .= "Your uploaded profile image appears to be too large. Please make sure that the width is no more than 3000 pixels. ";
+						elseif ($dimensions[0] < $profileImageSizes['verysmall']) $tl->page['error'] .= "Your uploaded profile image appears to be too small. Please make sure that the width is no less than " . floatval($profileImageSizes['verysmall']) . " pixels. ";
 					}
 				}
 								
 			// update profile
-				if (!$pageError) {
+				if (!$tl->page['error']) {
 
 					// update username and real name
 						updateDb('users', array('username'=>$_POST['username'], 'first_name'=>$_POST['first_name'], 'last_name'=>$_POST['last_name']), array('user_id'=>$user[0]['user_id']), null, null, null, null, 1);
@@ -119,7 +107,7 @@
 						}
 						
 					// update location etc.
-						updateDb('users', array('country_id'=>$_POST['country'], 'region_id'=>$_POST['region_' . $_POST['country']], 'other_region'=>$_POST['other_region'], 'city'=>$_POST['city'], 'primary_phone'=>$_POST['primary_phone'], 'primary_phone_sms'=>$_POST['primary_phone_sms'], 'secondary_phone'=>$_POST['secondary_phone'], 'secondary_phone_sms'=>$_POST['secondary_phone_sms'], 'ok_to_contact'=>$_POST['ok_to_contact'], 'anonymous'=>$_POST['anonymous']), array('user_id'=>$user[0]['user_id']), null, null, null, null, 1);
+						updateDb('users', array('country_id'=>$_POST['country_id'], 'region_id'=>$_POST['region_id'], 'other_region'=>$_POST['region_other'], 'city'=>$_POST['city'], 'primary_phone'=>$_POST['primary_phone'], 'primary_phone_sms'=>$_POST['primary_phone_sms'], 'secondary_phone'=>$_POST['secondary_phone'], 'secondary_phone_sms'=>$_POST['secondary_phone_sms'], 'ok_to_contact'=>$_POST['ok_to_contact'], 'anonymous'=>$_POST['anonymous']), array('user_id'=>$user[0]['user_id']), null, null, null, null, 1);
 						
 					// update test mode, etc.
 						if ($logged_in['can_edit_users']) {
@@ -153,7 +141,7 @@
 								insertIntoDb('user_keys', array('user_key'=>'Reset Email', 'user_id'=>$user[0]['user_id'], 'hash'=>$emailKey, 'value'=>$_POST['email'], 'saved_on'=>date('Y-m-d H:i:s'), 'expiry'=>$expiryDate));
 								
 								$emailSent = emailNewEmailKey($logged_in['full_name'], addSlashes($_POST['email']), $emailKey);
-								if (!$emailSent) $pageError = "Unable to send your email reset link. Please try updating again, and if you continue to encounter difficulties, <a href='/contact' class='errorMessage'>let us know</a>. ";
+								if (!$emailSent) $tl->page['error'] = "Unable to send your email reset link. Please try updating again, and if you continue to encounter difficulties, <a href='/contact' class='errorMessage'>let us know</a>. ";
 							}
 						}
 
@@ -162,16 +150,16 @@
 
 							// delete old image
 								$success = $avatar_manager->deleteProfileImage($user[0]['username']);
-								if (!$success) $pageError .= "There was a problem deleting this profile image. ";
+								if (!$success) $tl->page['error'] .= "There was a problem deleting this profile image. ";
 								
 							// save new image
 								$success = $avatar_manager->createProfileImage($user[0]['username'], $_FILES['profile_image']['tmp_name']);
-								if (!$success) $pageError .= "There was a problem saving this profile image. ";
+								if (!$success) $tl->page['error'] .= "There was a problem saving this profile image. ";
 							
 						}
 				}
 				
-				if (!$pageError) {
+				if (!$tl->page['error']) {
 					// update log
 						if ($logged_in['user_id'] != $user[0]['user_id']) {
 							$activity = $logged_in['full_name'] . " (user_id " . $logged_in['user_id'] . ") has updated the profile of " . $user[0]['full_name'] . " (" . $user[0]['user_id'] . ")";
@@ -183,9 +171,8 @@
 						}
 
 					// redirect
-						if ($logged_in['user_id'] == $user[0]['user_id'] && $_POST['email'] != $user[0]['email']) header('Location: /account/' . $_POST['username'] . '/profile_updated_check_email');
-						else  header('Location: /account/' . $_POST['username'] . '/profile_updated');
-						exit();
+						if ($logged_in['user_id'] == $user[0]['user_id'] && $_POST['email'] != $user[0]['email']) $authentication_manager->forceRedirect('/account/' . $_POST['username'] . '/success=profile_updated_check_email');
+						else  $authentication_manager->forceRedirect('/account/' . $_POST['username'] . '/success=profile_updated');
 				}
 				
 		}

@@ -65,42 +65,27 @@
 		if ($logged_in) echo "    " . $form->input('button', 'addTagsButton', null, false, 'Add a tag', 'btn btn-sm btn-link', null, null, array('data-toggle'=>'collapse', 'href'=>'#addTags')) . "\n";
 		echo "  </div>\n";
 		if ($logged_in) {
-			echo "  <div id='addTags' class='collapse'>\n";
+			echo "  <div id='addTags' class='collapse in'>\n";
 			echo "    <div class='row'>\n";
-			echo "      <div class='col-lg-9 col-md-9 col-sm-8 col-xs-6'>" . $form->input('select', 'new_tags', null, false, null, 'select2', $allTags, null, array('multiple'=>'multiple', 'data-placeholder'=>'Additional tags', 'data-tags'=>'true')) . "</div>\n";
+			echo "      <div class='col-lg-9 col-md-9 col-sm-8 col-xs-6'>" . $form->input('select', 'new_tags', null, false, null, 'form-control js-example-basic-multiple', $allTags, null, array('multiple'=>'multiple', 'data-placeholder'=>'Additional tags', 'data-tags'=>'true')) . "</div>\n";
 			echo "      <div class='col-lg-3 col-md-3 col-sm-4 col-xs-6 text-right'>\n";
 			echo "        " . $form->input('submit', 'submit_add_tags_button', null, false, 'Add', 'btn btn-info', null, null, null, null, array('onClick'=>'validateAddTags(); return false;')) . "\n";
 			echo "        " . $form->input('button', 'cancel_add_tags_button', null, false, 'Cancel', 'btn btn-link', null, null, array('data-toggle'=>'collapse', 'href'=>'#addTags')) . "\n";
 			echo "      </div>\n";
 			echo "    </div>\n";
 			echo "  </div>\n";
+
+			$pageJavaScript .= "// initialize Select2\n";
+			$pageJavaScript .= "  $('.js-example-basic-multiple').select2();\n";
+			$pageJavaScript .= "  $('#addTags').collapse('hide');\n";
+
+
 		}
 		echo "</div>\n";
 		echo $form->end() . "\n";
 
 
 	echo "<hr />\n";
-
-	// photo evidence
-		if ($photoEvidence) {
-			echo "<div id='photoEvidenceModal' class='modal fade'>\n";
-			echo "  <div class='modal-dialog'>\n";
-			echo "    <div class='modal-content'>\n";
-			echo "      <div class='modal-header'>\n";
-			echo "        <button type='button' class='close' data-dismiss='modal' aria-label='Close'><span aria-hidden='true'>&times;</span></button>\n";
-			echo "        <h4 class='modal-title'>Photographic evidence</h4>\n";
-			echo "      </div>\n";
-			echo "      <div class='modal-body'>\n";
-			echo "        <img src='/" . $photoEvidence . "?random=" . rand(10000,99999) . "' class='img-responsive' alt='Photo evidence' />\n";
-			echo "      </div>\n";
-			echo "    </div><!-- /.modal-content -->\n";
-			echo "  </div><!-- /.modal-dialog -->\n";
-			echo "</div><!-- /.modal -->\n";
-
-			echo "<div class='row'>\n";
-			echo "  <div id='photoEvidence' class='col-lg-2 col-md-3 col-sm-4 col-xs-6'><a href='javascript:void(0)' data-toggle='modal' data-target='#photoEvidenceModal' onClick='return false'><img src='/" . $photoEvidence . "?random=" . rand(10000,99999) . "' class='img-responsive' alt='Photo evidence' /></a></div>\n";
-			echo "  <div class='col-lg-10 col-md-9 col-sm-8 col-xs-6'>\n";
-		}
 
 	// status
 		if ($rumour[0]['status']) {
@@ -118,11 +103,45 @@
 		elseif (!$hasBeenWatchlisted) echo "  Add this page to your watchlist to keep track of our progress.\n";
 		echo "</div>\n";
 
-		if ($photoEvidence) {
-			echo "  </div>\n";
+	// attachments
+		if (count($attachments)) {
+			echo "<div id='rumourAttachments'>\n";
+			$modalCounter = 0;
+			foreach ($attachments as $filePath) {
+				if (substr_count($filePath, '\\')) $filename = substr($filePath, strrpos($filePath, '\\') + 1);
+				else $filename = substr($filePath, strrpos($filePath, '/') + 1);
+				if ($file_manager->isImage($filePath)) {
+					echo "<span class='rumourAttachment'><a href='javascript:void(0)' data-toggle='modal' data-target='#modal_" . $modalCounter . "'>" . $filename . "</a></span>\n";
+					$modalCounter++;
+				}
+				else echo "<span class='rumourAttachment'><a href='/" . $filePath . "' target='_blank'>" . $filename . "</a></span>\n";
+			}
 			echo "</div>\n";
+
+			$modalCounter = 0;
+			foreach ($attachments as $filePath) {
+				if (substr_count($filePath, '\\')) $filename = substr($filePath, strrpos($filePath, '\\') + 1);
+				else $filename = substr($filePath, strrpos($filePath, '/') + 1);
+
+				if ($file_manager->isImage($filePath)) {
+					echo "<div id='modal_" . $modalCounter . "' class='modal fade'>\n";
+					echo "  <div class='modal-dialog'>\n";
+					echo "    <div class='modal-content'>\n";
+					echo "      <div class='modal-header'>\n";
+					echo "        <button type='button' class='close' data-dismiss='modal' aria-label='Close'><span aria-hidden='true'>&times;</span></button>\n";
+					echo "        <h4 class='modal-title'>Image preview</h4>\n";
+					echo "      </div>\n";
+					echo "      <div class='modal-body'>\n";
+					echo "        <a href='/" . $filePath . "' target='_blank'><img src='/" . $filePath . "?random=" . rand(10000,99999) . "' class='img-responsive' /></a>\n";
+					echo "      </div>\n";
+					echo "    </div><!-- /.modal-content -->\n";
+					echo "  </div><!-- /.modal-dialog -->\n";
+					echo "</div><!-- /.modal -->\n";
+					$modalCounter++;
+				}
+			}
 		}
-		
+
 	// actions
 		if ($logged_in) {
 			echo $form->start('rumourActionsForm', '', 'post', '', null, array('onSubmit'=>'return false;')) . "\n";
@@ -130,7 +149,7 @@
 			echo $form->input('hidden', 'removeFromWatchlist') . "\n";
 			echo "<div id='rumourActions'>\n";
 			// add sighting
-				echo "  " . $form->input('button', 'addSightingButton', null, false, 'I have also heard this rumour', 'btn btn-info', null, null, array('data-toggle'=>'collapse', 'href'=>'#addSighting')) . "\n";
+				echo "  " . $form->input('button', 'addSightingButton', null, false, 'I have also heard this rumour', 'btn btn-info', null, null, null, null, array('onClick'=>'document.location.href="/sighting_edit/add/' . $publicID. '"')) . "\n";
 			// watchlist
 				if (!$hasBeenWatchlisted) echo "  " . $form->input('button', 'addToWatchlistButton', null, false, "<span class='glyphicon glyphicon-plus'></span> Watchlist", 'btn btn-default', null, null, null, null, array('onClick'=>'validateAddToWatchlist(); return false;')) . "\n";
 				else echo "  " . $form->input('button', 'removeFromWatchlistButton', null, false, "<span class='glyphicon glyphicon-minus'></span> Stop watching", 'btn btn-default', null, null, null, null, array('onClick'=>'validateRemoveFromWatchlist(); return false;')) . "\n";
@@ -142,40 +161,6 @@
 				elseif ($logged_in['is_moderator'] && !$rumour[0]['assigned_to']) $buttonText = 'Assign';
 				elseif ($logged_in['is_community_liaison'] && $rumour[0]['assigned_to'] == $logged_in['user_id']) $buttonText = 'Reassign';
 				if (@$buttonText) echo "  " . $form->input('button', 'editRumourButton', null, false, "<span class='glyphicon glyphicon-edit'></span> " . $buttonText, 'btn btn-default', null, null, null, null, array('onClick'=>'document.location.href="/rumour_edit/' . $publicID . '"; return false;'));
-			echo "</div>\n";
-			echo $form->end() . "\n";
-		}
-
-	// add sighting
-		if ($logged_in) {
-			echo $form->start('addSightingForm', '', 'post', null, null, array('onSubmit'=>'validateAddSightingForm(); return false;')) . "\n";
-			echo "<div id='addSighting' class='collapse'>\n";
-			echo "  <div class='row form-group'>\n";
-			/* Country */			echo "    <div class='col-md-4'>" . $form->input('country', 'country', $operators->firstTrue(@$_POST['country'], @$pseudonym['country_id']), false, 'Country where heard', 'form-control') . "</div>\n";
-			/* Community */			echo "    <div class='col-md-4'>" . $form->input('text', 'city', @$_POST['city'], false, '|Community', 'form-control') . "</div>\n";
-			/* Location type */		echo "    <div class='col-md-4'>" . $form->input('select', 'location_type', @$_POST['location_type'], false, null, 'select2', $locationTypes, null, array('data-placeholder'=>'Overheard at', 'data-tags'=>'true')) . "</div>\n";
-			echo "  </div>\n";
-			echo "  <div class='row form-group'>\n";
-			/* Date heard */		echo "    <div class='col-md-6'>\n";
-									echo "      <div id='heard_on' class='input-group date form_datetime' data-date-format='yyyy-mm-dd hh:ii:ss' data-link-format='yyyy-mm-dd hh:ii:ss' data-link-field='heard_on'>\n";
-									echo "        " . $form->input('text', 'heard_on', $operators->firstTrue(@$_POST['heard_on'], date('Y-m-d H:i:s')), false, null, 'form-control', null, 19) . "\n";
-									echo "        <span class='input-group-addon'>&nbsp;<span class='glyphicon glyphicon-calendar'></span></span>\n";
-									echo "      </div>\n";
-									echo "    </div>\n";
-			/* Source */			if ($logged_in['is_proxy']) echo "    <div class='col-md-6'>" . $form->input('select', 'source_id', null, false, '|Reported via', 'form-control', $rumourSources) . "</div>\n";
-									echo "  </div>\n";
-			if ($logged_in['is_proxy']) {
-				/* Attributed to */	echo "  <div class='row form-group'>\n";
-									echo "    <div class='col-md-6'>" . $form->input('select', 'created_by', $operators->firstTrue(@$_POST['created_by'], $logged_in['user_id']), false, '|Heard by', 'form-control', $allUsers + array(''=>'--', 'add'=>'A new user?')) . "</div>\n";
-									echo "    <div class='col-md-6'>" . $form->input('button', 'add_user', null, false, '...or create new user', 'btn btn-link', null, null, array('data-toggle'=>'collapse', 'data-target'=>'#newuser_container', 'aria-expanded'=>'false', 'aria-controls'=>'newuser_container'), null, array('onClick'=>'document.getElementById("created_by").value="add"; return false;')) . "</div>\n";
-									echo "  </div>\n";
-
-									include 'includes/views/desktop/shared/add_new_user.php';
-			}
-			else echo $form->input('hidden', 'created_by', $logged_in['user_id']) . "\n";
-			echo "  <div class='row form-group'>\n";
-			/* Action */			echo "    <div class='col-md-2'>" . $form->input('submit', 'submitSighting', null, false, 'Submit', 'btn btn-info') . "</div>\n";
-			echo "  </div>\n";
 			echo "</div>\n";
 			echo $form->end() . "\n";
 		}
@@ -366,7 +351,7 @@
 
 	// pagination
 		if ($numberOfPages > 1) {
-			echo $form->paginate($page, $numberOfPages, '/rumour/' . $publicID . $parser->seoFriendlySuffix($rumour[0]['description']) . '/' . $keyvalue_array->updateKeyValue($parameter3, 'page', '#', '|'));
+			echo $form->paginate($page, $numberOfPages, '/rumour/' . $publicID . $parser->seoFriendlySuffix($rumour[0]['description']) . '/' . $keyvalue_array->updateKeyValue($tl->page['parameter3'], 'page', '#', '|'));
 		}
 
 	echo "  </div>\n";

@@ -5,17 +5,17 @@
 	-------------------------------------- */
 
 	// authenticate user
-		if (!$logged_in) forceLoginThenRedirectHere();
+		if (!$logged_in) $authentication_manager->forceLoginThenRedirectHere(true);
 		
-		if (!$logged_in['can_run_housekeeping']) $pageError = "You aren't authorized to perform housekeeping.";
+		if (!$logged_in['can_run_housekeeping']) $tl->page['error'] = "You aren't authorized to perform housekeeping.";
 
 	// queries
-		$action = $parameter1;
+		$action = $tl->page['parameter1'];
 		if ($action == 'run') include 'housekeeping.php';
 		elseif ($action == 'source_code') {
-			if ($parameter2) $filters = $keyvalue_array->keyValueToArray(urldecode($parameter2), '|');
+			if ($tl->page['parameter2']) $filters = $keyvalue_array->keyValueToArray(urldecode($tl->page['parameter2']), '|');
 			$url = '../housekeeping/autoload/' . $filters['folder'] . '/' . $filters['script'] . '.php';
-			if (!file_exists($url)) $pageError = "Unable to locate source code at " . $url;
+			if (!file_exists($url)) $tl->page['error'] = "Unable to locate source code at " . $url;
 		}
 		else {
 

@@ -1,6 +1,6 @@
 <?php
 
-	echo "  <h2>" . (count(@$pseudonyms) ? "<span class='label label-default'>" . count(@$pseudonyms) . "</span> " : false) . $pageTitle . "</h2>\n\n";
+	echo "  <h2>" . (count(@$pseudonyms) ? "<span class='label label-default'>" . count(@$pseudonyms) . "</span> " : false) . $tl->page['title'] . "</h2>\n\n";
 
 	// add/edit
 
@@ -12,9 +12,9 @@
 			// url
 				echo $form->rowStart('url', 'URL');
 				echo "  <div class='row'>\n";
-				echo "    <div class='col-md-3'>" . $form->input('text', 'subdomain', $operators->firstTrue(@$_POST['subdomain'], @$result[0]['subdomain'], @$environmentals['subdomain']), false, '|subdomain', 'form-control', '', 50) . "</div>\n";
+				echo "    <div class='col-md-3'>" . $form->input('text', 'subdomain', $operators->firstTrue(@$_POST['subdomain'], @$result[0]['subdomain'], @$tl->page['subdomain']), false, '|subdomain', 'form-control', '', 50) . "</div>\n";
 				echo "    <div class='col-md-1 text-center'>.</div>\n";
-				echo "    <div class='col-md-8'>" . $form->input('text', 'domain', $operators->firstTrue(@$_POST['domain'], @$result[0]['domain'], @$environmentals['domain']), true, '|domain.com', 'form-control', '', 205) . "</div>\n";
+				echo "    <div class='col-md-8'>" . $form->input('text', 'domain', $operators->firstTrue(@$_POST['domain'], @$result[0]['domain'], @$tl->page['domain']), true, '|domain.com', 'form-control', '', 205) . "</div>\n";
 				echo "  </div>\n";
 				echo $form->rowEnd();
 			// name
@@ -24,7 +24,7 @@
 			// country
 				echo $form->row('country', 'country_id', $operators->firstTrue(@$_POST['country_id'], @$result[0]['country_id']), false, 'Default country', 'form-control');
 			// language
-				echo $form->row('language', 'language_id', $operators->firstTrue(@$_POST['language_id'], @$result[0]['language_id']), false, 'Default language', 'form-control');
+				echo $form->row('language_common', 'language_id', $operators->firstTrue(@$_POST['language_id'], @$result[0]['language_id']), false, 'Default language', 'form-control');
 			// google analytics
 				echo $form->row('text', 'google_analytics_id', $operators->firstTrue(@$_POST['google_analytics_id'], @$result[0]['google_analytics_id']), false, 'Google Analytics ID', 'form-control', '', 255);
 			// logo
@@ -32,6 +32,8 @@
 				if (@$logo) echo "<div><img src='/" . $logo . "' border='0' class='img-responsive' alt='Current logo' /></div><br />\n";
 				echo "  <div>" . $form->input('file', 'new_logo') . "</div>\n";
 				echo $form->rowEnd();
+			// Area of operations
+				echo $form->row('latlongmap', 'area', $operators->firstTrue((floatval(@$_POST['area_latitude']) <> 0 || floatval(@$_POST['area_longitude']) <> 0 ? floatval(@$_POST['area_latitude']) . "," . floatval(@$_POST['area_longitude']) : false), (floatval(@$result[0]['latitude']) <> 0 && floatval(@$result[0]['longitude']) <> 0 ? $result[0]['latitude'] . "," . $result[0]['longitude'] : false)), false, "Area of operations");
 			// actions
 				echo $form->rowStart('actions');
 				echo "  " . $form->input('submit', 'update_button', null, false, 'Save', 'btn btn-info') . "\n";
@@ -67,7 +69,7 @@
 					// url
 						echo "<td>" . $pseudonyms[$counter]['url'] . "</td>\n";
 					// country
-						echo "<td>" . $pseudonyms[$counter]['default_country'] . "</td>\n";
+						echo "<td>" . $pseudonyms[$counter]['default_country'] . ($pseudonyms[$counter]['latitude'] <> 0 && $pseudonyms[$counter]['longitude'] <> 0 ? " (" . round($pseudonyms[$counter]['latitude'], 4) . "," . round($pseudonyms[$counter]['longitude'], 4) . ")" : false) . "</td>\n";
 					// language
 						echo "<td>" . $pseudonyms[$counter]['default_language'] . "</td>\n";
 					echo "</tr>\n";

@@ -5,14 +5,17 @@
 	-------------------------------------- */
 
 	// authenticate user
-		if (!$logged_in['is_administrator']) forceLoginThenRedirectHere();
+		if (!$logged_in['is_administrator']) $authentication_manager->forceLoginThenRedirectHere(true);
 		
 	// parse query string
-		$pageStatus = $parameter1;
+		$query_string = urldecode(@$tl->page['parameter1']);
+		if ($query_string == 'index') $query_string = null;
+		$query_string = trim($query_string . "|alerts_only=true", '| ');
 
 	// queries
 		// alerts
-			$alerts = retrieveFromDb('logs', null, array('is_error'=>'1', 'is_resolved'=>'0'), null, null, null, null, null, $tablePrefix . 'logs.connected_on DESC');
+			$logs = new logs_widget_TL();
+			$logs->initialize(['template_name'=>$tl->page['template'], 'query_string'=>$query_string, 'columns'=>['connected_on'=>'', 'activity'=>'']]);
 
 		// comments
 			$flaggedComments = retrieveFlaggedComments();
@@ -32,8 +35,8 @@
 			
 			$dbSize = retrieveDbSize_TL();
 
-	$pageTitle = 'Dashboard';
-	$sectionTitle = 'Administration';
+	$tl->page['title'] = 'Dashboard';
+	$tl->page['section'] = 'Administration';
 		
 /*	--------------------------------------
 	Execute only if a form post
@@ -41,40 +44,23 @@
 			
 	if (count($_POST) > 0) {
 		
-		$pageError = '';
+		$tl->page['error'] = '';
 
-		if ($_POST['formName'] == 'dashboardAlertsForm' && $_POST['alertToResolve']) {
-			// resolve alert
-				$success = updateDb('logs', array('is_resolved'=>'1'), array('log_id'=>$_POST['alertToResolve']), null, null, null, null, 1);
-				if ($success) {
-					// update log
-						$activity = $logged_in['full_name'] . " (user_id " . $logged_in['user_id'] . ") has resolved log_id " . $_POST['log_id'];
-						$logger->logItInDb($activity);
-					// redirect
-						header('Location: /admin_dashboard/alert_resolved');
-						exit();
-				}
-				else {
-					$pageError .= "Unable to resolve alert for some reason. ";
-				}
-		}
-		
-		elseif ($_POST['formName'] == 'editRegistrantsForm' && $_POST['registrantToApprove']) {
+		if ($_POST['formName'] == 'editRegistrantsForm' && $_POST['registrantToApprove']) {
 
 			// retrieve registrant info
 				$registration = retrieveSingleFromDb('registrations', null, array('registration_id'=>$_POST['registrantToApprove']));
-				if (count($registration) < 1) $pageError = "There was a problem locating the desired registrant. ";
+				if (count($registration) < 1) $tl->page['error'] = "There was a problem locating the desired registrant. ";
 				else {
 
 					// add user
 						$confirmed = approveRegistration($registration[0]['registration_id'], $logged_in['user_id']);
 			
-						if (!$confirmed) $pageError = "There was a problem approving the desired registrant. ";
+						if (!$confirmed) $tl->page['error'] = "There was a problem approving the desired registrant. ";
 						else {
 
 							// redirect
-								header('Location: /admin_dashboard/registrant_approved');
-								exit();
+								$authentication_manager->forceRedirect('/admin_dashboard/index/success=registrant_approved');
 
 						}
 				}
@@ -93,8 +79,7 @@
 				$logger->logItInDb($activity, null, array('user_id=' . $logged_in['user_id'], 'registration_id=' . $_POST['registrantToDelete']));
 				
 			// redirect
-				header('Location: /admin_dashboard/registrant_deleted');
-				exit();
+				$authentication_manager->forceRedirect('/admin_dashboard/index/success=registrant_deleted');
 				
 		}
 		

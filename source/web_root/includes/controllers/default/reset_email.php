@@ -5,21 +5,18 @@
 	-------------------------------------- */
 
 	// parse query string
-		$key = $parameter1;
+		$key = $tl->page['parameter1'];
 		
 	// validate query string
 		$doesKeyExist = retrieveSingleFromDb('user_keys', null, array('user_key'=>'Reset Email', 'hash'=>$key));
-		if (!count($doesKeyExist)) $pageError = 'bad_key';
+		if (!count($doesKeyExist)) $tl->page['error'] = 'bad_key';
 		else {
 			$doesEmailAlreadyBelongToUser = retrieveSingleFromDb('users', 'email', array('email'=>$doesKeyExist[0]['value']));
-			if (count($doesEmailAlreadyBelongToUser)) $pageError = 'duplicate_email';
+			if (count($doesEmailAlreadyBelongToUser)) $tl->page['error'] = 'duplicate_email';
 			else {
 
 				// force logout if user is logged in under another account
-					if (@$logged_in && @$logged_in['user_id'] != $doesKeyExist[0]['user_id']) {
-						header('Location: /logout/redirect/' . urlencode('reset_email/' . $key));
-						exit();
-					}
+					if (@$logged_in && @$logged_in['user_id'] != $doesKeyExist[0]['user_id']) $authentication_manager->forceRedirect('/logout/redirect/' . urlencode('reset_email/' . $key));
 
 				// retrieve user
 					$user = retrieveUsers(array($tablePrefix . 'users.user_id'=>$doesKeyExist[0]['user_id']), null, null, null, 1);
@@ -42,7 +39,7 @@
 		}
 
 		// redirect
-			header('Location: /login_register/' . ($pageError ? $pageError : 'email_reset_successful'));
+			$authentication_manager->forceRedirect('/login_register/' . ($tl->page['error'] ? 'error=' . $tl->page['error'] : 'success=email_reset_successful'));
 			exit();
 
 /*	--------------------------------------

@@ -5,16 +5,11 @@
 	-------------------------------------- */
 
 	// parse query string
-		$publicID = $parameter1;
-		if (!$publicID) {
-			header('Location: /404');
-			exit();
-		}
+		$publicID = $tl->page['parameter1'];
+		if (!$publicID) $authentication_manager->forceRedirect('/404');
 		
-		if ($parameter3) $filters = $keyvalue_array->keyValueToArray(urldecode($parameter3), '|');
+		if ($tl->page['parameter3']) $filters = $keyvalue_array->keyValueToArray(urldecode($tl->page['parameter3']), '|');
 		
-		$pageStatus = $parameter4;
-
 	// clean input
 		if (@$filters) {
 			$allowableFilters = array('page', 'view');
@@ -28,10 +23,7 @@
 	// queries
 		if ($logged_in['is_moderator'] || $logged_in['is_administrator']) $rumour = retrieveRumours(array('public_id'=>$publicID), null, null, null, 1);
 		else $rumour = retrieveRumours(array('public_id'=>$publicID, $tablePrefix . 'rumours.enabled'=>1), null, null, null, 1);
-		if (count($rumour) < 1) {
-			header('Location: /404');
-			exit();
-		}
+		if (count($rumour) < 1) $authentication_manager->forceRedirect('/404');
 		
 		// tags
 			$tags = retrieveTags(array('rumour_id'=>$rumour[0]['rumour_id']), null, null, $tablePrefix . 'tags.tag ASC');
@@ -67,15 +59,15 @@
 
 			$allTags = array();
 			foreach ($rumourTags as $id=>$tag) {
-				$allTags[$tag] = $tag;
+				if (trim($id) && trim($tag)) $allTags[$tag] = $tag;
 			}
 
-			if (!$rumour[0]['enabled']) $pageWarning = "This rumour is disabled.";
-			$photoEvidence = 'assets/photo_evidence/' . $rumour[0]['rumour_id'] . '.' . $rumour[0]['photo_evidence_file_ext'];
-			if (!file_exists($photoEvidence)) $photoEvidence = null;
+			if (!$rumour[0]['enabled']) $tl->page['warning'] = "This rumour is disabled.";
+
+			if (file_exists('assets/rumour_attachments/' . $publicID)) $attachments = $directory_manager->read('assets/rumour_attachments/' . $publicID, false, false, true);
 			
 	if (@$filters['view'] == 'sightings') $pageLoadEvents = "populateMap();";
-	$pageDescription = $rumour[0]['description'];
+	$tl->page['description'] = $rumour[0]['description'];
 
 /*	--------------------------------------
 	Execute only if a form post
@@ -83,13 +75,13 @@
 
 	if (count($_POST) > 0) {
 
-		$pageError = null;
+		$tl->page['error'] = null;
 		
 		if ($_POST['formName'] == 'editTagsForm' && $_POST['tagToRemove'] && $logged_in) {
 			
 			// validate tag
 				$tag = retrieveSingleFromDb('tags', null, array('tag_id'=>$_POST['tagToRemove']));
-				if (count($tag) <> 1) $pageError .= "Unknown error attempting to remove tag. ";
+				if (count($tag) <> 1) $tl->page['error'] .= "Unknown error attempting to remove tag. ";
 				else {
 
 					// delete association
@@ -104,8 +96,7 @@
 						$logger->logItInDb($activity, null, array('user_id=' . $logged_in['user_id'], 'rumour_id=' . $rumour[0]['rumour_id'], 'tag_id=' . $_POST['tagToRemove']));
 						
 					// redirect
-						header('Location: /rumour/' . $publicID . '/' . $parser->seoFriendlySuffix($rumour[0]['description']) . '/' . ($parameter3 ? $parameter3 : "page=1") . '/tag_removed');
-						exit();
+						$authentication_manager->forceRedirect('/rumour/' . $publicID . '/' . $parser->seoFriendlySuffix($rumour[0]['description']) . '/' . $keyvalue_array->updateKeyValue($tl->page['parameter3'], 'view', 'rumour', '|') . '/success=tag_removed');
 					
 				}
 				
@@ -120,7 +111,7 @@
 				}
 				
 			// check for errors
-				if (!$_POST['new_tags']) $pageError .= "Please specify one or more tags. ";
+				if (!$_POST['new_tags']) $tl->page['error'] .= "Please specify one or more tags. ";
 				else {
 
 					for ($counter = 0; $counter < count($_POST['new_tags']); $counter++) {
@@ -141,8 +132,7 @@
 					}
 
 					// redirect
-						header('Location: /rumour/' . $publicID . '/' . $parser->seoFriendlySuffix($rumour[0]['description']) . '/' . ($parameter3 ? $parameter3 : "page=1") . '/tags_updated');
-						exit();
+						$authentication_manager->forceRedirect('/rumour/' . $publicID . '/' . $parser->seoFriendlySuffix($rumour[0]['description']) . '/' . $keyvalue_array->updateKeyValue($tl->page['parameter3'], 'view', 'rumour', '|') . '/success=tags_updated');
 
 				}
 
@@ -151,7 +141,7 @@
 			
 			// authenticate
 				$sighting = retrieveSightings(array('sighting_id'=>$_POST['sightingToRemove']), null, null, null, 1);
-				if (count($sighting) <> 1) $pageError .= "Unknown error attempting to remove sighting. ";
+				if (count($sighting) <> 1) $tl->page['error'] .= "Unknown error attempting to remove sighting. ";
 				elseif (($logged_in['is_administrator'] && $logged_in['can_edit_content']) || ($sighting[0]['created_by'] == $logged_in['user_id'] || $sighting[0]['entered_by'] == $logged_in['user_id'])) {
 
 					// remove sighting
@@ -162,11 +152,10 @@
 						$logger->logItInDb($activity, null, array('user_id=' . $logged_in['user_id'], 'rumour_id=' . $rumour[0]['rumour_id'], 'sighting_id=' . $_POST['sightingToRemove']));
 						
 					// redirect
-						header('Location: /rumour/' . $publicID . '/' . $parser->seoFriendlySuffix($rumour[0]['description']) . '/' . $keyvalue_array->updateKeyValue($parameter3, 'view', 'sightings', '|') . '/sighting_removed');
-						exit();
+						$authentication_manager->forceRedirect('/rumour/' . $publicID . '/' . $parser->seoFriendlySuffix($rumour[0]['description']) . '/' . $keyvalue_array->updateKeyValue($tl->page['parameter3'], 'view', 'sightings', '|') . '/success=sighting_removed');
 
 				}
-				else $pageError .= "You don't appear to be authorized to delete a sighting. ";
+				else $tl->page['error'] .= "You don't appear to be authorized to delete a sighting. ";
 				
 		}
 		elseif ($_POST['formName'] == 'addSightingForm' && $logged_in) {
@@ -180,35 +169,43 @@
 				}
 				
 			// check for errors
-				if (!@$_POST['country']) $pageError .= "Please specify a country. ";
-				if (!@$_POST['heard_on']) $pageError .= "Please specify a date. ";
+				if (!@$_POST['country']) $tl->page['error'] .= "Please specify a country. ";
+				if (!@$_POST['heard_on']) $tl->page['error'] .= "Please specify a date. ";
 				if (!$_POST['source_id']) $_POST['source_id'] = 1; // set source to "Internet"
 				if ($logged_in['is_proxy']) {
-					if (!@$_POST['created_by']) $pageError .= "Please specify who heard the rumour. ";
+					if (!@$_POST['created_by']) $tl->page['error'] .= "Please specify who heard the rumour. ";
 					elseif (@$_POST['created_by'] == 'add') {
-						if (!@$_POST['newuser_username']) $pageError .= "Please choose a username for the new user. ";
+						if (!@$_POST['newuser_username']) $tl->page['error'] .= "Please choose a username for the new user. ";
 						else {
 							$existingUsers = countInDb('users', 'user_id', array('username'=>$_POST['newuser_username']));
 							$existingRegistrants = countInDb('registrations', 'registration_id', array('username'=>$_POST['newuser_username']));
-							if ($existingUsers[0]['count'] || $existingRegistrants[0]['count'] > 0) $pageError .= "The username you've specified for a new user already belongs to another user. ";
+							if ($existingUsers[0]['count'] || $existingRegistrants[0]['count'] > 0) $tl->page['error'] .= "The username you've specified for a new user already belongs to another user. ";
 						}
-						if (!@$_POST['newuser_country']) $pageError .= "Please specify the new user's country. ";
+						if (!@$_POST['newuser_country']) $tl->page['error'] .= "Please specify the new user's country. ";
 						if ($_POST['newuser_email']) {
-							if (!$input_validator->validateEmailRobust($_POST['newuser_email'])) $pageError .= "Please specify a valid email address for the new user. ";
+							if (!$input_validator->validateEmailRobust($_POST['newuser_email'])) $tl->page['error'] .= "Please specify a valid email address for the new user. ";
 							else {
 								$existingUsers = countInDb('users', 'user_id', array('email'=>$_POST['newuser_email']));
 								$existingRegistrants = countInDb('registrations', 'registration_id', array('email'=>$_POST['newuser_email']));
-								if ($existingUsers[0]['count'] || $existingRegistrants[0]['count'] > 0) $pageError .= "The email address you've specified for a new user already belongs to another user. ";
+								if ($existingUsers[0]['count'] || $existingRegistrants[0]['count'] > 0) $tl->page['error'] .= "The email address you've specified for a new user already belongs to another user. ";
 							}
 						}
 					}
 				}
 
-			if (!$pageError) {
+			if (!$tl->page['error']) {
 				// create encoded IP
 					if (strlen($_SERVER['REMOTE_ADDR']) > 15) $ipv6 = $parser->encodeIP($_SERVER['REMOTE_ADDR'], 'ipv6');
 					elseif (strlen($_SERVER['REMOTE_ADDR']) > 0) $ipv4 = $parser->encodeIP($_SERVER['REMOTE_ADDR'], 'ipv4');
 				
+				// create publicID
+					$sightingPublicID = null;
+					while ($sightingPublicID == null) {
+						$sightingPublicID = $url_shortener->customAlphaID('a', 6, null, true, true);
+						$doesPublicIdExist = countInDb('rumour_sightings', 'public_id', array('public_id'=>$sightingPublicID));
+						if ($doesPublicIdExist[0]['count'] > 0) $sightingPublicID = null;
+					}
+
 				// determine attribution
 					if ($logged_in['is_proxy']) {
 						if ($_POST['created_by'] != 'add') $createdBy = $_POST['created_by'];
@@ -221,37 +218,32 @@
 					if (!count($latLong)) $latLong = retrieveSingleFromDB('rumours', null, array('country_id'=>@$_POST['country'], 'city'=>@$_POST['city']), null, null, null, "latitude <> 0 AND longitude <> 0");
 
 				// save sighting
-					$sightingID = insertIntoDb('rumour_sightings', array('rumour_id'=>$rumour[0]['rumour_id'], 'created_by'=>$createdBy, 'entered_by'=>$logged_in['user_id'], 'entered_on'=>date('Y-m-d H:i:s'), 'source_id'=>$_POST['source_id'], 'ipv4'=>@$ipv4, 'ipv6'=>@$ipv6, 'country_id'=>$_POST['country'], 'city'=>@$_POST['city'], 'location_type'=>@$_POST['location_type'], 'latitude'=>@$latLong[0]['latitude'], 'longitude'=>@$latLong[0]['longitude'], 'heard_on'=>$_POST['heard_on']));
+					$sightingID = insertIntoDb('rumour_sightings', array('public_id'=>$sightingPublicID, 'rumour_id'=>$rumour[0]['rumour_id'], 'created_by'=>$createdBy, 'entered_by'=>$logged_in['user_id'], 'entered_on'=>date('Y-m-d H:i:s'), 'source_id'=>$_POST['source_id'], 'ipv4'=>@$ipv4, 'ipv6'=>@$ipv6, 'country_id'=>$_POST['country'], 'city'=>@$_POST['city'], 'location_type'=>@$_POST['location_type'], 'latitude'=>@$latLong[0]['latitude'], 'longitude'=>@$latLong[0]['longitude'], 'heard_on'=>$_POST['heard_on']));
 										
 				// update log
 					$activity = $logged_in['full_name'] . " (user_id " . $logged_in['user_id'] . ") has added a sighting (sighting_id " . $sightingID . ") of rumour_id " . $rumour[0]['rumour_id'] . ": " . $rumour[0]['description'];
 					$logger->logItInDb($activity, null, array('user_id=' . $logged_in['user_id'], 'rumour_id=' . $rumour[0]['rumour_id'], 'sighting_id=' . $sightingID));
 					
 				// redirect
-					header('Location: /rumour/' . $publicID . '/' . $parser->seoFriendlySuffix($rumour[0]['description']) . '/' . $parameter3 . '/sighting_added');
-					exit();
+					$authentication_manager->forceRedirect('/rumour/' . $publicID . '/' . $parser->seoFriendlySuffix($rumour[0]['description']) . '/' . $keyvalue_array->updateKeyValue($tl->page['parameter3'], 'view', 'sightings', '|') . '/success=sighting_added');
 			}
 			
 		}
 		elseif ($_POST['formName'] == 'rumourActionsForm' && $_POST['addToWatchlist'] == 'Y' && $logged_in) {
 			
 			$alreadyWatchlisted = retrieveSingleFromDb('watchlist', null, array('rumour_id'=>$rumour[0]['rumour_id'], 'created_by'=>$logged_in['user_id']));
-			if (count($alreadyWatchlisted) > 0) $pageError .= "This rumour is already in your watchlist. ";
+			if (count($alreadyWatchlisted) > 0) $tl->page['error'] .= "This rumour is already in your watchlist. ";
 			else {
 				insertIntoDb('watchlist', array('rumour_id'=>$rumour[0]['rumour_id'], 'notify_of_updates'=>'1', 'created_by'=>$logged_in['user_id'], 'created_on'=>date('Y-m-d H:i:s')));
-				header('Location: /rumour/' . $publicID . '/' . $parser->seoFriendlySuffix($rumour[0]['description']) . '/' . $parameter3 . '/added_to_watchlist');
-				exit();
+				$authentication_manager->forceRedirect('/rumour/' . $publicID . '/' . $parser->seoFriendlySuffix($rumour[0]['description']) . '/' . $tl->page['parameter3'] . '/success=added_to_watchlist');
 			}
 			
 		}
 		elseif ($_POST['formName'] == 'rumourActionsForm' && $_POST['removeFromWatchlist'] == 'Y' && $logged_in) {
 			
 			$success = deleteFromDb('watchlist', array('rumour_id'=>$rumour[0]['rumour_id'], 'created_by'=>$logged_in['user_id']), null, null, null, null, 1);
-			if (!$success) $pageError .= "This rumour wasn't found in your watchlist. ";
-			else {
-				header('Location: /rumour/' . $publicID . '/' . $parser->seoFriendlySuffix($rumour[0]['description']) . '/' . $parameter3 . '/removed_from_watchlist');
-				exit();
-			}
+			if (!$success) $tl->page['error'] .= "This rumour wasn't found in your watchlist. ";
+			else $authentication_manager->forceRedirect('/rumour/' . $publicID . '/' . $parser->seoFriendlySuffix($rumour[0]['description']) . '/' . $keyvalue_array->updateKeyValue($tl->page['parameter3'], 'view', 'rumour', '|') . '/success=removed_from_watchlist');
 			
 		}
 		elseif ($_POST['formName'] == 'addCommentForm' && $logged_in) {
@@ -261,13 +253,13 @@
 				$_POST['new_comment'] = $parser->removeHTML($_POST['new_comment']);
 				
 			// check for errors
-				if (!$_POST['new_comment']) $pageError .= "Please provide a comment. ";
+				if (!$_POST['new_comment']) $tl->page['error'] .= "Please provide a comment. ";
 				
-			if (!$pageError) {
+			if (!$tl->page['error']) {
 				
 				// add to database
 					$commentID = insertIntoDb('comments', array('rumour_id'=>$rumour[0]['rumour_id'], 'comment'=>$_POST['new_comment'], 'created_by'=>$logged_in['user_id'], 'created_on'=>date('Y-m-d H:i:s')));
-					if (!$commentID) $pageError .= "Unable to add comment for some reason. ";
+					if (!$commentID) $tl->page['error'] .= "Unable to add comment for some reason. ";
 					else {
 
 						// update rumour
@@ -288,8 +280,7 @@
 							$logger->logItInDb($activity, null, array('user_id=' . $logged_in['user_id'], 'rumour_id=' . $rumour[0]['rumour_id'], 'comment_id=' . $commentID));
 							
 						// redirect
-							header('Location: /rumour/' . $publicID . '/' . $parser->seoFriendlySuffix($rumour[0]['description']) . '/' . $keyvalue_array->updateKeyValue($parameter3, 'view', 'comments', '|') . '/comment_added');
-							exit();
+							$authentication_manager->forceRedirect('/rumour/' . $publicID . '/' . $parser->seoFriendlySuffix($rumour[0]['description']) . '/' . $keyvalue_array->updateKeyValue($tl->page['parameter3'], 'view', 'comments', '|') . '/success=comment_added');
 						
 					}
 
@@ -309,8 +300,7 @@
 				$logger->logItInDb($activity, null, array('user_id=' . $logged_in['user_id'], 'rumour_id=' . $rumour[0]['rumour_id'], 'comment_id=' . $_POST['commentToFlag']));
 				
 			// redirect
-				header('Location: /rumour/' . $publicID . '/' . $parser->seoFriendlySuffix($rumour[0]['description']) . '/' . $keyvalue_array->updateKeyValue($parameter3, 'view', 'comments', '|') . '/comment_flagged');
-				exit();
+				$authentication_manager->forceRedirect('/rumour/' . $publicID . '/' . $parser->seoFriendlySuffix($rumour[0]['description']) . '/' . $keyvalue_array->updateKeyValue($tl->page['parameter3'], 'view', 'comments', '|') . '/success=comment_flagged');
 				
 		}
 
@@ -324,8 +314,7 @@
 				$logger->logItInDb($activity, null, array('user_id=' . $logged_in['user_id'], 'rumour_id=' . $rumour[0]['rumour_id'], 'comment_id=' . $_POST['commentToDisable']));
 				
 			// redirect
-				header('Location: /rumour/' . $publicID . '/' . $parser->seoFriendlySuffix($rumour[0]['description']) . '/' . $keyvalue_array->updateKeyValue($parameter3, 'view', 'comments', '|') . '/comment_disabled');
-				exit();
+				$authentication_manager->forceRedirect('/rumour/' . $publicID . '/' . $parser->seoFriendlySuffix($rumour[0]['description']) . '/' . $keyvalue_array->updateKeyValue($tl->page['parameter3'], 'view', 'comments', '|') . '/success=comment_disabled');
 				
 		}
 		
@@ -339,8 +328,7 @@
 				$logger->logItInDb($activity, null, array('user_id=' . $logged_in['user_id'], 'rumour_id=' . $rumour[0]['rumour_id'], 'comment_id=' . $_POST['commentToEnable']));
 				
 			// redirect
-				header('Location: /rumour/' . $publicID . '/' . $parser->seoFriendlySuffix($rumour[0]['description']) . '/' . $keyvalue_array->updateKeyValue($parameter3, 'view', 'comments', '|') . '/comment_enabled');
-				exit();
+				$authentication_manager->forceRedirect('/rumour/' . $publicID . '/' . $parser->seoFriendlySuffix($rumour[0]['description']) . '/' . $keyvalue_array->updateKeyValue($tl->page['parameter3'], 'view', 'comments', '|') . '/success=comment_enabled');
 				
 		}
 		

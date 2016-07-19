@@ -4,11 +4,11 @@
 
 		public function insertGoogleAnalytics($webPropertyID, $domain = '', $accommodateMultipleTopLevelDomains = false) {
 
-			global $console;
+			global $tl;
 	
 			// check input
 				if (!$webPropertyID) {
-					$console .= __CLASS__ . "->" . __FUNCTION__ . ": No ID specified.\n";
+					$tl->page['console'] .= __CLASS__ . "->" . __FUNCTION__ . ": No ID specified.\n";
 					return false;
 				}
 	
@@ -38,11 +38,11 @@
 		
 		public function insertMixPanel($token) {
 
-			global $console;
+			global $tl;
 	
 			// check input
 				if (!$token) {
-					$console .= __CLASS__ . "->" . __FUNCTION__ . ": No token specified.\n";
+					$tl->page['console'] .= __CLASS__ . "->" . __FUNCTION__ . ": No token specified.\n";
 					return false;
 				}
 				

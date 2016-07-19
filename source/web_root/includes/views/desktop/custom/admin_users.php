@@ -68,7 +68,7 @@
 			echo "    </div>\n";
 		// export button
 			echo "    <div class='col-lg-2 col-md-2 hidden-sm hidden-xs btn btn-link text-right'>\n";
-			echo "      <a href='/export/" . urlencode($keyvalue_array->updateKeyValue($parameter1, 'report', 'users', '|')) . "' target='_blank'>Export</a>\n";
+			echo "      <a href='/export/" . urlencode($keyvalue_array->updateKeyValue($tl->page['parameter1'], 'report', 'users', '|')) . "' target='_blank'>Export</a>\n";
 			echo "    </div>\n";
 		echo "  </div>\n";
 		echo $form->end() . "\n";
@@ -78,7 +78,7 @@
 			echo "  <br />\n";
 			echo "  <div class='row'>\n";
 			echo "    <div class='col-lg-12 col-md-12 col-sm-12 col-xs-12'>\n";
-			echo $form->paginate($filters['page'], $numberOfPages, '/admin_users/' . $keyvalue_array->updateKeyValue($parameter1, 'page', '#', '|'));
+			echo $form->paginate($filters['page'], $numberOfPages, '/admin_users/' . $keyvalue_array->updateKeyValue($tl->page['parameter1'], 'page', '#', '|'));
 			echo "    </div>\n";
 			echo "  </div>\n";
 		}

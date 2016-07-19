@@ -4,10 +4,10 @@
 
 		public function insertTracking($uacctID) {
 
-			global $console;
+			global $tl;
 	
 			if (!$uacctID) {
-				$console .= __CLASS__ . "->" . __FUNCTION__ . ": No tracking ID specified.\n";
+				$tl->page['console'] .= __CLASS__ . "->" . __FUNCTION__ . ": No tracking ID specified.\n";
 				return false;
 			}
 			
@@ -19,10 +19,10 @@
 		
 		public function insertAd($name, $adClientID, $adSlot, $width, $height) {
 			
-			global $console;
+			global $tl;
 
 			if (!$adClientID || !$adSlot || !$width || !$height) {
-				$console .= __CLASS__ . "->" . __FUNCTION__ . ": Insufficient parameters specified.\n";
+				$tl->page['console'] .= __CLASS__ . "->" . __FUNCTION__ . ": Insufficient parameters specified.\n";
 				return false;
 			}
 			

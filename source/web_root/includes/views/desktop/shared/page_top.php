@@ -9,6 +9,11 @@
 	// refresh
 		if (@$refreshInSeconds) echo "<meta http-equiv='refresh' content='" . $refreshInSeconds . "' />\n";
 	
+	// discourage caching
+		echo "  <meta http-equiv='Pragma' content='no-cache'>\n";
+		echo "  <meta http-equiv='Expires' content='-1'>\n";
+		echo "  <meta http-equiv='CACHE-CONTROL' content='NO-CACHE'>\n";
+
 	// define character set
 		echo "  <meta charset='UTF-8'>\n";
 		echo "  <meta http-equiv='content-type' content='text/html; charset=UTF-8' />\n";
@@ -23,21 +28,20 @@
 		echo "  <meta name='description' content=" . '"' . $operators->firstTrue(@$pseudonym['description'], "Conflict mitigration through information") . '"' . ">\n";
 
 	// Facebook sharing tags
-		if (@$pageTitle) echo "  <meta property='og:title' content=" . '"' . $pageTitle . '"' . " />\n";
-		if (@$pageDescription) echo "  <meta property='og:description' content=" . '"' . $pageDescription . '"' . " />\n";
+		if (@$tl->page['title']) echo "  <meta property='og:title' content=" . '"' . $tl->page['title'] . '"' . " />\n";
+		if (@$tl->page['description']) echo "  <meta property='og:description' content=" . '"' . $tl->page['description'] . '"' . " />\n";
 		if (@$pageImage) echo "  <meta property='og:image' content='" . $pageImage . "' />\n";
 
 	// Twitter sharing tags
-		if (@$pageTitle || @$pageDescription || @$pageImage) {
+		if (@$tl->page['title'] || @$tl->page['description'] || @$pageImage) {
 			echo "  <meta name='twitter:card' content='summary'>\n";
-			if (@$pageTitle) echo "  <meta property='twitter:title' content=" . '"' . $pageTitle . '"' . " />\n";
-			if (@$pageDescription) echo "  <meta property='twitter:description' content=" . '"' . $pageDescription . '"' . " />\n";
+			if (@$tl->page['title']) echo "  <meta property='twitter:title' content=" . '"' . $tl->page['title'] . '"' . " />\n";
+			if (@$tl->page['description']) echo "  <meta property='twitter:description' content=" . '"' . $tl->page['description'] . '"' . " />\n";
 			if (@$pageImage) echo "  <meta property='twitter:image' content='" . $pageImage . "' />\n";
 		}
 		
 	// load Bootstrap stylesheet
-		if ($file_manager->doesUrlExist('https://maxcdn.bootstrapcdn.com/bootstrap/3.3.4/css/bootstrap.min.css')) echo "  <!-- Bootstrap --><link href='//maxcdn.bootstrapcdn.com/bootstrap/3.3.4/css/bootstrap.min.css' rel='stylesheet' media='screen' type='text/css' />\n";
-		else echo "  <!-- Bootstrap (fallback) --><link href='/libraries/bootstrap/bootstrap-3.3.4-dist/css/bootstrap.min.css' rel='stylesheet' media='screen' type='text/css' />\n";
+		echo "  <!-- Bootstrap --><link href='/libraries/bootstrap/bootstrap-3.3.4-dist/css/bootstrap.min.css' rel='stylesheet' media='screen' type='text/css' />\n";
 
 	// load Bootstrap Switch stylesheet
 		echo "  <!-- Bootstrap Switch --><link href='/libraries/bootstrap-switch/bootstrap_switch_3-0/dist/css/bootstrap3/bootstrap-switch.min.css' rel='stylesheet' />\n";
@@ -45,13 +49,15 @@
 	// load Bootstrap datetimepicker stylesheet
 		echo "  <!-- Bootstrap Datepicker --><link href='/libraries/bootstrap-datetimepicker-master/css/bootstrap-datetimepicker.min.css' rel='stylesheet' media='screen' />\n";
 
+	// load Dropzone
+		echo "  <!-- Dropzone --><link href='/libraries/dropzone/dropzone_3-8-4/downloads/css/dropzone.css?rand=" . rand(10000, 99999) . "' rel='stylesheet' />\n";
+
 	// load Font Awesome stylesheet
-		if ($file_manager->doesUrlExist('https://maxcdn.bootstrapcdn.com/font-awesome/4.3.0/css/font-awesome.min.css')) echo "  <!-- Font Awesome --><link href='//maxcdn.bootstrapcdn.com/font-awesome/4.3.0/css/font-awesome.min.css' rel='stylesheet' media='screen' type='text/css' />\n";
-		else echo "  <!-- Font Awesome (fallback) --><link href='/libraries/font_awesome/font-awesome_4-3-0/font-awesome.min.css' rel='stylesheet' media='screen' type='text/css' />\n";
+		echo "  <!-- Font Awesome --><link href='/libraries/font_awesome/font-awesome_4-3-0/font-awesome.min.css' rel='stylesheet' media='screen' type='text/css' />\n";
 
 	// load Select2 stylesheet
-		if ($file_manager->doesUrlExist('https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.0/css/select2.min.css')) echo "  <!-- Select2 --><link href='//cdnjs.cloudflare.com/ajax/libs/select2/4.0.0/css/select2.min.css' rel='stylesheet' />\n";
-		else echo "  <!-- Select2 --><link href='/libraries/select2/select2_4-0/dist/css/select2.min' rel='stylesheet' />\n";
+		echo "  <!-- Select2 --><link href='/libraries/select2/4-0-2-rc-1/dist/css/select2.min.css' rel='stylesheet' />\n";
+//		echo "  <!-- Select2 --><link href='/libraries/select2/select2_4-0/dist/css/select2.min' rel='stylesheet' />\n";
 
 	// load TidalLock stylesheets
 		if ($handle = opendir('libraries/tidal_lock/css/.')) {
@@ -76,7 +82,7 @@
 			}
 			closedir($handle);
 		}
-		if (file_exists("resources/css/desktop/" . $templateName . ".css") > 0) echo "  <link href='/resources/css/desktop/" . $templateName . ".css' rel='stylesheet' media='screen' type='text/css' />\n";
+		if (file_exists("resources/css/desktop/" . $tl->page['template'] . ".css") > 0) echo "  <link href='/resources/css/desktop/" . $tl->page['template'] . ".css' rel='stylesheet' media='screen' type='text/css' />\n";
 		
 	// load page-specific CSS
 		if ($pageCss) {
@@ -89,7 +95,7 @@
 		if (file_exists('resources/img/icons/favicon.ico')) echo "  <link href='/resources/img/icons/favicon.ico' rel='SHORTCUT ICON' />\n";
 		
 	// specify canonical, if provided
-		if ($canonicalUrl) echo "  <link rel='canonical' href='" . $canonicalUrl . "' />\n\n";
+		if ($tl->page['canonical_url']) echo "  <link rel='canonical' href='" . $tl->page['canonical_url'] . "' />\n\n";
 
 	// load Google Analytics
 		if ($currentDatabase == 'production') {
@@ -99,9 +105,8 @@
 
 	// specify page title
 		echo "  <title>";
-		if (!$pageTitle && !$noPageTitle) $pageTitle = ucwords(str_replace('_', ' ', $templateName));
-		if ($pageTitle) echo $pageTitle . " - ";
-		if ($sectionTitle) echo $sectionTitle . " - ";
+		if ($tl->page['title']) echo $tl->page['title'] . " - ";
+		if ($tl->page['section']) echo $tl->page['section'] . " - ";
 		echo htmlspecialchars($operators->firstTrue(@$pseudonym['name'], $systemPreferences['Name of this application']), ENT_QUOTES);
 		echo "</title>\n";
 
@@ -112,11 +117,21 @@
 		if ($pageLoadEvents) echo $pageLoadEvents;
 		echo "'>\n\n";
 
-	if (!$hideSiteChrome) {
+	if (!$tl->page['hide_page_chrome']) {
 		
 		// start header content
 			echo "  <div id='pageContainer'>\n\n";
 				
+		// environment
+			if (@$systemPreferences['Display environment warning'] && (@$currentDatabase == 'dev' || @$currentDatabase == 'staging')) {
+				echo "  <div id='environmentWarning' class='collapse in'><center>" . strtoupper($currentDatabase) . "</center></div>\n";
+			}
+
+		// maintenance mode
+			if (@$systemPreferences['Maintenance Mode'] == 'On' && @$logged_in['is_administrator']) {
+				echo "  <div id='maintenanceWarning'><center>The website is currently in maintenance mode and is disabled for all users except administrators.</center></div>\n";
+			}
+
 		// console
 			if (@$logged_in['is_tester'] && @$systemPreferences['Enable console for testers']) {
 				echo "  <div id='console' class='collapse'>\n";
@@ -155,11 +170,10 @@
 				echo "      <div id='pageContent' class='row'>\n";
 				echo "        <div class='col-xs-12 col-sm-9 col-sm-push-3 col-md-9 col-md-push-3'>\n";
 				
-			// success or error message
-				if (@$pageError) echo "          <div class='alert alert-danger alert-dismissable'><button type='button' class='close' data-dismiss='alert' aria-hidden='true'>&times;</button>" . $pageError . "</div>\n";
-				elseif (@$pageWarning) echo "          <div class='alert alert-warning alert-dismissable'><button type='button' class='close' data-dismiss='alert' aria-hidden='true'>&times;</button>" . $pageWarning . "</div>\n";
-				elseif (@$errorMessages[$pageStatus]) echo "          <div class='alert alert-danger alert-dismissable'><button type='button' class='close' data-dismiss='alert' aria-hidden='true'>&times;</button>" . $errorMessages[$pageStatus] . "</div>\n";
-				elseif (@$successMessages[$pageStatus]) echo "          <div class='alert alert-success alert-dismissable'><button type='button' class='close' data-dismiss='alert' aria-hidden='true'>&times;</button>" . $successMessages[$pageStatus] . "</div>\n";
+		// success, warning or error message
+			if (@$tl->page['error']) echo "        <div class='alert alert-danger alert-dismissable'><button type='button' class='close' data-dismiss='alert' aria-hidden='true'>&times;</button>" . $tl->page['error'] . "</div>\n";
+			elseif (@$tl->page['warning']) echo "        <div class='alert alert-warning alert-dismissable'><button type='button' class='close' data-dismiss='alert' aria-hidden='true'>&times;</button>" . $tl->page['warning'] . "</div>\n";
+			elseif (@$tl->page['success']) echo "        <div class='alert alert-success alert-dismissable'><button type='button' class='close' data-dismiss='alert' aria-hidden='true'>&times;</button>" . $tl->page['success'] . "</div>\n";
 				
 			echo "        <!-- PAGE CONTENT BEGINS -->\n\n";
 

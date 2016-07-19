@@ -4,9 +4,6 @@
 	Execute immediately upon load
 	-------------------------------------- */
 
-	// parse query string
-		$pageStatus = $parameter1;
-
 /*	--------------------------------------
 	Execute only if a form post
 	-------------------------------------- */
@@ -14,30 +11,37 @@
 	if (count($_POST) > 0) {
 
 	// check honeypot
-			if (@$_POST['company']) $pageError .= "Nice try, Skynet. No bots allowed. ";
+			if (@$_POST['company']) $tl->page['error'] .= "Nice try, Skynet. No bots allowed. ";
 
 		// check timer
-			if (time() - @$_POST['timer'] < 2) $pageError .= "There was a problem with your form data. Please take a moment and try again. "; // if form submitted in under 2 sec, presumed to be a bot
+			if (time() - @$_POST['timer'] < 2) $tl->page['error'] .= "There was a problem with your form data. Please take a moment and try again. "; // if form submitted in under 2 sec, presumed to be a bot
 					
 		// clean input
-			if (!$pageError) $_POST = $parser->trimAll($_POST);
+			if (!$tl->page['error']) $_POST = $parser->trimAll($_POST);
 
 		// check for errors
-			if (!$pageError) {
-				if (!$_POST['name']) $pageError .= "Please provide your name. ";
-				if (!$input_validator->validateEmailRobust($_POST['email'])) $pageError .= "There appears to be a problem with your email address. ";
-				if (!$_POST['message']) $pageError .= "Please write a brief message. ";
+			if (!$tl->page['error']) {
+				if (!$_POST['name']) $tl->page['error'] .= "Please provide your name. ";
+				if (!$input_validator->validateEmailRobust($_POST['email'])) $tl->page['error'] .= "There appears to be a problem with your email address. ";
+				if (!$_POST['message']) $tl->page['error'] .= "Please write a brief message. ";
 								
 				$recipients = retrieveFromDb('notifications', null, array('contact_form'=>'1'));
-				if (count($recipients) < 1) $pageError .= "No recipients specified for the subject selected. ";
+				if (count($recipients) < 1) $tl->page['error'] .= "No recipients specified for the subject selected. ";
 			}
 			
 		// send email
-			if (!$pageError) {
+			if (!$tl->page['error']) {
 				
 				for ($counter = 0; $counter < count($recipients); $counter++) {
 					$emailSent = emailFromUser($_POST['name'], $_POST['email'], $_POST['username'], $_POST['telephone'], $_POST['message'], $recipients[$counter]['notification_email']);
 					if ($emailSent) {
+
+						// capture user agent metadata
+							$detector->browser();
+							$detector->connection();
+							$connectionID = insertIntoDb('browser_connections', array('connected_on'=>date('Y-m-d H:i:s'), 'mail_id'=>$emailSent, 'user_agent'=>$detector->browser['user_agent'], 'ip'=>$detector->connection['ip'], 'country_id'=>$detector->connection['country']));
+							if ($logged_in) updateDbSingle('browser_connections', array('user_id'=>$logged_in['user_id']), array('mail_id'=>$emailSent));
+
 						// update log
 							$activity = $_POST['name'] . " (";
 							if ($_POST['username']) $activity .= $_POST['username'] . " / ";
@@ -45,19 +49,17 @@
 							$activity .= $_POST['email'];
 							$activity .= ") has messaged " . $systemPreferences['Name of this application'] . " through the contact form:\n\n" . $_POST['message'];
 							$logger->logItInDb($activity);
+							
 					}
 					else {
-						$pageError = "Unknown error attempting to send email. Please try again.";
+						$tl->page['error'] = "Unknown error attempting to send email. Please try again.";
 						$logger->logItInDb("Contact form failed to send email.", null, null, array('is_error'=>'1', 'is_resolved'=>'0'));
 					}
 				}
 			}
 						
 		// redirect URL
-			if (!$pageError) {
-				header ('Location: /contact/message_sent');
-				exit();
-			}
+			if (!$tl->page['error']) $authentication_manager->forceRedirect('/contact/success=message_sent');
 
 	}
 	

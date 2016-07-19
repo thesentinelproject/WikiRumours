@@ -5,13 +5,15 @@
 		$errors = array();
 		$warnings = array();
 
+		$localization_manager->populateCountries();
+
 	// retrieve input parameters
-		$apiKey = $parameter1;
-		$model = $parameter2;
-		$output = $parameter3;
+		$apiKey = $tl->page['parameter1'];
+		$model = $tl->page['parameter2'];
+		$output = $tl->page['parameter3'];
 		if ($output != 'json' && $output != 'csv') $output = 'xml';
 
-		$parseFilters = explode('|', urldecode($parameter4));
+		$parseFilters = explode('|', urldecode($tl->page['parameter4']));
 
 		$filters = array();
 		foreach ($parseFilters as $value) {
@@ -31,7 +33,8 @@
 		unset($filters['keywords']);
 		
 		if (@$filters['country_id']) {
-			$filters[$tablePrefix . 'rumours.country_id'] = $filters['country_id']; // remove ambiguity in join
+			if ($model == 'rumours') $filters[$tablePrefix . 'rumours.country_id'] = $filters['country_id']; // remove ambiguity in join
+			elseif ($model == 'sightings') $filters[$tablePrefix . 'rumour_sightings.country_id'] = $filters['country_id']; // remove ambiguity in join
 			unset($filters['country_id']);
 		}
 
@@ -45,11 +48,16 @@
 			unset($filters['priority_id']);
 		}
 
+		if (@$filters['tag_id'] && $model == 'sightings') {
+			$warnings[count($warnings)] = 5; // Can't use tag_id with sightings
+			unset($filters['tag_id']);
+		}
+
 		if ($keywords) {
 			$otherCriteria = "1=2";
 			$keywordsExplode = explode(' ', $keywords);
 			foreach ($keywordsExplode as $keyword) {
-				if (trim($keyword)) $otherCriteria .= " OR LOWER(description) LIKE '%" . addSlashes(trim(strtolower($keyword))) . "%'";
+				if (trim($keyword)) $otherCriteria .= " OR LOWER(" . $tablePrefix . "rumours.description) LIKE '%" . addSlashes(trim(strtolower($keyword))) . "%'";
 			}
 			unset ($filters['keywords']);
 		}
@@ -98,6 +106,17 @@
 				
 				$data = retrieveRumours(@$filters, null, @$otherCriteria, $sort, floatval(($page * $numberOfResultsPerPage) - $numberOfResultsPerPage) . ',' . $numberOfResultsPerPage);
 			}
+			elseif ($model == 'sightings') {
+				$result = retrieveSightings(@$filters, null, @$otherCriteria);
+				$numberOfResults = count($result);
+				if ($numberOfResults < 1) $warnings[count($warnings)] = 3; // No sightings were retrieved based on your input parameters.
+
+				$numberOfPages = max(1, ceil($numberOfResults / $numberOfResultsPerPage));
+				if ($page < 1) $page = 1;
+				elseif ($page > $numberOfPages) $page = $numberOfPages;
+				
+				$data = retrieveSightings(@$filters, null, @$otherCriteria, $sort, floatval(($page * $numberOfResultsPerPage) - $numberOfResultsPerPage) . ',' . $numberOfResultsPerPage);
+			}
 			else {
 				$errors[count($errors)] = 5; // Unable to determine a valid query type.
 			}
@@ -111,14 +130,15 @@
 			header("Content-Disposition: attachment; filename=wikirumours.csv");
 			header("Pragma: no-cache");
 			header("Expires: 0");
-			fputcsv($csvOutput, array('RumourID', 'Rumour', 'Country_Abbreviation', 'Country', 'Region', 'Latitude', 'Longitude', 'Occurred_on', 'Status_ID', 'Status', 'Priority_ID', 'Priority', 'Findings', 'Number_of_Sightings'));
+			if ($model == 'rumours') fputcsv($csvOutput, array('RumourID', 'Rumour', 'Country_Abbreviation', 'Country', 'Region', 'Latitude', 'Longitude', 'Occurred_on', 'Status_ID', 'Status', 'Priority_ID', 'Priority', 'Findings', 'Number_of_Sightings'));
+			elseif ($model == 'sightings') fputcsv($csvOutput, array('SightingID', 'Heard_on', 'Country_Abbreviation', 'Country', 'Region', 'Latitude', 'Longitude', 'Rumour', 'Occurred_on', 'Findings'));
 		}
 
 		$xmlOutput = null;
 		$xmlOutput .= "<" . "?" . "xml version='1.0' encoding='ISO-8859-1'" . "?" . ">\n";
 		$xmlOutput .= "<wikirumours>\n";
-		$xmlOutput .= "  <version>1.0</version>\n";
-		$xmlOutput .= "  <status><![CDATA[" . $user[0]['full_name'] . " successfully connected with the WikiRumours API on " . date('F j, Y, \a\t g:i A') . ". Filters: " . $parameter4 . "]]></status>\n";
+		$xmlOutput .= "  <version>2.1</version>\n";
+		$xmlOutput .= "  <status><![CDATA[" . $user[0]['full_name'] . " successfully connected with the WikiRumours API on " . date('F j, Y, \a\t g:i A') . ". Filters: " . $tl->page['parameter4'] . "]]></status>\n";
 		$xmlOutput .= "  <page>" . $page . "</page>\n";
 		$xmlOutput .= "  <number_of_results>" . $numberOfResults . "</number_of_results>\n";
 		$xmlOutput .= "  <number_of_results_on_this_page>" . count($data) . "</number_of_results_on_this_page>\n";
@@ -138,23 +158,44 @@
 			$xmlOutput .= "  <number_of_queries_today>" . $user[0]['internal_api_calls_today'] . "</number_of_queries_today>\n";
 			$xmlOutput .= "  <data>\n";
 			for ($counter = 0; $counter < count($data); $counter++) {
-				$xmlOutput .= "    <datapoint>\n";
-				$xmlOutput .= "      <rumour_id><![CDATA[" . $data[$counter]['public_id'] . "]]></rumour_id>\n";
-				$xmlOutput .= "      <rumour><![CDATA[" . $data[$counter]['description'] . "]]></rumour>\n";
-				$xmlOutput .= "      <country_abbreviation><![CDATA[" . $data[$counter]['country_id'] . "]]></country_abbreviation>\n";
-				$xmlOutput .= "      <country><![CDATA[" . @$countries_TL[$data[$counter]['country_id']] . "]]></country>\n";
-				$xmlOutput .= "      <region><![CDATA[" . $data[$counter]['city'] . "]]></region>\n";
-				$xmlOutput .= "      <latitude><![CDATA[" . $data[$counter]['latitude'] . "]]></latitude>\n";
-				$xmlOutput .= "      <longitude><![CDATA[" . $data[$counter]['longitude'] . "]]></longitude>\n";
-				$xmlOutput .= "      <occurred_on><![CDATA[" . $data[$counter]['occurred_on'] . "]]></occurred_on>\n";
-				$xmlOutput .= "      <status_id><![CDATA[" . $data[$counter]['status_id'] . "]]></status_id>\n";
-				$xmlOutput .= "      <status><![CDATA[" . $data[$counter]['status'] . "]]></status>\n";
-				$xmlOutput .= "      <priority_id><![CDATA[" . $data[$counter]['priority_id'] . "]]></priority_id>\n";
-				$xmlOutput .= "      <priority><![CDATA[" . $data[$counter]['priority'] . "]]></priority>\n";
-				$xmlOutput .= "      <findings><![CDATA[" . $data[$counter]['findings'] . "]]></findings>\n";
-				$xmlOutput .= "      <number_of_sightings>" . $data[$counter]['number_of_sightings'] . "</number_of_sightings>\n";
-				$xmlOutput .= "    </datapoint>\n";
-				if ($output == 'csv') fputcsv($csvOutput, array($data[$counter]['public_id'], $data[$counter]['description'], $data[$counter]['country_id'], @$countries_TL[$data[$counter]['country_id']], $data[$counter]['city'], $data[$counter]['latitude'], $data[$counter]['longitude'], $data[$counter]['occurred_on'], $data[$counter]['status_id'], $data[$counter]['status'], $data[$counter]['priority_id'], $data[$counter]['priority'], $data[$counter]['findings'], $data[$counter]['number_of_sightings']));
+				if ($model == 'rumours') {
+					$xmlOutput .= "    <datapoint>\n";
+					$xmlOutput .= "      <rumour_id><![CDATA[" . $data[$counter]['public_id'] . "]]></rumour_id>\n";
+					$xmlOutput .= "      <rumour><![CDATA[" . $data[$counter]['description'] . "]]></rumour>\n";
+					$xmlOutput .= "      <country_abbreviation><![CDATA[" . $data[$counter]['country_id'] . "]]></country_abbreviation>\n";
+					$xmlOutput .= "      <country><![CDATA[" . @$localization_manager->countries[$data[$counter]['country_id']] . "]]></country>\n";
+					$xmlOutput .= "      <region><![CDATA[" . $data[$counter]['city'] . "]]></region>\n";
+					$xmlOutput .= "      <latitude><![CDATA[" . $data[$counter]['latitude'] . "]]></latitude>\n";
+					$xmlOutput .= "      <longitude><![CDATA[" . $data[$counter]['longitude'] . "]]></longitude>\n";
+					$xmlOutput .= "      <occurred_on><![CDATA[" . $data[$counter]['occurred_on'] . "]]></occurred_on>\n";
+					$xmlOutput .= "      <status_id><![CDATA[" . $data[$counter]['status_id'] . "]]></status_id>\n";
+					$xmlOutput .= "      <status><![CDATA[" . $data[$counter]['status'] . "]]></status>\n";
+					$xmlOutput .= "      <priority_id><![CDATA[" . $data[$counter]['priority_id'] . "]]></priority_id>\n";
+					$xmlOutput .= "      <priority><![CDATA[" . $data[$counter]['priority'] . "]]></priority>\n";
+					$xmlOutput .= "      <findings><![CDATA[" . $data[$counter]['findings'] . "]]></findings>\n";
+					$xmlOutput .= "      <number_of_sightings>" . $data[$counter]['number_of_sightings'] . "</number_of_sightings>\n";
+					$xmlOutput .= "    </datapoint>\n";
+
+					if ($output == 'csv') fputcsv($csvOutput, array($data[$counter]['public_id'], $data[$counter]['description'], $data[$counter]['country_id'], @$localization_manager->countries[$data[$counter]['country_id']], $data[$counter]['city'], $data[$counter]['latitude'], $data[$counter]['longitude'], $data[$counter]['occurred_on'], $data[$counter]['status_id'], $data[$counter]['status'], $data[$counter]['priority_id'], $data[$counter]['priority'], $data[$counter]['findings'], $data[$counter]['number_of_sightings']));
+				}
+				elseif ($model == 'sightings') {
+					$xmlOutput .= "    <datapoint>\n";
+					$xmlOutput .= "      <sighting_id><![CDATA[" . $data[$counter]['public_id'] . "]]></sighting_id>\n";
+					$xmlOutput .= "      <heard_on><![CDATA[" . $data[$counter]['heard_on'] . "]]></heard_on>\n";
+					$xmlOutput .= "      <country_abbreviation><![CDATA[" . $data[$counter]['sighting_country_id'] . "]]></country_abbreviation>\n";
+					$xmlOutput .= "      <country><![CDATA[" . @$localization_manager->countries[$data[$counter]['sighting_country_id']] . "]]></country>\n";
+					$xmlOutput .= "      <region><![CDATA[" . $data[$counter]['sighting_city'] . "]]></region>\n";
+					$xmlOutput .= "      <latitude><![CDATA[" . $data[$counter]['sighting_latitude'] . "]]></latitude>\n";
+					$xmlOutput .= "      <longitude><![CDATA[" . $data[$counter]['sighting_longitude'] . "]]></longitude>\n";
+					$xmlOutput .= "      <rumour><![CDATA[" . $data[$counter]['description'] . "]]></rumour>\n";
+					$xmlOutput .= "      <occurred_on><![CDATA[" . $data[$counter]['occurred_on'] . "]]></occurred_on>\n";
+					$xmlOutput .= "      <status_id><![CDATA[" . $data[$counter]['status_id'] . "]]></status_id>\n";
+					$xmlOutput .= "      <status><![CDATA[" . $data[$counter]['status'] . "]]></status>\n";
+					$xmlOutput .= "      <findings><![CDATA[" . $data[$counter]['findings'] . "]]></findings>\n";
+					$xmlOutput .= "    </datapoint>\n";
+
+					if ($output == 'csv') fputcsv($csvOutput, array($data[$counter]['public_id'], $data[$counter]['heard_on'], $data[$counter]['country_id'], @$localization_manager->countries[$data[$counter]['country_id']], $data[$counter]['city'], $data[$counter]['latitude'], $data[$counter]['longitude'], $data[$counter]['description'], $data[$counter]['occurred_on'], $data[$counter]['findings']));
+				}
 			}
 			$xmlOutput .= "  </data>\n";
 		}
@@ -174,7 +215,4 @@
 			echo $jsonOutput;
 		}
 
-	// close DB connection
-		$dbConnection->close();
-		
 ?>

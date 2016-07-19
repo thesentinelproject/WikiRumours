@@ -5,7 +5,7 @@
 		public function convert($incomingFile, $outgoingFilename, $outgoingPath, $desiredWidth, $desiredHeight = null, $desiredAngle = null) {
 
 			global $extToMime_TL;
-			global $console;
+			global $tl;
 			
 			$fileManager = new file_manager_TL();
 			
@@ -16,7 +16,7 @@
 			
 			// validate incoming file (rudimentary validation only)
 				if (!file_exists($incomingFile) && !$fileManager->doesUrlExist($incomingFile)) {
-					$console .= __CLASS__ . "->" . __FUNCTION__ . ": Can't find source image.\n";
+					$tl->page['console'] .= __CLASS__ . "->" . __FUNCTION__ . ": Can't find source image.\n";
 					return false;
 				}
 				
@@ -24,14 +24,14 @@
 				$outgoingPath = trim ($outgoingPath, '/') . '/';
 				if (file_exists($outgoingPath)) {
 					if (!is_dir($outgoingPath) || is_link($outgoingPath)) {
-						$console .= __CLASS__ . "->" . __FUNCTION__ . ": Destination directory is invalid.\n";
+						$tl->page['console'] .= __CLASS__ . "->" . __FUNCTION__ . ": Destination directory is invalid.\n";
 						return false;
 					}
 				}
 				else {
 					mkdir($outgoingPath);
 					if (!file_exists($outgoingPath)) {
-						$console .= __CLASS__ . "->" . __FUNCTION__ . ": Unable to locate or create destination directory.\n";
+						$tl->page['console'] .= __CLASS__ . "->" . __FUNCTION__ . ": Unable to locate or create destination directory.\n";
 						return false;
 					}
 				}
@@ -45,7 +45,7 @@
 					elseif (substr_count($outgoingMIME, 'image')) return $this->thumbnailVideo($incomingFile, $outgoingFilename, $outgoingPath, $desiredWidth, $desiredHeight);
 				}
 				else {
-					$console .= __CLASS__ . "->" . __FUNCTION__ . ": Unable to read incoming file and/or incompatible file format.\n";
+					$tl->page['console'] .= __CLASS__ . "->" . __FUNCTION__ . ": Unable to read incoming file and/or incompatible file format.\n";
 					return false;
 				}
 			
@@ -56,7 +56,7 @@
 			global $pathToImageMagick;
 			global $systemPreferences;
 			global $extToMime_TL;
-			global $console;
+			global $tl;
 			
 			$outgoingPath = rtrim ($outgoingPath, '/') . '/';
 			$outgoingExt = pathinfo($outgoingFilename, PATHINFO_EXTENSION);
@@ -72,7 +72,7 @@
 			
 			// check for errors
 				if (!$currentWidth || !$currentHeight) {
-					$console .= __CLASS__ . "->" . __FUNCTION__ . ": Unable to retrieve dimensions of current image.\n";
+					$tl->page['console'] .= __CLASS__ . "->" . __FUNCTION__ . ": Unable to retrieve dimensions of current image.\n";
 					return false;
 				}
 				
@@ -134,7 +134,7 @@
 				if (file_exists($outgoingPath . $outgoingFilename)) return true;
 				else {
 					if ($desiredAngle) {
-						$console .= __CLASS__ . "->" . __FUNCTION__ . ": Unable to convert image using ImageMagick\n";
+						$tl->page['console'] .= __CLASS__ . "->" . __FUNCTION__ . ": Unable to convert image using ImageMagick\n";
 						return false;
 					}
 					else {
@@ -143,7 +143,7 @@
 							elseif ($img = @imagecreatefromgif($incomingFile)) $img = imagecreatefromgif($incomingFile);
 							elseif ($img = @imagecreatefrompng($incomingFile)) $img = imagecreatefrompng($incomingFile);
 							else {
-								$console .= __CLASS__ . "->" . __FUNCTION__ . ": Unable to read image format.\n";
+								$tl->page['console'] .= __CLASS__ . "->" . __FUNCTION__ . ": Unable to read image format.\n";
 								return false;
 							}
 							
@@ -159,14 +159,14 @@
 							elseif ($outgoingExt == 'png') imagepng($newImage, $outgoingPath . $outgoingFilename, 80);
 							elseif ($outgoingExt == 'gif') imagegif($newImage, $outgoingPath . $outgoingFilename);
 							else {
-								$console .= __CLASS__ . "->" . __FUNCTION__ . ": Unable to determine destination file type.\n";
+								$tl->page['console'] .= __CLASS__ . "->" . __FUNCTION__ . ": Unable to determine destination file type.\n";
 								return false;
 							}
 							
 						// check for errors again
 							if (file_exists($outgoingPath . $outgoingFilename)) return true;
 							else {
-								$console .= __CLASS__ . "->" . __FUNCTION__ . ": Unknown problem attempting to create new image.\n";
+								$tl->page['console'] .= __CLASS__ . "->" . __FUNCTION__ . ": Unknown problem attempting to create new image.\n";
 								return false;
 							}
 									
@@ -180,11 +180,11 @@
 			global $pathToImageMagick;
 			global $pathToFFmpeg;
 			global $systemPreferences;
-			global $console;
+			global $tl;
 
 			// check for errors
 				if (!$desiredWidth && !$desiredHeight) {
-					$console .= __CLASS__ . "->" . __FUNCTION__ . ": Missing desired dimensions.\n";
+					$tl->page['console'] .= __CLASS__ . "->" . __FUNCTION__ . ": Missing desired dimensions.\n";
 					return false;
 				}
 			
@@ -209,7 +209,7 @@
 				
 						if (file_exists($outgoingPath . $outgoingFilename)) return true;
 						else {
-							$console .= __CLASS__ . "->" . __FUNCTION__ . ": Unknown problem attempting to create new preview video with ImageMagick.\n";
+							$tl->page['console'] .= __CLASS__ . "->" . __FUNCTION__ . ": Unknown problem attempting to create new preview video with ImageMagick.\n";
 							return false;
 						}
 						
@@ -218,7 +218,7 @@
 					
 					// file extension must be lowercase
 						if (pathinfo($incomingFile, PATHINFO_EXTENSION) != strtolower(pathinfo($incomingFile, PATHINFO_EXTENSION))) {
-							$console .= __CLASS__ . "->" . __FUNCTION__ . ": Please make sure file extension of incoming file is lowercase.\n";
+							$tl->page['console'] .= __CLASS__ . "->" . __FUNCTION__ . ": Please make sure file extension of incoming file is lowercase.\n";
 							return false; 
 						}
 						
@@ -239,13 +239,13 @@
 				
 						if (file_exists($outgoingPath . $outgoingFilename)) return true;
 						else {
-							$console .= __CLASS__ . "->" . __FUNCTION__ . ": Unknown problem attempting to create new preview video with FFmpeg.\n";
+							$tl->page['console'] .= __CLASS__ . "->" . __FUNCTION__ . ": Unknown problem attempting to create new preview video with FFmpeg.\n";
 							return false;
 						}
 						
 				}
 				else {
-					$console .= __CLASS__ . "->" . __FUNCTION__ . ": No video converter found.\n";
+					$tl->page['console'] .= __CLASS__ . "->" . __FUNCTION__ . ": No video converter found.\n";
 					return false;
 				}
 			
@@ -255,17 +255,17 @@
 	
 			global $pathToImageMagick;
 			global $systemPreferences;
-			global $console;
+			global $tl;
 			
 			// check for errors
 				if ($pathToImageMagick && !file_exists(rtrim($pathToImageMagick, '/') . '/convert')) {
-					$console .= __CLASS__ . "->" . __FUNCTION__ . ": Can't find ImageMagick on this server.\n";
+					$tl->page['console'] .= __CLASS__ . "->" . __FUNCTION__ . ": Can't find ImageMagick on this server.\n";
 					return false;
 				}
 			
 			// check for errors
 				if (!$desiredWidth && !$desiredHeight) {
-					$console .= __CLASS__ . "->" . __FUNCTION__ . ": Missing desired dimensions.\n";
+					$tl->page['console'] .= __CLASS__ . "->" . __FUNCTION__ . ": Missing desired dimensions.\n";
 					return false;
 				}
 			
@@ -283,10 +283,80 @@
 		
 				if (file_exists($outgoingPath . $outgoingFilename)) return true;
 				else {
-					$console .= __CLASS__ . "->" . __FUNCTION__ . ": Unknown problem attempting to thumbnail video.\n";
+					$tl->page['console'] .= __CLASS__ . "->" . __FUNCTION__ . ": Unknown problem attempting to thumbnail video.\n";
 					return false;
 				}
 			
+		}
+		
+		public function thumbnailPDF($incomingFile, $outgoingFilename, $outgoingPath, $desiredWidth = null, $desiredHeight = null) {
+
+			global $pathToImageMagick;
+			global $pathToGhostScript;
+			global $tl;
+
+			$outgoingPath = rtrim ($outgoingPath, '/') . '/';
+			$outgoingExt = pathinfo($outgoingFilename, PATHINFO_EXTENSION);
+
+			if (!file_exists($incomingFile)) {
+				$tl->page['console'] .= __CLASS__ . "->" . __FUNCTION__ . ": Unable to locate PDF.\n";
+				return false;
+			}
+
+			$file_manager = new file_manager_TL();
+			if (!$file_manager->isPDF($incomingFile)) {
+				$tl->page['console'] .= __CLASS__ . "->" . __FUNCTION__ . ": Does not appear to be a valid PDF.\n";
+				return false;
+			}
+			
+			// convert first page of PDF to JPG (try using GhostScript first, then try ImageMagick)
+					if ($pathToGhostScript && file_exists($pathToGhostScript)) {
+						$ghostScriptDeviceEngines = array('jpg' => 'jpeg', 'jpeg' => 'jpeg', 'tif' => 'tiff24nc', 'bmp' => 'bmpsep8', 'png' => 'png16m');
+						if (!$outgoingExt || !@$ghostScriptDeviceEngines[$outgoingExt]) {
+							$tl->page['console'] .= __CLASS__ . "->" . __FUNCTION__ . ": Unable to convert to desired file extension.\n";
+							return false;
+						}
+
+						$convert = rtrim($pathToGhostScript, '/') . "/gs";
+						$convert .= " -dBATCH -dNOPAUSE -dFirstPage=1 -dLastPage=1";
+						$convert .= " -sDEVICE=" . $ghostScriptDeviceEngines[$outgoingExt];
+						$convert .= " -sOutputFile=" . escapeshellarg($outgoingPath . 'temp_' . $outgoingFilename); // output file
+						$convert .= " " . escapeshellarg($incomingFile); // input file
+						exec ($convert, $output, $return_var);
+					}
+
+					if (!file_exists($outgoingPath . 'temp_' . $outgoingFilename)) {
+
+						if ($pathToImageMagick && file_exists(rtrim($pathToImageMagick, '/') . '/convert')) {
+							$convert = rtrim($pathToImageMagick, '/') . '/convert';
+							$convert .= ' ' . escapeshellarg($incomingFile) . '[0]'; // input file
+							$convert .= ' ' . escapeshellarg($outgoingPath . 'temp_' . $outgoingFilename); // output file
+							exec ($convert, $output, $return_var);
+						}
+
+					}
+
+					if (!file_exists($outgoingPath . 'temp_' . $outgoingFilename)) {
+						$tl->page['console'] .= __CLASS__ . "->" . __FUNCTION__ . ": Unable to convert PDF.\n";
+						return false;
+					}
+
+			// resize if necessary
+				if ($desiredWidth || $desiredHeight) {
+					$success = $this->convertImage($outgoingPath . 'temp_' . $outgoingFilename, $outgoingFilename, $outgoingPath, $desiredWidth, $desiredHeight);
+					@unlink($outgoingPath . 'temp_' . $outgoingFilename);
+					return $success;
+				}
+				else {
+					rename($outgoingPath . 'temp_' . $outgoingFilename, $outgoingPath . $outgoingFilename);
+					if (file_exists($outgoingPath . $outgoingFilename)) return true;
+					else {
+						@unlink($outgoingPath . 'temp_' . $outgoingFilename);
+						$tl->page['console'] .= __CLASS__ . "->" . __FUNCTION__ . ": Unable to rename converted file.\n";
+						return false;
+					}
+				}
+
 		}
 		
 	}

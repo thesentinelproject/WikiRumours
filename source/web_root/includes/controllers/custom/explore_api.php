@@ -8,7 +8,7 @@
 		$apiKey = retrieveSingleFromDb('user_keys', null, array('user_id'=>$logged_in['user_id'], 'user_key'=>'API'));
 	}
 
-	$pageTitle = "Explore API";
+	$tl->page['title'] = "Explore API";
 		
 /*	--------------------------------------
 	Execute only if a form post
