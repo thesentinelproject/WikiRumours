@@ -18,11 +18,10 @@
 			echo "          <div class='row'>\n";
 			echo "            <div class='col-xs-12 col-md-offset-3 col-md-9'>\n";
 			echo "              <ul class='list-inline fixInlineList'>\n";
-			echo "                <li><a href='/'>" . $operators->firstTrue(@$pseudonym['name'], $systemPreferences['Name of this application']) . "</a></li>\n";
-			if ($systemPreferences['Redirect for mobile']) echo "              <li><a href='http://m." . trim($tl->page['domain'], '/') . "'>Mobile Site</a></li>\n";
-			if ($systemPreferences['Redirect for tablet']) echo "              <li><a href='http://t." . trim($tl->page['domain'], '/') . "'>Tablet Site</a></li>\n";
-			$slug = 'footer nav';
-			include 'includes/views/shared/cms_block.php';
+			echo "                <li><a href='/'>" . $tl->settings['Name of this application'] . "</a></li>\n";
+			if ($tl->settings['Redirect for mobile']) echo "              <li><a href='http://m." . trim($tl->page['domain'], '/') . "'>Mobile Site</a></li>\n";
+			if ($tl->settings['Redirect for tablet']) echo "              <li><a href='http://t." . trim($tl->page['domain'], '/') . "'>Tablet Site</a></li>\n";
+			displayCmsBlock(['public_id'=>"footer nav"]);
 			echo "              </ul>\n";
 			echo "            </div>\n";
 			echo "          </div>\n";
@@ -112,7 +111,7 @@
 		}
 		
 	// load console
-		if ($tl->page['console'] && $logged_in['is_tester'] && $systemPreferences['Enable console for testers']) {
+		if ($tl->page['console'] && $logged_in['is_tester'] && $tl->settings['Enable console for testers']) {
 			echo "  <!-- Activate console --><script type='text/javascript'>\n";
 			echo "    //<![CDATA[\n";
 			echo "      var console = " . '"' . "<h4><span class='label label-default'>CONSOLE</span></h4>" . '"' . ";\n";
@@ -124,7 +123,7 @@
 		}
 
 	// Hide environment
-		if (@$systemPreferences['Display environment warning'] && (@$currentDatabase == 'dev' || @$currentDatabase == 'staging')) {
+		if (@$tl->settings['Display environment warning'] && (@$currentDatabase == 'dev' || @$currentDatabase == 'staging')) {
 			echo "  <!-- Hide environment --><script type='text/javascript'>\n";
 			echo "    //<![CDATA[\n";
 			echo "    $('#environmentWarning').collapse('hide');\n";

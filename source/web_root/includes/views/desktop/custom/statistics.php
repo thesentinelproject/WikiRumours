@@ -3,7 +3,7 @@
 	// load Google Charts packages
 		$pageJavaScript .= "  google.load('visualization', '1.1', {packages:['bar', 'corechart']});\n";
 
-	echo "<h2>Statistics" . (@$pseudonym['name'] ? " for " . $pseudonym['name'] : false) . "</h2>\n";
+	echo "<h2>Statistics" . (@$tl->page['domain_alias']['title'] ? " for " . $tl->page['domain_alias']['title'] : false) . "</h2>\n";
 
 	echo "<div class='pageModule row container-fluid'>\n";
 
@@ -218,23 +218,23 @@
 		$pageJavaScript .= "    chart.draw(data, options);\n";
 		$pageJavaScript .= "  };\n\n";
 
-	if (!@$pseudonym['pseudonym_id']) {
-		// rumours and sightings per instance
+	if (count(@$rumoursAndSightingsByDomain)) {
+		// rumours and sightings per domain
 			echo "<div class='pageModule row'>\n";
 			echo "  <div class='col-lg-12 col-md-12 col-sm-12 col-xs-12'>\n";
-			echo "    <h3>Deployments of " . htmlspecialchars($systemPreferences['Name of this application'], ENT_QUOTES) . "</h3>\n";
-			echo "    <div id='rumoursAndSightingsByPseudonymChart' style='width: 100%; height: auto;''></div>\n";
+			echo "    <h3>Deployments of WikiRumours</h3>\n";
+			echo "    <div id='rumoursAndSightingsByDomainChart' style='width: 100%; height: auto;''></div>\n";
 			echo "  </div>\n";
 			echo "</div>\n";
 
 			$pageJavaScript .= "// rumours by instance chart\n";
-			$pageJavaScript .= "  google.setOnLoadCallback(drawRumoursAndSightingsByPseudonymChart);\n\n";
-			$pageJavaScript .= "  function drawRumoursAndSightingsByPseudonymChart() {\n";
+			$pageJavaScript .= "  google.setOnLoadCallback(drawRumoursAndSightingsByDomainChart);\n\n";
+			$pageJavaScript .= "  function drawRumoursAndSightingsByDomainChart() {\n";
 			$pageJavaScript .= "    var data = new google.visualization.arrayToDataTable([\n";
 			$pageJavaScript .= "      ['Deployment', 'Rumours', 'Sightings'],\n";
-			for ($counter = 0; $counter < count($rumoursAndSightingsByPseudonym); $counter++) {
-				$pageJavaScript .= "      ['" . htmlspecialchars($rumoursAndSightingsByPseudonym[$counter]['name'], ENT_QUOTES). "', " . $rumoursAndSightingsByPseudonym[$counter]['number_of_rumours'] . ", " . $rumoursAndSightingsByPseudonym[$counter]['number_of_sightings'] . "]";
-				if ($counter < count($rumoursAndSightingsByPseudonym) - 1) $pageJavaScript .= ",";
+			for ($counter = 0; $counter < count($rumoursAndSightingsByDomain); $counter++) {
+				$pageJavaScript .= "      ['" . htmlspecialchars($rumoursAndSightingsByDomain[$counter]['title'], ENT_QUOTES). "', " . $rumoursAndSightingsByDomain[$counter]['number_of_rumours'] . ", " . $rumoursAndSightingsByDomain[$counter]['number_of_sightings'] . "]";
+				if ($counter < count($rumoursAndSightingsByDomain) - 1) $pageJavaScript .= ",";
 				$pageJavaScript .= "\n";
 			}
 			$pageJavaScript .= "    ]);\n\n";
@@ -242,7 +242,7 @@
 			$pageJavaScript .= "      colors:['#5bc0de','#addcea'],\n";
 			$pageJavaScript .= "      bars: 'horizontal' // Required for Material Bar Charts.\n";
 			$pageJavaScript .= "    };\n\n";
-			$pageJavaScript .= "    var chart = new google.charts.Bar(document.getElementById('rumoursAndSightingsByPseudonymChart'));\n";
+			$pageJavaScript .= "    var chart = new google.charts.Bar(document.getElementById('rumoursAndSightingsByDomainChart'));\n";
 			$pageJavaScript .= "    chart.draw(data, options);\n";
 			$pageJavaScript .= "  };\n";
 	}

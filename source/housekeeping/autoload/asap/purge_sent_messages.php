@@ -1,9 +1,9 @@
 <?php
 
-	if (@$systemPreferences['Purge sent messages from mail queue after']) {
+	if (@$tl->settings['Purge sent messages from mail queue after']) {
 
 		// calculate expiry
-			$expiry = date('Y-m-d H:i:s', mktime(date('H'), date('i'), date('s'), date('m'), date('d') - $systemPreferences['Purge sent messages from mail queue after'], date('Y')));
+			$expiry = date('Y-m-d H:i:s', mktime(date('H'), date('i'), date('s'), date('m'), date('d') - $tl->settings['Purge sent messages from mail queue after'], date('Y')));
 			$logger->logItInMemory("Looking for archived messages prior to " . $expiry);
 			$logger->logItInDb($logger->retrieveLogFromMemory(), $logID);
 

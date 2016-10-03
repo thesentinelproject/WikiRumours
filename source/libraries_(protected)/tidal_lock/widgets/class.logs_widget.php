@@ -27,7 +27,6 @@
 
 			global $tablePrefix;
 			global $connectionTypes;
-			global $systemPreferences;
 			global $tl;
 
 			$keyvalue_array = new keyvalue_array_TL();
@@ -281,7 +280,7 @@
 						$this->html .= "          <h4 class='modal-title' id='exportModalLabel'>Your export is complete!</h4>\n";
 						$this->html .= "        </div>\n";
 						$this->html .= "        <div class='modal-body'>\n";
-						if (@$systemPreferences['Delete downloadables after']) $this->html .= "          <p>This download will be automatically deleted from the server within " . ($systemPreferences['Delete downloadables after'] == 1 ? "1 day" : $systemPreferences['Delete downloadables after'] . " days") . ".</p>\n";
+						if (@$tl->settings['Delete downloadables after']) $this->html .= "          <p>This download will be automatically deleted from the server within " . ($tl->settings['Delete downloadables after'] == 1 ? "1 day" : $tl->settings['Delete downloadables after'] . " days") . ".</p>\n";
 						$this->html .= "          <a href='/" . $exportPath . "' target='_blank' class='btn btn-primary'>Download now</a>\n";
 						$this->html .= "        </div>\n";
 						$this->html .= "      </div>\n";

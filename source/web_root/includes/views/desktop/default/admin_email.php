@@ -48,9 +48,9 @@
 	// send email
 		if ($logged_in['can_send_email']) {
 			echo "<div class='pageModule'>\n";
-			echo "  <h2>Send email from " . $systemPreferences['Name of this application'] . "</h2>\n";
+			echo "  <h2>Send email from " . $tl->settings['Name of this application'] . "</h2>\n";
 			echo "  " . $form->start('emailUserForm', null, 'post', null, null, array('onSubmit'=>'validateEmailUserForm(); return false;')) . "\n";
-			/* From */		echo $form->row('uneditable_static', 'from', $systemPreferences['Name of this application'] . " <" . $mail_TL['OutgoingAddress'] . ">", false, 'From') . "\n";
+			/* From */		echo $form->row('uneditable_static', 'from', $tl->settings['Name of this application'] . " <" . $tl->mail['OutgoingAddress'] . ">", false, 'From') . "\n";
 			/* To */		echo $form->rowStart('recipient', 'To');
 							echo "  <div class='row'>\n";
 							echo "    <div class='col-lg-6 col-md-6 col-sm-6 col-xs-6'>\n";
@@ -71,7 +71,7 @@
 							echo "    </div>\n";
 							echo "  </div>\n";
 							echo $form->rowEnd();
-			/* Subject */	echo $form->row('text', 'subject', $operators->firstTrue(@$_POST['subject'], '[' . $systemPreferences['Name of this application'] . '] '), true, 'Subject', 'form-control') . "\n";
+			/* Subject */	echo $form->row('text', 'subject', $operators->firstTrue(@$_POST['subject'], '[' . $tl->settings['Name of this application'] . '] '), true, 'Subject', 'form-control') . "\n";
 			/* Message */	echo $form->row('textarea', 'message', @$_POST['message'], true, 'Message', 'form-control', null, null, null, null, array('rows'=>'5')) . "\n";
 			/* Actions */	echo $form->row('submit', 'Send', null, false, 'Send', 'btn btn-info') . "\n";
 			echo "  " . $form->end() . "\n";

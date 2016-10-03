@@ -58,7 +58,7 @@
 
 					if ($user[0]['user_id'] == $logged_in['user_id']) {
 						$_SESSION['password_hash'] = $hash;
-						$cookieExpiryDate = time()+60*60*24 * floatval($systemPreferences['Keep users logged in for']);
+						$cookieExpiryDate = time()+60*60*24 * floatval($tl->settings['Keep users logged in for']);
 						setcookie("password_hash", $_SESSION['password_hash'], $cookieExpiryDate, '', '', 0);
 					}
 					

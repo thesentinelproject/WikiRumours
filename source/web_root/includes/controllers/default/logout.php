@@ -8,7 +8,7 @@
 		if ($tl->page['parameter1'] == 'redirect') $destination = $tl->page['parameter2'];
 
 	// delete cookies
-		$cookieExpiryDate = time()-60*60*24 * floatval($systemPreferences['Keep users logged in for']);
+		$cookieExpiryDate = time()-60*60*24 * floatval($tl->settings['Keep users logged in for']);
 		if (isset($_COOKIE['username'])) setcookie("username", "", $cookieExpiryDate, '/', '.' . $tl->page['domain'], 0);
 		if (isset($_COOKIE['email'])) setcookie("email", "", $cookieExpiryDate, '/', '.' . $tl->page['domain'], 0);
 		if (isset($_COOKIE['password_hash'])) setcookie("password_hash", "", $cookieExpiryDate, '/', '.' . $tl->page['domain'], 0);

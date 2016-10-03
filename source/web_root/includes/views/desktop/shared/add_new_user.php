@@ -30,12 +30,12 @@
 						echo "    <div class='col-lg-3 col-md-4 col-sm-4 col-xs-4 text-right'>" . $form->input('yesno_bootstrap_switch', 'newuser_secondary_phone_sms', @$_POST['newuser_secondary_phone_sms'], false, null, null, null, null, array('data-on-color'=>'default', 'data-off-color'=>'default')) . "</div>\n";
 						echo "  </div>\n";
 	/* Country */		echo "  <div class='row form-group'>\n";
-						echo "    <div class='col-md-12'>" . $form->input('country', 'newuser_country', $operators->firstTrue(@$_POST['newuser_country'], @$pseudonym['country_id']), false, "Country", 'form-control') . "</div>\n";
+						echo "    <div class='col-md-12'>" . $form->input('country', 'newuser_country', $operators->firstTrue(@$_POST['newuser_country'], @$tl->page['domain_alias']['country_id']), false, "Country", 'form-control') . "</div>\n";
 						echo "  </div>\n";
 	/* Anonymized */	echo "  <div class='row form-group'>\n";
-						echo "    <div class='col-md-3'><strong>OK to <a href='javascript:void(0)' class='tooltips' onClick='return false' data-toggle='tooltip' title='Choosing NO will prevent " . htmlspecialchars($operators->firstTrue(@$pseudonym['name'], $systemPreferences['Name of this application']), ENT_QUOTES) . " from contacting you, regardless of other profile settings. Use with caution.'>contact</a>?</strong></div>\n";
+						echo "    <div class='col-md-3'><strong>OK to <a href='javascript:void(0)' class='tooltips' onClick='return false' data-toggle='tooltip' title='Choosing NO will prevent " . htmlspecialchars($tl->settings['Name of this application'], ENT_QUOTES) . " from contacting you, regardless of other profile settings. Use with caution.'>contact</a>?</strong></div>\n";
 						echo "    <div class='col-md-3 text-right'>" . $form->input('yesno_bootstrap_switch', 'newuser_ok_to_contact', @$_POST['newuser_ok_to_contact'], false, null, null, null, null, array('data-on-color'=>'default', 'data-off-color'=>'default')) . "</div>\n";
-						echo "    <div class='col-md-3'><strong><a href='javascript:void(0)' class='tooltips' onClick='return false' data-toggle='tooltip' title='" . htmlspecialchars($operators->firstTrue(@$pseudonym['name'], $systemPreferences['Name of this application']), ENT_QUOTES) . " is a community-based platform. Please avoid hiding your profile unless you have significant security or privacy concerns.'>Anonymous</a>?</strong></div>\n";
+						echo "    <div class='col-md-3'><strong><a href='javascript:void(0)' class='tooltips' onClick='return false' data-toggle='tooltip' title='" . htmlspecialchars($tl->settings['Name of this application'], ENT_QUOTES) . " is a community-based platform. Please avoid hiding your profile unless you have significant security or privacy concerns.'>Anonymous</a>?</strong></div>\n";
 						echo "    <div class='col-md-3 text-right'>" . $form->input('yesno_bootstrap_switch', 'newuser_anonymous', @$_POST['newuser_anonymous'], false, null, null, null, null, array('data-on-color'=>'default', 'data-off-color'=>'default')) . "</div>\n";
 						echo "  </div>\n";
 	echo "</div>\n";

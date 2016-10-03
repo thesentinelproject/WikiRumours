@@ -102,7 +102,7 @@
 
 						if ($user[0]['user_id'] == $logged_in['user_id']) {
 							$_SESSION['username'] = $_POST['username'];
-							$cookieExpiryDate = time()+60*60*24 * floatval($systemPreferences['Keep users logged in for']);
+							$cookieExpiryDate = time()+60*60*24 * floatval($tl->settings['Keep users logged in for']);
 							setcookie("username", $_SESSION['username'], $cookieExpiryDate, '', '', 0);
 						}
 						
@@ -135,7 +135,7 @@
 							else {
 								$encryption = new encrypter_TL();
 								$emailKey = $encryption->quickEncrypt($_POST['email'], rand(10000,99999));
-								$expiryDate = date('Y-m-d', mktime(0, 0, 0, date('m'), date('d') + $systemPreferences['Email confirmation link active for'], date('Y'))); // one week
+								$expiryDate = date('Y-m-d', mktime(0, 0, 0, date('m'), date('d') + $tl->settings['Email confirmation link active for'], date('Y'))); // one week
 								
 								deleteFromDb('user_keys', array('user_key'=>'Reset Email', 'user_id'=>$user[0]['user_id']));
 								insertIntoDb('user_keys', array('user_key'=>'Reset Email', 'user_id'=>$user[0]['user_id'], 'hash'=>$emailKey, 'value'=>$_POST['email'], 'saved_on'=>date('Y-m-d H:i:s'), 'expiry'=>$expiryDate));

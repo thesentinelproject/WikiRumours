@@ -76,8 +76,8 @@
 		
 	// check usage cap
 		if (!count($errors) && !$user[0]['unlimited_api_queries']) {
-			if ($user[0]['internal_api_calls_today'] >= $systemPreferences['Maximum API calls']) $errors[count($errors)] = 4; // maximum query limit achieved
-			elseif ($user[0]['internal_api_calls_today'] >= ($systemPreferences['Maximum API calls'] - intval($systemPreferences['Maximum API calls'] / 20))) $warnings[count($warnings)] = 1; // approaching maximum queries
+			if ($user[0]['internal_api_calls_today'] >= $tl->settings['Maximum API calls']) $errors[count($errors)] = 4; // maximum query limit achieved
+			elseif ($user[0]['internal_api_calls_today'] >= ($tl->settings['Maximum API calls'] - intval($tl->settings['Maximum API calls'] / 20))) $warnings[count($warnings)] = 1; // approaching maximum queries
 		}
 		
 	// increment query count

@@ -1,9 +1,9 @@
 <?php
 
-	if (@$systemPreferences['Keep logs for']) {
+	if (@$tl->settings['Keep logs for']) {
 
 		// calculate expiry
-			$expiry = date('Y-m-d H:i:s', mktime(date('H'), date('i'), date('s'), date('m'), date('d') - floatval($systemPreferences['Keep logs for']), date('Y')));
+			$expiry = date('Y-m-d H:i:s', mktime(date('H'), date('i'), date('s'), date('m'), date('d') - floatval($tl->settings['Keep logs for']), date('Y')));
 			$logger->logItInMemory("Looking for logs prior to " . $expiry);
 			$logger->logItInDb($logger->retrieveLogFromMemory(), $logID);
 

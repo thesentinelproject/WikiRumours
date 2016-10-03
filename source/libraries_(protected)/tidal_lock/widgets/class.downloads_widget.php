@@ -8,7 +8,6 @@
 
 		public function initialize() {
 
-			global $systemPreferences;
 			global $tl;
 
 			$directory_manager = new directory_manager_TL();
@@ -50,8 +49,8 @@
 						$filename = substr($this->downloads[$counter], 21);
 						$timeCreated = strtotime(substr($this->downloads[$counter], 1, 10) . ' ' . substr($this->downloads[$counter], 12, 2) . ':' . substr($this->downloads[$counter], 15, 2) . ':' . substr($this->downloads[$counter], 18, 2));
 						$createdOn = date('j-M-Y @ g:i A', $timeCreated);
-						if (!@$systemPreferences['Delete downloadables after']) $expiresOn = '-';
-						else $expiresOn = date('j-M-Y @ g:i A', mktime(date('H', $timeCreated), date('i', $timeCreated), date('s', $timeCreated), date('m', $timeCreated), date('d', $timeCreated) + floatval($systemPreferences['Delete downloadables after']), date('Y', $timeCreated)));
+						if (!@$tl->settings['Delete downloadables after']) $expiresOn = '-';
+						else $expiresOn = date('j-M-Y @ g:i A', mktime(date('H', $timeCreated), date('i', $timeCreated), date('s', $timeCreated), date('m', $timeCreated), date('d', $timeCreated) + floatval($tl->settings['Delete downloadables after']), date('Y', $timeCreated)));
 
 
 						$this->html .= "<tr>\n";

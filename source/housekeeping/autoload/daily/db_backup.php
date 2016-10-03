@@ -1,6 +1,6 @@
 <?php
 
-	if ($systemPreferences['Enable database backups']) {
+	if ($tl->settings['Enable database backups']) {
 
 		$destinationPath = __DIR__ . '/../../../backups/db';
 		
@@ -31,8 +31,8 @@
 							$logger->logItInMemory("Attempting to dump database to text file and compress");
 							$logger->logItInDb($logger->retrieveLogFromMemory(), $logID);
 								
-							$backupFilename = $db_TL['Name'] . '_' . date("Y-m-d_H-i-s") . '.gz';
-							$command = "mysqldump --opt -h " . $db_TL['Server'] . " -u" . $db_TL['User'] . " -p" . $db_TL['Password'] . " " . $db_TL['Name'] . " | gzip > " . $backupFilename;
+							$backupFilename = $tl->db['Name'] . '_' . date("Y-m-d_H-i-s") . '.gz';
+							$command = "mysqldump --opt -h " . $tl->db['Server'] . " -u" . $tl->db['User'] . " -p" . $tl->db['Password'] . " " . $tl->db['Name'] . " | gzip > " . $backupFilename;
 							system($command);
 									
 							if (!file_exists($backupFilename)) {

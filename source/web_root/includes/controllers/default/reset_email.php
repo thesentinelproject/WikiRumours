@@ -30,7 +30,7 @@
 				// update session variable if set
 					if (@$_SESSION['email']) {
 						$_SESSION['email'] = $doesKeyExist[0]['value'];
-						$cookieExpiryDate = time()+60*60*24 * floatval($systemPreferences['Keep users logged in for']);
+						$cookieExpiryDate = time()+60*60*24 * floatval($tl->settings['Keep users logged in for']);
 						setcookie("email", $_SESSION['email'], $cookieExpiryDate, '', '', 0);
 					}
 

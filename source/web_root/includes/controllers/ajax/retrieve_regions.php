@@ -1,7 +1,5 @@
 <?php
 
-	$tl->page['hide_page_chrome'] = true;
-	$isAjax = true;
 	include __DIR__ . '/../../../initialize.php';
 
 	// initialize

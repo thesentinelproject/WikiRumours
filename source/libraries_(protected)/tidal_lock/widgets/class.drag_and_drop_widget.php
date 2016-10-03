@@ -23,7 +23,6 @@
 				events: Dropzone-specific events, with ['parameters'] and ['actions']
 			*/
 
-			global $systemPreferences;
 			global $tl;
 
 			$form = new form_TL();
@@ -59,7 +58,7 @@
 				$this->js .= "    paramName: 'file',\n";
 				$this->js .= "    addRemoveLinks: false,\n";
 				$this->js .= "    filesizeBase: 1024,\n";
-				$this->js .= "    maxFilesize: " . $systemPreferences['Maximum filesize for uploads'] . ", // MB\n";
+				$this->js .= "    maxFilesize: " . $tl->settings['Maximum filesize for uploads'] . ", // MB\n";
 				$this->js .= "    maxFiles: " . (@$params['max_files'] ? $params['max_files'] : 'null') . ",\n";
 				if (@$params['thumbnail_width']) $this->js .= "    thumbnailWidth: " .  $params['thumbnail_width'] . ",\n";
 				if (@$params['thumbnail_height']) $this->js .= "    thumbnailHeight: " .  $params['thumbnail_height'] . ",\n";
@@ -95,7 +94,7 @@
 
 		public function processUpload($params) {
 
-			global $systemPreferences;
+			global $tl;
 			global $_FILES;
 
 			// check for errors
@@ -120,7 +119,7 @@
 					return false;
 				}
 
-				if ($systemPreferences['Maximum filesize for uploads'] && filesize($_FILES['file']['tmp_name']) > (floatval($systemPreferences['Maximum filesize for uploads']) * 1024 * 1024)) {
+				if ($tl->settings['Maximum filesize for uploads'] && filesize($_FILES['file']['tmp_name']) > (floatval($tl->settings['Maximum filesize for uploads']) * 1024 * 1024)) {
 					header('HTTP/1.1 413 Request Entity Too Large');
 					header('Content-type: text/plain');
 					exit('File size too large.');		

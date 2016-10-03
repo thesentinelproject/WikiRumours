@@ -1,9 +1,9 @@
 <?php
 
-	if (@$systemPreferences['Keep connection metadata for']) {
+	if (@$tl->settings['Keep connection metadata for']) {
 
 		// calculate expiry
-			$expiry = date('Y-m-d H:i:s', mktime(date('H'), date('i'), date('s'), date('m'), date('d') - floatval($systemPreferences['Keep connection metadata for']), date('Y')));
+			$expiry = date('Y-m-d H:i:s', mktime(date('H'), date('i'), date('s'), date('m'), date('d') - floatval($tl->settings['Keep connection metadata for']), date('Y')));
 
 		// delete metadata
 			$logger->logItInMemory("Looking for metadata prior to " . $expiry);

@@ -8,8 +8,8 @@
 		if (!$logged_in['is_administrator'] || !$logged_in['can_update_settings']) $authentication_manager->forceLoginThenRedirectHere(true);
 
 	// initialize
-		$ip_monitor_widget = new ip_monitor_widget_TL();
-		$ip_monitor_widget->initialize();
+		$cms_widget = new cms_widget_TL();
+		$cms_widget->initialize();
 		$tl->page['section'] = "Administration";
 		
 /*	--------------------------------------

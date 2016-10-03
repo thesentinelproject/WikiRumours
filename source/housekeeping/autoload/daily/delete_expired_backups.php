@@ -1,6 +1,6 @@
 <?php
 
-	if ($systemPreferences['Enable database backups']) {
+	if ($tl->settings['Enable database backups']) {
 
 		$destinationPath = __DIR__ . '/../../../backups/db';
 		$numberOfBackupsDeleted = 0;
@@ -18,7 +18,7 @@
 			else {
 			
 				// retrieve list of backups
-					$expiryDate = date('Y-m-d', mktime(0, 0, 0, date('m'), date('d') - floatval($systemPreferences['Keep backups for']), date('Y')));
+					$expiryDate = date('Y-m-d', mktime(0, 0, 0, date('m'), date('d') - floatval($tl->settings['Keep backups for']), date('Y')));
 					$backups = $directory_manager->read($destinationPath, false, true);
 					
 				// delete expired backups

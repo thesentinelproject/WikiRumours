@@ -54,7 +54,6 @@
 		public function convertImage($incomingFile, $outgoingFilename, $outgoingPath, $desiredWidth, $desiredHeight = null, $desiredAngle = null) {
 
 			global $pathToImageMagick;
-			global $systemPreferences;
 			global $extToMime_TL;
 			global $tl;
 			
@@ -179,7 +178,6 @@
 			
 			global $pathToImageMagick;
 			global $pathToFFmpeg;
-			global $systemPreferences;
 			global $tl;
 
 			// check for errors
@@ -254,7 +252,6 @@
 		public function thumbnailVideo($incomingFile, $outgoingFilename, $outgoingPath, $desiredWidth, $desiredHeight) {
 	
 			global $pathToImageMagick;
-			global $systemPreferences;
 			global $tl;
 			
 			// check for errors

@@ -1,6 +1,6 @@
 <?php
 
-	if (@$systemPreferences['Delete downloadables after']) {
+	if (@$tl->settings['Delete downloadables after']) {
 
 		$downloadPath = __DIR__ . '/../../../web_root/downloads';
 		$numberOfItemsDeleted = 0;
@@ -19,7 +19,7 @@
 					for ($counter = 0; $counter < count($downloads); $counter++) {
 						$timeCreated = strtotime(substr($this->downloads[$counter], 1, 10) . ' ' . substr($this->downloads[$counter], 12, 2) . ':' . substr($this->downloads[$counter], 15, 2) . ':' . substr($this->downloads[$counter], 18, 2));
 						$createdOn = date('Y-m-d H:i:s', $timeCreated);
-						$expiresOn = date('Y-m-d H:i:s', mktime(date('H', $timeCreated), date('i', $timeCreated), date('s', $timeCreated), date('m', $timeCreated), date('d', $timeCreated) + floatval($systemPreferences['Delete downloadables after']), date('Y', $timeCreated)));
+						$expiresOn = date('Y-m-d H:i:s', mktime(date('H', $timeCreated), date('i', $timeCreated), date('s', $timeCreated), date('m', $timeCreated), date('d', $timeCreated) + floatval($tl->settings['Delete downloadables after']), date('Y', $timeCreated)));
 
 						if ($expiresOn < date('Y-m-d H:i:s')) {
 							

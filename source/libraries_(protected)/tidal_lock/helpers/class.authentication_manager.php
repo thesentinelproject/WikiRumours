@@ -53,18 +53,23 @@
 			global $tl;
 			global $logged_in;
 
-			$logger = new logger_TL();
 			$detector = new detector_TL();
 
 			if ($alert) {
-				if ($logged_in) $activity = $logged_in['full_name'] . " (user_id " . $logged_in['user_id'] . ") unsuccessfully attempted to access /" . $tl->page['template'] . " and was logged out";
-				else {
-					$detector->connection();
-					if (@$detector->connection['country']) $user .= "in " . trim(@$detector->connection['city'] . ", " . @$detector->connection['country'], ', ') . " ";
-					$activity = "An unidentified user " . (@$detector->connection['country'] ? "in " . trim(@$detector->connection['city'] . ", " . @$detector->connection['country'], ', ') : false) . (@$detector->connection['ip'] ? " (" . $detector->connection['ip'] . ")" : false) . " unsuccessfully attempted to access /" . $tl->page['template'];
-				}
 
-				$logger->logItInDb($activity, null, null, array('is_error'=>'1', 'is_resolved'=>'0'));
+				// detect IP
+					$ip = (@$_SERVER['REMOTE_ADDR'] ? $_SERVER['REMOTE_ADDR'] : @$_SERVER['REMOTE_HOST']);
+
+				// IP is known?
+					if ($ip) $exists = retrieveSingleFromDb('ips', null, ['ip'=>$ip]);
+					if (!count(@$exists)) {
+						// analyze IP
+							$detector->connection();
+						// add to DB
+							insertIntoDb('ips', ['ip'=>$ip, 'user_id'=>@$logged_in['user_id'], 'status'=>'s', 'attempts'=>'1', 'country_id'=>@$detector->connection['country'], 'city'=>@$detector->connection['city'], 'updated_on'=>date('Y-m-d H:i:s')]);
+
+					}
+
 			}
 			
 			$this->forceRedirect('/login_register/redirect/' . urlencode(trim($tl->page['template'] . '|' . $tl->page['parameter1'] . '|' . $tl->page['parameter2'] . '|' . $tl->page['parameter3'] . '|' . $tl->page['parameter4'] . '|', '| ')));
@@ -74,13 +79,12 @@
 		public function forceRedirect($url) {
 
 			global $sessionID;
-			global $dbConnection;
 
 			// check for errors
 				if (!$url) return false;
 
 			// clear session in DB
-				if (@$sessionID) deleteFromDbSingle('sessions', array('session_id'=>$sessionID));
+				if (@$sessionID) deleteFromDbSingle('sessions', ['session_id'=>$sessionID]);
 
 			// redirect
 				header ('Location: ' . $url);

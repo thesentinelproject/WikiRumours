@@ -16,7 +16,7 @@
 			if ($logged_in['is_moderator']) $otherCriteria = "(assigned_to = '" . $logged_in['user_id'] . "' OR assigned_to = '0')";
 			else $otherCriteria = "assigned_to = '" . $logged_in['user_id'] . "'";
 
-			if (@$pseudonym['pseudonym_id']) $otherCriteria .= " AND " . $tablePrefix . "rumours.pseudonym_id = '" . intval($pseudonym['pseudonym_id']) . "'";
+			if (@$tl->page['domain_alias']['cms_id']) $otherCriteria .= " AND " . $tablePrefix . "rumours.domain_alias_id = '" . intval($tl->page['domain_alias']['cms_id']) . "'";
 			
 			$otherCriteria .= " AND (is_closed = '0' OR is_closed IS NULL)";
 
@@ -31,7 +31,7 @@
 			if (@$filters['page'] < 1) $filters['page'] = 1;
 			elseif (@$filters['page'] > $numberOfPages) $filters['page'] = $numberOfPages;
 			
-			$myRumours = retrieveRumours(array('created_by'=>$logged_in['user_id'], $tablePrefix . 'rumours.enabled'=>'1'), null, ($pseudonym['pseudonym_id'] ? $tablePrefix . "rumours.pseudonym_id = '" . intval($pseudonym['pseudonym_id']) . "'" : false), $tablePrefix . 'rumours.updated_on DESC', floatval(($filters['page'] * $rowsPerPage) - $rowsPerPage) . ',' . $rowsPerPage);
+			$myRumours = retrieveRumours(array('created_by'=>$logged_in['user_id'], $tablePrefix . 'rumours.enabled'=>'1'), null, (@$tl->page['domain_alias_id']['cms_id'] ? $tablePrefix . "rumours.domain_alias_id = '" . intval($tl->page['domain_alias_id']['cms_id']) . "'" : false), $tablePrefix . 'rumours.updated_on DESC', floatval(($filters['page'] * $rowsPerPage) - $rowsPerPage) . ',' . $rowsPerPage);
 
 /*	--------------------------------------
 	Execute only if a form post

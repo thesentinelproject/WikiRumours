@@ -1,12 +1,14 @@
 <?php
 
-	$mail_TL = array(
-		"Host" => "",
-		"User" => "",
-		"Password" => "",
-		"OutgoingAddress" => "",
-		"IncomingAddress" => "",
-		"AddressForBackups" => ""
-	);
+	$tl->mail = [
+		"Host" =>				"",
+		"Port" =>				"",
+		"Secure" =>				"",
+		"User" =>				"",
+		"Password" =>			"",
+		"OutgoingAddress" =>	"",
+		"IncomingAddress" =>	"",
+		"AddressForBackups" =>	""
+	];
 		
 ?>

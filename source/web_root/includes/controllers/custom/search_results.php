@@ -39,7 +39,7 @@
 		$keywords = @$filters['keywords'];
 		
 		$otherCriteria = $tablePrefix . "rumours.enabled = '1'";
-		if (@$pseudonym['pseudonym_id']) $otherCriteria = $tablePrefix . "rumours.pseudonym_id = '" . $pseudonym['pseudonym_id'] . "'";
+		if (@$tl->page['domain_alias']['cms_id']) $otherCriteria = $tablePrefix . "rumours.domain_alias_id = '" . $tl->page['domain_alias']['cms_id'] . "'";
 		if (@$filters['country_id']) $otherCriteria .= " AND (" . $tablePrefix . "rumours.country_id = '" . $filters['country_id'] . "')";
 		if (@$filters['status_id']) $otherCriteria .= " AND (" . $tablePrefix . "rumours.status_id = '" . $filters['status_id'] . "')";
 		if (@$filters['priority_id']) $otherCriteria .= " AND (" . $tablePrefix . "rumours.priority_id = '" . $filters['priority_id'] . "')";

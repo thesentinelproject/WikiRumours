@@ -61,10 +61,11 @@
 			emailNewUser($name, $registration[0]['email']);
 
 		// notify admins, if necessary
-			$notifications = retrieveFromDb('notifications', null, array('new_registrations'=>'1'));
+			$notifications_widget = new notifications_widget_TL();
+			$recipients = $notifications_widget->retrieveAdminRecipients([$tablePrefix . 'notification_recipients_x_types.type_id'=>'1']); // successful registration
 			
-			for ($counter = 0; $counter < count($notifications); $counter++) {
-				$emailSent = emailAdministratorAboutSuccessfulRegistrant($notifications[$counter]['notification_email'], $name);
+			for ($counter = 0; $counter < count($recipients); $counter++) {
+				$emailSent = emailAdministratorAboutSuccessfulRegistrant($recipients[$counter]['email'], $name);
 			}
 
 		return $userID;

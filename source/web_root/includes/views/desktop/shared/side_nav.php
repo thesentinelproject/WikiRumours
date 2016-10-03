@@ -48,7 +48,7 @@
 		// About
 			echo "            <div>\n";
 			echo "              <span class='pull-left transluscent'><span class='glyphicon glyphicon-exclamation-sign'></span>&nbsp;&nbsp;</span>\n";
-			echo "              <div class='siteNavItemLabel'><a href='/about'>About " . htmlspecialchars($operators->firstTrue(@$pseudonym['name'], $systemPreferences['Name of this application']), ENT_QUOTES) . "</a></div>\n";
+			echo "              <div class='siteNavItemLabel'><a href='/about'>About " . htmlspecialchars($tl->settings['Name of this application'], ENT_QUOTES) . "</a></div>\n";
 			echo "            </div>\n";
 		// Help
 			echo "            <div>\n";

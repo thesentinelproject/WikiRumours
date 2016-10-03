@@ -25,7 +25,7 @@
 		echo "<td>" . floatval($allQueries[0]['count']) . "</td>\n";
 		echo "<td>" . floatval($recentQueries[0]['count']) . "</td>\n";
 		if ($apiKey[0]['value'] == 'u') echo "<td>Unlimited</td>\n";
-		else echo "<td>" . @$systemPreferences['Maximum API calls'] . "</td>\n";
+		else echo "<td>" . @$tl->settings['Maximum API calls'] . "</td>\n";
 		echo "</tr>\n";
 		echo "</table>\n";
 

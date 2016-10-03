@@ -384,7 +384,6 @@
 
 			global $pathToFFmpeg;
 			global $pathToImageMagick;
-			global $systemPreferences;
 							
 			$metadata = array();
 			
@@ -509,7 +508,6 @@
 	
 		parser_TL
 		operators_TL
-		$systemPreferences
 		getID3 library
 		PDFInfo library
 	

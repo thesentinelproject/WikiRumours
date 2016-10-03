@@ -1,9 +1,9 @@
 <?php
 
-	if (@$systemPreferences['Keep interrupted sessions for']) {
+	if (@$tl->settings['Keep interrupted sessions for']) {
 
 		// calculate expiry
-			$expiry = date('Y-m-d H:i:s', mktime(date('H'), date('i'), date('s'), date('m'), date('d') - floatval($systemPreferences['Keep interrupted sessions for']), date('Y')));
+			$expiry = date('Y-m-d H:i:s', mktime(date('H'), date('i'), date('s'), date('m'), date('d') - floatval($tl->settings['Keep interrupted sessions for']), date('Y')));
 
 		// delete metadata
 			$logger->logItInMemory("Looking for interrupted sessions prior to " . $expiry);

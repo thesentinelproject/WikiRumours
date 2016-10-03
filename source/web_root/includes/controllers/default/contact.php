@@ -25,7 +25,8 @@
 				if (!$input_validator->validateEmailRobust($_POST['email'])) $tl->page['error'] .= "There appears to be a problem with your email address. ";
 				if (!$_POST['message']) $tl->page['error'] .= "Please write a brief message. ";
 								
-				$recipients = retrieveFromDb('notifications', null, array('contact_form'=>'1'));
+				$notifications_widget = new notifications_widget_TL();
+				$recipients = $notifications_widget->retrieveAdminRecipients([$tablePrefix . 'notification_recipients_x_types.type_id'=>'2']); // contact form
 				if (count($recipients) < 1) $tl->page['error'] .= "No recipients specified for the subject selected. ";
 			}
 			
@@ -33,13 +34,13 @@
 			if (!$tl->page['error']) {
 				
 				for ($counter = 0; $counter < count($recipients); $counter++) {
-					$emailSent = emailFromUser($_POST['name'], $_POST['email'], $_POST['username'], $_POST['telephone'], $_POST['message'], $recipients[$counter]['notification_email']);
+					$emailSent = emailFromUser($_POST['name'], $_POST['email'], $_POST['username'], $_POST['telephone'], $_POST['message'], $recipients[$counter]['email']);
 					if ($emailSent) {
 
 						// capture user agent metadata
 							$detector->browser();
 							$detector->connection();
-							$connectionID = insertIntoDb('browser_connections', array('connected_on'=>date('Y-m-d H:i:s'), 'mail_id'=>$emailSent, 'user_agent'=>$detector->browser['user_agent'], 'ip'=>$detector->connection['ip'], 'country_id'=>$detector->connection['country']));
+							$connectionID = insertIntoDb('browser_connections', ['connected_on'=>date('Y-m-d H:i:s'), 'mail_id'=>$emailSent, 'user_agent'=>$detector->browser['user_agent'], 'ip'=>$detector->connection['ip'], 'country_id'=>$detector->connection['country']]);
 							if ($logged_in) updateDbSingle('browser_connections', array('user_id'=>$logged_in['user_id']), array('mail_id'=>$emailSent));
 
 						// update log
@@ -47,7 +48,7 @@
 							if ($_POST['username']) $activity .= $_POST['username'] . " / ";
 							if ($_POST['telephone']) $activity .= $_POST['telephone'] . " / ";
 							$activity .= $_POST['email'];
-							$activity .= ") has messaged " . $systemPreferences['Name of this application'] . " through the contact form:\n\n" . $_POST['message'];
+							$activity .= ") has messaged " . $tl->settings['Name of this application'] . " through the contact form:\n\n" . $_POST['message'];
 							$logger->logItInDb($activity);
 							
 					}

@@ -310,11 +310,11 @@
 	function retrieveTables_TL($host = null, $dbName = null, $user = null, $password = null) {
 
 		global $dbConnection;
-		global $db_TL;
+		global $tl;
 
 		if (!$host || !$dbName || !$user || !$password) {
 			$connection = $dbConnection;
-			$dbName = $db_TL['Name'];
+			$dbName = $tl->db['Name'];
 		}
 		else {
 			$connection = @new mysqli($host, $user, $password, $dbName);
@@ -341,11 +341,11 @@
 	function retrieveDbSize_TL($host = null, $dbName = null, $user = null, $password = null) {
 
 		global $dbConnection;
-		global $db_TL;
+		global $tl;
 		
 		if (!$host || !$dbName || !$user || !$password) {
 			$connection = $dbConnection;
-			$dbName = $db_TL['Name'];
+			$dbName = $tl->db['Name'];
 		}
 		else {
 			$connection = @new mysqli(trim($host), trim($user), trim($password), trim($dbName));

@@ -23,7 +23,7 @@
 					// create key and expiry
 						$encryption = new encrypter_TL();
 						$key = $encryption->quickEncrypt($_POST['email'], $salts_TL['public_keys']);
-						$expiryDate = date('Y-m-d', mktime(0, 0, 0, date('m'), date('d') + $systemPreferences['Password reset link active for'], date('Y'))); // one week
+						$expiryDate = date('Y-m-d', mktime(0, 0, 0, date('m'), date('d') + $tl->settings['Password reset link active for'], date('Y'))); // one week
 					// save key to database with expiry
 						deleteFromDb('user_keys', array('user_key'=>'Reset Password', 'user_id'=>$doesUserExist[0]['user_id']));
 						insertIntoDb('user_keys', array('user_id'=>$doesUserExist[0]['user_id'], 'user_key'=>'Reset Password', 'hash'=>$key, 'saved_on'=>date('Y-m-d H:i:s'), 'expiry'=>$expiryDate));

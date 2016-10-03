@@ -25,7 +25,7 @@
 		echo "  <meta name='viewport' content='width=device-width, initial-scale=1.0'>\n";
 		
 	// define description for search engine indexing
-		echo "  <meta name='description' content=" . '"' . $operators->firstTrue(@$pseudonym['description'], "Conflict mitigration through information") . '"' . ">\n";
+		echo "  <meta name='description' content=" . '"' . $tl->settings['Describe this application'] . '"' . ">\n";
 
 	// Facebook sharing tags
 		if (@$tl->page['title']) echo "  <meta property='og:title' content=" . '"' . $tl->page['title'] . '"' . " />\n";
@@ -99,15 +99,15 @@
 
 	// load Google Analytics
 		if ($currentDatabase == 'production') {
-			if (@$pseudonym['google_analytics_id']) echo $analytics->insertGoogleAnalytics($pseudonym['google_analytics_id']); 
-			elseif (@$systemPreferences['Google Analytics ID']) echo $analytics->insertGoogleAnalytics($systemPreferences['Google Analytics ID']); 
+			if (@$tl->page['domain_alias']['google_analytics_id']) echo $analytics->insertGoogleAnalytics($tl->page['domain_alias']['google_analytics_id']); 
+			elseif (@$tl->settings['Google Analytics ID']) echo $analytics->insertGoogleAnalytics($tl->settings['Google Analytics ID']); 
 		}
 
 	// specify page title
 		echo "  <title>";
 		if ($tl->page['title']) echo $tl->page['title'] . " - ";
 		if ($tl->page['section']) echo $tl->page['section'] . " - ";
-		echo htmlspecialchars($operators->firstTrue(@$pseudonym['name'], $systemPreferences['Name of this application']), ENT_QUOTES);
+		echo htmlspecialchars($tl->settings['Name of this application'], ENT_QUOTES);
 		echo "</title>\n";
 
 		echo "</head>\n\n";
@@ -123,28 +123,28 @@
 			echo "  <div id='pageContainer'>\n\n";
 				
 		// environment
-			if (@$systemPreferences['Display environment warning'] && (@$currentDatabase == 'dev' || @$currentDatabase == 'staging')) {
+			if (@$tl->settings['Display environment warning'] && (@$currentDatabase == 'dev' || @$currentDatabase == 'staging')) {
 				echo "  <div id='environmentWarning' class='collapse in'><center>" . strtoupper($currentDatabase) . "</center></div>\n";
 			}
 
 		// maintenance mode
-			if (@$systemPreferences['Maintenance Mode'] == 'On' && @$logged_in['is_administrator']) {
+			if (@$tl->settings['Maintenance Mode'] == 'On' && @$logged_in['is_administrator']) {
 				echo "  <div id='maintenanceWarning'><center>The website is currently in maintenance mode and is disabled for all users except administrators.</center></div>\n";
 			}
 
 		// console
-			if (@$logged_in['is_tester'] && @$systemPreferences['Enable console for testers']) {
+			if (@$logged_in['is_tester'] && @$tl->settings['Enable console for testers']) {
 				echo "  <div id='console' class='collapse'>\n";
 				echo "  </div><!-- console -->\n";
 			}
 
 		echo "    <div class='container'>\n";
 		echo "      <div id='header' class='row'>\n";
-			
+
 		// logo
 			echo "        <div id='logo' class='col-xs-12 col-sm-3 col-md-3 col-lg-3'>\n";
-			echo "          <h1 class='hidden'>" . htmlspecialchars($operators->firstTrue(@$pseudonym['name'], $systemPreferences['Name of this application']), ENT_QUOTES) . "</h1>\n";
-			echo "          <a href='/'><img src='" . (@$pseudonym['pseudonym_id'] && file_exists('assets/pseudonym_logos/' . $pseudonym['pseudonym_id'] . '.' . $pseudonym['logo_ext']) ? '/assets/pseudonym_logos/' . $pseudonym['pseudonym_id'] . '.' . $pseudonym['logo_ext'] : "/resources/img/logo.png") . "' border='0' class='img-responsive' alt='" . htmlspecialchars($operators->firstTrue(@$pseudonym['name'], $systemPreferences['Name of this application']), ENT_QUOTES) . "' /></a>\n";
+			echo "          <h1 class='hidden'>" . htmlspecialchars($tl->settings['Name of this application'], ENT_QUOTES) . "</h1>\n";
+			echo "          <a href='/'><img src='" . (@$tl->page['domain_alias']['destination_url'] && file_exists($tl->page['domain_alias']['destination_url']) ? '/' . $tl->page['domain_alias']['destination_url'] : "/resources/img/logo.png") . "' border='0' class='img-responsive' alt='" . htmlspecialchars($tl->settings['Name of this application'], ENT_QUOTES) . "' /></a>\n";
 			echo "        </div><!-- logo -->\n\n";
 	
 		// header

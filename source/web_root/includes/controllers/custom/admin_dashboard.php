@@ -29,7 +29,7 @@
 		// system stats
 			$errno = 0;
 			$errstr = '';
-			$isMailServerActive = fsockopen($mail_TL['Host'], 25, $errno, $errstr, 5);
+			$isMailServerActive = fsockopen($tl->mail['Host'], 25, $errno, $errstr, 5);
 			if ($isMailServerActive) $mailServerStatus = 'Active';
 			else $mailServerStatus = 'Inactive';
 			

@@ -20,7 +20,6 @@
 		public function logItInDb($activity, $id = null, $relationships = null, $otherAttributes = null, $skipIfReported = false) {
 
 			global $tl;
-			global $connectionType;
 	
 			// check for errors
 				if (!$activity) {
@@ -36,7 +35,7 @@
 			    
 			// create new log entry or update previous entry
 				if ($id) updateDb('logs', array('activity'=>$activity), array('log_id'=>$id), null, null, null, null, 1);
-				else $id = insertIntoDb('logs', array('activity'=>$activity, 'connection_type'=>$connectionType, 'connected_on'=>date('Y-m-d H:i:s')));
+				else $id = insertIntoDb('logs', array('activity'=>$activity, 'connection_type'=>$tl->page['connection_type'], 'connected_on'=>date('Y-m-d H:i:s')));
 
 				if (count($otherAttributes)) updateDb('logs', $otherAttributes, array('log_id'=>$id), null, null, null, null, 1);
 

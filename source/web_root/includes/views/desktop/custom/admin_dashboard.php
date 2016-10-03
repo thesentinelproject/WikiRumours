@@ -24,7 +24,7 @@
 			echo "        </thead>\n";
 			echo "        <tbody>\n";
 			for ($counter = 0; $counter < count($unsentMail); $counter++) {
-				if ($unsentMail[$counter]['failed_attempts'] >= $systemPreferences['Maximum allowable failures per email address']) echo "        <tr class='danger'>\n";
+				if ($unsentMail[$counter]['failed_attempts'] >= $tl->settings['Maximum allowable failures per email address']) echo "        <tr class='danger'>\n";
 				else echo "        <tr>\n";
 				echo "        <td class='nowrap'>\n";
 				echo "          " . date('j-M-Y', strtotime($unsentMail[$counter]['queued_on'])) . "<br />\n";

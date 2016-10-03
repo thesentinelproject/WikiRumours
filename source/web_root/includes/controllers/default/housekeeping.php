@@ -20,7 +20,7 @@
 		else {
 
 			// bot status		
-				if ($systemPreferences['Enable cron connections'] && $systemPreferences['Interval between cron connections'] > 0) $botStatus = "Enabled";
+				if ($tl->settings['Enable cron connections'] && $tl->settings['Interval between cron connections'] > 0) $botStatus = "Enabled";
 				else $botStatus = "Disabled";
 
 			// previous cron

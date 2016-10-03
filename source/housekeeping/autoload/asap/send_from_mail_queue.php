@@ -5,7 +5,7 @@
 		$maxMessagesToSend = 5;
 
 		// retrieve unsent mail in order of priority, and then in order of earliest queued first
-			$unsentMail = retrieveFromDb('mail_queue', null, null, null, null, null, $tablePrefix . "mail_queue.sent_on = '0000-00-00 00:00:00' AND " . $tablePrefix . "mail_queue.failed_attempts < '" . $systemPreferences['Maximum allowable failures per email address'] . "'", null, $tablePrefix . 'mail_queue.priority DESC, ' . $tablePrefix . 'mail_queue.queued_on ASC');
+			$unsentMail = retrieveFromDb('mail_queue', null, null, null, null, null, $tablePrefix . "mail_queue.sent_on = '0000-00-00 00:00:00' AND " . $tablePrefix . "mail_queue.failed_attempts < '" . $tl->settings['Maximum allowable failures per email address'] . "'", null, $tablePrefix . 'mail_queue.priority DESC, ' . $tablePrefix . 'mail_queue.queued_on ASC');
 			$logger->logItInMemory("Found " . count($unsentMail) . " queued messages");
 			$logger->logItInDb($logger->retrieveLogFromMemory(), $logID);
 

@@ -185,7 +185,7 @@
 								}
 
 							// add rumour
-								$rumourID = insertIntoDb('rumours', array('public_id'=>$newRumourPublicID, 'description'=>$_POST['description'], 'country_id'=>$_POST['country'], 'city'=>$_POST['city'], 'latitude'=>$_POST['occurred_at_latitude'], 'longitude'=>$_POST['occurred_at_longitude'], 'occurred_on'=>$_POST['occurred_on'], 'created_by'=>$heardBy, 'created_on'=>date('Y-m-d H:i:s'), 'updated_by'=>$logged_in['user_id'], 'updated_on'=>date('Y-m-d H:i:s'), 'entered_by'=>$logged_in['user_id'], 'status_id'=>@$_POST['status_id'], 'priority_id'=>@$_POST['priority_id'], 'assigned_to'=>@$_POST['assigned_to'], 'pseudonym_id'=>@$pseudonym['pseudonym_id']));
+								$rumourID = insertIntoDb('rumours', array('public_id'=>$newRumourPublicID, 'description'=>$_POST['description'], 'country_id'=>$_POST['country'], 'city'=>$_POST['city'], 'latitude'=>$_POST['occurred_at_latitude'], 'longitude'=>$_POST['occurred_at_longitude'], 'occurred_on'=>$_POST['occurred_on'], 'created_by'=>$heardBy, 'created_on'=>date('Y-m-d H:i:s'), 'updated_by'=>$logged_in['user_id'], 'updated_on'=>date('Y-m-d H:i:s'), 'entered_by'=>$logged_in['user_id'], 'status_id'=>@$_POST['status_id'], 'priority_id'=>@$_POST['priority_id'], 'assigned_to'=>@$_POST['assigned_to'], 'domain_alias_id'=>@$tl->page['domain_alias']['cms_id']));
 								if (!$rumourID) $tl->page['error'] .= "Unable to add rumour for some reason. ";
 								else {
 			

@@ -22,14 +22,14 @@
 				$detector->connection();
 				$agent_info = $detector->parseUserAgent($unalerted[$counter]['user_agent']);
 				
-				$user = "An unidentified user ";
+				$user = "An unidentified user (" . $unalerted[$counter]['ip'] . ") ";
 				if (@$detector->connection['country']) $user .= "in " . trim(@$detector->connection['city'] . ", " . @$detector->connection['country'], ', ') . " ";
 				if (@$agent_info['browser']) $user .= "using " . trim(@$agent_info['browser'] . " " . @$agent_info['browser_version'], ' ') . " ";
 				if (@$agent_info['os']) $user .= "on " . trim(@$agent_info['os'] . " " . @$agent_info['os_version'], ' ') . " ";
-				$user .= "(" . $unalerted[$counter]['ip'] . ")";
+				if (!@$agent_info['browser'] && !@$agent_info['os']) $user .= "(" . $unalerted[$counter]['user_agent'] . ") ";
 			}
 
-			$activity = $user . " encountered a broken page" . (@$unalerted[$counter]['template'] ? " at " . $unalerted[$counter]['template'] : false);
+			$activity = $user . "encountered a broken page" . (@$unalerted[$counter]['template'] ? " at " . $unalerted[$counter]['template'] : false);
 
 			$logger->logItInMemory($activity);
 			$logger->logItInDb($logger->retrieveLogFromMemory(), $logID);

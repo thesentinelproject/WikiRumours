@@ -1,6 +1,5 @@
 <?php
 
-	$slug = 'Home Page';
-	include 'includes/views/shared/cms_block.php';
+	displayCmsBlock(['public_id'=>"Home Page"]);
 	
 ?>

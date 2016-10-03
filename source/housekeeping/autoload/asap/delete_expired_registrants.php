@@ -1,8 +1,8 @@
 <?php
-	if (@$systemPreferences['Pending registrations auto-deleted after']) {
+	if (@$tl->settings['Pending registrations auto-deleted after']) {
 
 		// calculate expiry
-			$expiry = date('Y-m-d H:i:s', mktime(date('H'), date('i'), date('s'), date('m'), date('d') - $systemPreferences['Pending registrations auto-deleted after'], date('Y')));
+			$expiry = date('Y-m-d H:i:s', mktime(date('H'), date('i'), date('s'), date('m'), date('d') - $tl->settings['Pending registrations auto-deleted after'], date('Y')));
 			$logger->logItInMemory("Looking for registrations prior to " . $expiry);
 			$logger->logItInDb($logger->retrieveLogFromMemory(), $logID);
 

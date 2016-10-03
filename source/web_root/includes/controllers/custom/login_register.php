@@ -38,7 +38,7 @@
 						// set cookies
 							$_SESSION['username'] = $_POST['loginUsername'];
 							$_SESSION['password_hash'] = $logged_in['password_hash'];
-							$cookieExpiryDate = time()+60*60*24 * floatval($systemPreferences['Keep users logged in for']);
+							$cookieExpiryDate = time()+60*60*24 * floatval($tl->settings['Keep users logged in for']);
 							setcookie("username", $_SESSION['username'], $cookieExpiryDate, '/', '.' . $tl->page['domain'], 0);
 							setcookie("password_hash", $_SESSION['password_hash'], $cookieExpiryDate, '/', '.' . $tl->page['domain'], 0);
 
@@ -120,9 +120,11 @@
 							$isPhoneNumberAlreadyRegistered = retrieveUsers(null, null, "(primary_phone != '' AND REPLACE(primary_phone, '-', '') LIKE '%" . substr(str_replace('-','', $_POST['secondary_phone']), -7) . "') OR (secondary_phone != '' AND REPLACE(secondary_phone, '-', '') LIKE '%" . substr(str_replace('-','', $_POST['secondary_phone']), -7) . "')", null, 1);
 						}
 						if (count(@$isPhoneNumberAlreadyRegistered)) {
-							$admins = retrieveFromDb('notifications', null, ['duplicate_users'=>'1']);
-							for ($counter = 0; $counter < count($admins); $counter++) {
-								warnAdministratorOfDuplicateUserPhoneNumber($admins[$counter]['notification_email'], $_POST['registerUsername'], $isPhoneNumberAlreadyRegistered[0]['username']);
+							$notifications_widget = new notifications_widget_TL();
+							$recipients = $notifications_widget->retrieveAdminRecipients([$tablePrefix . 'notification_recipients_x_types.type_id'=>'3']); // duplicate users
+
+							for ($counter = 0; $counter < count($recipients); $counter++) {
+								warnAdministratorOfDuplicateUserPhoneNumber($recipients[$counter]['email'], $_POST['registerUsername'], $isPhoneNumberAlreadyRegistered[0]['username']);
 							}
 						}
 					// save registration

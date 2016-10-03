@@ -1,7 +1,5 @@
 <?php
 
-	$tl->page['hide_page_chrome'] = true;
-	$isAjax = true;
 	include __DIR__ . '/../../../initialize.php';
 
 	// parse query string
@@ -32,7 +30,7 @@
 			exit('Unable to find uploaded file.');		
 		}
 
-		if ($systemPreferences['Maximum filesize for uploads'] && filesize($_FILES['file']['tmp_name']) > (floatval($systemPreferences['Maximum filesize for uploads']) * 1024 * 1024)) {
+		if ($tl->settings['Maximum filesize for uploads'] && filesize($_FILES['file']['tmp_name']) > (floatval($tl->settings['Maximum filesize for uploads']) * 1024 * 1024)) {
 			header('HTTP/1.1 413 Request Entity Too Large');
 			header('Content-type: text/plain');
 			exit('File size too large.');		

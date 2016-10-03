@@ -8,7 +8,7 @@
 			<div class='col-md-3 col-md-offset-1'>Daily query limit:</div>
 			<div class='col-md-2'><?php
 				if (@$logged_in['unlimited_api_queries']) echo "Unlimited";
-				else echo $systemPreferences['Maximum API calls'];
+				else echo $tl->settings['Maximum API calls'];
 			?></div>
 			<div class='col-md-2 pull-right'>
 <?php 
@@ -27,7 +27,7 @@
 			<div class='col-sm-9 col-xs-9'>Daily query limit:</div>
 			<div class='col-sm-3 col-xs-3 pull-right'><?php
 				if (@$logged_in['unlimited_api_queries']) echo "Unlimited";
-				else echo $systemPreferences['Maximum API calls'];
+				else echo $tl->settings['Maximum API calls'];
 			?></div>
 		</div><br />
 		<div>
@@ -41,8 +41,10 @@
 	<br />
 	
 <?php
-	$slug = 'api_intro';
-	include 'includes/views/shared/cms_block.php';
+//	$slug = 'api_intro';
+//	include 'includes/views/shared/cms_block.php';
+	displayCmsBlock(['public_id'=>"api_intro"]);
+
 ?>
 
 	<br />
@@ -54,8 +56,7 @@
 		</ul>
 		<div class="tab-content">
 			<div class="tab-pane active" id="v2"><br /><?php
-				$slug = 'api_v2';
-				include 'includes/views/shared/cms_block.php';
+				displayCmsBlock(['public_id'=>"api_v2"]);
 			?></div>
 			<div class="tab-pane" id="v1"><br /><?php echo $apiErrorCodes[6]; ?></div>
 			<div class="tab-pane" id="codes"><br />

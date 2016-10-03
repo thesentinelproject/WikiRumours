@@ -4,8 +4,8 @@
 
 		public function sendFromMailQueue($mailID) {
 
-			global $mail_TL;
 			global $tl;
+
 			$input_validator = new input_validator_TL();
 			$parser = new parser_TL();
 
@@ -71,10 +71,10 @@
 				$phpMailer->MailerDebug = false;
 				$phpMailer->CharSet = 'UTF-8';
 				
-				if ($mail_TL['Host']) {
-					$phpMailer->Host = $mail_TL['Host'];
-					$phpMailer->Username = $mail_TL['User'];
-					$phpMailer->Password = $mail_TL['Password'];
+				if ($tl->mail['Host']) {
+					$phpMailer->Host = $tl->mail['Host'];
+					$phpMailer->Username = $tl->mail['User'];
+					$phpMailer->Password = $tl->mail['Password'];
 					$phpMailer->SMTPAuth = true;
 					$phpMailer->SMTPDebug = 0;
 					$phpMailer->do_debug = 0;

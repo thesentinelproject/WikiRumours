@@ -4,14 +4,14 @@
 		
 		global $dbConnection;
 		global $tablePrefix;
-		global $pseudonym;
+		global $tl;
 		
 		// build query
 			$query = "SELECT " . $tablePrefix . "users.*,";
 			$query .= " " . $tablePrefix . "countries.country as country,";
 			$query .= " " . $tablePrefix . "regions.region as region,";
 			$query .= " TRIM(CONCAT(" . $tablePrefix . "users.first_name, ' ', " . $tablePrefix . "users.last_name)) as full_name,";
-			$query .= " (SELECT COUNT(rumour_id) FROM " .$tablePrefix . "rumours LEFT JOIN " .$tablePrefix . "statuses ON " .$tablePrefix . "rumours.status_id = " .$tablePrefix . "statuses.status_id WHERE " .$tablePrefix . "rumours.assigned_to = " .$tablePrefix . "users.user_id AND (" .$tablePrefix . "statuses.is_closed = '0' OR " .$tablePrefix . "statuses.is_closed IS NULL)" . (@$pseudonym['pseudonym_id'] ? " AND " . $tablePrefix . "rumours.pseudonym_id='" . $pseudonym['pseudonym_id'] . "'" : false) . ") AS rumours_assigned,";
+			$query .= " (SELECT COUNT(rumour_id) FROM " .$tablePrefix . "rumours LEFT JOIN " .$tablePrefix . "statuses ON " .$tablePrefix . "rumours.status_id = " .$tablePrefix . "statuses.status_id WHERE " .$tablePrefix . "rumours.assigned_to = " .$tablePrefix . "users.user_id AND (" .$tablePrefix . "statuses.is_closed = '0' OR " .$tablePrefix . "statuses.is_closed IS NULL)" . (@$tl->page['domain_alias']['cms_id'] ? " AND " . $tablePrefix . "rumours.domain_alias_id='" . $tl->page['domain_alias']['cms_id'] . "'" : false) . ") AS rumours_assigned,";
 			$query .= " (SELECT COUNT(rumour_id) FROM " .$tablePrefix . "rumours WHERE " .$tablePrefix . "rumours.created_by = " .$tablePrefix . "users.user_id) AS rumours_created,";
 			$query .= " (SELECT COUNT(sighting_id) FROM " .$tablePrefix . "rumour_sightings WHERE " .$tablePrefix . "rumour_sightings.created_by = " .$tablePrefix . "users.user_id) AS sightings,";
 			$query .= " (SELECT COUNT(comment_id) FROM " .$tablePrefix . "comments WHERE " .$tablePrefix . "comments.created_by = " .$tablePrefix . "users.user_id) AS comments_left,";

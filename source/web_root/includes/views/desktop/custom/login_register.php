@@ -3,7 +3,7 @@
 	// Login
 
 		echo "  <div id='loginContainer' class='pageModule'>\n";
-		echo "    <h2>Log in with your " . $operators->firstTrue(@$pseudonym['name'], $systemPreferences['Name of this application']) . " account...</h2>\n";
+		echo "    <h2>Log in with your " . $tl->settings['Name of this application'] . " account...</h2>\n";
 
 		echo "    " . $form->start('loginForm', null, 'post', null, null, array('onSubmit'=>'validateLoginForm(); return false;')) . "\n";
 		/* Username */		echo $form->row('text', 'loginUsername', $operators->firstTrue(@$_POST['loginUsername'], @$_COOKIE['username']), true, 'Username', 'form-control', '', 30) . "\n";
@@ -31,8 +31,8 @@
 							echo "    <div class='col-md-6'>" . $form->input('text', 'last_name', @$_POST['last_name'], false, 'Last|Last', 'form-control', '', 30) . "</div>\n";
 							echo "  </div>\n";
 							echo $form->rowEnd();
-		/* Country */		echo $form->row('country', 'country_id', $operators->firstTrue(@$_POST['country_id'], @$pseudonym[0]['country_id']), false, "Country", 'form-control') . "\n";
-		/* Region */		echo $form->row('region', 'region', ['country_id'=>$operators->firstTrue(@$_POST['country_id'], @$pseudonym[0]['country_id']), 'region_id'=>@$_POST['region_id'], 'region_other'=>@$_POST['region_other']], false, "Region", 'form-control', null, null, ['link-to'=>'country_id']) . "\n";
+		/* Country */		echo $form->row('country', 'country_id', $operators->firstTrue(@$_POST['country_id'], @$tl->page['domain_alias']['country_id']), false, "Country", 'form-control') . "\n";
+		/* Region */		echo $form->row('region', 'region', ['country_id'=>$operators->firstTrue(@$_POST['country_id'], @$tl->page['domain_alias']['country_id']), 'region_id'=>@$_POST['region_id'], 'region_other'=>@$_POST['region_other']], false, "Region", 'form-control', null, null, ['link-to'=>'country_id']) . "\n";
 		/* Community */		echo $form->row('text', 'city', @$_POST['city'], false, 'Community', 'form-control', '', 50) . "\n";
 		/* Phone */			echo $form->rowStart('primary_phone', 'Primary Phone');
 							echo "  <div class='row'>\n";
