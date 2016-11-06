@@ -275,7 +275,7 @@
 							else {
 								$numberOfMinutesSincePreviousCronConnection = round((time() - strtotime($previousCronConnection[0]['connected_on'])) / 60, 0);
 								if ($numberOfMinutesSincePreviousCronConnection >= ($tl->settings['Interval between cron connections'] * 2)) {
-									$cronError = "Cron has stopped connecting for some reason (perhaps a server outage?)";
+									$cronError = "As of " . date('Y-m-d H:i A') . ", cron has stopped connecting for some reason (perhaps a server outage?)";
 								}
 							}
 							
