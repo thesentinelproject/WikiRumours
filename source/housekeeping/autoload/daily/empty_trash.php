@@ -7,8 +7,7 @@
 		if (!file_exists($trashPath)) {
 			$activity = "Error encountered during " . pathinfo(__FILE__, PATHINFO_FILENAME) . ": Can't find trash bin at " . $trashPath;
 			
-			$logger->logItInMemory($activity);
-			$logger->logItInDb($logger->retrieveLogFromMemory(), $logID);
+			$output .= $activity . "\n";
 			
 			$logger->logItInDb($activity, null, null, array('is_error'=>'1', 'is_resolved'=>'0'), true);
 			emailSystemNotification($activity, 'Critical error');
@@ -31,8 +30,7 @@
 							else {
 								$activity = "Error encountered during " . pathinfo(__FILE__, PATHINFO_FILENAME) . ": Unknown error attempting to delete the folder " . $trashBin[$counter];
 								
-								$logger->logItInMemory($activity);
-								$logger->logItInDb($logger->retrieveLogFromMemory(), $logID);
+								$output .= $activity . "\n";
 								
 								$logger->logItInDb($activity, null, null, array('is_error'=>'1', 'is_resolved'=>'0'), true);
 								emailSystemNotification($activity, 'Critical error');
@@ -42,8 +40,7 @@
 				}
 				
 			// update log
-				$logger->logItInMemory("Removed " . floatval($numberOfItemsDeleted) . " item(s)");
-				$logger->logItInDb($logger->retrieveLogFromMemory(), $logID);
+				$output .= "Removed " . floatval($numberOfItemsDeleted) . " item(s)\n";
 
 		}
 		

@@ -5,7 +5,7 @@
 	-------------------------------------- */
 
 	// authenticate user
-		if (!$logged_in) $authentication_manager->forceLoginThenRedirectHere(true);
+		if (!$logged_in) $authentication_manager->forceLoginThenRedirectHere();
 		
 		if (!$logged_in['can_run_housekeeping']) $tl->page['error'] = "You aren't authorized to perform housekeeping.";
 

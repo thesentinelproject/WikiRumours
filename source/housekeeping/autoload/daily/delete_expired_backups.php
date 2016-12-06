@@ -9,8 +9,7 @@
 			if (!file_exists($destinationPath)) {
 				$activity = "Error encountered during " . pathinfo(__FILE__, PATHINFO_FILENAME) . ": Can't find destination directory for backups";
 				
-				$logger->logItInMemory($activity);
-				$logger->logItInDb($logger->retrieveLogFromMemory(), $logID);
+				$output .= $activity . "\n";
 				
 				$logger->logItInDb($activity, null, null, array('is_error'=>'1', 'is_resolved'=>'0'), true);
 				emailSystemNotification($activity, 'Critical error');
@@ -33,10 +32,9 @@
 							// check if successful
 								if ($success) $numberOfBackupsDeleted++;
 								else {
-									$activity = "Unknown error attempting to delete the expired backup " . $backups[$counter];
+									$activity = "Error encountered during " . pathinfo(__FILE__, PATHINFO_FILENAME) . ": Unknown error attempting to delete the expired backup " . $backups[$counter];
 									
-									$logger->logItInMemory($activity);
-									$logger->logItInDb($logger->retrieveLogFromMemory(), $logID);
+									$output .= $activity . "\n";
 									
 									$logger->logItInDb($activity, null, null, array('is_error'=>'1', 'is_resolved'=>'0'), true);
 									emailSystemNotification($activity, 'Critical error');
@@ -48,13 +46,11 @@
 			}
 			
 		// update log
-			$logger->logItInMemory("Removed " . floatval($numberOfBackupsDeleted) . " expired backup(s)");
-			$logger->logItInDb($logger->retrieveLogFromMemory(), $logID);
+			$output .= "Removed " . floatval($numberOfBackupsDeleted) . " expired backup(s)\n";
 
 	}
 	else {
-		$logger->logItInMemory("Backups disabled");
-		$logger->logItInDb($logger->retrieveLogFromMemory(), $logID);
+		$output .= "Backups disabled\n";
 	}
 
 ?>

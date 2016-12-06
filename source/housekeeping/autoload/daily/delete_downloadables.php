@@ -7,8 +7,7 @@
 		
 		// make sure download directory exists
 			if (!file_exists($downloadPath)) {
-				$logger->logItInMemory("Error encountered during " . pathinfo(__FILE__, PATHINFO_FILENAME) . ": Can't find download directory at " . $downloadPath);
-				$logger->logItInDb($logger->retrieveLogFromMemory(), $logID);
+				$output .= "Error encountered during " . pathinfo(__FILE__, PATHINFO_FILENAME) . ": Can't find download directory at " . $downloadPath . "\n";
 			}
 			else {
 			
@@ -17,7 +16,7 @@
 					
 				// delete expired downloadables
 					for ($counter = 0; $counter < count($downloads); $counter++) {
-						$timeCreated = strtotime(substr($this->downloads[$counter], 1, 10) . ' ' . substr($this->downloads[$counter], 12, 2) . ':' . substr($this->downloads[$counter], 15, 2) . ':' . substr($this->downloads[$counter], 18, 2));
+						$timeCreated = strtotime(substr($downloads[$counter], 1, 10) . ' ' . substr($downloads[$counter], 12, 2) . ':' . substr($downloads[$counter], 15, 2) . ':' . substr($downloads[$counter], 18, 2));
 						$createdOn = date('Y-m-d H:i:s', $timeCreated);
 						$expiresOn = date('Y-m-d H:i:s', mktime(date('H', $timeCreated), date('i', $timeCreated), date('s', $timeCreated), date('m', $timeCreated), date('d', $timeCreated) + floatval($tl->settings['Delete downloadables after']), date('Y', $timeCreated)));
 
@@ -31,8 +30,7 @@
 								else {
 									$activity = "Error encountered during " . pathinfo(__FILE__, PATHINFO_FILENAME) . ": Unknown error attempting to delete the folder " . $downloads[$counter];
 									
-									$logger->logItInMemory($activity);
-									$logger->logItInDb($logger->retrieveLogFromMemory(), $logID);
+									$output .= $activity . "\n";
 									
 									$logger->logItInDb($activity, null, null, array('is_error'=>'1', 'is_resolved'=>'0'), true);
 									emailSystemNotification($activity, 'Critical error');
@@ -42,8 +40,7 @@
 					}
 					
 				// update log
-					$logger->logItInMemory("Removed " . floatval($numberOfItemsDeleted) . " item(s)");
-					$logger->logItInDb($logger->retrieveLogFromMemory(), $logID);
+					$output .= "Removed " . floatval($numberOfItemsDeleted) . " item(s)\n";
 
 			}
 			

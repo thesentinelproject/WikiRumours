@@ -31,8 +31,8 @@
 
 			$activity = $user . "encountered a broken page" . (@$unalerted[$counter]['template'] ? " at " . $unalerted[$counter]['template'] : false);
 
-			$logger->logItInMemory($activity);
-			$logger->logItInDb($logger->retrieveLogFromMemory(), $logID);
+			$output .= $activity . "\n";
+
 			$logger->logItInDb($activity, null, null, array('is_error'=>'1', 'is_resolved'=>'0'));
 			emailSystemNotification($activity, 'Critical error');
 

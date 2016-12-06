@@ -1,11 +1,11 @@
 -- phpMyAdmin SQL Dump
--- version 4.6.2
+-- version 4.6.4
 -- https://www.phpmyadmin.net/
 --
 -- Host: mysql.wikirumours.org
--- Generation Time: Sep 13, 2016 at 08:19 AM
+-- Generation Time: Dec 06, 2016 at 01:10 PM
 -- Server version: 5.6.25-log
--- PHP Version: 7.0.9
+-- PHP Version: 7.0.12
 
 SET SQL_MODE = "NO_AUTO_VALUE_ON_ZERO";
 SET time_zone = "+00:00";
@@ -8604,6 +8604,21 @@ CREATE TABLE `wr_log_relationships` (
 -- --------------------------------------------------------
 
 --
+-- Table structure for table `wr_log_tasks`
+--
+
+CREATE TABLE `wr_log_tasks` (
+  `task_id` int(9) NOT NULL,
+  `task` varchar(100) COLLATE utf8_unicode_ci NOT NULL,
+  `output` varchar(255) COLLATE utf8_unicode_ci NOT NULL,
+  `is_error` tinyint(1) NOT NULL,
+  `log_id` int(9) NOT NULL,
+  `completed_on` datetime NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
+
+-- --------------------------------------------------------
+
+--
 -- Table structure for table `wr_mail_queue`
 --
 
@@ -13501,6 +13516,12 @@ ALTER TABLE `wr_log_relationships`
   ADD PRIMARY KEY (`log_id`,`relationship_name`,`relationship_value`);
 
 --
+-- Indexes for table `wr_log_tasks`
+--
+ALTER TABLE `wr_log_tasks`
+  ADD PRIMARY KEY (`task_id`);
+
+--
 -- Indexes for table `wr_mail_queue`
 --
 ALTER TABLE `wr_mail_queue`
@@ -13669,6 +13690,11 @@ ALTER TABLE `wr_location_types`
 --
 ALTER TABLE `wr_logs`
   MODIFY `log_id` int(9) UNSIGNED NOT NULL AUTO_INCREMENT;
+--
+-- AUTO_INCREMENT for table `wr_log_tasks`
+--
+ALTER TABLE `wr_log_tasks`
+  MODIFY `task_id` int(9) NOT NULL AUTO_INCREMENT;
 --
 -- AUTO_INCREMENT for table `wr_mail_queue`
 --

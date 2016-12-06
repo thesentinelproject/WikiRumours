@@ -6,16 +6,15 @@
 			$expiry = date('Y-m-d H:i:s', mktime(date('H'), date('i'), date('s'), date('m'), date('d') - floatval($tl->settings['Keep interrupted sessions for']), date('Y')));
 
 		// delete metadata
-			$logger->logItInMemory("Looking for interrupted sessions prior to " . $expiry);
-			$logger->logItInDb($logger->retrieveLogFromMemory(), $logID);
+			$output .= "Looking for interrupted sessions prior to " . $expiry . "\n";
+			
 			$deleted = deleteFromDb('sessions', null, null, null, null, "connected_on < '" . $expiry . "'");
-			$logger->logItInMemory("Deleted " . floatval($deleted) . " expired sessions");
-			$logger->logItInDb($logger->retrieveLogFromMemory(), $logID);
+			
+			$output .= "Deleted " . floatval($deleted) . " expired sessions\n";
 
 	}
 	else {
-		$logger->logItInMemory("No expiry provided in settings");
-		$logger->logItInDb($logger->retrieveLogFromMemory(), $logID);
+		$output .= "No expiry provided in settings\n";
 	}
 
 ?>

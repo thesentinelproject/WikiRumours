@@ -5,8 +5,7 @@
 	------------------
 
 	if ($currentDatabase != 'production') {
-		$logger->logItInMemory("Can geocode only from production due to Google IP restrictions.");
-		$logger->logItInDb($logger->retrieveLogFromMemory(), $logID);
+		$output .= "Can geocode only from production due to Google IP restrictions.\n";
 	}
 	else {
 
@@ -17,17 +16,14 @@
 			$sightings = retrieveFromDb('rumour_sightings', null, array('latitude' => 0, 'longitude' => '0', 'unable_to_geocode' => '0'), null, null, null, null, null, false, $limit);
 
 			if (!count($sightings)){
-				$logger->logItInMemory("No outstanding ungeocoded sightings found");
-				$logger->logItInDb($logger->retrieveLogFromMemory(), $logID);
+				$output .= "No outstanding ungeocoded sightings found\n";
 			}
 			else {
-				$logger->logItInMemory("Attempting to geocode " . count($sightings) . " sightings");
-				$logger->logItInDb($logger->retrieveLogFromMemory(), $logID);
+				$output .= "Attempting to geocode " . count($sightings) . " sightings\n";
 
 				for ($counter = 0; $counter < count($sightings); $counter++) {
 
-					$logger->logItInMemory("Checking sighting_id " . $sightings[$counter]['sighting_id']);
-					$logger->logItInDb($logger->retrieveLogFromMemory(), $logID);
+					$output .= "Checking sighting_id " . $sightings[$counter]['sighting_id'] . "\n";
 
 					$error = null;
 					$latitude = null;
@@ -37,25 +33,21 @@
 						$match = retrieveFromDb('rumour_sightings', null, array('LOWER(city)' => strtolower($sightings[$counter]['city']), 'LOWER(country_id)' => strtolower($sightings[$counter]['country_id'])), null, null, null, "latitude <> 0 AND longitude <> 0", null, false, 1);
 						if (count($match)) {
 							updateDb('rumour_sightings', array('latitude' => $match[0]['latitude'], 'longitude' => $match[0]['longitude']), array('sighting_id'=>$sightings[$counter]['sighting_id']), null, null, null, null, 1);
-							$logger->logItInMemory("Successfully matched " . trim($sightings[$counter]['city'] . ',' . $sightings[$counter]['country_id'], ', '));
-							$logger->logItInDb($logger->retrieveLogFromMemory(), $logID);
+							$output .= "Successfully matched " . trim($sightings[$counter]['city'] . ',' . $sightings[$counter]['country_id'], ', ') . "\n";
 						}
 						else {
 							$match = retrieveFromDb('rumours', null, array('LOWER(city)' => strtolower($sightings[$counter]['city']), 'LOWER(country_id)' => strtolower($sightings[$counter]['country_id'])), null, null, null, "latitude <> 0 AND longitude <> 0", null, false, 1);
 							if (count($match)) {
 								updateDb('rumour_sightings', array('latitude' => $match[0]['latitude'], 'longitude' => $match[0]['longitude']), array('sighting_id'=>$rumours[$counter]['sighting_id']), null, null, null, null, 1);
-								$logger->logItInMemory("Successfully matched " . trim($rumours[$counter]['city'] . ',' . $rumours[$counter]['country_id'], ', '));
-								$logger->logItInDb($logger->retrieveLogFromMemory(), $logID);
+								$output .= "Successfully matched " . trim($rumours[$counter]['city'] . ',' . $rumours[$counter]['country_id'], ', ') . "\n";
 							}
 							else {
-								$logger->logItInMemory("Unable to find a match for " . trim($sightings[$counter]['city'] . ',' . $sightings[$counter]['country_id'], ', ') . "; attempting to query Google Maps API");
-								$logger->logItInDb($logger->retrieveLogFromMemory(), $logID);
+								$output .= "Unable to find a match for " . trim($sightings[$counter]['city'] . ',' . $sightings[$counter]['country_id'], ', ') . "; attempting to query Google Maps API\n";
 
 								// verify cap
 									$queriesToday = countInDb('api_calls_external', null, array('destination'=>'gm'), null, null, null, "queried_on > '" . date('Y-m-d H:i:s', mktime(date('H'), date('i'), date('s'), date('m'), date('d') - 1, date('Y'))) . "'");
 									if ($queriesToday[0]['count'] >= 2250) {
-										$logger->logItInMemory("Too many queries today");
-										$logger->logItInDb($logger->retrieveLogFromMemory(), $logID);
+										$output .= "Too many queries today\n";
 									}
 									else {
 										// parse address
@@ -64,8 +56,7 @@
 											// retrieve data from Google Maps API
 												$googleUrl = 'http://maps.googleapis.com/maps/api/geocode/xml?sensor=false&address=' . urlencode($location);
 												if (!$file_manager->doesUrlExist($googleUrl)) {
-													$logger->logItInMemory("Unable to access Google Maps API");
-													$logger->logItInDb($logger->retrieveLogFromMemory(), $logID);
+													$output .= "Unable to access Google Maps API\n";
 												}
 												else {
 													insertIntoDb('api_calls_external', array('destination'=>'gm', 'queried_on'=>date('Y-m-d H:i:s')));
@@ -81,13 +72,11 @@
 														if ($result['GeocodeResponse']['status']) $error = $result['GeocodeResponse']['status'];
 														else $error = "Connected to Google Maps API, but was unable to successfully determine latitude and longitude";
 														updateDb('rumour_sightings', array('unable_to_geocode'=>'1'), array('sighting_id'=>$sightings[$counter]['sighting_id']), null, null, null, null, 1);
-														$logger->logItInMemory($error);
-														$logger->logItInDb($logger->retrieveLogFromMemory(), $logID);
+														$output .= $error . "\n";
 													}
 													else {
 														updateDb('rumour_sightings', array('latitude'=>$latitude, 'longitude'=>$longitude), array('sighting_id'=>$sightings[$counter]['sighting_id']), null, null, null, null, 1);
-														$logger->logItInMemory("Successfully geocoded " . $location);
-														$logger->logItInDb($logger->retrieveLogFromMemory(), $logID);
+														$output .= "Successfully geocoded " . $location . "\n";
 													}
 												}
 
