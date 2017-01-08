@@ -155,7 +155,7 @@
 							imagecopyresampled($newImage, $img, 0, 0, intval(@$xOffset), intval(@$yOffset), $desiredWidth, $desiredHeight, $currentWidth, $currentHeight);
 							imagedestroy($img);
 							if ($outgoingExt == 'jpg') imagejpeg($newImage, $outgoingPath . $outgoingFilename, 80);
-							elseif ($outgoingExt == 'png') imagepng($newImage, $outgoingPath . $outgoingFilename, 80);
+							elseif ($outgoingExt == 'png') imagepng($newImage, $outgoingPath . $outgoingFilename, 8);
 							elseif ($outgoingExt == 'gif') imagegif($newImage, $outgoingPath . $outgoingFilename);
 							else {
 								$tl->page['console'] .= __CLASS__ . "->" . __FUNCTION__ . ": Unable to determine destination file type.\n";
