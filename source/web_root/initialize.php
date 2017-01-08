@@ -140,7 +140,7 @@
 				}
 				
 			// Open database
-				$dbConnection = new mysqli($tl->db['Server'], $tl->db['User'], $tl->db['Password'], $tl->db['Name']);
+				$dbConnection = new mysqli($tl->db['Server'], $tl->db['User'], $tl->db['Password'], $tl->db['Name'], @$tl->db['Port']);
 				if($dbConnection->connect_errno > 0){
 		    		die ("Unable to connect to database [" . $dbConnection->connect_error . "]");
 				}
@@ -202,10 +202,10 @@
 				}
 
 			// Determine domain alias
-				$result = $cms->retrieveContent([$tablePrefix . 'cms.content_type'=>'d', $tablePrefix . 'cms.source_url_subdomain'=>str_replace('www', '', $tl->page['subdomain']), $tablePrefix . 'cms.source_url'=>$tl->page['domain']]);
+				$result = $cms->retrieveContent([$tablePrefix . 'cms.content_type'=>'d', $tablePrefix . 'cms.source_url_subdomain'=>str_replace('www', '', @$tl->page['subdomain']), $tablePrefix . 'cms.source_url'=>@$tl->page['domain']]);
 				if (count($result) == 1) $tl->page['domain_alias'] = $result[0];
-				if ($tl->page['domain_alias']['title']) $tl->settings['Name of this application'] = $tl->page['domain_alias']['title'];
-				if ($tl->page['domain_alias']['content']) $tl->settings['Describe this application'] = $tl->page['domain_alias']['content'];
+				if (@$tl->page['domain_alias']['title']) $tl->settings['Name of this application'] = $tl->page['domain_alias']['title'];
+				if (@$tl->page['domain_alias']['content']) $tl->settings['Describe this application'] = $tl->page['domain_alias']['content'];
 
 			// Verify that root path of application is in database
 				if (!$tl->settings['Root URL']) {
