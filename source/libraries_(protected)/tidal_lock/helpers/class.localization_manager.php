@@ -56,6 +56,7 @@
 			for ($counter = 0; $counter < count($result); $counter++) {
 				$this->currencies[$result[$counter]['currency_id']] = $result[$counter]['currency'];
 				$this->currency_symbols[$result[$counter]['currency_id']] = $result[$counter]['symbol'];
+				$this->currency_countries[$result[$counter]['currency_id']] = $result[$counter]['country'];
 			}
 
 		}

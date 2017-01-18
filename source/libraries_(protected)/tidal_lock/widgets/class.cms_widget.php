@@ -46,7 +46,7 @@
 				$this->cms_id = floatval(@$tl->page['filters']['cms_id']);
 				$this->content_type = @$tl->page['filters']['content_type'];
 				$this->tab = (@$tl->page['filters']['tab'] ? $tl->page['filters']['tab'] : "page");
-				$this->filePath = trim($this->filePath, ' /');
+				$this->filePath = trim(@$this->filePath, ' /');
 
 				if (@$tl->page['filters']['screen'] == 'edit_content' && $this->cms_id) $this->screen = 'edit_content'; 
 				elseif (@$tl->page['filters']['screen'] == 'add_content') $this->screen = 'add_content'; 
@@ -257,7 +257,7 @@
 					elseif ($this->content_type == 'b') {
 						if (!$_POST['public_id']) $tl->page['error'] .= "Please specify a unique descriptor for this content block. ";
 						else {
-							$exists = $this->retrieveContent([$tablePrefix . 'cms.public_id'=>$_POST['public_id'], $tablePrefix . 'cms.language_id'=>$_POST['language_id'], $tablePrefix . 'cms.domain_alias_id'=>$_POST['domain_alias_id']], $tablePrefix . "cms.cms_id != '" . $this->cms_id . "'");
+							$exists = $this->retrieveContent([$tablePrefix . 'cms.public_id'=>$_POST['public_id'], $tablePrefix . 'cms.language_id'=>$_POST['language_id'], $tablePrefix . 'cms.domain_alias_id'=>@$_POST['domain_alias_id']], $tablePrefix . "cms.cms_id != '" . $this->cms_id . "'");
 							if (count($exists)) $tl->page['error'] .= "The unique descriptor you've specified already exists. ";
 						}
 						if (!$_POST['content']) $tl->page['error'] .= "Please provide some content for this content block. ";
@@ -377,7 +377,7 @@
 				// nav
 					$this->html .= "<ul class='nav nav-tabs' role='tablist'>\n";
 					foreach ($this->content_types as $key=>$value) {
-						$this->html .= "  <li role='presentation'" . (str_replace('_', ' ', $this->tab) == $value ? " class='active'" : false) . "><a href='#" . str_replace(' ', '_', $value) . "' aria-controls='" . str_replace(' ', '_', $value) . "' role='tab' data-toggle='tab'>" . ucwords($value) . (count($this->content[$key]) ? " (" . count($this->content[$key]) . ")" : false) . "</a></li>\n";
+						$this->html .= "  <li role='presentation'" . (str_replace('_', ' ', $this->tab) == $value ? " class='active'" : false) . "><a href='#" . str_replace(' ', '_', $value) . "' aria-controls='" . str_replace(' ', '_', $value) . "' role='tab' data-toggle='tab'>" . ucwords($value) . (count(@$this->content[$key]) ? " (" . count(@$this->content[$key]) . ")" : false) . "</a></li>\n";
 					}
 					$this->html .= "</ul>\n";
 

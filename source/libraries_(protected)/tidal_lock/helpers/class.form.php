@@ -416,15 +416,16 @@
 								$tl->page['console'] .= __FUNCTION__ . " (" . $name . "): eventHandlers must be an array.\n";
 								return false;
 							}
-							if (!$options) {
-								global $localization_manager;
-								if ($localization_manager->currencies) $options = $localization_manager->currencies;
-								else {
-									$localization_manager = new localization_manager_TL();
-									$localization_manager->populateCurrencies();
-									$options = $localization_manager->currencies;
-								}
+							global $localization_manager;
+							if (!$localization_manager->currencies) {
+								$localization_manager = new localization_manager_TL();
+								$localization_manager->populateCurrencies();
 							}
+							if (!@$options) {
+								$options = $localization_manager->currencies;
+								if ($type == 'currency_select_short') ksort($options);
+							}
+
 						// initialize
 							if (!$name) $name = 'currency';
 						// return

@@ -3,9 +3,9 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: mysql.wikirumours.org
--- Generation Time: Dec 06, 2016 at 01:10 PM
+-- Generation Time: Jan 18, 2017 at 12:25 PM
 -- Server version: 5.6.25-log
--- PHP Version: 7.0.12
+-- PHP Version: 7.1.0
 
 SET SQL_MODE = "NO_AUTO_VALUE_ON_ZERO";
 SET time_zone = "+00:00";
@@ -501,6 +501,188 @@ INSERT INTO `wr_countries` (`country_id`, `country`, `subdivision`) VALUES
 ('ZA', 'South Africa', ''),
 ('ZM', 'Zambia', ''),
 ('ZW', 'Zimbabwe', '');
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `wr_currencies`
+--
+
+CREATE TABLE `wr_currencies` (
+  `currency_id` char(3) CHARACTER SET utf8 NOT NULL,
+  `currency` varchar(60) CHARACTER SET utf8 NOT NULL,
+  `symbol` varchar(7) COLLATE utf8_unicode_ci NOT NULL,
+  `country` varchar(2) COLLATE utf8_unicode_ci NOT NULL,
+  `enabled` tinyint(1) NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
+
+--
+-- Dumping data for table `wr_currencies`
+--
+
+INSERT INTO `wr_currencies` (`currency_id`, `currency`, `symbol`, `country`, `enabled`) VALUES
+('AED', 'United Arab Emirates Dirham', '', '', 0),
+('AFN', 'Afghanistan Afghani', '؋', '', 0),
+('ALL', 'Albania Lek', 'Lek', '', 0),
+('AMD', 'Armenia Dram', '', '', 0),
+('ANG', 'Netherlands Antilles Guilder', 'ƒ', '', 0),
+('AOA', 'Angola Kwanza', '', '', 0),
+('ARS', 'Argentina Peso', '$', '', 0),
+('AUD', 'Australia Dollar', '$', '', 0),
+('AWG', 'Aruba Guilder', 'ƒ', '', 0),
+('AZN', 'Azerbaijan New Manat', 'ман', '', 0),
+('BAM', 'Bosnia and Herzegovina Convertible Marka', 'KM', '', 0),
+('BBD', 'Barbados Dollar', '$', '', 0),
+('BDT', 'Bangladesh Taka', '', '', 0),
+('BGN', 'Bulgaria Lev', 'лв', '', 0),
+('BHD', 'Bahrain Dinar', '', '', 0),
+('BIF', 'Burundi Franc', '', '', 0),
+('BMD', 'Bermuda Dollar', '$', '', 0),
+('BND', 'Brunei Darussalam Dollar', '$', '', 0),
+('BOB', 'Bolivia Boliviano', '$b', '', 0),
+('BRL', 'Brazil Real', 'R$', '', 0),
+('BSD', 'Bahamas Dollar', '$', '', 0),
+('BTN', 'Bhutan Ngultrum', '', '', 0),
+('BWP', 'Botswana Pula', 'P', '', 0),
+('BYR', 'Belarus Ruble', 'p.', '', 0),
+('BZD', 'Belize Dollar', 'BZ$', '', 0),
+('CAD', 'Canada Dollar', '$', '', 1),
+('CDF', 'Congo/Kinshasa Franc', '', '', 0),
+('CHF', 'Switzerland Franc', 'CHF', '', 0),
+('CLP', 'Chile Peso', '$', '', 0),
+('CNY', 'China Yuan Renminbi', '¥', '', 0),
+('COP', 'Colombia Peso', '$', '', 0),
+('CRC', 'Costa Rica Colon', '₡', '', 0),
+('CUC', 'Cuba Convertible Peso', '', '', 0),
+('CUP', 'Cuba Peso', '₱', '', 0),
+('CVE', 'Cape Verde Escudo', '', '', 0),
+('CZK', 'Czech Republic Koruna', 'Kč', '', 0),
+('DJF', 'Djibouti Franc', '', '', 0),
+('DKK', 'Denmark Krone', 'kr', '', 0),
+('DOP', 'Dominican Republic Peso', 'RD$', '', 0),
+('DZD', 'Algeria Dinar', '', '', 0),
+('EGP', 'Egypt Pound', '£', '', 0),
+('ERN', 'Eritrea Nakfa', '', '', 0),
+('ETB', 'Ethiopia Birr', '', '', 0),
+('EUR', 'Euro Member Countries', '€', '', 0),
+('FJD', 'Fiji Dollar', '$', '', 0),
+('FKP', 'Falkland Islands (Malvinas) Pound', '£', '', 0),
+('GBP', 'United Kingdom Pound', '£', '', 0),
+('GEL', 'Georgia Lari', '', '', 0),
+('GGP', 'Guernsey Pound', '£', '', 0),
+('GHS', 'Ghana Cedi', '¢', '', 0),
+('GIP', 'Gibraltar Pound', '£', '', 0),
+('GMD', 'Gambia Dalasi', '', '', 0),
+('GNF', 'Guinea Franc', '', '', 0),
+('GTQ', 'Guatemala Quetzal', 'Q', '', 0),
+('GYD', 'Guyana Dollar', '$', '', 0),
+('HKD', 'Hong Kong Dollar', '$', '', 0),
+('HNL', 'Honduras Lempira', 'L', '', 0),
+('HRK', 'Croatia Kuna', 'kn', '', 0),
+('HTG', 'Haiti Gourde', '', '', 0),
+('HUF', 'Hungary Forint', 'Ft', '', 0),
+('IDR', 'Indonesia Rupiah', 'Rp', '', 0),
+('ILS', 'Israel Shekel', '₪', '', 0),
+('IMP', 'Isle of Man Pound', '£', '', 0),
+('INR', 'India Rupee', '', '', 0),
+('IQD', 'Iraq Dinar', '', '', 0),
+('IRR', 'Iran Rial', '﷼', '', 0),
+('ISK', 'Iceland Krona', 'kr', '', 0),
+('JEP', 'Jersey Pound', '£', '', 0),
+('JMD', 'Jamaica Dollar', 'J$', '', 0),
+('JOD', 'Jordan Dinar', '', '', 0),
+('JPY', 'Japan Yen', '¥', '', 0),
+('KES', 'Kenya Shilling', '', '', 0),
+('KGS', 'Kyrgyzstan Som', 'лв', '', 0),
+('KHR', 'Cambodia Riel', '៛', '', 0),
+('KMF', 'Comoros Franc', '', '', 0),
+('KPW', 'Korea (North) Won', '₩', '', 0),
+('KRW', 'Korea (South) Won', '₩', '', 0),
+('KWD', 'Kuwait Dinar', '', '', 0),
+('KYD', 'Cayman Islands Dollar', '$', '', 0),
+('KZT', 'Kazakhstan Tenge', 'лв', '', 0),
+('LAK', 'Laos Kip', '₭', '', 0),
+('LBP', 'Lebanon Pound', '£', '', 0),
+('LKR', 'Sri Lanka Rupee', '₨', '', 0),
+('LRD', 'Liberia Dollar', '$', '', 0),
+('LSL', 'Lesotho Loti', '', '', 0),
+('LYD', 'Libya Dinar', '', '', 0),
+('MAD', 'Morocco Dirham', '', '', 0),
+('MDL', 'Moldova Leu', '', '', 0),
+('MGA', 'Madagascar Ariary', '', '', 0),
+('MKD', 'Macedonia Denar', 'ден', '', 0),
+('MMK', 'Myanmar (Burma) Kyat', '', '', 0),
+('MNT', 'Mongolia Tughrik', '₮', '', 0),
+('MOP', 'Macau Pataca', '', '', 0),
+('MRO', 'Mauritania Ouguiya', '', '', 0),
+('MUR', 'Mauritius Rupee', '₨', '', 0),
+('MVR', 'Maldives (Maldive Islands) Rufiyaa', '', '', 0),
+('MWK', 'Malawi Kwacha', '', '', 0),
+('MXN', 'Mexico Peso', '$', '', 0),
+('MYR', 'Malaysia Ringgit', 'RM', '', 0),
+('MZN', 'Mozambique Metical', 'MT', '', 0),
+('NAD', 'Namibia Dollar', '$', '', 0),
+('NGN', 'Nigeria Naira', '₦', '', 0),
+('NIO', 'Nicaragua Cordoba', 'C$', '', 0),
+('NOK', 'Norway Krone', 'kr', '', 0),
+('NPR', 'Nepal Rupee', '₨', '', 0),
+('NZD', 'New Zealand Dollar', '$', '', 0),
+('OMR', 'Oman Rial', '﷼', '', 0),
+('PAB', 'Panama Balboa', 'B/.', '', 0),
+('PEN', 'Peru Nuevo Sol', 'S/.', '', 0),
+('PGK', 'Papua New Guinea Kina', '', '', 0),
+('PHP', 'Philippines Peso', '₱', '', 0),
+('PKR', 'Pakistan Rupee', '₨', '', 0),
+('PLN', 'Poland Zloty', 'zł', '', 0),
+('PYG', 'Paraguay Guarani', 'Gs', '', 0),
+('QAR', 'Qatar Riyal', '﷼', '', 0),
+('RON', 'Romania New Leu', 'lei', '', 0),
+('RSD', 'Serbia Dinar', 'Дин.', '', 0),
+('RUB', 'Russia Ruble', 'руб', '', 0),
+('RWF', 'Rwanda Franc', '', '', 0),
+('SAR', 'Saudi Arabia Riyal', '﷼', '', 0),
+('SBD', 'Solomon Islands Dollar', '$', '', 0),
+('SCR', 'Seychelles Rupee', '₨', '', 0),
+('SDG', 'Sudan Pound', '', '', 0),
+('SEK', 'Sweden Krona', 'kr', '', 0),
+('SGD', 'Singapore Dollar', '$', '', 0),
+('SHP', 'Saint Helena Pound', '£', '', 0),
+('SLL', 'Sierra Leone Leone', '', '', 0),
+('SOS', 'Somalia Shilling', 'S', '', 0),
+('SPL', 'Seborga Luigino', '', '', 0),
+('SRD', 'Suriname Dollar', '$', '', 0),
+('STD', 'S', '', '', 0),
+('SVC', 'El Salvador Colon', '$', '', 0),
+('SYP', 'Syria Pound', '£', '', 0),
+('SZL', 'Swaziland Lilangeni', '', '', 0),
+('THB', 'Thailand Baht', '฿', '', 0),
+('TJS', 'Tajikistan Somoni', '', '', 0),
+('TMT', 'Turkmenistan Manat', '', '', 0),
+('TND', 'Tunisia Dinar', '', '', 0),
+('TOP', 'Tonga Pa\'anga', '', '', 0),
+('TRY', 'Turkey Lira', '', '', 0),
+('TTD', 'Trinidad and Tobago Dollar', 'TT$', '', 0),
+('TVD', 'Tuvalu Dollar', '$', '', 0),
+('TWD', 'Taiwan New Dollar', 'NT$', '', 0),
+('TZS', 'Tanzania Shilling', '', '', 0),
+('UAH', 'Ukraine Hryvnia', '₴', '', 0),
+('UGX', 'Uganda Shilling', '', '', 0),
+('USD', 'United States Dollar', '$', '', 1),
+('UYU', 'Uruguay Peso', '$U', '', 0),
+('UZS', 'Uzbekistan Som', 'лв', '', 0),
+('VEF', 'Venezuela Bolivar', 'Bs', '', 0),
+('VND', 'Viet Nam Dong', '₫', '', 0),
+('VUV', 'Vanuatu Vatu', '', '', 0),
+('WST', 'Samoa Tala', '', '', 0),
+('XAF', 'Communaut', '', '', 0),
+('XCD', 'East Caribbean Dollar', '$', '', 0),
+('XDR', 'International Monetary Fund (IMF) Special Drawing Rights', '', '', 0),
+('XOF', 'Communaut', '', '', 0),
+('XPF', 'Comptoirs Fran', '', '', 0),
+('YER', 'Yemen Rial', '﷼', '', 0),
+('ZAR', 'South Africa Rand', 'R', '', 0),
+('ZMW', 'Zambia Kwacha', '', '', 0),
+('ZWD', 'Zimbabwe Dollar', 'Z$', '', 0);
 
 -- --------------------------------------------------------
 
@@ -13466,6 +13648,12 @@ ALTER TABLE `wr_comment_flags`
 --
 ALTER TABLE `wr_countries`
   ADD PRIMARY KEY (`country_id`);
+
+--
+-- Indexes for table `wr_currencies`
+--
+ALTER TABLE `wr_currencies`
+  ADD PRIMARY KEY (`currency_id`);
 
 --
 -- Indexes for table `wr_faqs`
