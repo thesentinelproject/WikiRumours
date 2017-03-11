@@ -35,17 +35,52 @@
 			
 	}
 
-	// load third-party JS
-		if (count(@$frontEndLibraries)) {
-			foreach ($frontEndLibraries as $library =>$details) {
-				if ($details['local_js_path'] || $details['remote_js_path']) {
-					echo "  <!-- " . $library . ($details['version'] ? " v." . $details['version'] : false) . " -->\n";
-					if ($details['remote_js_path'] && $file_manager->doesUrlExist($details['remote_js_path'])) echo "    <script type='text/javascript' src='" . $details['remote_js_path'] . "'></script>\n";
-					elseif ($details['local_js_path']) echo "    <script type='text/javascript' src='/libraries/" . $details['local_js_path'] . "'></script>\n";
-					echo "\n";
-				}
-			}
-		}
+	// load jQuery
+		echo "  <!-- jQuery --><script src='/libraries/jquery/jquery_v1-11-1.js'></script>\n";
+				
+	// load Bootstrap JS
+		echo "  <!-- Bootstrap --><script src='/libraries/bootstrap/bootstrap-3.3.4-dist/js/bootstrap.min.js'></script>\n";
+
+	// load Bootstrap Switch JS
+		echo "  <!-- Bootstrap Switch --><script src='/libraries/bootstrap-switch/bootstrap_switch_3-0/dist/js/bootstrap-switch.min.js'></script>\n";
+		
+	// load Bootstrap Datetimepicker JS
+		echo "  <!-- Bootstrap Datetimepicker -->\n";
+		echo "    <script type='text/javascript' src='/libraries/bootstrap-datetimepicker-master/js/bootstrap-datetimepicker.js' charset='UTF-8'></script>\n";
+		echo "    <script type='text/javascript' src='/libraries/bootstrap-datetimepicker-master/js/locales/bootstrap-datetimepicker.fr.js' charset='UTF-8' /></script>\n";
+		echo "    <script type='text/javascript'>\n";
+		echo "      $('.form_datetime').datetimepicker({\n";
+        echo "        weekStart: 1,\n";
+        echo "        todayBtn:  1,\n";
+		echo "        autoclose: 1,\n";
+		echo "        todayHighlight: 1,\n";
+		echo "        startView: 2,\n";
+		echo "        forceParse: 0,\n";
+        echo "        showMeridian: 1\n";
+    	echo "      });\n";
+		echo "    </script>\n";
+
+	// load Select2 JS
+		echo "  <!-- Select2 --><script src='/libraries/select2/4-0-2-rc-1/dist/js/select2.min.js'></script>\n";
+//		echo "  <!-- Select2 --><script src='/libraries/select2/select2_4-0/dist/js/select2.full.min'></script>\n";
+		
+	// load Dropzone
+		echo "  <!-- Dropzone --><script src='/libraries/dropzone/dropzone_3-8-4/downloads/dropzone.js'></script>\n";
+
+	// load Moment.js
+		echo "  <!-- Moment.js -->\n";
+		echo "    <script src='/libraries/moment-js/moment.min.js'></script>\n";
+		echo "    <script src='/libraries/moment-js/moment-timezone-with-data.min.js'></script>\n";
+
+	// load Google Maps Visualization library
+//		if ($file_manager->doesUrlExist('http://maps.google.com/maps/api/js?sensor=false')) echo "  <!-- Google Maps API --><script type='text/javascript' src='http://maps.google.com/maps/api/js?sensor=false'></script>\n";
+		if ($file_manager->doesUrlExist('https://maps.googleapis.com/maps/api/js?libraries=visualization&sensor=true_or_false')) echo "  <!-- Google Maps Visualization Library --><script type='text/javascript' src='https://maps.googleapis.com/maps/api/js?libraries=visualization&sensor=true_or_false'></script>\n";
+
+	// load Google AJAX API and Google charts package
+		if ($file_manager->doesUrlExist('https://www.google.com/jsapi')) echo "  <!-- Google Charts --><script type='text/javascript' src='https://www.google.com/jsapi'></script>\n";
+
+	// load Google Material Design icons
+		if (@$loadMaterialDesignLocally) echo "  <!-- Google Material Design Icons --><script type='text/javascript' src='/libraries/material_design_icons/rendering.js'></script>\n";
 				
 	// load Tidal Lock JS
 		if ($handle = opendir('libraries/tidal_lock/js/.')) {
@@ -98,13 +133,13 @@
 
 	// load AJAX
 		if (file_exists('includes/controllers/ajax/' . $tl->page['template'] . '.php') && file_exists('resources/js/ajax_callbacks/' . $tl->page['template'] . '.js')) {
-			echo "  <!-- AJAX --><script src='/resources/js/ajax_callbacks/" . $tl->page['template'] . ".js'></script>\n";
+			echo "  <!-- AJAX --><script src='/resources/js/ajax_callbacks/" . $tl->page['template'] . ".js?rand=" . rand(10000, 99999) . "'></script>\n";
 			echo "  <!-- AJAX --><script type='text/javascript'>\n";
 			echo "    //<![CDATA[\n\n";
 			echo "      function callAjax(dataToSend) {\n";
 			echo "        $.ajax({\n";
 			echo "          type: 'POST',\n";
-			echo "          url: 'includes/controllers/ajax/" . $tl->page['template'] . ".php',\n";
+			echo "          url: '/includes/controllers/ajax/" . $tl->page['template'] . ".php',\n";
 			echo "          data: dataToSend,\n";
 			echo "          success: function(data) {\n";
 			echo "            ajaxCallback(data, '');\n";

@@ -39,25 +39,18 @@
 			if (@$tl->page['description']) echo "  <meta property='twitter:description' content=" . '"' . $tl->page['description'] . '"' . " />\n";
 			if (@$pageImage) echo "  <meta property='twitter:image' content='" . $pageImage . "' />\n";
 		}
-		
-	// load Bootstrap stylesheet
-		echo "  <!-- Bootstrap --><link href='/libraries/bootstrap/bootstrap-3.3.4-dist/css/bootstrap.min.css' rel='stylesheet' media='screen' type='text/css' />\n";
 
-	// load Bootstrap Switch stylesheet
-		echo "  <!-- Bootstrap Switch --><link href='/libraries/bootstrap-switch/bootstrap_switch_3-0/dist/css/bootstrap3/bootstrap-switch.min.css' rel='stylesheet' />\n";
-		
-	// load Bootstrap datetimepicker stylesheet
-		echo "  <!-- Bootstrap Datepicker --><link href='/libraries/bootstrap-datetimepicker-master/css/bootstrap-datetimepicker.min.css' rel='stylesheet' media='screen' />\n";
-
-	// load Dropzone
-		echo "  <!-- Dropzone --><link href='/libraries/dropzone/dropzone_3-8-4/downloads/css/dropzone.css?rand=" . rand(10000, 99999) . "' rel='stylesheet' />\n";
-
-	// load Font Awesome stylesheet
-		echo "  <!-- Font Awesome --><link href='/libraries/font_awesome/font-awesome_4-3-0/font-awesome.min.css' rel='stylesheet' media='screen' type='text/css' />\n";
-
-	// load Select2 stylesheet
-		echo "  <!-- Select2 --><link href='/libraries/select2/4-0-2-rc-1/dist/css/select2.min.css' rel='stylesheet' />\n";
-//		echo "  <!-- Select2 --><link href='/libraries/select2/select2_4-0/dist/css/select2.min' rel='stylesheet' />\n";
+	// load third-party CSS
+		if (count(@$frontEndLibraries)) {
+			foreach ($frontEndLibraries as $library =>$details) {
+				if ($details['local_css_path'] || $details['remote_css_path']) {
+					echo "  <!-- " . $library . ($details['version'] ? " v." . $details['version'] : false) . " -->\n";
+					if ($details['remote_css_path'] && $file_manager->doesUrlExist($details['remote_css_path'])) echo "    <link rel='stylesheet' type='text/css' media='screen' href='" . $details['remote_css_path'] . "' />\n";
+					elseif ($details['local_css_path']) echo "    <link rel='stylesheet' type='text/css' media='screen' href='/libraries/" . $details['local_css_path'] . "' />\n";
+					echo "\n";
+				}
+			}
+		}
 
 	// load TidalLock stylesheets
 		if ($handle = opendir('libraries/tidal_lock/css/.')) {
@@ -65,14 +58,6 @@
 				if (substr_count($file, ".css") > 0) echo "  <!-- Tidal Lock --><link href='/libraries/tidal_lock/css/" . $file . "' rel='stylesheet' media='screen' type='text/css' />\n";
 			}
 			closedir($handle);
-		}
-
-	// load Google Material Design icons
-		$url = "https://fonts.googleapis.com/icon?family=Material+Icons";
-		if ($file_manager->doesUrlExist($url)) echo "  <!-- Google Material Design Icons --><link rel='stylesheet' type='text/css' href='" . $url . "'>\n";
-		else {
-			echo "  <!-- Google Material Design Icons --><link rel='stylesheet' type='text/css' href='/libraries/material_design_icons/material_design_icons.css'>\n";
-			$loadMaterialDesignLocally = true;
 		}
 
 	// load base stylesheets

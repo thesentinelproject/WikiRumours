@@ -29,7 +29,7 @@
 				if (!@$agent_info['browser'] && !@$agent_info['os']) $user .= "(" . $unalerted[$counter]['user_agent'] . ") ";
 			}
 
-			$activity = $user . "encountered a broken page" . (@$unalerted[$counter]['template'] ? " at " . $unalerted[$counter]['template'] : false);
+			$activity = $user . " encountered a broken page" . (@$unalerted[$counter]['template'] ? " at " . $unalerted[$counter]['template'] : false);
 
 			$output .= $activity . "\n";
 

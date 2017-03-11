@@ -74,13 +74,19 @@
 					closedir($handle);
 				}
 
+			// Autoload configuration files
+				if ($handle = opendir(__DIR__ . '/../config/autoload/.')) {
+					while (false !== ($file = readdir($handle))) {
+						if (substr_count($file, '.php') > 0) include __DIR__ . '/../config/autoload/' . $file;
+					}
+					closedir($handle);
+				}
+				
 			// Load third-party PHP libraries
-				@include __DIR__ . '/../libraries_(protected)/import_these_paths.php';
-
-				if (count(@$thirdPartyLibraries)) {
-					foreach ($thirdPartyLibraries as $path) {
-						if ($path && file_exists(__DIR__ . '/../libraries_(protected)/' . $path)) include __DIR__ . '/../libraries_(protected)/' . $path;
-						else die("Unable to locate " . $path);
+				if (count(@$backEndLibraries)) {
+					foreach ($backEndLibraries as $library => $details) {
+						if ($details['local_path'] && file_exists(__DIR__ . '/../libraries_(protected)/' . $details['local_path'])) include __DIR__ . '/../libraries_(protected)/' . $details['local_path'];
+						else die("Unable to locate " . $library . " at " . $details['local_path']);
 					}
 				}
 				
@@ -102,14 +108,6 @@
 				if ($handle = opendir(__DIR__ . '/../libraries_(protected)/tidal_lock/widgets/.')) {
 					while (false !== ($file = readdir($handle))) {
 						if (substr_count($file, '.php') > 0) include __DIR__ . '/../libraries_(protected)/tidal_lock/widgets/' . $file;
-					}
-					closedir($handle);
-				}
-				
-			// Autoload configuration files
-				if ($handle = opendir(__DIR__ . '/../config/autoload/.')) {
-					while (false !== ($file = readdir($handle))) {
-						if (substr_count($file, '.php') > 0) include __DIR__ . '/../config/autoload/' . $file;
 					}
 					closedir($handle);
 				}
