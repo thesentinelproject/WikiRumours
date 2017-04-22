@@ -5,7 +5,6 @@
 		public function sendFromMailQueue($mailID) {
 
 			global $tl;
-
 			$input_validator = new input_validator_TL();
 			$parser = new parser_TL();
 

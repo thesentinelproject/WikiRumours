@@ -1,6 +1,55 @@
 <?php
 
-	class url_shortener_TL {
+	class link_TL {
+
+		public function a($url, $label, $class = null, $new = false, $download = false, $otherAttributes = null) {
+
+			// anchor
+
+				global $tl;
+
+				if (!$url) {
+					$tl->page['console'] .= "No URL specified in " . __CLASS__ . "::" . __FUNCTION__ . "\n";
+					return false;
+				}
+
+				if (!$label) {
+					$tl->page['console'] .= "No label specified in " . __CLASS__ . "::" . __FUNCTION__ . "\n";
+					return false;
+				}
+
+				$output = "<a href='" . $url . "'";
+				if ($class) $output .= " class='" . $class . "'";
+				if ($new) $output .= " target='_blank'";
+				if ($download === true) $output .= " download";
+				elseif ($download) $output .= " download='" . $download . "'";
+				if ($otherAttributes) foreach ($otherAttributes as $attribute=>$property) { $output .= " " . $attribute . "='" . $property . "'"; }
+				$output .= ">" . $label . "</a>";
+
+				return $output;
+
+		}
+
+		public function e($label, $class = null, $eventHandlers = null, $id = null) {
+
+			// event (non-clickable link)
+
+				global $tl;
+
+				if (!$label) {
+					$tl->page['console'] .= "No label specified in " . __CLASS__ . "::" . __FUNCTION__ . "\n";
+					return false;
+				}
+
+				$output = "<a href='javascript:void(0);'";
+				if ($id) $output .= " id='" . $id . "'";
+				$output .= " class='" . ($class ? $class . "; " : false) . "return false;'";
+				if ($eventHandlers) foreach ($eventHandlers as $event=>$action) { $output .= " " . $event . "=" . '"' . $action . '"'; }
+				$output .= ">" . $label . "</a>";
+
+				return $output;
+
+		}
 
 		public function bitly($longUrl) {
 			

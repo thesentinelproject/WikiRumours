@@ -101,6 +101,12 @@
 				if (!$this->connection['isp']) $this->connection['isp'] = $result->hostname;
 			}
 
+			$this->connection['outgoing_ip'] = @file_get_contents("http://ipecho.net/plain");
+			if (!$this->connection['outgoing_ip']) {
+				preg_match('/Current IP Address: \[?([:.0-9a-fA-F]+)\]?/', @file_get_contents('http://checkip.dyndns.com/'), $m);
+				$this->connection['outgoing_ip'] = $m[1];
+			}
+
 		}
 
 		public function parseUserAgent($agent) { 
