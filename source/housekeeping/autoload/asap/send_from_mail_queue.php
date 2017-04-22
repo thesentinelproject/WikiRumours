@@ -12,7 +12,7 @@
 
 				for ($counter = 0; $counter < min(count($unsentMail), $maxMessagesToSend); $counter++) {
 
-					$output .= "Preparing to send email to " . $unsentMail[0]['to_email'] . " (mail_id " . $unsentMail[0]['mail_id'] . ")\n";
+					$output .= "Preparing to send email to " . $unsentMail[$counter]['to_email'] . " (mail_id " . $unsentMail[$counter]['mail_id'] . ")\n";
 
 					$success = $notifier->sendFromMailQueue($unsentMail[$counter]['mail_id']);
 

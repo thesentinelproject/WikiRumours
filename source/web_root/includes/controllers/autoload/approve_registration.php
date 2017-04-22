@@ -6,6 +6,7 @@
 		global $profileImageSizes;
 		global $avatar_manager;
 		global $logger;
+		global $tablePrefix;
 
 		// check for errors
 			if (!$registrationID) {

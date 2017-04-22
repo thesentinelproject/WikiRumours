@@ -172,14 +172,14 @@
 							// create public IDs
 								$newRumourPublicID = null;
 								while ($newRumourPublicID == null) {
-									$newRumourPublicID = $url_shortener->customAlphaID('a', 6, null, true, true);
+									$newRumourPublicID = $link->customAlphaID('a', 6, null, true, true);
 									$doesPublicIdExist = countInDb('rumours', 'public_id', array('public_id'=>$newRumourPublicID));
 									if ($doesPublicIdExist[0]['count'] > 0) $newRumourPublicID = null;
 								}
 
 								$newSightingPublicID = null;
 								while ($newSightingPublicID == null) {
-									$newSightingPublicID = $url_shortener->customAlphaID('a', 6, null, true, true);
+									$newSightingPublicID = $link->customAlphaID('a', 6, null, true, true);
 									$doesPublicIdExist = countInDb('rumour_sightings', 'public_id', array('public_id'=>$newSightingPublicID));
 									if ($doesPublicIdExist[0]['count'] > 0) $newSightingPublicID = null;
 								}

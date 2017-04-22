@@ -201,7 +201,7 @@
 				// create publicID
 					$sightingPublicID = null;
 					while ($sightingPublicID == null) {
-						$sightingPublicID = $url_shortener->customAlphaID('a', 6, null, true, true);
+						$sightingPublicID = $link->customAlphaID('a', 6, null, true, true);
 						$doesPublicIdExist = countInDb('rumour_sightings', 'public_id', array('public_id'=>$sightingPublicID));
 						if ($doesPublicIdExist[0]['count'] > 0) $sightingPublicID = null;
 					}
