@@ -36,12 +36,12 @@
 	}
 
 	// load third-party JS
-		if (count(@$frontEndLibraries)) {
-			foreach ($frontEndLibraries as $library =>$details) {
-				if ($details['local_js_path'] || $details['remote_js_path']) {
-					echo "  <!-- " . $library . ($details['version'] ? " v." . $details['version'] : false) . " -->\n";
-					if ($details['remote_js_path'] && $file_manager->doesUrlExist($details['remote_js_path'])) echo "    <script type='text/javascript' src='" . $details['remote_js_path'] . "'></script>\n";
-					elseif ($details['local_js_path']) echo "    <script type='text/javascript' src='/libraries/" . $details['local_js_path'] . "'></script>\n";
+		if (count(@$tl->frontEndLibraries)) {
+			foreach ($tl->frontEndLibraries as $key =>$value) {
+				if ($value['local_js_path'] || $value['remote_js_path']) {
+					echo "  <!-- " . $key . ($value['version'] ? " v." . $value['version'] : false) . " -->\n";
+					if ($value['remote_js_path'] && $file_manager->doesUrlExist($value['remote_js_path'])) echo "    <script type='text/javascript' src='" . $value['remote_js_path'] . "'></script>\n";
+					elseif ($value['local_js_path']) echo "    <script type='text/javascript' src='/libraries/" . $value['local_js_path'] . "'></script>\n";
 					echo "\n";
 				}
 			}
@@ -67,10 +67,10 @@
 		}
 		
 	// load page-specific JS
-		if ($pageJavaScript) {
+		if ($tl->page['javascript']) {
 			echo "  <!-- Page-specific JS --><script type='text/javascript'>\n";
 			echo "    //<![CDATA[\n\n";
-			echo $pageJavaScript . "\n";
+			echo $tl->page['javascript'] . "\n";
 			echo "    //]]>\n";
 			echo "  </script>\n";
 		}

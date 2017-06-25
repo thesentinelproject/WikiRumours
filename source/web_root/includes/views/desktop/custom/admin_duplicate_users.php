@@ -3,6 +3,6 @@
 	echo "<h2>" . $tl->page['title'] . "</h2>\n";
 
 	echo $duplicates->html;
-	$pageJavaScript .= $duplicates->js;
+	$tl->page['javascript'] .= $duplicates->js;
 
 ?>

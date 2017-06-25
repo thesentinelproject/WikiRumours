@@ -5,7 +5,7 @@
 	-------------------------------------- */
 
 	// authenticate user
-		if (!$logged_in) $authentication_manager->forceLoginThenRedirectHere();
+		if (!$logged_in) $authentication_manager->forceLoginThenRedirectHere(false, 'login_register');
 		
 	// initialize
 		$step = max(@$_POST['step'], 1);

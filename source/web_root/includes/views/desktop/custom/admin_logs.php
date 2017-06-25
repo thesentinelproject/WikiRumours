@@ -1,6 +1,6 @@
 <?php
 
 	echo $logs->html;
-	$pageJavaScript .= $logs->js;
+	$tl->page['javascript'] .= $logs->js;
 
 ?>

@@ -4,10 +4,10 @@
 		All libraries are loaded in the order in which they appear here
 		---------------------------------------------------------------	*/
 
-		$backEndLibraries = [
+		$tl->backEndLibraries = [
 		];
 
-		$frontEndLibraries = [
+		$tl->frontEndLibraries = [
 		];
 
 ?>

@@ -1,5 +1,17 @@
 $ cat .gitignore
 
-# exclude config folder containing real credentials
-
 config/*
+
+web_root/assets/cms_files/*
+web_root/assets/photo_evidence/*
+web_root/assets/profile_images/*
+web_root/assets/pseudonym_logos/*
+web_root/assets/rumour_attachments/*
+
+web_root/downloads/*
+
+web_root/uploads/cms_files/*
+web_root/uploads/photo_evidence/*
+web_root/uploads/profile_images/*
+web_root/uploads/pseudonym_logos/*
+web_root/uploads/rumour_attachments/*

@@ -5,7 +5,7 @@
 	-------------------------------------- */
 
 	// authenticate user
-		if (!$logged_in['is_administrator'] || !$logged_in['can_update_settings']) $authentication_manager->forceLoginThenRedirectHere(true);
+		if (!$logged_in['is_administrator'] || !$logged_in['can_edit_content']) $authentication_manager->forceLoginThenRedirectHere(true);
 
 	// initialize
 		$cms_widget = new cms_widget_TL();

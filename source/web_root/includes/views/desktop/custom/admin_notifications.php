@@ -1,6 +1,6 @@
 <?php
 
 	echo $notifications_widget->html;
-	$pageJavaScript .= $notifications_widget->js;
+	$tl->page['javascript'] .= $notifications_widget->js;
 
 ?>

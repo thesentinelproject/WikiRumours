@@ -24,7 +24,7 @@
 			$faqs = retrieveFaqs(null, null, $otherCriteria, $tablePrefix . 'faq_sections.position ASC, ' . $tablePrefix . 'faqs.position ASC');
 			
 			for ($faqCounter = 0; $faqCounter < count(@$faqs); $faqCounter++) {
-				$pageJavaScript .=	"  $('#question_" . $faqs[$faqCounter]['faq_id'] . "').click(function () {\n" .
+				$tl->page['javascript'] .=	"  $('#question_" . $faqs[$faqCounter]['faq_id'] . "').click(function () {\n" .
 									"    $('#answer_" . $faqs[$faqCounter]['faq_id'] . "').slideToggle('slow');\n" .
 									"   });\n" .
 									"  $('#answer_" . $faqs[$faqCounter]['faq_id'] . "').click(function () {\n" .
@@ -37,7 +37,7 @@
 			
 			for ($sectionCounter = 0; $sectionCounter < count($faqs); $sectionCounter++) {
 				for ($faqCounter = 0; $faqCounter < count(@$faqs[$sectionCounter]['FAQs']); $faqCounter++) {
-					$pageJavaScript .=	"  $('#question_" . $faqs[$sectionCounter]['FAQs'][$faqCounter]['faq_id'] . "').click(function () {\n" .
+					$tl->page['javascript'] .=	"  $('#question_" . $faqs[$sectionCounter]['FAQs'][$faqCounter]['faq_id'] . "').click(function () {\n" .
 										"    $('#answer_" . $faqs[$sectionCounter]['FAQs'][$faqCounter]['faq_id'] . "').slideToggle('slow');\n" .
 										"   });\n" .
 										"  $('#answer_" . $faqs[$sectionCounter]['FAQs'][$faqCounter]['faq_id'] . "').click(function () {\n" .

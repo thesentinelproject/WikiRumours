@@ -78,34 +78,34 @@
 			echo "    <div id='searchResultsMapCanvas' class='img-rounded img-thumbnail'>Loading...</div>\n";
 			echo "  </div><!-- #map -->\n";
 
-			$pageJavaScript .= "// Populate map\n";
-			$pageJavaScript .= "  var mapLoaded = false;\n\n";
-			$pageJavaScript .= "  function populateMap() {\n";
-			$pageJavaScript .= "    var myLatlng = new google.maps.LatLng(" . $map[count($map) - 1]['latitude'] . "," . $map[count($map) - 1]['longitude'] . ");\n";
-			$pageJavaScript .= "    var myOptions = {\n";
-			$pageJavaScript .= "      zoom: 6,\n";
-			$pageJavaScript .= "      center: myLatlng,\n";
-			$pageJavaScript .= "      mapTypeId: google.maps.MapTypeId.TERRAIN\n";
-			$pageJavaScript .= "    };\n";
-			$pageJavaScript .= "    var thisMap = new google.maps.Map(document.getElementById('searchResultsMapCanvas'), myOptions);\n";
-			$pageJavaScript .= "    mapLoaded = true;\n\n";
+			$tl->page['javascript'] .= "// Populate map\n";
+			$tl->page['javascript'] .= "  var mapLoaded = false;\n\n";
+			$tl->page['javascript'] .= "  function populateMap() {\n";
+			$tl->page['javascript'] .= "    var myLatlng = new google.maps.LatLng(" . $map[count($map) - 1]['latitude'] . "," . $map[count($map) - 1]['longitude'] . ");\n";
+			$tl->page['javascript'] .= "    var myOptions = {\n";
+			$tl->page['javascript'] .= "      zoom: 6,\n";
+			$tl->page['javascript'] .= "      center: myLatlng,\n";
+			$tl->page['javascript'] .= "      mapTypeId: google.maps.MapTypeId.TERRAIN\n";
+			$tl->page['javascript'] .= "    };\n";
+			$tl->page['javascript'] .= "    var thisMap = new google.maps.Map(document.getElementById('searchResultsMapCanvas'), myOptions);\n";
+			$tl->page['javascript'] .= "    mapLoaded = true;\n\n";
 
 			for ($counter = 0; $counter < count($map); $counter++) {
-				$pageJavaScript .= "    var myLatlng = new google.maps.LatLng(" . $map[$counter]['latitude'] . "," . $map[$counter]['longitude'] . ");\n";
-				$pageJavaScript .= "    var rumour_marker_" . $counter . " = new google.maps.Marker({\n";
-				$pageJavaScript .= "      position: myLatlng, \n";
-				$pageJavaScript .= "      map: thisMap, \n";
-				if (substr_count($map[$counter]['status'], 'true')) $pageJavaScript .= "      icon: 'http://maps.google.com/mapfiles/ms/icons/green-dot.png', \n";
-				elseif (substr_count($map[$counter]['status'], 'false')) $pageJavaScript .= "      icon: 'http://maps.google.com/mapfiles/ms/icons/red-dot.png', \n";
-				else $pageJavaScript .= "      icon: 'http://maps.google.com/mapfiles/ms/icons/yellow-dot.png', \n";
-				$pageJavaScript .= "      title:" . '"' . htmlspecialchars(preg_replace( "/\r|\n/", "", $map[$counter]['status'] . " : " . $map[$counter]['description']), ENT_QUOTES) . '"' . "\n";
-				$pageJavaScript .= "    });\n";
-				$pageJavaScript .= "    google.maps.event.addListener(rumour_marker_" . $counter . ", 'click', function() {\n";
-				$pageJavaScript .= "      document.location.href = '/rumour/" . $map[$counter]['public_id'] . "';\n";
-				$pageJavaScript .= "    });\n";
+				$tl->page['javascript'] .= "    var myLatlng = new google.maps.LatLng(" . $map[$counter]['latitude'] . "," . $map[$counter]['longitude'] . ");\n";
+				$tl->page['javascript'] .= "    var rumour_marker_" . $counter . " = new google.maps.Marker({\n";
+				$tl->page['javascript'] .= "      position: myLatlng, \n";
+				$tl->page['javascript'] .= "      map: thisMap, \n";
+				if (substr_count($map[$counter]['status'], 'true')) $tl->page['javascript'] .= "      icon: 'http://maps.google.com/mapfiles/ms/icons/green-dot.png', \n";
+				elseif (substr_count($map[$counter]['status'], 'false')) $tl->page['javascript'] .= "      icon: 'http://maps.google.com/mapfiles/ms/icons/red-dot.png', \n";
+				else $tl->page['javascript'] .= "      icon: 'http://maps.google.com/mapfiles/ms/icons/yellow-dot.png', \n";
+				$tl->page['javascript'] .= "      title:" . '"' . htmlspecialchars(preg_replace( "/\r|\n/", "", $map[$counter]['status'] . " : " . $map[$counter]['description']), ENT_QUOTES) . '"' . "\n";
+				$tl->page['javascript'] .= "    });\n";
+				$tl->page['javascript'] .= "    google.maps.event.addListener(rumour_marker_" . $counter . ", 'click', function() {\n";
+				$tl->page['javascript'] .= "      document.location.href = '/rumour/" . $map[$counter]['public_id'] . "';\n";
+				$tl->page['javascript'] .= "    });\n";
 			}
 			
-			$pageJavaScript .= "  }\n";
+			$tl->page['javascript'] .= "  }\n";
 
 		echo "</div>\n";
 		

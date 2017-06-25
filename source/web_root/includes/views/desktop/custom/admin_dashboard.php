@@ -4,7 +4,7 @@
 		if ($logs->numberOfLogs) {
 			echo "<div class='pageModule'>\n";
 			echo $logs->html;
-			$pageJavaScript .= $logs->js;
+			$tl->page['javascript'] .= $logs->js;
 			echo "</div>\n";
 		}
 
@@ -149,14 +149,14 @@
 		echo "</div>\n";
 
 		// update clock
-			$pageJavaScript .= "// Dashboard clock (showing server time rather than browser time)\n";
-			$pageJavaScript .= "  var serverTime = moment('" . date('Y') . ", " . date('m') . ", " . date('d') . ", " . date('H') . ", " . date('i') . ", " . date('s') . "');\n";
-			$pageJavaScript .= "  var browserTime = moment();\n";
-			$pageJavaScript .= "  var offsetInMinutes = Math.round((browserTime - serverTime) / 60);\n";
-			$pageJavaScript .= "  setInterval(function(){\n";
-			$pageJavaScript .= "    var currentTime = moment().add(" . intval(@$offsetInMinutes) . ", 'Minutes');\n";
-			$pageJavaScript .= "    document.getElementById('timer').innerHTML = currentTime.format('h:mm A');;\n";
-			$pageJavaScript .= "  },500);\n";
+			$tl->page['javascript'] .= "// Dashboard clock (showing server time rather than browser time)\n";
+			$tl->page['javascript'] .= "  var serverTime = moment('" . date('Y') . ", " . date('m') . ", " . date('d') . ", " . date('H') . ", " . date('i') . ", " . date('s') . "');\n";
+			$tl->page['javascript'] .= "  var browserTime = moment();\n";
+			$tl->page['javascript'] .= "  var offsetInMinutes = Math.round((browserTime - serverTime) / 60);\n";
+			$tl->page['javascript'] .= "  setInterval(function(){\n";
+			$tl->page['javascript'] .= "    var currentTime = moment().add(" . intval(@$offsetInMinutes) . ", 'Minutes');\n";
+			$tl->page['javascript'] .= "    document.getElementById('timer').innerHTML = currentTime.format('h:mm A');;\n";
+			$tl->page['javascript'] .= "  },500);\n";
 
 		// phpinfo modal
 			echo "<div class='modal fade' id='phpinfoModal' tabindex='-1' role='dialog' aria-labelledby='phpinfoModalLabel' aria-hidden='true'>\n";

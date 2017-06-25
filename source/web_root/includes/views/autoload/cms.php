@@ -4,8 +4,6 @@
 
 		global $tablePrefix;
 		global $tl;
-		global $pageCss;
-		global $pageJavaScript;
 
 		$cms = new cms_widget_TL();
 
@@ -40,9 +38,9 @@
 				$otherLanguages = $cms->retrieveContent(array_merge($matching, [$tablePrefix . 'cms.public_id'=>$result[0]['public_id'], $tablePrefix . 'cms.domain_alias_id'=>$result[0]['domain_alias_id']]), $tablePrefix . "cms.cms_id != '" . $result[0]['cms_id'] . "'");
 
 				if (!count($otherLanguages)) {
-					$pageCss .= $result[0]['content_css'];
+					$tl->page['css'] .= $result[0]['content_css'];
 					echo $result[0]['content'];
-					$pageJavaScript .= $result[0]['content_js'];
+					$tl->page['javascript'] .= $result[0]['content_js'];
 				}
 				else {
 
@@ -51,16 +49,16 @@
 					echo "    " . $result[0]['content'] . "\n";
 				  	echo "  </div>\n";
 
-					$pageCss .= $result[0]['content_css'];
-					$pageJavaScript .= $result[0]['content_js'];
+					$tl->page['css'] .= $result[0]['content_css'];
+					$tl->page['javascript'] .= $result[0]['content_js'];
 
 					for ($counter = 0; $counter < count($otherLanguages); $counter++) {
 						echo "  <div class='tab-pane' id='" . $otherLanguages[$counter]['language_id'] . "'>\n";
 						echo "    " . $otherLanguages[$counter]['content'] . "\n";
 					  	echo "  </div>\n";
 
-						$pageCss .= $result[$counter]['content_css'];
-						$pageJavaScript .= $result[$counter]['content_js'];
+						$tl->page['css'] .= $result[$counter]['content_css'];
+						$tl->page['javascript'] .= $result[$counter]['content_js'];
 					}
 				  	echo "</div>\n";
 

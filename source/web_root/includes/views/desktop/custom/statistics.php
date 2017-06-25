@@ -1,7 +1,7 @@
 <?php
 
 	// load Google Charts packages
-		$pageJavaScript .= "  google.load('visualization', '1.1', {packages:['bar', 'corechart']});\n";
+		$tl->page['javascript'] .= "  google.load('visualization', '1.1', {packages:['bar', 'corechart']});\n";
 
 	echo "<h2>Statistics" . (@$tl->page['domain_alias']['title'] ? " for " . $tl->page['domain_alias']['title'] : false) . "</h2>\n";
 
@@ -71,25 +71,25 @@
 			echo "    </div>\n";
 			echo "  </div>\n";
 
-			$pageJavaScript .= "// status chart\n";
-			$pageJavaScript .= "  google.setOnLoadCallback(drawStatusPie);\n\n";
-			$pageJavaScript .= "  function drawStatusPie() {\n";
-			$pageJavaScript .= "    var data = new google.visualization.arrayToDataTable([\n";
-			$pageJavaScript .= "      ['Status', 'Rumours'],\n";
+			$tl->page['javascript'] .= "// status chart\n";
+			$tl->page['javascript'] .= "  google.setOnLoadCallback(drawStatusPie);\n\n";
+			$tl->page['javascript'] .= "  function drawStatusPie() {\n";
+			$tl->page['javascript'] .= "    var data = new google.visualization.arrayToDataTable([\n";
+			$tl->page['javascript'] .= "      ['Status', 'Rumours'],\n";
 			for ($counter = 0; $counter < count($statuses); $counter++) {
-				$pageJavaScript .= "      ['" . htmlspecialchars($statuses[$counter]['status'], ENT_QUOTES). "', " . $statuses[$counter]['count'] . "]";
-				if ($counter < count($statuses) - 1) $pageJavaScript .= ",";
-				$pageJavaScript .= "\n";
+				$tl->page['javascript'] .= "      ['" . htmlspecialchars($statuses[$counter]['status'], ENT_QUOTES). "', " . $statuses[$counter]['count'] . "]";
+				if ($counter < count($statuses) - 1) $tl->page['javascript'] .= ",";
+				$tl->page['javascript'] .= "\n";
 			}
-			$pageJavaScript .= "    ]);\n\n";
-			$pageJavaScript .= "    var options = {\n";
-			$pageJavaScript .= "      is3D: true,\n";
-			$pageJavaScript .= "      chartArea: { left: 0, top: 0, width: '100%', height: '100%' },\n";
-			$pageJavaScript .= "      pieSliceText: 'value'\n";
-			$pageJavaScript .= "    };\n\n";
-			$pageJavaScript .= "    var chart = new google.visualization.PieChart(document.getElementById('statusPie'));\n";
-			$pageJavaScript .= "    chart.draw(data, options);\n";
-			$pageJavaScript .= "  };\n\n";
+			$tl->page['javascript'] .= "    ]);\n\n";
+			$tl->page['javascript'] .= "    var options = {\n";
+			$tl->page['javascript'] .= "      is3D: true,\n";
+			$tl->page['javascript'] .= "      chartArea: { left: 0, top: 0, width: '100%', height: '100%' },\n";
+			$tl->page['javascript'] .= "      pieSliceText: 'value'\n";
+			$tl->page['javascript'] .= "    };\n\n";
+			$tl->page['javascript'] .= "    var chart = new google.visualization.PieChart(document.getElementById('statusPie'));\n";
+			$tl->page['javascript'] .= "    chart.draw(data, options);\n";
+			$tl->page['javascript'] .= "  };\n\n";
 		}
 
 	// tags
@@ -135,25 +135,25 @@
 			echo "    </div>\n";
 			echo "  </div>\n";
 
-			$pageJavaScript .= "// tag chart\n";
-			$pageJavaScript .= "  google.setOnLoadCallback(drawTagPie);\n\n";
-			$pageJavaScript .= "  function drawTagPie() {\n";
-			$pageJavaScript .= "    var data = new google.visualization.arrayToDataTable([\n";
-			$pageJavaScript .= "      ['Tags', 'Rumours'],\n";
+			$tl->page['javascript'] .= "// tag chart\n";
+			$tl->page['javascript'] .= "  google.setOnLoadCallback(drawTagPie);\n\n";
+			$tl->page['javascript'] .= "  function drawTagPie() {\n";
+			$tl->page['javascript'] .= "    var data = new google.visualization.arrayToDataTable([\n";
+			$tl->page['javascript'] .= "      ['Tags', 'Rumours'],\n";
 			for ($counter = 0; $counter < count($tags); $counter++) {
-				$pageJavaScript .= "      ['" . htmlspecialchars($tags[$counter]['tag'], ENT_QUOTES). "', " . $tags[$counter]['count'] . "]";
-				if ($counter < count($tags) - 1) $pageJavaScript .= ",";
-				$pageJavaScript .= "\n";
+				$tl->page['javascript'] .= "      ['" . htmlspecialchars($tags[$counter]['tag'], ENT_QUOTES). "', " . $tags[$counter]['count'] . "]";
+				if ($counter < count($tags) - 1) $tl->page['javascript'] .= ",";
+				$tl->page['javascript'] .= "\n";
 			}
-			$pageJavaScript .= "    ]);\n\n";
-			$pageJavaScript .= "    var options = {\n";
-			$pageJavaScript .= "      is3D: true,\n";
-			$pageJavaScript .= "      chartArea: { left: 0, top: 0, width: '100%', height: '100%' },\n";
-			$pageJavaScript .= "      pieSliceText: 'value'\n";
-			$pageJavaScript .= "    };\n\n";
-			$pageJavaScript .= "    var chart = new google.visualization.PieChart(document.getElementById('tagPie'));\n";
-			$pageJavaScript .= "    chart.draw(data, options);\n";
-			$pageJavaScript .= "  };\n\n";
+			$tl->page['javascript'] .= "    ]);\n\n";
+			$tl->page['javascript'] .= "    var options = {\n";
+			$tl->page['javascript'] .= "      is3D: true,\n";
+			$tl->page['javascript'] .= "      chartArea: { left: 0, top: 0, width: '100%', height: '100%' },\n";
+			$tl->page['javascript'] .= "      pieSliceText: 'value'\n";
+			$tl->page['javascript'] .= "    };\n\n";
+			$tl->page['javascript'] .= "    var chart = new google.visualization.PieChart(document.getElementById('tagPie'));\n";
+			$tl->page['javascript'] .= "    chart.draw(data, options);\n";
+			$tl->page['javascript'] .= "  };\n\n";
 		}
 
 	echo "</div>\n";
@@ -194,29 +194,29 @@
 		echo "  </div>\n";
 		echo "</div>\n";
 
-		$pageJavaScript .= "// rumours by instance chart\n";
-		$pageJavaScript .= "  google.setOnLoadCallback(drawRumoursAndSightingsByDateChart);\n\n";
-		$pageJavaScript .= "  function drawRumoursAndSightingsByDateChart() {\n";
-		$pageJavaScript .= "    var data = new google.visualization.arrayToDataTable([\n";
-		$pageJavaScript .= "      ['Month', 'Rumours', 'Sightings'],\n";
+		$tl->page['javascript'] .= "// rumours by instance chart\n";
+		$tl->page['javascript'] .= "  google.setOnLoadCallback(drawRumoursAndSightingsByDateChart);\n\n";
+		$tl->page['javascript'] .= "  function drawRumoursAndSightingsByDateChart() {\n";
+		$tl->page['javascript'] .= "    var data = new google.visualization.arrayToDataTable([\n";
+		$tl->page['javascript'] .= "      ['Month', 'Rumours', 'Sightings'],\n";
 		$counter = 0;
 		foreach ($rumoursAndSightingsByDateChart as $month=>$counts) {
-			$pageJavaScript .= "      ['" . htmlspecialchars($month, ENT_QUOTES). "', " . floatval(@$counts['rumours']) . ", " . floatval(@$counts['sightings']) . "]";
-			if ($counter < count($rumoursAndSightingsByDateChart) - 1) $pageJavaScript .= ",";
-			$pageJavaScript .= "\n";
+			$tl->page['javascript'] .= "      ['" . htmlspecialchars($month, ENT_QUOTES). "', " . floatval(@$counts['rumours']) . ", " . floatval(@$counts['sightings']) . "]";
+			if ($counter < count($rumoursAndSightingsByDateChart) - 1) $tl->page['javascript'] .= ",";
+			$tl->page['javascript'] .= "\n";
 			$counter++;
 		}
-		$pageJavaScript .= "    ]);\n\n";
-		$pageJavaScript .= "    var options = {\n";
-		$pageJavaScript .= "      curveType: 'function',\n";
-		$pageJavaScript .= "      width: '100%',\n";
-		$pageJavaScript .= "      vAxis: { viewWindow: { min: 0 }},\n";
-		$pageJavaScript .= "      hAxis: { slantedText: true },\n";
-		$pageJavaScript .= "      legend: { position: 'bottom' }\n";
-		$pageJavaScript .= "    };\n\n";
-		$pageJavaScript .= "    var chart = new google.visualization.LineChart(document.getElementById('rumoursAndSightingsByDateChart'));\n";
-		$pageJavaScript .= "    chart.draw(data, options);\n";
-		$pageJavaScript .= "  };\n\n";
+		$tl->page['javascript'] .= "    ]);\n\n";
+		$tl->page['javascript'] .= "    var options = {\n";
+		$tl->page['javascript'] .= "      curveType: 'function',\n";
+		$tl->page['javascript'] .= "      width: '100%',\n";
+		$tl->page['javascript'] .= "      vAxis: { viewWindow: { min: 0 }},\n";
+		$tl->page['javascript'] .= "      hAxis: { slantedText: true },\n";
+		$tl->page['javascript'] .= "      legend: { position: 'bottom' }\n";
+		$tl->page['javascript'] .= "    };\n\n";
+		$tl->page['javascript'] .= "    var chart = new google.visualization.LineChart(document.getElementById('rumoursAndSightingsByDateChart'));\n";
+		$tl->page['javascript'] .= "    chart.draw(data, options);\n";
+		$tl->page['javascript'] .= "  };\n\n";
 
 	if (count(@$rumoursAndSightingsByDomain)) {
 		// rumours and sightings per domain
@@ -227,24 +227,24 @@
 			echo "  </div>\n";
 			echo "</div>\n";
 
-			$pageJavaScript .= "// rumours by instance chart\n";
-			$pageJavaScript .= "  google.setOnLoadCallback(drawRumoursAndSightingsByDomainChart);\n\n";
-			$pageJavaScript .= "  function drawRumoursAndSightingsByDomainChart() {\n";
-			$pageJavaScript .= "    var data = new google.visualization.arrayToDataTable([\n";
-			$pageJavaScript .= "      ['Deployment', 'Rumours', 'Sightings'],\n";
+			$tl->page['javascript'] .= "// rumours by instance chart\n";
+			$tl->page['javascript'] .= "  google.setOnLoadCallback(drawRumoursAndSightingsByDomainChart);\n\n";
+			$tl->page['javascript'] .= "  function drawRumoursAndSightingsByDomainChart() {\n";
+			$tl->page['javascript'] .= "    var data = new google.visualization.arrayToDataTable([\n";
+			$tl->page['javascript'] .= "      ['Deployment', 'Rumours', 'Sightings'],\n";
 			for ($counter = 0; $counter < count($rumoursAndSightingsByDomain); $counter++) {
-				$pageJavaScript .= "      ['" . htmlspecialchars($rumoursAndSightingsByDomain[$counter]['title'], ENT_QUOTES). "', " . $rumoursAndSightingsByDomain[$counter]['number_of_rumours'] . ", " . $rumoursAndSightingsByDomain[$counter]['number_of_sightings'] . "]";
-				if ($counter < count($rumoursAndSightingsByDomain) - 1) $pageJavaScript .= ",";
-				$pageJavaScript .= "\n";
+				$tl->page['javascript'] .= "      ['" . htmlspecialchars($rumoursAndSightingsByDomain[$counter]['title'], ENT_QUOTES). "', " . $rumoursAndSightingsByDomain[$counter]['number_of_rumours'] . ", " . $rumoursAndSightingsByDomain[$counter]['number_of_sightings'] . "]";
+				if ($counter < count($rumoursAndSightingsByDomain) - 1) $tl->page['javascript'] .= ",";
+				$tl->page['javascript'] .= "\n";
 			}
-			$pageJavaScript .= "    ]);\n\n";
-			$pageJavaScript .= "    var options = {\n";
-			$pageJavaScript .= "      colors:['#5bc0de','#addcea'],\n";
-			$pageJavaScript .= "      bars: 'horizontal' // Required for Material Bar Charts.\n";
-			$pageJavaScript .= "    };\n\n";
-			$pageJavaScript .= "    var chart = new google.charts.Bar(document.getElementById('rumoursAndSightingsByDomainChart'));\n";
-			$pageJavaScript .= "    chart.draw(data, options);\n";
-			$pageJavaScript .= "  };\n";
+			$tl->page['javascript'] .= "    ]);\n\n";
+			$tl->page['javascript'] .= "    var options = {\n";
+			$tl->page['javascript'] .= "      colors:['#5bc0de','#addcea'],\n";
+			$tl->page['javascript'] .= "      bars: 'horizontal' // Required for Material Bar Charts.\n";
+			$tl->page['javascript'] .= "    };\n\n";
+			$tl->page['javascript'] .= "    var chart = new google.charts.Bar(document.getElementById('rumoursAndSightingsByDomainChart'));\n";
+			$tl->page['javascript'] .= "    chart.draw(data, options);\n";
+			$tl->page['javascript'] .= "  };\n";
 	}
 
 ?>

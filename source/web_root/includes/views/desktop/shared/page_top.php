@@ -41,12 +41,12 @@
 		}
 
 	// load third-party CSS
-		if (count(@$frontEndLibraries)) {
-			foreach ($frontEndLibraries as $library =>$details) {
-				if ($details['local_css_path'] || $details['remote_css_path']) {
-					echo "  <!-- " . $library . ($details['version'] ? " v." . $details['version'] : false) . " -->\n";
-					if ($details['remote_css_path'] && $file_manager->doesUrlExist($details['remote_css_path'])) echo "    <link rel='stylesheet' type='text/css' media='screen' href='" . $details['remote_css_path'] . "' />\n";
-					elseif ($details['local_css_path']) echo "    <link rel='stylesheet' type='text/css' media='screen' href='/libraries/" . $details['local_css_path'] . "' />\n";
+		if (count(@$tl->frontEndLibraries)) {
+			foreach ($tl->frontEndLibraries as $key =>$value) {
+				if ($value['local_css_path'] || $value['remote_css_path']) {
+					echo "  <!-- " . $key . ($value['version'] ? " v." . $value['version'] : false) . " -->\n";
+					if ($value['remote_css_path'] && $file_manager->doesUrlExist($value['remote_css_path'])) echo "    <link rel='stylesheet' type='text/css' media='screen' href='" . $value['remote_css_path'] . "' />\n";
+					elseif ($value['local_css_path']) echo "    <link rel='stylesheet' type='text/css' media='screen' href='/libraries/" . $value['local_css_path'] . "' />\n";
 					echo "\n";
 				}
 			}
@@ -67,12 +67,20 @@
 			}
 			closedir($handle);
 		}
+
+		if ($handle = opendir('resources/css/print/autoload/.')) {
+			while (false !== ($file = readdir($handle))) {
+				if (substr_count($file, ".css") > 0) echo "  <!-- " . ucwords(str_replace('_', ' ', substr($file, 0, -4))) . " -->\n    <link href='/resources/css/print/autoload/" . $file . "?rand=" . rand(10000, 99999) . "' rel='stylesheet' media='print' type='text/css' />\n";
+			}
+			closedir($handle);
+		}
+
 		if (file_exists("resources/css/desktop/" . $tl->page['template'] . ".css") > 0) echo "  <link href='/resources/css/desktop/" . $tl->page['template'] . ".css' rel='stylesheet' media='screen' type='text/css' />\n";
 		
 	// load page-specific CSS
-		if ($pageCss) {
+		if ($tl->page['css']) {
 			echo "  <style type='text/css'>\n";
-			echo $pageCss . "\n";
+			echo $tl->page['css'] . "\n";
 			echo "  </style>\n";
 		}
 
@@ -98,9 +106,7 @@
 		echo "</head>\n\n";
 
 	// start body
-		echo "<body onLoad='";
-		if ($pageLoadEvents) echo $pageLoadEvents;
-		echo "'>\n\n";
+		echo "<body" . ($tl->page['events'] ? " onLoad='" . $tl->page['events'] . "'" : false) . ">\n\n";
 
 	if (!$tl->page['hide_page_chrome']) {
 		

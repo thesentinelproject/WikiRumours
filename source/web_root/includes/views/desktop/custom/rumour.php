@@ -75,9 +75,9 @@
 			echo "    </div>\n";
 			echo "  </div>\n";
 
-			$pageJavaScript .= "// initialize Select2\n";
-			$pageJavaScript .= "  $('.js-example-basic-multiple').select2();\n";
-			$pageJavaScript .= "  $('#addTags').collapse('hide');\n";
+			$tl->page['javascript'] .= "// initialize Select2\n";
+			$tl->page['javascript'] .= "  $('.js-example-basic-multiple').select2();\n";
+			$tl->page['javascript'] .= "  $('#addTags').collapse('hide');\n";
 
 
 		}
@@ -200,37 +200,37 @@
 			echo "    <p class='text-muted'>This heatmap depicts the spread of rumours over time. Hotter areas of the map denote earlier sightings, while cooler areas indicate delayed dispersion.</p>\n";
 			echo "  </div>\n";
 
-			$pageJavaScript .= "// Populate map\n";
-			$pageJavaScript .= "  var mapLoaded = false;\n";
-			$pageJavaScript .= "  function populateMap() {\n";
-			$pageJavaScript .= "    var heatMapData = [\n";
+			$tl->page['javascript'] .= "// Populate map\n";
+			$tl->page['javascript'] .= "  var mapLoaded = false;\n";
+			$tl->page['javascript'] .= "  function populateMap() {\n";
+			$tl->page['javascript'] .= "    var heatMapData = [\n";
 			if ($rumour[0]['latitude'] <> 0 && $rumour[0]['longitude'] <> 0) $mapCenter = $rumour[0]['latitude'] . "," . $rumour[0]['longitude'];
 			for ($counter = 0; $counter < count($sightings); $counter++) {
 				if ($sightings[$counter]['sighting_latitude'] <> 0 && $sightings[$counter]['sighting_longitude'] <> 0 && $sightings[$counter]['heard_on'] != '0000-00-00 00:00:00') {
-					$pageJavaScript .= "      {location: new google.maps.LatLng(" . $sightings[$counter]['sighting_latitude'] . "," . $sightings[$counter]['sighting_longitude'] . "), weight: " . ($counter + 20) . "}" . ($counter < count($sightings) - 1 ? "," : false) . " // heard in " . $sightings[$counter]['sighting_city'] . " on " . date('Y-m-d', strtotime($sightings[$counter]['heard_on'])) . "\n";
+					$tl->page['javascript'] .= "      {location: new google.maps.LatLng(" . $sightings[$counter]['sighting_latitude'] . "," . $sightings[$counter]['sighting_longitude'] . "), weight: " . ($counter + 20) . "}" . ($counter < count($sightings) - 1 ? "," : false) . " // heard in " . $sightings[$counter]['sighting_city'] . " on " . date('Y-m-d', strtotime($sightings[$counter]['heard_on'])) . "\n";
 					if (!@$mapCenter) $mapCenter = $sightings[$counter]['sighting_latitude'] . "," . $sightings[$counter]['sighting_longitude'];
 				}
 			}
-			$pageJavaScript .= "    ];\n\n";
+			$tl->page['javascript'] .= "    ];\n\n";
 
 			if (!@$mapCenter) $mapCenter = '0,0';
 
 
-			$pageJavaScript .= "    var mapCenter = new google.maps.LatLng(" . ($sightings[0]['latitude_occurred'] <> 0 && $sightings[0]['longitude_occurred'] <> 0 ? $sightings[0]['latitude_occurred'] . "," . $sightings[0]['longitude_occurred'] : $mapCenter) . ");\n";
+			$tl->page['javascript'] .= "    var mapCenter = new google.maps.LatLng(" . ($sightings[0]['latitude_occurred'] <> 0 && $sightings[0]['longitude_occurred'] <> 0 ? $sightings[0]['latitude_occurred'] . "," . $sightings[0]['longitude_occurred'] : $mapCenter) . ");\n";
 
-			$pageJavaScript .= "    map = new google.maps.Map(document.getElementById('rumourMapCanvas'), {\n";
-			$pageJavaScript .= "      center: mapCenter,\n";
-			$pageJavaScript .= "      zoom: 7,\n";
-			$pageJavaScript .= "      mapTypeId: google.maps.MapTypeId.HYBRID\n";
-			$pageJavaScript .= "    });\n\n";
+			$tl->page['javascript'] .= "    map = new google.maps.Map(document.getElementById('rumourMapCanvas'), {\n";
+			$tl->page['javascript'] .= "      center: mapCenter,\n";
+			$tl->page['javascript'] .= "      zoom: 7,\n";
+			$tl->page['javascript'] .= "      mapTypeId: google.maps.MapTypeId.HYBRID\n";
+			$tl->page['javascript'] .= "    });\n\n";
 
-			$pageJavaScript .= "    var heatmap = new google.maps.visualization.HeatmapLayer({\n";
-			$pageJavaScript .= "      radius: 20,\n";
-			$pageJavaScript .= "      data: heatMapData\n";
-			$pageJavaScript .= "    });\n";
-			$pageJavaScript .= "    heatmap.setMap(map);\n";
-			$pageJavaScript .= "    mapLoaded = true;\n";
-			$pageJavaScript .= "  }\n";
+			$tl->page['javascript'] .= "    var heatmap = new google.maps.visualization.HeatmapLayer({\n";
+			$tl->page['javascript'] .= "      radius: 20,\n";
+			$tl->page['javascript'] .= "      data: heatMapData\n";
+			$tl->page['javascript'] .= "    });\n";
+			$tl->page['javascript'] .= "    heatmap.setMap(map);\n";
+			$tl->page['javascript'] .= "    mapLoaded = true;\n";
+			$tl->page['javascript'] .= "  }\n";
 
 		// table
 			echo "  <div class='tab-pane' id='sightingsTable'>\n";

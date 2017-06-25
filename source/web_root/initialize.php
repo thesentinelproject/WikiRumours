@@ -9,7 +9,16 @@
 		$tl->settings = array();
 		$tl->db = array();
 		$tl->mail = array();
+		$tl->initialize = array();
 
+		// autoload configuration files
+			if ($tl->initialize['handle'] = opendir(__DIR__ . '/../config/autoload/.')) {
+				while (false !== ($tl->initialize['file'] = readdir($tl->initialize['handle']))) {
+					if (substr_count($tl->initialize['file'], '.php') > 0) include __DIR__ . '/../config/autoload/' . $tl->initialize['file'];
+				}
+				closedir($tl->initialize['handle']);
+			}
+			
 		// identify if cron
 			if (substr_count($_SERVER['SCRIPT_FILENAME'], '/cron/cron.php') > 0) $tl->page['is_cron'] = true;
 			else $tl->page['is_cron'] = false;
@@ -35,13 +44,6 @@
 				// if no page is specified in the URL, assume home
 					if (!$tl->page['template']) $tl->page['template'] = 'index';
 				
-				// prohibit hitting certain pages
-					$prohibitedUrls = array();
-					
-					if ($prohibitedUrls) foreach ($prohibitedUrls as $key => $value) {
-						if ($value == $tl->page['template']) $tl->page['template'] = '404';
-					}
-
 			}
 			else $tl->page['template'] = null;
 
@@ -49,6 +51,7 @@
 				$tl->page['error'] = null;
 				$tl->page['warning'] = null;
 				$tl->page['success'] = null;
+				
 				$tl->page['console'] = null;
 
 				$tl->page['title'] = ucwords(str_replace('_', ' ', $tl->page['template']));
@@ -56,76 +59,64 @@
 				$tl->page['canonical_url'] = null;
 				$tl->page['hide_page_chrome'] = false;
 
-				$pageLoadEvents = null;
-				$pageCss = null;
-				$pageJavaScript = null;
+				$tl->page['events'] = null;
+				$tl->page['css'] = null;
+				$tl->page['javascript'] = null;
 				
 		// Initialize application
 		
-			// Define connection
-				if (@$tl->page['is_cron']) $tl->page['connection_type'] = 'R';
-				else $tl->page['connection_type'] = 'U';
-				
 			// Autoload database queries
-				if ($handle = opendir(__DIR__ . '/includes/models/autoload/.')) {
-					while (false !== ($file = readdir($handle))) {
-						if (substr_count($file, '.php') > 0) include __DIR__ . '/includes/models/autoload/' . $file;
+				if ($tl->initialize['handle'] = opendir(__DIR__ . '/includes/models/autoload/.')) {
+					while (false !== ($tl->initialize['file'] = readdir($tl->initialize['handle']))) {
+						if (substr_count($tl->initialize['file'], '.php') > 0) include __DIR__ . '/includes/models/autoload/' . $tl->initialize['file'];
 					}
-					closedir($handle);
+					closedir($tl->initialize['handle']);
 				}
 
-			// Autoload configuration files
-				if ($handle = opendir(__DIR__ . '/../config/autoload/.')) {
-					while (false !== ($file = readdir($handle))) {
-						if (substr_count($file, '.php') > 0) include __DIR__ . '/../config/autoload/' . $file;
-					}
-					closedir($handle);
-				}
-				
 			// Load third-party PHP libraries
-				if (count(@$backEndLibraries)) {
-					foreach ($backEndLibraries as $library => $details) {
-						if ($details['local_path'] && file_exists(__DIR__ . '/../libraries_(protected)/' . $details['local_path'])) include __DIR__ . '/../libraries_(protected)/' . $details['local_path'];
-						else die("Unable to locate " . $library . " at " . $details['local_path']);
+				if (count(@$tl->backEndLibraries)) {
+					foreach ($tl->backEndLibraries as $key => $value) {
+						if ($value['local_path'] && file_exists(__DIR__ . '/../libraries_(protected)/' . $value['local_path'])) include __DIR__ . '/../libraries_(protected)/' . $value['local_path'];
+						else die("Unable to locate " . $key . " at " . $value['local_path']);
 					}
 				}
 				
 			// Load Tidal Lock PHP libraries and instantiate classes
-				if ($handle = opendir(__DIR__ . '/../libraries_(protected)/tidal_lock/helpers/.')) {
-					while (false !== ($file = readdir($handle))) {
-						if (substr_count($file, '.php') > 0) {
+				if ($tl->initialize['handle'] = opendir(__DIR__ . '/../libraries_(protected)/tidal_lock/0-5/helpers/.')) {
+					while (false !== ($tl->initialize['file'] = readdir($tl->initialize['handle']))) {
+						if (substr_count($tl->initialize['file'], '.php') > 0) {
 							// include file
-								include __DIR__ . '/../libraries_(protected)/tidal_lock/helpers/' . $file;
+								include __DIR__ . '/../libraries_(protected)/tidal_lock/0-5/helpers/' . $tl->initialize['file'];
 							// instantiate class
-								$instance = str_replace('.php', '', str_replace('class.', '', $file));
-								$class = $instance . '_TL';
-								${$instance} = new $class();
+								$tl->initialize['instance'] = str_replace('.php', '', str_replace('class.', '', $tl->initialize['file']));
+								$tl->initialize['class'] = $tl->initialize['instance'] . '_TL';
+								${$tl->initialize['instance']} = new $tl->initialize['class']();
 						}
 					}
-					closedir($handle);
+					closedir($tl->initialize['handle']);
 				}
 
-				if ($handle = opendir(__DIR__ . '/../libraries_(protected)/tidal_lock/widgets/.')) {
-					while (false !== ($file = readdir($handle))) {
-						if (substr_count($file, '.php') > 0) include __DIR__ . '/../libraries_(protected)/tidal_lock/widgets/' . $file;
+				if ($tl->initialize['handle'] = opendir(__DIR__ . '/../libraries_(protected)/tidal_lock/0-5/widgets/.')) {
+					while (false !== ($tl->initialize['file'] = readdir($tl->initialize['handle']))) {
+						if (substr_count($tl->initialize['file'], '.php') > 0) include __DIR__ . '/../libraries_(protected)/tidal_lock/0-5/widgets/' . $tl->initialize['file'];
 					}
-					closedir($handle);
+					closedir($tl->initialize['handle']);
 				}
 				
 			// Autoload shared controllers
-				if ($handle = opendir(__DIR__ . '/includes/controllers/autoload/.')) {
-					while (false !== ($file = readdir($handle))) {
-						if (substr_count($file, '.php') > 0) include __DIR__ . '/includes/controllers/autoload/' . $file;
+				if ($tl->initialize['handle'] = opendir(__DIR__ . '/includes/controllers/autoload/.')) {
+					while (false !== ($tl->initialize['file'] = readdir($tl->initialize['handle']))) {
+						if (substr_count($tl->initialize['file'], '.php') > 0) include __DIR__ . '/includes/controllers/autoload/' . $tl->initialize['file'];
 					}
-					closedir($handle);
+					closedir($tl->initialize['handle']);
 				}
 
 			// Autoload shared views
-				if ($handle = opendir(__DIR__ . '/includes/views/autoload/.')) {
-					while (false !== ($file = readdir($handle))) {
-						if (substr_count($file, '.php') > 0) include __DIR__ . '/includes/views/autoload/' . $file;
+				if ($tl->initialize['handle'] = opendir(__DIR__ . '/includes/views/autoload/.')) {
+					while (false !== ($tl->initialize['file'] = readdir($tl->initialize['handle']))) {
+						if (substr_count($tl->initialize['file'], '.php') > 0) include __DIR__ . '/includes/views/autoload/' . $tl->initialize['file'];
 					}
-					closedir($handle);
+					closedir($tl->initialize['handle']);
 				}
 
 			// Confirm setup
@@ -209,33 +200,6 @@
 				if (!$tl->settings['Root URL']) {
 					$tl->settings['Root URL'] = $tl->page['protocol'] . $tl->page['root'];
 					updateOrInsertIntoDb('preferences', array('value'=>$tl->settings['Root URL'], 'input_type'=>'text', 'is_mandatory'=>'1'), array('preference'=>'Root URL'), null, null, null, null, 1);
-				}
-												
-			// Mobile and tablet redirection
-				if ($tl->settings['Redirect for mobile'] && !@$tl->page['is_cron'] && $tl->page['subdomain'] != 'm') {
-
-					$detect = new Mobile_Detect;
-
-					if ($detect->isMobile()) {
-						if (file_exists('includes/views/mobile/custom/' . $tl->page['template'] . '.php') || file_exists('includes/views/mobile/default/' . $tl->page['template'] . '.php')) $url = $tl->page['protocol'] . 'm.' . $tl->page['domain'] . '/' . $tl->page['template'] . '/' . trim($tl->page['parameter1'] . '/' . $tl->page['parameter2'] . '/' . $tl->page['parameter3'] . '/' . $tl->page['parameter4'], '/');
-						else $url = $tl->page['protocol'] . 'm.' . $tl->page['domain'];
-						
-						$authentication_manager->forceRedirect($url);
-					}
-
-				}
-
-				if ($tl->settings['Redirect for tablet'] && !@$tl->page['is_cron'] && $tl->page['subdomain'] != 't') {
-
-					$detect = new Mobile_Detect;
-
-					if ($detect->isTablet()) {
-						if (file_exists('includes/views/tablet/custom/' . $tl->page['template'] . '.php') || file_exists('includes/views/tablet/default/' . $tl->page['template'] . '.php')) $url = $tl->page['protocol'] . 't.' . $tl->page['domain'] . '/' . $tl->page['template'] . '/' . trim($tl->page['parameter1'] . '/' . $tl->page['parameter2'] . '/' . $tl->page['parameter3'] . '/' . $tl->page['parameter4'], '/');
-						else $url = $tl->page['protocol'] . 't.' . $tl->page['domain'];
-						
-						$authentication_manager->forceRedirect($url);
-					}
-
 				}
 		
 			// Set timezone
@@ -395,7 +359,7 @@
 								else {
 
 									$tl->page['title'] = $result[0]['title'];
-									$pageCss = $result[0]['content_css'];
+									$tl->page['css'] = $result[0]['content_css'];
 									include __DIR__ . '/includes/views/' . $view . '/shared/page_top.php';
 
 									$otherLanguages = $cms->retrieveContent([$tablePrefix . 'cms.destination_url'=>$tl->page['template'], $tablePrefix . 'cms.content_type'=>'p', $tablePrefix . 'cms.domain_alias_id'=>$result[0]['domain_alias_id']], $tablePrefix . "cms.cms_id != '" . $result[0]['cms_id'] . "'");
@@ -429,7 +393,7 @@
 
 									if ($logged_in['can_edit_content']) echo "    <div class='text-right'><a href='/admin_cms/" . urlencode("screen=edit_content|cms_id=" . $result[0]['cms_id']) . "' class='btn btn-link'>Edit</a></div>\n";
 
-									$pageJavaScript = $result[0]['content_js'];
+									$tl->page['javascript'] = $result[0]['content_js'];
 									include __DIR__ . '/includes/views/' . $view . '/shared/page_bottom.php';
 
 								}

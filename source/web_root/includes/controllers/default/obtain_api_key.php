@@ -67,7 +67,7 @@
 
 			// create API key
 				$newApiKey = $encrypter->quickEncrypt($user[0]['user_id'] . rand(100000, 999999));
-			
+
 			// save API key
 				insertIntoDb('user_keys', array('user_id'=>$user[0]['user_id'], 'user_key'=>'API', 'hash'=>$newApiKey, 'saved_on'=>date('Y-m-d H:i:s')));
 				

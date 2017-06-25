@@ -66,7 +66,7 @@
 
 			if (file_exists('assets/rumour_attachments/' . $publicID)) $attachments = $directory_manager->read('assets/rumour_attachments/' . $publicID, false, false, true);
 			
-	if (@$filters['view'] == 'sightings') $pageLoadEvents = "populateMap();";
+	if (@$filters['view'] == 'sightings') $tl->page['events'] = "populateMap();";
 	$tl->page['description'] = $rumour[0]['description'];
 
 /*	--------------------------------------
