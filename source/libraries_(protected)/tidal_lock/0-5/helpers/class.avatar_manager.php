@@ -4,7 +4,6 @@
 
 		public function retrieveProfileImage($username, $addRandomToClearCache = true) {
 			
-			global $salts_TL;
 			global $profileImageSizes;
 			global $tl;
 			
@@ -15,7 +14,7 @@
 			
 			$image = array();
 			$encryption = new encrypter_TL();
-			$key = $encryption->quickEncrypt($username, $salts_TL['public_keys']);
+			$key = $encryption->quickEncrypt($username, $tl->salts['public_keys']);
 	
 			$image['key'] = $key;
 			$image['sizes'] = array();
@@ -36,7 +35,6 @@
 		
 		public function createProfileImage($username, $sourceImage) {
 			
-			global $salts_TL;
 			global $profileImageSizes;
 			global $tl;
 			
@@ -51,7 +49,7 @@
 			
 			$error = '';
 			$encryption = new encrypter_TL();
-			$key = $encryption->quickEncrypt($username, $salts_TL['public_keys']);
+			$key = $encryption->quickEncrypt($username, $tl->salts['public_keys']);
 
 			$converter = new media_converter_TL();
 			
@@ -72,7 +70,6 @@
 		
 		public function deleteProfileImage($username) {
 			
-			global $salts_TL;
 			global $profileImageSizes;
 			global $tl;
 	
@@ -83,7 +80,7 @@
 			
 			$error = '';
 			$encryption = new encrypter_TL();
-			$key = $encryption->quickEncrypt($username, $salts_TL['public_keys']);
+			$key = $encryption->quickEncrypt($username, $tl->salts['public_keys']);
 	
 			foreach ($profileImageSizes as $type=>$width) {
 				$filePath = 'assets/profile_images/' . $key . '_' . $type . '.jpg';
