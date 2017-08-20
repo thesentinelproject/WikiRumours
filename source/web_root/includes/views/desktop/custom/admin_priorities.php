@@ -13,6 +13,7 @@
 								echo "  </div>\n"; 
 								echo $form->rowEnd();
 		/* Severity */			echo $form->row('number', 'severity_' . $priorities[$counter]['priority_id'], $operators->firstTrue(@$_POST['severity_' . $priorities[$counter]['priority_id']], @$priorities[$counter]['severity']), false, 'Severity', 'form-control', null, null, array('min'=>0, 'max'=>99));
+		/* Icon */				echo $form->row('text', 'icon_' . $priorities[$counter]['priority_id'], $operators->firstTrue(@$_POST['icon_' . $priorities[$counter]['priority_id']], @$priorities[$counter]['icon']), false, 'Icon', 'form-control', null, 75);
 		/* Action required */	echo $form->rowStart('action_required_in_' . $priorities[$counter]['priority_id'], 'Action required in');
 								echo "  <div class='input-group'>\n";
 								echo "    " .  $form->input('number', 'action_required_in_' . $priorities[$counter]['priority_id'], $operators->firstTrue(@$_POST['action_required_in_' . $priorities[$counter]['priority_id']], @$priorities[$counter]['action_required_in']), false, null, 'form-control', null, null, array('min'=>0, 'max'=>365)) . "\n";
@@ -25,6 +26,7 @@
 
 	/* Priority */			echo $form->row('text', 'priority_add', @$_POST['priority_add'], false, 'Priority', 'form-control', null, 50);
 	/* Severity */			echo $form->row('number', 'severity_add', @$_POST['severity_add'], false, 'Severity', 'form-control', null, null, array('min'=>0, 'max'=>99));
+	/* Icon */				echo $form->row('text', 'icon_add', @$_POST['icon_add'], false, 'Icon', 'form-control', null, 75);
 	/* Action required */	echo $form->rowStart('action_required_in_add', 'Action required in');
 							echo "  <div class='input-group'>\n";
 							echo "    " .  $form->input('number', 'action_required_in_add', @$_POST['action_required_in_add'], false, null, 'form-control', null, null, array('min'=>0, 'max'=>365)) . "\n";

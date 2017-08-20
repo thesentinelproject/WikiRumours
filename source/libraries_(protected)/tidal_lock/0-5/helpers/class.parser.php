@@ -324,7 +324,7 @@
 		Parsing IP
 		-------------------------------------- */
 		
-		function encodeIP($ip, $type = 'ipv4') {
+		function encodeIP($ip) {
 
 			global $tl;
 						
@@ -333,14 +333,10 @@
 					$tl->page['console'] .= __CLASS__ . "->" . __FUNCTION__ . ": No IP specified.\n";
 					return false;
 				}
-				if ($type != 'ipv4' && $type != 'ipv6') {
-					$tl->page['console'] .= __CLASS__ . "->" . __FUNCTION__ . ": Missing or invalid IP type.\n";
-					return false;
-				}
 				
 			// encode for MySQL
-				if ($type == 'ipv4') return ip2long($ip);
-				elseif ($type == 'ipv6') return mysql_real_escape_string(inet_pton($ip));
+				if (strlen($ip) < 16) return ip2long($ip);
+				else return mysql_real_escape_string(inet_pton($ip));
 			
 		}
 		

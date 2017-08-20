@@ -13,9 +13,11 @@
 				$query .= " (SELECT IF (is_closed = 0, DATE_ADD(updated_on, INTERVAL action_required_in DAY), '')) as update_by, ";
 				$query .= " " . $tablePrefix . "countries.country,";
 				$query .= " " . $tablePrefix . "statuses.status,";
+				$query .= " " . $tablePrefix . "statuses.icon as status_icon,";
 				$query .= " " . $tablePrefix . "statuses.is_closed,";
 				$query .= " " . $tablePrefix . "priorities.priority,";
 				$query .= " " . $tablePrefix . "priorities.severity,";
+				$query .= " " . $tablePrefix . "priorities.icon as priority_icon,";
 				$query .= " " . $tablePrefix . "rumours.enabled AS rumour_enabled,";
 				$query .= " TRIM(CONCAT(" . $tablePrefix . "creators.first_name, ' ', " . $tablePrefix . "creators.last_name)) as created_by_full_name,";
 				$query .= " " . $tablePrefix . "creators.username as created_by_username,";
@@ -49,9 +51,11 @@
 				$query .= " (SELECT IF (is_closed = 0, DATE_ADD(updated_on, INTERVAL action_required_in DAY), '')) as update_by, ";
 				$query .= " " . $tablePrefix . "countries.country,";
 				$query .= " " . $tablePrefix . "statuses.status,";
+				$query .= " " . $tablePrefix . "statuses.icon as status_icon,";
 				$query .= " " . $tablePrefix . "statuses.is_closed,";
 				$query .= " " . $tablePrefix . "priorities.priority,";
 				$query .= " " . $tablePrefix . "priorities.severity,";
+				$query .= " " . $tablePrefix . "priorities.icon as priority_icon,";
 				$query .= " " . $tablePrefix . "rumours.enabled AS rumour_enabled,";
 				$query .= " " . $tablePrefix . "rumours.updated_on AS rumour_updated_on,";
 				$query .= " TRIM(CONCAT(" . $tablePrefix . "creators.first_name, ' ', " . $tablePrefix . "creators.last_name)) as created_by_full_name,";

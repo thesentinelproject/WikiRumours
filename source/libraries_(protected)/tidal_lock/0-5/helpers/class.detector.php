@@ -57,12 +57,18 @@
 
 			$this->page['root'] = trim($_SERVER['SERVER_NAME'], '/');
 	
-			if (substr_count(trim($_SERVER['SERVER_NAME'], '/'), '.') < 2) { // e.g. mydomain.com
-				$this->page['domain'] = trim($_SERVER['SERVER_NAME'], '/');
+			if (substr_count($this->page['root'], '.') < 2) { // e.g. mydomain.com
+				if (substr($this->page['root'], strpos($this->page['root'], '.') + 1, 9) == 'localhost') {
+					$this->page['domain'] = substr($this->page['root'], strpos($this->page['root'], '.') + 1);
+					$this->page['subdomain'] = substr($this->page['root'], 0, strpos($this->page['root'], '.'));
+				}
+				else {
+					$this->page['domain'] = $this->page['root'];
+				}
 			}
 			else {
-				$this->page['subdomain'] = substr(trim($_SERVER['SERVER_NAME'], '/'), 0, strpos(trim($_SERVER['SERVER_NAME'], '/'), '.')); // e.g. www
-				$this->page['domain'] = substr(trim($_SERVER['SERVER_NAME'], '/'), strpos(trim($_SERVER['SERVER_NAME'], '/'), '.') + 1); // e.g. mydomain.com
+				$this->page['subdomain'] = substr($this->page['root'], 0, strpos($this->page['root'], '.')); // e.g. www
+				$this->page['domain'] = substr($this->page['root'], strpos($this->page['root'], '.') + 1); // e.g. mydomain.com
 			}
 			
 			if (@$_SERVER['HTTPS']) $this->page['protocol'] = 'https://';

@@ -22,7 +22,7 @@
 				if (count($doesUserExist) > 0) {
 					// create key and expiry
 						$encryption = new encrypter_TL();
-						$key = $encryption->quickEncrypt($_POST['email'], $salts_TL['public_keys']);
+						$key = $encryption->quickEncrypt($_POST['email'], $tl->salts['public_keys']);
 						$expiryDate = date('Y-m-d', mktime(0, 0, 0, date('m'), date('d') + $tl->settings['Password reset link active for'], date('Y'))); // one week
 					// save key to database with expiry
 						deleteFromDb('user_keys', array('user_key'=>'Reset Password', 'user_id'=>$doesUserExist[0]['user_id']));

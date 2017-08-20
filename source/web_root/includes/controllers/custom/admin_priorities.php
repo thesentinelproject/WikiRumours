@@ -66,11 +66,11 @@
 				
 				// update edit
 					for ($counter = 0; $counter < count($priorities); $counter++) {
-						updateDb('priorities', array('priority'=>$_POST['priority_' . $priorities[$counter]['priority_id']], 'severity'=>$_POST['severity_' . $priorities[$counter]['priority_id']], 'action_required_in'=>$_POST['action_required_in_' . $priorities[$counter]['priority_id']]), array('priority_id'=>$priorities[$counter]['priority_id']), null, null, null, null, 1);
+						updateDb('priorities', array('priority'=>$_POST['priority_' . $priorities[$counter]['priority_id']], 'severity'=>$_POST['severity_' . $priorities[$counter]['priority_id']], 'icon'=>$_POST['icon_' . $priorities[$counter]['priority_id']], 'action_required_in'=>$_POST['action_required_in_' . $priorities[$counter]['priority_id']]), array('priority_id'=>$priorities[$counter]['priority_id']), null, null, null, null, 1);
 					}
 				// update add
 					if ($_POST['priority_add']) {
-						$faqID = insertIntoDb('priorities', array('priority'=>$_POST['priority_add'], 'severity'=>$_POST['severity_add'], 'action_required_in'=>$_POST['action_required_in_add']));
+						$faqID = insertIntoDb('priorities', array('priority'=>$_POST['priority_add'], 'severity'=>$_POST['severity_add'], 'icon'=>$_POST['icon_add'], 'action_required_in'=>$_POST['action_required_in_add']));
 					}
 
 				// update log

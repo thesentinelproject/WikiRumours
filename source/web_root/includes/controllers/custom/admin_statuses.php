@@ -67,10 +67,10 @@
 				
 				// update edit
 					for ($counter = 0; $counter < count($statuses); $counter++) {
-						updateDb('statuses', array('status'=>$_POST['status_' . $statuses[$counter]['status_id']], 'position'=>$_POST['position_' . $statuses[$counter]['status_id']], 'is_closed'=>$_POST['is_closed_' . $statuses[$counter]['status_id']]), array('status_id'=>$statuses[$counter]['status_id']), null, null, null, null, 1);
+						updateDb('statuses', array('status'=>$_POST['status_' . $statuses[$counter]['status_id']], 'position'=>$_POST['position_' . $statuses[$counter]['status_id']], 'icon'=>$_POST['icon_' . $statuses[$counter]['status_id']], 'is_closed'=>$_POST['is_closed_' . $statuses[$counter]['status_id']]), array('status_id'=>$statuses[$counter]['status_id']), null, null, null, null, 1);
 					}
 				// update add
-					if ($_POST['status_add']) insertIntoDb('statuses', array('status'=>$_POST['status_add'], 'position'=>$_POST['position_add'], 'is_closed'=>$_POST['is_closed_add']));
+					if ($_POST['status_add']) insertIntoDb('statuses', array('status'=>$_POST['status_add'], 'position'=>$_POST['position_add'], 'icon'=>$_POST['icon_add'], 'is_closed'=>$_POST['is_closed_add']));
 
 				// update log
 					$activity = $logged_in['full_name'] . " (user_id " . $logged_in['user_id'] . ") has updated statuses";

@@ -33,7 +33,7 @@
 
 					$logged_in = $authentication_manager->confirmUser('username', $_POST['loginUsername'], null, $_POST['loginPassword']);
 
-					if (!@$logged_in['error']) {
+					if (!@$logged_in['error'] && $logged_in['enabled']) {
 
 						// set cookies
 							$_SESSION['username'] = $_POST['loginUsername'];

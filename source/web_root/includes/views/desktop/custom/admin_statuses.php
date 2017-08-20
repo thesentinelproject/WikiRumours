@@ -17,6 +17,7 @@
 									echo "    <div class='col-lg-3 col-md-3 col-sm-3 col-xs-3 text-right'>" .  $form->input('button', 'delete_status_button_' .$statuses[$counter]['status_id'], null, false, 'Delete?', 'btn btn-link', null, null, null, null, array('onClick'=>'validateDeleteStatus("' . $statuses[$counter]['status_id'] . '"); return false;')) . "</div>\n";
 									echo "  </div>\n"; 
 									echo $form->rowEnd();
+			/* Icon */				echo $form->row('text', 'icon_' . $statuses[$counter]['status_id'], $operators->firstTrue(@$_POST['icon_' . $statuses[$counter]['status_id']], @$statuses[$counter]['icon']), false, 'Icon', 'form-control', null, 75);
 			/* # Rumours */			echo $form->input('hidden', 'number_of_rumours_' . $statuses[$counter]['status_id'], @$statuses[$counter]['number_of_rumours']);
 			/* Prohibited */		echo $form->input('hidden', 'delete_prohibited_' . $statuses[$counter]['status_id'], @$statuses[$counter]['delete_prohibited']);
 			echo "<hr />";
@@ -32,6 +33,7 @@
 								echo "    <div class='col-lg-3 col-md-3 col-sm-3 col-xs-3 text-center'>" .  $form->input('yesno_bootstrap_switch', 'is_closed_add', @$_POST['is_closed_add'], false, 'Indicates closed?', null, null, null, array('data-on-color'=>'default', 'data-off-color'=>'default')) . "</div>\n";
 								echo "  </div>\n"; 
 								echo $form->rowEnd();
+		/* Icon */				echo $form->row('text', 'icon_add', @$_POST['icon_add'], false, 'Icon', 'form-control', null, 75);
 		/* Actions */			echo $form->row('submit', 'submit_button', null, false, 'Save', 'btn btn-info');
 
 	echo "  " . $form->end() . "\n";

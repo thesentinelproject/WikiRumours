@@ -32,7 +32,7 @@
 				if (!$key || !$value || (!$hashedPassword && !$unhashedPassword)) return false;
 
 			// check user & password
-				$user = retrieveUsers(array($key=>$value, 'enabled'=>'1'), null, null, null, 1);
+				$user = retrieveUsers([$key=>$value], null, null, null, 1);
 
 				if (!count($user)) return array('error'=>"Invalid login. Please try again.");  // user not found
 				if ($hashedPassword && $hashedPassword != $user[0]['password_hash']) return array('error'=>"Invalid login. Please try again.");  // password hash is incorrect
@@ -73,14 +73,14 @@
 
 		public function forceRedirect($url) {
 
-			global $sessionID;
+			global $tl;
 			global $dbConnection;
 
 			// check for errors
 				if (!$url) return false;
 
 			// clear session in DB
-				if (@$sessionID) deleteFromDbSingle('sessions', array('session_id'=>$sessionID));
+				if (@$tl->session['id']) deleteFromDbSingle('sessions', array('session_id'=>$tl->session['id']));
 
 			// redirect
 				header ('Location: ' . $url);
