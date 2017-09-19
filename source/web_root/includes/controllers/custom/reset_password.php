@@ -35,17 +35,26 @@
 			
 		// retrieve user details and reset password if appropriate
 			if (!$tl->page['error']) {
+
 				// calculate password score
 					$score = floatval($security_manager->checkPasswordStrength($_POST['password'])) * 100;
+
 				// update user
 					updateDbSingle('users', array('password_hash'=>$hash, 'password_score'=>$score), array('user_id'=>$doesKeyExist[0]['user_id']));
+
 				// update log
-					$activity = $doesUserExist[0]['full_name'] . " (user_id " . $doesKeyExist[0]['user_id'] . ") has successfully updated his/her password";
+					$activity = $doesUserExist[0]['full_name'] . " has successfully updated his/her password";
 					$logger->logItInDb($activity, null, array('user_id=' . $doesKeyExist[0]['user_id']));
+
+					$attributableOutput = $attributable->capture($activity, null, ['user_id'=>$doesUserExist[0]['user_id'], 'first_name'=>$doesUserExist[0]['first_name'], 'last_name'=>$doesUserExist[0]['last_name'], 'email'=>$doesUserExist[0]['email'], 'phone'=>$doesUserExist[0]['primary_phone']], ['domain_alias_id'=>@$tl->page['domain_alias']['cms_id']]);
+					if (!@count($attributableOutput['content']['success'])) emailSystemNotification(__FILE__ . ": " . (is_array($attributableOutput) ? print_r($attributableOutput, true) : $attributableOutput) . (@$logged_in ? " [" . $logged_in['username'] . "]" : false), 'Attributable failure');
+
 				// remove key
 					deleteFromDb('user_keys', array('user_key'=>'Reset Password', 'user_id'=>$doesKeyExist[0]['user_id']));
+
 				// redirect
 					$authentication_manager->forceRedirect('/login_register/success=password_reset_successful');
+
 			}
 
 

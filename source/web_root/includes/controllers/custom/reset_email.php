@@ -23,8 +23,11 @@
 				// update user
 					updateDb('users', array('email'=>$doesKeyExist[0]['value']), array('user_id'=>$user[0]['user_id']), null, null, null, null, 1);
 				// update log
-					$activity = $user[0]['full_name'] . " (user_id " . $user[0]['user_id'] . ") has successfully updated his/her email address";
+					$activity = $user[0]['full_name'] . " has successfully updated his/her email address";
 					$logger->logItInDb($activity, null, array('user_id=' . $user[0]['user_id']));
+
+					$attributableOutput = $attributable->capture($activity, null, ['user_id'=>$user[0]['user_id'], 'first_name'=>$user[0]['first_name'], 'last_name'=>$user[0]['last_name'], 'email'=>$user[0]['email'], 'phone'=>$user[0]['primary_phone']], ['domain_alias_id'=>@$tl->page['domain_alias']['cms_id']]);
+					if (!@count($attributableOutput['content']['success'])) emailSystemNotification(__FILE__ . ": " . (is_array($attributableOutput) ? print_r($attributableOutput, true) : $attributableOutput) . (@$logged_in ? " [" . $logged_in['username'] . "]" : false), 'Attributable failure');
 				// remove key
 					deleteFromDb('user_keys', array('user_key'=>'Reset Email', 'hash'=>$key));
 				// update session variable if set

@@ -1,6 +1,6 @@
 <?php
 
-	function retrieveUsers($matching, $containing = null, $otherCriteria = null, $sortBy = false, $limit = false) {
+	function retrieveUsers($matching = null, $containing = null, $otherCriteria = null, $sortBy = false, $limit = false) {
 		
 		global $dbConnection;
 		global $tablePrefix;

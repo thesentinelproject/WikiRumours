@@ -241,13 +241,19 @@
 					if (count($moderators) < 1) {
 						$activity = "Added a rumour, but no moderator has been designated to assign it.";
 						$logger->logItInDb($activity, null, null, array('is_error'=>'1', 'is_resolved'=>'0'));
+
+						$attributableOutput = $attributable->capture($activity, null, ['user_id'=>$logged_in['user_id'], 'first_name'=>$logged_in['first_name'], 'last_name'=>$logged_in['last_name'], 'email'=>$logged_in['email'], 'phone'=>$logged_in['primary_phone']], ['rumour_id'=>$operators->firstTrue(@$rumourID, @$rumour[0]['rumour_id']), 'domain_alias_id'=>@$tl->page['domain_alias']['cms_id']], '1');
+						if (!@count($attributableOutput['content']['success'])) emailSystemNotification(__FILE__ . ": " . (is_array($attributableOutput) ? print_r($attributableOutput, true) : $attributableOutput) . (@$logged_in ? " [" . $logged_in['username'] . "]" : false), 'Attributable failure');
 					}
 					else {
 						for ($counter = 0; $counter < count($moderators); $counter++) {
 							$success = notifyOfRumour($moderators[$counter]['full_name'], $moderators[$counter]['email'], $operators->firstTrue(@$newRumourPublicID, @$rumour[0]['public_id']), $_POST['description']);
 							if (!$success) {
-								$activity = "Unable to email " . $moderators[$counter]['full_name'] . " (" . $moderators[$counter]['email'] . ") of a new rumour with rumour_id " . $rumourID . " (" . $operators->firstTrue(@$newRumourPublicID, @$rumour[0]['public_id']) . "):" . $_POST['description'];
+								$activity = "Unable to email the moderator " . $moderators[$counter]['full_name'] . " of a the rumour &quot;" . $_POST['description'] . "&quot;";
 								$logger->logItInDb($activity);
+
+								$attributableOutput = $attributable->capture($activity, null, ['user_id'=>$logged_in['user_id'], 'first_name'=>$logged_in['first_name'], 'last_name'=>$logged_in['last_name'], 'email'=>$logged_in['email'], 'phone'=>$logged_in['primary_phone']], ['rumour_id'=>$operators->firstTrue(@$rumourID, @$rumour[0]['rumour_id']), 'domain_alias_id'=>@$tl->page['domain_alias']['cms_id']], '1');
+								if (!@count($attributableOutput['content']['success'])) emailSystemNotification(__FILE__ . ": " . (is_array($attributableOutput) ? print_r($attributableOutput, true) : $attributableOutput) . (@$logged_in ? " [" . $logged_in['username'] . "]" : false), 'Attributable failure');
 							}
 						}
 					}
@@ -264,12 +270,24 @@
 			// update log
 				if (!$tl->page['error']) {
 					if ($matchingRumour) {
-						$activity = $logged_in['full_name'] . " (user_id " . $logged_in['user_id'] . ") has added a sighting for rumour_id " . $rumour[0]['rumour_id'] . ": " . $rumour[0]['description'];
+						$activity = $logged_in['full_name'] . " has added a sighting for the rumour &quot;" . $rumour[0]['description'] . "&quot;";
 						$logger->logItInDb($activity, null, array('user_id=' . $logged_in['user_id'], 'user_id=' . $heardBy, 'rumour_id=' . $rumour[0]['rumour_id'], 'sighting_id=' . $sightingID));
+
+						$attributableOutput = $attributable->capture($activity, null, ['user_id'=>$logged_in['user_id'], 'first_name'=>$logged_in['first_name'], 'last_name'=>$logged_in['last_name'], 'email'=>$logged_in['email'], 'phone'=>$logged_in['primary_phone']], ['user_id'=>$heardBy, 'rumour_id'=>$rumour[0]['rumour_id'], 'sighting_id'=>$sightingID, 'domain_alias_id'=>@$tl->page['domain_alias']['cms_id']]);
+						if (!@count($attributableOutput['content']['success'])) emailSystemNotification(__FILE__ . ": " . (is_array($attributableOutput) ? print_r($attributableOutput, true) : $attributableOutput) . (@$logged_in ? " [" . $logged_in['username'] . "]" : false), 'Attributable failure');
+
+						$sightings = retrieveSightings(['domain_alias_id'=>@$tl->page['domain_alias']['cms_id']]);
+						$attributableOutput = $attributable->measure(trim(@$tl->page['domain_alias']['title'] . " Sightings"), "=" . count($sightings));
 					}
 					else {
-						$activity = $logged_in['full_name'] . " (user_id " . $logged_in['user_id'] . ") has added rumour_id " . $rumourID . ": " . $_POST['description'];
+						$activity = $logged_in['full_name'] . " has added the rumour &quot;" . $_POST['description'] . "&quot;";
 						$logger->logItInDb($activity, null, array('user_id=' . $logged_in['user_id'], 'user_id=' . $heardBy, 'rumour_id=' . $rumourID, 'sighting_id=' . $sightingID));
+
+						$attributableOutput = $attributable->capture($activity, null, ['user_id'=>$logged_in['user_id'], 'first_name'=>$logged_in['first_name'], 'last_name'=>$logged_in['last_name'], 'email'=>$logged_in['email'], 'phone'=>$logged_in['primary_phone']], ['user_id'=>$heardBy, 'rumour_id'=>$rumourID, 'sighting_id'=>$sightingID, 'domain_alias_id'=>@$tl->page['domain_alias']['cms_id']]);
+						if (!@count($attributableOutput['content']['success'])) emailSystemNotification(__FILE__ . ": " . (is_array($attributableOutput) ? print_r($attributableOutput, true) : $attributableOutput) . (@$logged_in ? " [" . $logged_in['username'] . "]" : false), 'Attributable failure');
+
+						$rumours = retrieveRumours(['domain_alias_id'=>@$tl->page['domain_alias']['cms_id']]);
+						$attributableOutput = $attributable->measure(trim(@$tl->page['domain_alias']['title'] . " Rumours"), "=" . count($rumours));
 					}
 				}
 				

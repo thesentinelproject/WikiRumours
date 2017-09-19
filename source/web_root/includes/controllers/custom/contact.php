@@ -50,11 +50,19 @@
 							$activity .= $_POST['email'];
 							$activity .= ") has messaged " . $tl->settings['Name of this application'] . " through the contact form:\n\n" . $_POST['message'];
 							$logger->logItInDb($activity);
+
+							if ($logged_in) $author = ['user_id'=>$logged_in['user_id'], 'first_name'=>$logged_in['first_name'], 'last_name'=>$logged_in['last_name'], 'email'=>$logged_in['email'], 'phone'=>$logged_in['primary_phone']];
+							$attributableOutput = $attributable->capture($activity, null, @$author, ['domain_alias_id'=>@$tl->page['domain_alias']['cms_id']]);
+							if (!@count($attributableOutput['content']['success'])) emailSystemNotification(__FILE__ . ": " . (is_array($attributableOutput) ? print_r($attributableOutput, true) : $attributableOutput), 'Attributable failure');
 							
 					}
 					else {
 						$tl->page['error'] = "Unknown error attempting to send email. Please try again.";
-						$logger->logItInDb("Contact form failed to send email.", null, null, array('is_error'=>'1', 'is_resolved'=>'0'));
+						$activity = "Contact form failed to send email.";
+						$logger->logItInDb($activity, null, null, array('is_error'=>'1', 'is_resolved'=>'0'));
+
+						$attributableOutput = $attributable->capture($activity, null, ['user_id'=>$userID, 'first_name'=>$registration[0]['first_name'], 'last_name'=>$registration[0]['last_name'], 'email'=>$registration[0]['email'], 'phone'=>$registration[0]['primary_phone']], ['domain_alias_id'=>@$tl->page['domain_alias']['cms_id']], 1);
+						if (!@count($attributableOutput['content']['success'])) emailSystemNotification(__FILE__ . ": " . (is_array($attributableOutput) ? print_r($attributableOutput, true) : $attributableOutput), 'Attributable failure');
 					}
 				}
 			}

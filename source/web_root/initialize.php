@@ -210,6 +210,29 @@
 				date_default_timezone_set($tl->settings['Home timezone']);
 				putenv('TZ=' . $tl->settings['Home timezone']);
 				
+			// Initialize Attributable
+				if (@$attributableConfig[$currentAttributableCredentials]['API']) {
+					$attributable = new attributable();
+					$attributable->key = $attributableConfig[$currentAttributableCredentials]['API'];
+				}
+
+			// Terminate session for blacklisted IPs
+				if ($tl->settings['Block blacklisted users']) {
+
+					$tl->initialize['connecting_ip'] = (@$_SERVER['REMOTE_ADDR'] ? $_SERVER['REMOTE_ADDR'] : @$_SERVER['REMOTE_HOST']);
+					if (strlen($tl->initialize['connecting_ip']) < 16) $tl->initialize['blacklisted'] = $database_manager->retrieveSingle('blacklisted_ips', null, ['ipv4'=>$parser->encodeIP($tl->initialize['connecting_ip'])]);
+					elseif ($tl->initialize['connecting_ip']) $tl->initialize['blacklisted'] = $database_manager->retrieveSingle('blacklisted_ips', null, ['ipv6'=>$parser->encodeIP($tl->initialize['connecting_ip'])]);
+
+					if (count(@$tl->initialize['blacklisted'])) {
+						$activity = "Attempted connection by blacklisted IP " . $tl->initialize['connecting_ip'] . " intercepted";
+						$attributableOutput = $attributable->capture($activity, null, null, ['domain_alias_id'=>@$tl->page['domain_alias']['cms_id']]);
+						if (!@count($attributableOutput['content']['success'])) emailSystemNotification(__FILE__ . ": " . (is_array($attributableOutput) ? print_r($attributableOutput, true) : $attributableOutput) . (@$logged_in ? " [" . $logged_in['username'] . "]" : false), 'Attributable failure');
+
+						$tl->page['template'] = 'blacklisted';
+					}
+
+				}
+
 			// Verify cron connection
 				if (@$currentDatabase == 'production') {
 
@@ -240,7 +263,12 @@
 							}
 							
 							if ($tl->initialize['cron_error']) {
-								$logger->logItInDb($tl->initialize['cron_error'], null, null, array('is_error'=>'1', 'is_resolved'=>'0'), true);
+								$activity = $tl->initialize['cron_error'];
+								$logger->logItInDb($activity, null, null, array('is_error'=>'1', 'is_resolved'=>'0'), true);
+
+								$attributableOutput = $attributable->capture($activity, null, ['user_id'=>$logged_in['user_id'], 'first_name'=>$logged_in['first_name'], 'last_name'=>$logged_in['last_name'], 'email'=>$logged_in['email'], 'phone'=>$logged_in['primary_phone']], ['user_id'=>@$user[0]['user_id'], 'domain_alias_id'=>@$tl->page['domain_alias']['cms_id']], 1);
+								if (!@count($attributableOutput['content']['success'])) emailSystemNotification(__FILE__ . ": " . (is_array($attributableOutput) ? print_r($attributableOutput, true) : $attributableOutput) . (@$logged_in ? " [" . $logged_in['username'] . "]" : false), 'Attributable failure');
+
 								emailSystemNotification($tl->initialize['cron_error'], 'Critical error');
 							}
 						}
@@ -280,13 +308,6 @@
 					unset($otherCriteria);
 				}
 
-			// terminate session for banned IPs
-				$tl->initialize['blacklisted_or_suspicious'] = $database_manager->retrieveSingle('ips', null, ['ip'=>(@$_SERVER['REMOTE_ADDR'] ? $_SERVER['REMOTE_ADDR'] : @$_SERVER['REMOTE_HOST'])], null, null, null, "status = 'b' OR status = 's'");
-				if (count($tl->initialize['blacklisted_or_suspicious'])) {
-					$database_manager->updateSingle('ips', ['user_id'=>@$logged_in['user_id'], 'attempts'=>(floatval($tl->initialize['blacklisted_or_suspicious'][0]['attempts']) + 1), 'updated_on'=>date('Y-m-d H:i:s')], ['ip_id'=>$tl->initialize['blacklisted_or_suspicious'][0]['ip_id']]);
-					if ($tl->initialize['blacklisted_or_suspicious'][0]['status'] == 'b') $tl->page['template'] = 'blacklisted';
-				}
-				
 			// Log session in DB
 				$tl->session['id'] = rand(1,999999999);
 				$database_manager->insert('sessions', ['session_id'=>$tl->session['id'], 'connected_on'=>date('Y-m-d H:i:s'), 'template'=>$_SERVER['REQUEST_URI'], 'user_id'=>@$logged_in['user_id'], 'user_agent'=>$_SERVER['HTTP_USER_AGENT'], 'ip'=>(@$_SERVER['REMOTE_ADDR'] ? $_SERVER['REMOTE_ADDR'] : @$_SERVER['REMOTE_HOST'])]);

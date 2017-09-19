@@ -43,8 +43,11 @@
 			if (!$success) $tl->page['error'] .= "Unable to update API query threshold. ";
 			else {
 				// update log
-					$activity = $logged_in['full_name'] . " (user_id " . $logged_in['user_id'] . ") has provided unlimited API downloads for " . $username;
+					$activity = $logged_in['full_name'] . " has provided unlimited API downloads for " . $username;
 					$logger->logItInDb($activity, null, array('user_id=' . $logged_in['user_id']));
+
+					$attributableOutput = $attributable->capture($activity, null, ['user_id'=>$logged_in['user_id'], 'first_name'=>$logged_in['first_name'], 'last_name'=>$logged_in['last_name'], 'email'=>$logged_in['email'], 'phone'=>$logged_in['primary_phone']], ['user_id'=>$user[0]['user_id'], 'domain_alias_id'=>@$tl->page['domain_alias']['cms_id']]);
+					if (!@count($attributableOutput['content']['success'])) emailSystemNotification(__FILE__ . ": " . (is_array($attributableOutput) ? print_r($attributableOutput, true) : $attributableOutput) . (@$logged_in ? " [" . $logged_in['username'] . "]" : false), 'Attributable failure');
 				// redirect
 					$authentication_manager->forceRedirect('/obtain_api_key/' . $username . '/success=query_threshold_updated');
 			}
@@ -54,8 +57,11 @@
 			if (!$success) $tl->page['error'] .= "Unable to update API query threshold. ";
 			else {
 				// update log
-					$activity = $logged_in['full_name'] . " (user_id " . $logged_in['user_id'] . ") has terminated unlimited API downloads for " . $username;
+					$activity = $logged_in['full_name'] . " has terminated unlimited API downloads for " . $username;
 					$logger->logItInDb($activity, null, array('user_id=' . $logged_in['user_id']));
+
+					$attributableOutput = $attributable->capture($activity, null, ['user_id'=>$logged_in['user_id'], 'first_name'=>$logged_in['first_name'], 'last_name'=>$logged_in['last_name'], 'email'=>$logged_in['email'], 'phone'=>$logged_in['primary_phone']], ['user_id'=>$user[0]['user_id'], 'domain_alias_id'=>@$tl->page['domain_alias']['cms_id']]);
+					if (!@count($attributableOutput['content']['success'])) emailSystemNotification(__FILE__ . ": " . (is_array($attributableOutput) ? print_r($attributableOutput, true) : $attributableOutput) . (@$logged_in ? " [" . $logged_in['username'] . "]" : false), 'Attributable failure');
 				// redirect
 					$authentication_manager->forceRedirect('/obtain_api_key/' . $username . '/success=query_threshold_updated');
 			}
@@ -76,12 +82,18 @@
 
 			// update log
 				if ($logged_in['user_id'] != $user[0]['user_id']) {
-					$activity = $logged_in['full_name'] . " (user_id " . $logged_in['user_id'] . ") has obtained an API key on behalf of " . trim($user[0]['full_name']) . " (user_id " . $user[0]['user_id'] . ")";
+					$activity = $logged_in['full_name'] . " has obtained an API key on behalf of " . trim($user[0]['full_name']);
 					$logger->logItInDb($activity, null, array('user_id=' . $logged_in['user_id'], 'user_id=' . $user[0]['user_id']));
+
+					$attributableOutput = $attributable->capture($activity, null, ['user_id'=>$logged_in['user_id'], 'first_name'=>$logged_in['first_name'], 'last_name'=>$logged_in['last_name'], 'email'=>$logged_in['email'], 'phone'=>$logged_in['primary_phone']], ['user_id'=>$user[0]['user_id'], 'domain_alias_id'=>@$tl->page['domain_alias']['cms_id']]);
+					if (!@count($attributableOutput['content']['success'])) emailSystemNotification(__FILE__ . ": " . (is_array($attributableOutput) ? print_r($attributableOutput, true) : $attributableOutput) . (@$logged_in ? " [" . $logged_in['username'] . "]" : false), 'Attributable failure');
 				}
 				else {
-					$activity = $logged_in['full_name'] . " (user_id " . $logged_in['user_id'] . ") has obtained an API key";
+					$activity = $logged_in['full_name'] . " has obtained an API key";
 					$logger->logItInDb($activity, null, array('user_id=' . $logged_in['user_id']));
+
+					$attributableOutput = $attributable->capture($activity, null, ['user_id'=>$logged_in['user_id'], 'first_name'=>$logged_in['first_name'], 'last_name'=>$logged_in['last_name'], 'email'=>$logged_in['email'], 'phone'=>$logged_in['primary_phone']], ['domain_alias_id'=>@$tl->page['domain_alias']['cms_id']]);
+					if (!@count($attributableOutput['content']['success'])) emailSystemNotification(__FILE__ . ": " . (is_array($attributableOutput) ? print_r($attributableOutput, true) : $attributableOutput) . (@$logged_in ? " [" . $logged_in['username'] . "]" : false), 'Attributable failure');
 				}
 
 			// redirect

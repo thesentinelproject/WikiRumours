@@ -92,8 +92,11 @@
 						if (count($anyOtherRumours) < 1) deleteFromDb('tags', array('tag_id'=>$_POST['tagToRemove']), null, null, null, null, 1);
 		
 					// update log
-						$activity = $logged_in['full_name'] . " (user_id " . $logged_in['user_id'] . ") has removed the tag &quot;" . $tag[0]['tag'] . "&quot; (tag_id " . $_POST['tagToRemove'] . ") from rumour_id " . $rumour[0]['rumour_id'] . ": " . $rumour[0]['description'];
+						$activity = $logged_in['full_name'] . " has removed the tag &quot;" . $tag[0]['tag'] . "&quot; from the rumour &quot;" . $rumour[0]['description'] . "&quot;";
 						$logger->logItInDb($activity, null, array('user_id=' . $logged_in['user_id'], 'rumour_id=' . $rumour[0]['rumour_id'], 'tag_id=' . $_POST['tagToRemove']));
+
+						$attributableOutput = $attributable->capture($activity, null, ['user_id'=>$logged_in['user_id'], 'first_name'=>$logged_in['first_name'], 'last_name'=>$logged_in['last_name'], 'email'=>$logged_in['email'], 'phone'=>$logged_in['primary_phone']], ['rumour_id'=>$rumour[0]['rumour_id'], 'tag_id'=>$_POST['tagToRemove']]);
+						if (!@count($attributableOutput['content']['success'])) emailSystemNotification(__FILE__ . ": " . (is_array($attributableOutput) ? print_r($attributableOutput, true) : $attributableOutput) . (@$logged_in ? " [" . $logged_in['username'] . "]" : false), 'Attributable failure');
 						
 					// redirect
 						$authentication_manager->forceRedirect('/rumour/' . $publicID . '/' . $parser->seoFriendlySuffix($rumour[0]['description']) . '/' . $keyvalue_array->updateKeyValue($tl->page['parameter3'], 'view', 'rumour', '|') . '/success=tag_removed');
@@ -126,8 +129,11 @@
 							insertIntoDb('rumours_x_tags', array('tag_id'=>$tagID, 'rumour_id'=>$rumour[0]['rumour_id'], 'added_by'=>$logged_in['user_id'], 'added_on'=>date('Y-m-d H:i:s')));
 
 						// update log
-							$activity = $logged_in['full_name'] . " (user_id " . $logged_in['user_id'] . ") has added the tag &quot;" . $_POST['new_tags'][$counter] . "&quot; (tag_id " . $tagID . ") to rumour_id " . $rumour[0]['rumour_id'] . ": " . $rumour[0]['description'];
+							$activity = $logged_in['full_name'] . " has added the tag &quot;" . $_POST['new_tags'][$counter] . "&quot; to the rumour &quot;" . $rumour[0]['description'] . "&quot;";
 							$logger->logItInDb($activity, null, array('user_id=' . $logged_in['user_id'], 'rumour_id=' . $rumour[0]['rumour_id'], 'tag_id=' . $tagID));
+
+							$attributableOutput = $attributable->capture($activity, null, ['user_id'=>$logged_in['user_id'], 'first_name'=>$logged_in['first_name'], 'last_name'=>$logged_in['last_name'], 'email'=>$logged_in['email'], 'phone'=>$logged_in['primary_phone']], ['rumour_id'=>$rumour[0]['rumour_id'], 'tag_id'=>$tagID]);
+							if (!@count($attributableOutput['content']['success'])) emailSystemNotification(__FILE__ . ": " . (is_array($attributableOutput) ? print_r($attributableOutput, true) : $attributableOutput) . (@$logged_in ? " [" . $logged_in['username'] . "]" : false), 'Attributable failure');
 							
 					}
 
@@ -148,9 +154,12 @@
 						deleteFromDb('rumour_sightings', array('sighting_id'=>$_POST['sightingToRemove']), null, null, null, null, 1);
 		
 					// update log
-						$activity = $logged_in['full_name'] . " (user_id " . $logged_in['user_id'] . ") has removed a sighting from the rumour &quot;" . $rumour[0]['description'] . "&quot; (public_id " . $publicID . ")";
+						$activity = $logged_in['full_name'] . " has removed a sighting from the rumour &quot;" . $rumour[0]['description'] . "&quot;";
 						$logger->logItInDb($activity, null, array('user_id=' . $logged_in['user_id'], 'rumour_id=' . $rumour[0]['rumour_id'], 'sighting_id=' . $_POST['sightingToRemove']));
 						
+						$attributableOutput = $attributable->capture($activity, null, ['user_id'=>$logged_in['user_id'], 'first_name'=>$logged_in['first_name'], 'last_name'=>$logged_in['last_name'], 'email'=>$logged_in['email'], 'phone'=>$logged_in['primary_phone']], ['rumour_id'=>$rumour[0]['rumour_id'], 'sighting_id'=>$_POST['sightingToRemove']]);
+						if (!@count($attributableOutput['content']['success'])) emailSystemNotification(__FILE__ . ": " . (is_array($attributableOutput) ? print_r($attributableOutput, true) : $attributableOutput) . (@$logged_in ? " [" . $logged_in['username'] . "]" : false), 'Attributable failure');
+
 					// redirect
 						$authentication_manager->forceRedirect('/rumour/' . $publicID . '/' . $parser->seoFriendlySuffix($rumour[0]['description']) . '/' . $keyvalue_array->updateKeyValue($tl->page['parameter3'], 'view', 'sightings', '|') . '/success=sighting_removed');
 
@@ -221,9 +230,15 @@
 					$sightingID = insertIntoDb('rumour_sightings', array('public_id'=>$sightingPublicID, 'rumour_id'=>$rumour[0]['rumour_id'], 'created_by'=>$createdBy, 'entered_by'=>$logged_in['user_id'], 'entered_on'=>date('Y-m-d H:i:s'), 'source_id'=>$_POST['source_id'], 'ipv4'=>@$ipv4, 'ipv6'=>@$ipv6, 'country_id'=>$_POST['country'], 'city'=>@$_POST['city'], 'location_type'=>@$_POST['location_type'], 'latitude'=>@$latLong[0]['latitude'], 'longitude'=>@$latLong[0]['longitude'], 'heard_on'=>$_POST['heard_on']));
 										
 				// update log
-					$activity = $logged_in['full_name'] . " (user_id " . $logged_in['user_id'] . ") has added a sighting (sighting_id " . $sightingID . ") of rumour_id " . $rumour[0]['rumour_id'] . ": " . $rumour[0]['description'];
+					$activity = $logged_in['full_name'] . " has added a sighting to the rumour &quot;" . $rumour[0]['description'] . "&quot;";
 					$logger->logItInDb($activity, null, array('user_id=' . $logged_in['user_id'], 'rumour_id=' . $rumour[0]['rumour_id'], 'sighting_id=' . $sightingID));
+
+					$attributableOutput = $attributable->capture($activity, null, ['user_id'=>$logged_in['user_id'], 'first_name'=>$logged_in['first_name'], 'last_name'=>$logged_in['last_name'], 'email'=>$logged_in['email'], 'phone'=>$logged_in['primary_phone']], ['rumour_id'=>$rumour[0]['rumour_id'], 'sighting_id'=>$sightingID, 'domain_alias_id'=>@$tl->page['domain_alias']['cms_id']]);
+					if (!@count($attributableOutput['content']['success'])) emailSystemNotification(__FILE__ . ": " . (is_array($attributableOutput) ? print_r($attributableOutput, true) : $attributableOutput) . (@$logged_in ? " [" . $logged_in['username'] . "]" : false), 'Attributable failure');
 					
+					$sightings = retrieveSightings(['domain_alias_id'=>@$tl->page['domain_alias']['cms_id']]);
+					$attributableOutput = $attributable->measure(trim(@$tl->page['domain_alias']['title'] . " Sightings"), "=" . count($sightings));
+
 				// redirect
 					$authentication_manager->forceRedirect('/rumour/' . $publicID . '/' . $parser->seoFriendlySuffix($rumour[0]['description']) . '/' . $keyvalue_array->updateKeyValue($tl->page['parameter3'], 'view', 'sightings', '|') . '/success=sighting_added');
 			}
@@ -276,8 +291,11 @@
 							}
 
 						// update log
-							$activity = $logged_in['full_name'] . " (user_id " . $logged_in['user_id'] . ") has added a comment (comment_id " . $commentID . ") to rumour_id " . $rumour[0]['rumour_id'] . ": " . $rumour[0]['description'];
+							$activity = $logged_in['full_name'] . " has added a comment to the rumour &quot;" . $rumour[0]['description'] . "&quot;";
 							$logger->logItInDb($activity, null, array('user_id=' . $logged_in['user_id'], 'rumour_id=' . $rumour[0]['rumour_id'], 'comment_id=' . $commentID));
+
+							$attributableOutput = $attributable->capture($activity, null, ['user_id'=>$logged_in['user_id'], 'first_name'=>$logged_in['first_name'], 'last_name'=>$logged_in['last_name'], 'email'=>$logged_in['email'], 'phone'=>$logged_in['primary_phone']], ['rumour_id'=>$rumour[0]['rumour_id'], 'comment_id'=>$commentID, 'domain_alias_id'=>@$tl->page['domain_alias']['cms_id']]);
+							if (!@count($attributableOutput['content']['success'])) emailSystemNotification(__FILE__ . ": " . (is_array($attributableOutput) ? print_r($attributableOutput, true) : $attributableOutput) . (@$logged_in ? " [" . $logged_in['username'] . "]" : false), 'Attributable failure');
 							
 						// redirect
 							$authentication_manager->forceRedirect('/rumour/' . $publicID . '/' . $parser->seoFriendlySuffix($rumour[0]['description']) . '/' . $keyvalue_array->updateKeyValue($tl->page['parameter3'], 'view', 'comments', '|') . '/success=comment_added');
@@ -296,8 +314,11 @@
 				insertIntoDb('comment_flags', array('comment_id'=>$_POST['commentToFlag'], 'flagged_by'=>$logged_in['user_id'], 'flagged_on'=>date('Y-m-d H:i:s')));
 
 			// update log
-				$activity = $logged_in['full_name'] . " (user_id " . $logged_in['user_id'] . ") has flagged a comment (comment_id " . $_POST['commentToFlag'] . ") to rumour_id " . $rumour[0]['rumour_id'] . ": " . $rumour[0]['description'];
+				$activity = $logged_in['full_name'] . " has flagged a comment on the rumour &quot;" . $rumour[0]['description'] . "&quot;";
 				$logger->logItInDb($activity, null, array('user_id=' . $logged_in['user_id'], 'rumour_id=' . $rumour[0]['rumour_id'], 'comment_id=' . $_POST['commentToFlag']));
+
+				$attributableOutput = $attributable->capture($activity, null, ['user_id'=>$logged_in['user_id'], 'first_name'=>$logged_in['first_name'], 'last_name'=>$logged_in['last_name'], 'email'=>$logged_in['email'], 'phone'=>$logged_in['primary_phone']], ['rumour_id'=>$rumour[0]['rumour_id'], 'comment_id'=>$_POST['commentToFlag'], 'domain_alias_id'=>@$tl->page['domain_alias']['cms_id']]);
+				if (!@count($attributableOutput['content']['success'])) emailSystemNotification(__FILE__ . ": " . (is_array($attributableOutput) ? print_r($attributableOutput, true) : $attributableOutput) . (@$logged_in ? " [" . $logged_in['username'] . "]" : false), 'Attributable failure');
 				
 			// redirect
 				$authentication_manager->forceRedirect('/rumour/' . $publicID . '/' . $parser->seoFriendlySuffix($rumour[0]['description']) . '/' . $keyvalue_array->updateKeyValue($tl->page['parameter3'], 'view', 'comments', '|') . '/success=comment_flagged');
@@ -310,8 +331,11 @@
 				updateDb('comments', array('enabled'=>'0'), array('comment_id'=>$_POST['commentToDisable']), null, null, null, null, 1);
 
 			// update log
-				$activity = $logged_in['full_name'] . " (user_id " . $logged_in['user_id'] . ") has disabled a comment (comment_id " . $_POST['commentToDisable'] . ") to rumour_id " . $rumour[0]['rumour_id'] . ": " . $rumour[0]['description'];
+				$activity = $logged_in['full_name'] . " has disabled a comment on the rumour &quot;" . $rumour[0]['description'] . "&quot;";
 				$logger->logItInDb($activity, null, array('user_id=' . $logged_in['user_id'], 'rumour_id=' . $rumour[0]['rumour_id'], 'comment_id=' . $_POST['commentToDisable']));
+
+				$attributableOutput = $attributable->capture($activity, null, ['user_id'=>$logged_in['user_id'], 'first_name'=>$logged_in['first_name'], 'last_name'=>$logged_in['last_name'], 'email'=>$logged_in['email'], 'phone'=>$logged_in['primary_phone']], ['rumour_id'=>$rumour[0]['rumour_id'], 'comment_id'=>$_POST['commentToDisable'], 'domain_alias_id'=>@$tl->page['domain_alias']['cms_id']]);
+				if (!@count($attributableOutput['content']['success'])) emailSystemNotification(__FILE__ . ": " . (is_array($attributableOutput) ? print_r($attributableOutput, true) : $attributableOutput) . (@$logged_in ? " [" . $logged_in['username'] . "]" : false), 'Attributable failure');
 				
 			// redirect
 				$authentication_manager->forceRedirect('/rumour/' . $publicID . '/' . $parser->seoFriendlySuffix($rumour[0]['description']) . '/' . $keyvalue_array->updateKeyValue($tl->page['parameter3'], 'view', 'comments', '|') . '/success=comment_disabled');
@@ -324,8 +348,11 @@
 				updateDb('comments', array('enabled'=>'1'), array('comment_id'=>$_POST['commentToEnable']), null, null, null, null, 1);
 
 			// update log
-				$activity = $logged_in['full_name'] . " (user_id " . $logged_in['user_id'] . ") has re-enabled a comment (comment_id " . $_POST['commentToEnable'] . ") to rumour_id " . $rumour[0]['rumour_id'] . ": " . $rumour[0]['description'];
+				$activity = $logged_in['full_name'] . " has re-enabled a comment on the rumour &quot;" . $rumour[0]['description'] . "&quot;";
 				$logger->logItInDb($activity, null, array('user_id=' . $logged_in['user_id'], 'rumour_id=' . $rumour[0]['rumour_id'], 'comment_id=' . $_POST['commentToEnable']));
+
+				$attributableOutput = $attributable->capture($activity, null, ['user_id'=>$logged_in['user_id'], 'first_name'=>$logged_in['first_name'], 'last_name'=>$logged_in['last_name'], 'email'=>$logged_in['email'], 'phone'=>$logged_in['primary_phone']], ['rumour_id'=>$rumour[0]['rumour_id'], 'comment_id'=>$_POST['commentToEnable'], 'domain_alias_id'=>@$tl->page['domain_alias']['cms_id']]);
+				if (!@count($attributableOutput['content']['success'])) emailSystemNotification(__FILE__ . ": " . (is_array($attributableOutput) ? print_r($attributableOutput, true) : $attributableOutput) . (@$logged_in ? " [" . $logged_in['username'] . "]" : false), 'Attributable failure');
 				
 			// redirect
 				$authentication_manager->forceRedirect('/rumour/' . $publicID . '/' . $parser->seoFriendlySuffix($rumour[0]['description']) . '/' . $keyvalue_array->updateKeyValue($tl->page['parameter3'], 'view', 'comments', '|') . '/success=comment_enabled');

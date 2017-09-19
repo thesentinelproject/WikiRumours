@@ -53,8 +53,11 @@
 				deleteFromDb('rumour_sightings', array('sighting_id'=>$sighting[0]['sighting_id']), null, null, null, null, 1);
 
 			// update log
-				$activity = $logged_in['full_name'] . " (user_id " . $logged_in['user_id'] . ") has deleted a sighting (sighting_id " . $sighting[0]['sighting_id'] . ") from the rumour &quot;" . $sighting[0]['description'] . "&quot; (public_id " . $sighting[0]['public_id'] . ")";
+				$activity = $logged_in['full_name'] . " has deleted a sighting from the rumour &quot;" . $sighting[0]['description'] . "&quot;";
 				$logger->logItInDb($activity, null, array('user_id=' . $logged_in['user_id'], 'sighting_id=' . $sighting[0]['sighting_id'], 'rumour_id=' . $sighting[0]['rumour_id']));
+
+				$attributableOutput = $attributable->capture($activity, null, ['user_id'=>$logged_in['user_id'], 'first_name'=>$logged_in['first_name'], 'last_name'=>$logged_in['last_name'], 'email'=>$logged_in['email'], 'phone'=>$logged_in['primary_phone']], ['rumour_id'=>$sighting[0]['rumour_id'], 'sighting_id'=>$sighting[0]['sighting_id'], 'domain_alias_id'=>@$tl->page['domain_alias']['cms_id']]);
+				if (!@count($attributableOutput['content']['success'])) emailSystemNotification(__FILE__ . ": " . (is_array($attributableOutput) ? print_r($attributableOutput, true) : $attributableOutput) . (@$logged_in ? " [" . $logged_in['username'] . "]" : false), 'Attributable failure');
 				
 			// redirect
 				$authentication_manager->forceRedirect('/rumour/' . $sighting[0]['rumour_public_id'] . '/' . $parser->seoFriendlySuffix($sighting[0]['description']) . '/' . urlencode('view=sightings|success=sighting_removed'));
@@ -148,9 +151,15 @@
 					updateDb('rumour_sightings', array('created_by'=>$createdBy, 'entered_by'=>$logged_in['user_id'], 'entered_on'=>date('Y-m-d H:i:s'), 'source_id'=>$_POST['source_id'], 'ipv4'=>@$ipv4, 'ipv6'=>@$ipv6, 'country_id'=>$_POST['country_id'], 'city'=>@$_POST['city'], 'location_type'=>@$_POST['location_type'], 'latitude'=>@$_POST['heard_at_latitude'], 'longitude'=>@$_POST['heard_at_longitude'], 'heard_on'=>$_POST['heard_on']), array('sighting_id'=>$id), null, null, null, null, 1);
 										
 				// update log
-					$activity = $logged_in['full_name'] . " (user_id " . $logged_in['user_id'] . ") has saved a sighting (sighting_id " . $id . ") for the rumour &quot;" . $operators->firstTrue(@$sighting[0]['description'], @$rumour[0]['description']) . "&quot; (public_id " . $operators->firstTrue(@$sighting[0]['public_id'], @$rumour[0]['public_id']) . ")";
+					$activity = $logged_in['full_name'] . " has saved a sighting for the rumour &quot;" . $operators->firstTrue(@$sighting[0]['description'], @$rumour[0]['description']) . "&quot;";
 					$logger->logItInDb($activity, null, array('user_id=' . $logged_in['user_id'], 'sighting_id=' . $id, 'rumour_id=' . $operators->firstTrue(@$sighting[0]['rumour_id'], @$rumour[0]['rumour_id'])));
+
+					$attributableOutput = $attributable->capture($activity, null, ['user_id'=>$logged_in['user_id'], 'first_name'=>$logged_in['first_name'], 'last_name'=>$logged_in['last_name'], 'email'=>$logged_in['email'], 'phone'=>$logged_in['primary_phone']], ['rumour_id'=>$operators->firstTrue(@$sighting[0]['rumour_id'], @$rumour[0]['rumour_id']), 'sighting_id'=>$id, 'domain_alias_id'=>@$tl->page['domain_alias']['cms_id']]);
+					if (!@count($attributableOutput['content']['success'])) emailSystemNotification(__FILE__ . ": " . (is_array($attributableOutput) ? print_r($attributableOutput, true) : $attributableOutput) . (@$logged_in ? " [" . $logged_in['username'] . "]" : false), 'Attributable failure');
 					
+					$sightings = retrieveSightings(['domain_alias_id'=>@$tl->page['domain_alias']['cms_id']]);
+					$attributableOutput = $attributable->measure(trim(@$tl->page['domain_alias']['title'] . " Sightings"), "=" . count($sightings));
+
 				// redirect
 					$authentication_manager->forceRedirect('/sighting_edit/' . $id . '/success=sighting_updated');
 			}
