@@ -7,6 +7,9 @@
 
 		echo "    " . $form->start('loginForm', null, 'post', null, null, array('onSubmit'=>'validateLoginForm(); return false;')) . "\n";
 		/* Username */		echo $form->row('text', 'loginUsername', $operators->firstTrue(@$_POST['loginUsername'], @$_COOKIE['username']), true, 'Username', 'form-control', '', 30) . "\n";
+		/* Honeypot */		echo "<div class='hidden'>\n";
+							echo $form->row('text', 'loginEmail', @$_POST['loginEmail'], false, 'Email') . "\n";
+							echo "</div>\n";
 		/* Password */		echo $form->row('password', 'loginPassword', '', true, 'Password', 'form-control', '', 72) . "\n";
 		/* Actions */		echo $form->rowStart('actions');
 							echo "  " . $form->input('submit', 'login', null, false, 'Log In', 'btn btn-info') . "\n";
@@ -31,6 +34,9 @@
 							echo "    <div class='col-md-6'>" . $form->input('text', 'last_name', @$_POST['last_name'], false, 'Last|Last', 'form-control', '', 30) . "</div>\n";
 							echo "  </div>\n";
 							echo $form->rowEnd();
+		/* Honeypot */		echo "<div class='hidden'>\n";
+							echo $form->row('text', 'title', @$_POST['title'], false, 'Title') . "\n";
+							echo "</div>\n";
 		/* Country */		echo $form->row('country', 'country_id', $operators->firstTrue(@$_POST['country_id'], @$tl->page['domain_alias']['country_id']), false, "Country", 'form-control') . "\n";
 		/* Region */		echo $form->row('region', 'region', ['country_id'=>$operators->firstTrue(@$_POST['country_id'], @$tl->page['domain_alias']['country_id']), 'region_id'=>@$_POST['region_id'], 'region_other'=>@$_POST['region_other']], false, "Region", 'form-control', null, null, ['link-to'=>'country_id']) . "\n";
 		/* Community */		echo $form->row('text', 'city', @$_POST['city'], false, 'Community', 'form-control', '', 50) . "\n";

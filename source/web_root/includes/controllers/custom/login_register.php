@@ -19,7 +19,16 @@
 			
 	if (count($_POST) > 0) {
 
-		if ($_POST['formName'] == 'loginForm') {
+		if ($_POST['formName'] == 'loginForm' && $_POST['loginEmail']) {
+
+			$tl->page['error'] .= "Sorry, SkyNet. No bots allowed. ";
+
+			$activity = "Login honeypot intercepted from " . $_POST['loginUsername'];
+			$attributableOutput = $attributable->capture($activity, null, ['is_blacklisted'=>'1']);
+			if (!@count($attributableOutput['content']['success'])) emailSystemNotification(__FILE__ . ": " . (is_array($attributableOutput) ? print_r($attributableOutput, true) : $attributableOutput) . (@$logged_in ? " [" . $logged_in['username'] . "]" : false), 'Attributable failure');
+
+		}
+		elseif ($_POST['formName'] == 'loginForm') {
 
 			// clean input
 				$_POST = $parser->trimAll($_POST);
@@ -67,7 +76,16 @@
 				
 		}
 
-		if ($_POST['formName'] == 'registrationForm') {
+		if ($_POST['formName'] == 'registrationForm' && $_POST['title']) {
+
+			$tl->page['error'] .= "Sorry, SkyNet. No bots allowed. ";
+
+			$activity = "Login honeypot intercepted from " . $_POST['email'];
+			$attributableOutput = $attributable->capture($activity, null, ['is_blacklisted'=>'1']);
+			if (!@count($attributableOutput['content']['success'])) emailSystemNotification(__FILE__ . ": " . (is_array($attributableOutput) ? print_r($attributableOutput, true) : $attributableOutput) . (@$logged_in ? " [" . $logged_in['username'] . "]" : false), 'Attributable failure');
+
+		}
+		elseif ($_POST['formName'] == 'registrationForm') {
 
 			// clean input
 				$_POST = $parser->trimAll($_POST);
