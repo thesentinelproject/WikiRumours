@@ -43,10 +43,10 @@
 	// load third-party CSS
 		if (count(@$tl->frontEndLibraries)) {
 			foreach ($tl->frontEndLibraries as $key =>$value) {
-				if ($value['local_css_path'] || $value['remote_css_path']) {
-					echo "  <!-- " . $key . ($value['version'] ? " v." . $value['version'] : false) . " -->\n";
-					if ($value['remote_css_path'] && $file_manager->doesUrlExist($value['remote_css_path'])) echo "    <link rel='stylesheet' type='text/css' media='screen' href='" . $value['remote_css_path'] . "' />\n";
-					elseif ($value['local_css_path']) echo "    <link rel='stylesheet' type='text/css' media='screen' href='/libraries/" . $value['local_css_path'] . "' />\n";
+				if (@$value['local_css_path'] || @$value['remote_css_path']) {
+					echo "  <!-- " . $key . (@$value['version'] ? " v." . $value['version'] : false) . " -->\n";
+					if (@$value['remote_css_path']) echo "    <link rel='stylesheet' type='text/css' media='screen' href='" . $value['remote_css_path'] . "' />\n";
+					elseif (@$value['local_css_path']) echo "    <link rel='stylesheet' type='text/css' media='screen' href='/libraries/" . $value['local_css_path'] . "' />\n";
 					echo "\n";
 				}
 			}

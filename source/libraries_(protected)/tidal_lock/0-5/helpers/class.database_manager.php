@@ -342,6 +342,25 @@
 				return $items;
 			
 		}
+
+		public function emptyData($table) {
+
+			global $dbConnection;
+			global $tablePrefix;
+			
+			// validate input
+				if (!$table) return false;
+				
+			// build query
+				$query = "TRUNCATE " . $tablePrefix . $table;
+				
+				$result = $dbConnection->query($query) or die('Unable to execute ' . __FUNCTION__ . '(' . addSlashes($table) . '): ' . $dbConnection->error . '<br /><br />' . $query);
+
+			// test
+				if ($this->howMany($table)) return false;
+				else return true;
+				
+		}
 	
 	}
 

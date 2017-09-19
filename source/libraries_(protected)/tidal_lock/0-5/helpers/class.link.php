@@ -166,7 +166,31 @@
 				return $id;
 				
 		}
-		
+
+		function buildQuery($updatedValues, $delimiter = '|', $query = null) {
+
+			if (!$updatedValues || !is_array($updatedValues)) return $query;
+
+			$queryArray = [];
+			if ($query) {
+				$params = explode($delimiter, $query);
+				foreach ($params as $counter => $param) {
+					$pairs = explode('=', $param);
+					if ($pairs[1]) $queryArray[$pairs[0]] = $pairs[1];
+				}
+			}
+
+			foreach($updatedValues as $key=>$value) {
+				if ($value) $queryArray[$key] = $value;
+				else unset($queryArray[$key]);
+			}
+
+			$query = http_build_query($queryArray, null, '|');
+
+			return $query;
+
+		}
+
 	}
 
 /*

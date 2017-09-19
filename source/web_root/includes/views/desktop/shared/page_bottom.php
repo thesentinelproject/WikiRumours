@@ -38,10 +38,10 @@
 	// load third-party JS
 		if (count(@$tl->frontEndLibraries)) {
 			foreach ($tl->frontEndLibraries as $key =>$value) {
-				if ($value['local_js_path'] || $value['remote_js_path']) {
-					echo "  <!-- " . $key . ($value['version'] ? " v." . $value['version'] : false) . " -->\n";
-					if ($value['remote_js_path'] && $file_manager->doesUrlExist($value['remote_js_path'])) echo "    <script type='text/javascript' src='" . $value['remote_js_path'] . "'></script>\n";
-					elseif ($value['local_js_path']) echo "    <script type='text/javascript' src='/libraries/" . $value['local_js_path'] . "'></script>\n";
+				if (@$value['local_js_path'] || @$value['remote_js_path']) {
+					echo "  <!-- " . $key . (@$value['version'] ? " v." . $value['version'] : false) . " -->\n";
+					if (@$value['remote_js_path']) echo "    <script type='text/javascript' src='" . $value['remote_js_path'] . "'></script>\n";
+					elseif (@$value['local_js_path']) echo "    <script type='text/javascript' src='/libraries/" . $value['local_js_path'] . "'></script>\n";
 					echo "\n";
 				}
 			}

@@ -1,13 +1,15 @@
 -- phpMyAdmin SQL Dump
--- version 4.6.5
+-- version 4.7.3
 -- https://www.phpmyadmin.net/
 --
 -- Host: mysql.wikirumours.org
--- Generation Time: Aug 09, 2017 at 11:29 AM
+-- Generation Time: Sep 18, 2017 at 01:33 AM
 -- Server version: 5.6.34-log
 -- PHP Version: 7.1.0
 
 SET SQL_MODE = "NO_AUTO_VALUE_ON_ZERO";
+SET AUTOCOMMIT = 0;
+START TRANSACTION;
 SET time_zone = "+00:00";
 
 
@@ -43,6 +45,19 @@ CREATE TABLE `wr_api_calls_internal` (
   `api_key` char(32) CHARACTER SET utf8 NOT NULL,
   `queried_on` datetime NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `wr_blacklisted_ips`
+--
+
+CREATE TABLE `wr_blacklisted_ips` (
+  `ip_id` int(9) NOT NULL,
+  `ipv4` int(10) UNSIGNED NOT NULL,
+  `ipv6` binary(16) NOT NULL,
+  `created_on` datetime NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci ROW_FORMAT=COMPACT;
 
 -- --------------------------------------------------------
 
@@ -13513,6 +13528,451 @@ CREATE TABLE `wr_tags` (
 -- --------------------------------------------------------
 
 --
+-- Table structure for table `wr_timezones`
+--
+
+CREATE TABLE `wr_timezones` (
+  `timezone_id` int(3) NOT NULL,
+  `timezone` varchar(35) COLLATE utf8_unicode_ci NOT NULL,
+  `abbreviation` varchar(5) COLLATE utf8_unicode_ci NOT NULL,
+  `gmt_offset` varchar(6) COLLATE utf8_unicode_ci NOT NULL,
+  `daylight_savings` tinyint(1) NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
+
+--
+-- Dumping data for table `wr_timezones`
+--
+
+INSERT INTO `wr_timezones` (`timezone_id`, `timezone`, `abbreviation`, `gmt_offset`, `daylight_savings`) VALUES
+(1, 'Africa/Abidjan', 'GMT', '+00:00', 0),
+(2, 'Africa/Accra', 'GMT', '+00:00', 0),
+(3, 'Africa/Addis_Ababa', 'EAT', '+03:00', 0),
+(4, 'Africa/Algiers', 'CET', '+01:00', 0),
+(5, 'Africa/Asmara', 'EAT', '+03:00', 0),
+(6, 'Africa/Bamako', 'GMT', '+00:00', 0),
+(7, 'Africa/Bangui', 'WAT', '+01:00', 0),
+(8, 'Africa/Banjul', 'GMT', '+00:00', 0),
+(9, 'Africa/Bissau', 'GMT', '+00:00', 0),
+(10, 'Africa/Blantyre', 'CAT', '+02:00', 0),
+(11, 'Africa/Brazzaville', 'WAT', '+01:00', 0),
+(12, 'Africa/Bujumbura', 'CAT', '+02:00', 0),
+(13, 'Africa/Cairo', 'EET', '+02:00', 0),
+(14, 'Africa/Casablanca', 'WEST', '+01:00', 1),
+(15, 'Africa/Ceuta', 'CEST', '+02:00', 1),
+(16, 'Africa/Conakry', 'GMT', '+00:00', 0),
+(17, 'Africa/Dakar', 'GMT', '+00:00', 0),
+(18, 'Africa/Dar_es_Salaam', 'EAT', '+03:00', 0),
+(19, 'Africa/Djibouti', 'EAT', '+03:00', 0),
+(20, 'Africa/Douala', 'WAT', '+01:00', 0),
+(21, 'Africa/El_Aaiun', 'WEST', '+01:00', 1),
+(22, 'Africa/Freetown', 'GMT', '+00:00', 0),
+(23, 'Africa/Gaborone', 'CAT', '+02:00', 0),
+(24, 'Africa/Harare', 'CAT', '+02:00', 0),
+(25, 'Africa/Johannesburg', 'SAST', '+02:00', 0),
+(26, 'Africa/Juba', 'EAT', '+03:00', 0),
+(27, 'Africa/Kampala', 'EAT', '+03:00', 0),
+(28, 'Africa/Khartoum', 'EAT', '+03:00', 0),
+(29, 'Africa/Kigali', 'CAT', '+02:00', 0),
+(30, 'Africa/Kinshasa', 'WAT', '+01:00', 0),
+(31, 'Africa/Lagos', 'WAT', '+01:00', 0),
+(32, 'Africa/Libreville', 'WAT', '+01:00', 0),
+(33, 'Africa/Lome', 'GMT', '+00:00', 0),
+(34, 'Africa/Luanda', 'WAT', '+01:00', 0),
+(35, 'Africa/Lubumbashi', 'CAT', '+02:00', 0),
+(36, 'Africa/Lusaka', 'CAT', '+02:00', 0),
+(37, 'Africa/Malabo', 'WAT', '+01:00', 0),
+(38, 'Africa/Maputo', 'CAT', '+02:00', 0),
+(39, 'Africa/Maseru', 'SAST', '+02:00', 0),
+(40, 'Africa/Mbabane', 'SAST', '+02:00', 0),
+(41, 'Africa/Mogadishu', 'EAT', '+03:00', 0),
+(42, 'Africa/Monrovia', 'GMT', '+00:00', 0),
+(43, 'Africa/Nairobi', 'EAT', '+03:00', 0),
+(44, 'Africa/Ndjamena', 'WAT', '+01:00', 0),
+(45, 'Africa/Niamey', 'WAT', '+01:00', 0),
+(46, 'Africa/Nouakchott', 'GMT', '+00:00', 0),
+(47, 'Africa/Ouagadougou', 'GMT', '+00:00', 0),
+(48, 'Africa/Porto-Novo', 'WAT', '+01:00', 0),
+(49, 'Africa/Sao_Tome', 'GMT', '+00:00', 0),
+(50, 'Africa/Tripoli', 'EET', '+02:00', 0),
+(51, 'Africa/Tunis', 'CET', '+01:00', 0),
+(52, 'Africa/Windhoek', 'WAST', '+02:00', 1),
+(53, 'America/Adak', 'HDT', '-09:00', 1),
+(54, 'America/Anchorage', 'AKDT', '-08:00', 1),
+(55, 'America/Anguilla', 'AST', '-04:00', 0),
+(56, 'America/Antigua', 'AST', '-04:00', 0),
+(57, 'America/Araguaina', 'BRT', '-03:00', 0),
+(58, 'America/Argentina/Buenos_Aires', 'ART', '-03:00', 0),
+(59, 'America/Argentina/Catamarca', 'ART', '-03:00', 0),
+(60, 'America/Argentina/Cordoba', 'ART', '-03:00', 0),
+(61, 'America/Argentina/Jujuy', 'ART', '-03:00', 0),
+(62, 'America/Argentina/La_Rioja', 'ART', '-03:00', 0),
+(63, 'America/Argentina/Mendoza', 'ART', '-03:00', 0),
+(64, 'America/Argentina/Rio_Gallegos', 'ART', '-03:00', 0),
+(65, 'America/Argentina/Salta', 'ART', '-03:00', 0),
+(66, 'America/Argentina/San_Juan', 'ART', '-03:00', 0),
+(67, 'America/Argentina/San_Luis', 'ART', '-03:00', 0),
+(68, 'America/Argentina/Tucuman', 'ART', '-03:00', 0),
+(69, 'America/Argentina/Ushuaia', 'ART', '-03:00', 0),
+(70, 'America/Aruba', 'AST', '-04:00', 0),
+(71, 'America/Asuncion', 'PYT', '-04:00', 0),
+(72, 'America/Atikokan', 'EST', '-05:00', 0),
+(73, 'America/Bahia', 'BRT', '-03:00', 0),
+(74, 'America/Bahia_Banderas', 'CDT', '-05:00', 1),
+(75, 'America/Barbados', 'AST', '-04:00', 0),
+(76, 'America/Belem', 'BRT', '-03:00', 0),
+(77, 'America/Belize', 'CST', '-06:00', 0),
+(78, 'America/Blanc-Sablon', 'AST', '-04:00', 0),
+(79, 'America/Boa_Vista', 'AMT', '-04:00', 0),
+(80, 'America/Bogota', 'COT', '-05:00', 0),
+(81, 'America/Boise', 'MDT', '-06:00', 1),
+(82, 'America/Cambridge_Bay', 'MDT', '-06:00', 1),
+(83, 'America/Campo_Grande', 'AMT', '-04:00', 0),
+(84, 'America/Cancun', 'EST', '-05:00', 0),
+(85, 'America/Caracas', 'VET', '-04:00', 0),
+(86, 'America/Cayenne', 'GFT', '-03:00', 0),
+(87, 'America/Cayman', 'EST', '-05:00', 0),
+(88, 'America/Chicago', 'CDT', '-05:00', 1),
+(89, 'America/Chihuahua', 'MDT', '-06:00', 1),
+(90, 'America/Costa_Rica', 'CST', '-06:00', 0),
+(91, 'America/Creston', 'MST', '-07:00', 0),
+(92, 'America/Cuiaba', 'AMT', '-04:00', 0),
+(93, 'America/Curacao', 'AST', '-04:00', 0),
+(94, 'America/Danmarkshavn', 'GMT', '+00:00', 0),
+(95, 'America/Dawson', 'PDT', '-07:00', 1),
+(96, 'America/Dawson_Creek', 'MST', '-07:00', 0),
+(97, 'America/Denver', 'MDT', '-06:00', 1),
+(98, 'America/Detroit', 'EDT', '-04:00', 1),
+(99, 'America/Dominica', 'AST', '-04:00', 0),
+(100, 'America/Edmonton', 'MDT', '-06:00', 1),
+(101, 'America/Eirunepe', 'ACT', '-05:00', 0),
+(102, 'America/El_Salvador', 'CST', '-06:00', 0),
+(103, 'America/Fort_Nelson', 'MST', '-07:00', 0),
+(104, 'America/Fortaleza', 'BRT', '-03:00', 0),
+(105, 'America/Glace_Bay', 'ADT', '-03:00', 1),
+(106, 'America/Godthab', 'WGST', '-02:00', 1),
+(107, 'America/Goose_Bay', 'ADT', '-03:00', 1),
+(108, 'America/Grand_Turk', 'AST', '-04:00', 0),
+(109, 'America/Grenada', 'AST', '-04:00', 0),
+(110, 'America/Guadeloupe', 'AST', '-04:00', 0),
+(111, 'America/Guatemala', 'CST', '-06:00', 0),
+(112, 'America/Guayaquil', 'ECT', '-05:00', 0),
+(113, 'America/Guyana', 'GYT', '-04:00', 0),
+(114, 'America/Halifax', 'ADT', '-03:00', 1),
+(115, 'America/Havana', 'CDT', '-04:00', 1),
+(116, 'America/Hermosillo', 'MST', '-07:00', 0),
+(117, 'America/Indiana/Indianapolis', 'EDT', '-04:00', 1),
+(118, 'America/Indiana/Knox', 'CDT', '-05:00', 1),
+(119, 'America/Indiana/Marengo', 'EDT', '-04:00', 1),
+(120, 'America/Indiana/Petersburg', 'EDT', '-04:00', 1),
+(121, 'America/Indiana/Tell_City', 'CDT', '-05:00', 1),
+(122, 'America/Indiana/Vevay', 'EDT', '-04:00', 1),
+(123, 'America/Indiana/Vincennes', 'EDT', '-04:00', 1),
+(124, 'America/Indiana/Winamac', 'EDT', '-04:00', 1),
+(125, 'America/Inuvik', 'MDT', '-06:00', 1),
+(126, 'America/Iqaluit', 'EDT', '-04:00', 1),
+(127, 'America/Jamaica', 'EST', '-05:00', 0),
+(128, 'America/Juneau', 'AKDT', '-08:00', 1),
+(129, 'America/Kentucky/Louisville', 'EDT', '-04:00', 1),
+(130, 'America/Kentucky/Monticello', 'EDT', '-04:00', 1),
+(131, 'America/Kralendijk', 'AST', '-04:00', 0),
+(132, 'America/La_Paz', 'BOT', '-04:00', 0),
+(133, 'America/Lima', 'PET', '-05:00', 0),
+(134, 'America/Los_Angeles', 'PDT', '-07:00', 1),
+(135, 'America/Lower_Princes', 'AST', '-04:00', 0),
+(136, 'America/Maceio', 'BRT', '-03:00', 0),
+(137, 'America/Managua', 'CST', '-06:00', 0),
+(138, 'America/Manaus', 'AMT', '-04:00', 0),
+(139, 'America/Marigot', 'AST', '-04:00', 0),
+(140, 'America/Martinique', 'AST', '-04:00', 0),
+(141, 'America/Matamoros', 'CDT', '-05:00', 1),
+(142, 'America/Mazatlan', 'MDT', '-06:00', 1),
+(143, 'America/Menominee', 'CDT', '-05:00', 1),
+(144, 'America/Merida', 'CDT', '-05:00', 1),
+(145, 'America/Metlakatla', 'AKDT', '-08:00', 1),
+(146, 'America/Mexico_City', 'CDT', '-05:00', 1),
+(147, 'America/Miquelon', 'PMDT', '-02:00', 1),
+(148, 'America/Moncton', 'ADT', '-03:00', 1),
+(149, 'America/Monterrey', 'CDT', '-05:00', 1),
+(150, 'America/Montevideo', 'UYT', '-03:00', 0),
+(151, 'America/Montserrat', 'AST', '-04:00', 0),
+(152, 'America/Nassau', 'EDT', '-04:00', 1),
+(153, 'America/New_York', 'EDT', '-04:00', 1),
+(154, 'America/Nipigon', 'EDT', '-04:00', 1),
+(155, 'America/Nome', 'AKDT', '-08:00', 1),
+(156, 'America/Noronha', 'FNT', '-02:00', 0),
+(157, 'America/North_Dakota/Beulah', 'CDT', '-05:00', 1),
+(158, 'America/North_Dakota/Center', 'CDT', '-05:00', 1),
+(159, 'America/North_Dakota/New_Salem', 'CDT', '-05:00', 1),
+(160, 'America/Ojinaga', 'MDT', '-06:00', 1),
+(161, 'America/Panama', 'EST', '-05:00', 0),
+(162, 'America/Pangnirtung', 'EDT', '-04:00', 1),
+(163, 'America/Paramaribo', 'SRT', '-03:00', 0),
+(164, 'America/Phoenix', 'MST', '-07:00', 0),
+(165, 'America/Port-au-Prince', 'EST', '-05:00', 0),
+(166, 'America/Port_of_Spain', 'AST', '-04:00', 0),
+(167, 'America/Porto_Velho', 'AMT', '-04:00', 0),
+(168, 'America/Puerto_Rico', 'AST', '-04:00', 0),
+(169, 'America/Rainy_River', 'CDT', '-05:00', 1),
+(170, 'America/Rankin_Inlet', 'CDT', '-05:00', 1),
+(171, 'America/Recife', 'BRT', '-03:00', 0),
+(172, 'America/Regina', 'CST', '-06:00', 0),
+(173, 'America/Resolute', 'CDT', '-05:00', 1),
+(174, 'America/Rio_Branco', 'ACT', '-05:00', 0),
+(175, 'America/Santarem', 'BRT', '-03:00', 0),
+(176, 'America/Santiago', 'CLST', '-03:00', 1),
+(177, 'America/Santo_Domingo', 'AST', '-04:00', 0),
+(178, 'America/Sao_Paulo', 'BRT', '-03:00', 0),
+(179, 'America/Scoresbysund', 'EGST', '+00:00', 1),
+(180, 'America/Sitka', 'AKDT', '-08:00', 1),
+(181, 'America/St_Barthelemy', 'AST', '-04:00', 0),
+(182, 'America/St_Johns', 'NDT', '-02:30', 1),
+(183, 'America/St_Kitts', 'AST', '-04:00', 0),
+(184, 'America/St_Lucia', 'AST', '-04:00', 0),
+(185, 'America/St_Thomas', 'AST', '-04:00', 0),
+(186, 'America/St_Vincent', 'AST', '-04:00', 0),
+(187, 'America/Swift_Current', 'CST', '-06:00', 0),
+(188, 'America/Tegucigalpa', 'CST', '-06:00', 0),
+(189, 'America/Thule', 'ADT', '-03:00', 1),
+(190, 'America/Thunder_Bay', 'EDT', '-04:00', 1),
+(191, 'America/Tijuana', 'PDT', '-07:00', 1),
+(192, 'America/Toronto', 'EDT', '-04:00', 1),
+(193, 'America/Tortola', 'AST', '-04:00', 0),
+(194, 'America/Vancouver', 'PDT', '-07:00', 1),
+(195, 'America/Whitehorse', 'PDT', '-07:00', 1),
+(196, 'America/Winnipeg', 'CDT', '-05:00', 1),
+(197, 'America/Yakutat', 'AKDT', '-08:00', 1),
+(198, 'America/Yellowknife', 'MDT', '-06:00', 1),
+(199, 'Antarctica/Casey', '+11', '+11:00', 0),
+(200, 'Antarctica/Davis', '+07', '+07:00', 0),
+(201, 'Antarctica/DumontDUrville', '+10', '+10:00', 0),
+(202, 'Antarctica/Macquarie', 'MIST', '+11:00', 0),
+(203, 'Antarctica/Mawson', '+05', '+05:00', 0),
+(204, 'Antarctica/McMurdo', 'NZST', '+12:00', 0),
+(205, 'Antarctica/Palmer', 'CLST', '-03:00', 1),
+(206, 'Antarctica/Rothera', '-03', '-03:00', 0),
+(207, 'Antarctica/Syowa', '+03', '+03:00', 0),
+(208, 'Antarctica/Troll', '+02', '+02:00', 1),
+(209, 'Antarctica/Vostok', '+06', '+06:00', 0),
+(210, 'Arctic/Longyearbyen', 'CEST', '+02:00', 1),
+(211, 'Asia/Aden', 'AST', '+03:00', 0),
+(212, 'Asia/Almaty', '+06', '+06:00', 0),
+(213, 'Asia/Amman', 'EEST', '+03:00', 1),
+(214, 'Asia/Anadyr', '+12', '+12:00', 0),
+(215, 'Asia/Aqtau', '+05', '+05:00', 0),
+(216, 'Asia/Aqtobe', '+05', '+05:00', 0),
+(217, 'Asia/Ashgabat', '+05', '+05:00', 0),
+(218, 'Asia/Atyrau', '+05', '+05:00', 0),
+(219, 'Asia/Baghdad', 'AST', '+03:00', 0),
+(220, 'Asia/Bahrain', 'AST', '+03:00', 0),
+(221, 'Asia/Baku', '+04', '+04:00', 0),
+(222, 'Asia/Bangkok', 'ICT', '+07:00', 0),
+(223, 'Asia/Barnaul', '+07', '+07:00', 0),
+(224, 'Asia/Beirut', 'EEST', '+03:00', 1),
+(225, 'Asia/Bishkek', '+06', '+06:00', 0),
+(226, 'Asia/Brunei', 'BNT', '+08:00', 0),
+(227, 'Asia/Chita', '+09', '+09:00', 0),
+(228, 'Asia/Choibalsan', 'CHOST', '+09:00', 1),
+(229, 'Asia/Colombo', '+0530', '+05:30', 0),
+(230, 'Asia/Damascus', 'EEST', '+03:00', 1),
+(231, 'Asia/Dhaka', 'BDT', '+06:00', 0),
+(232, 'Asia/Dili', 'TLT', '+09:00', 0),
+(233, 'Asia/Dubai', 'GST', '+04:00', 0),
+(234, 'Asia/Dushanbe', '+05', '+05:00', 0),
+(235, 'Asia/Famagusta', '+03', '+03:00', 0),
+(236, 'Asia/Gaza', 'EEST', '+03:00', 1),
+(237, 'Asia/Hebron', 'EEST', '+03:00', 1),
+(238, 'Asia/Ho_Chi_Minh', 'ICT', '+07:00', 0),
+(239, 'Asia/Hong_Kong', 'HKT', '+08:00', 0),
+(240, 'Asia/Hovd', 'HOVST', '+08:00', 1),
+(241, 'Asia/Irkutsk', '+08', '+08:00', 0),
+(242, 'Asia/Jakarta', 'WIB', '+07:00', 0),
+(243, 'Asia/Jayapura', 'WIT', '+09:00', 0),
+(244, 'Asia/Jerusalem', 'IDT', '+03:00', 1),
+(245, 'Asia/Kabul', 'AFT', '+04:30', 0),
+(246, 'Asia/Kamchatka', '+12', '+12:00', 0),
+(247, 'Asia/Karachi', 'PKT', '+05:00', 0),
+(248, 'Asia/Kathmandu', 'NPT', '+05:45', 0),
+(249, 'Asia/Khandyga', '+09', '+09:00', 0),
+(250, 'Asia/Kolkata', 'IST', '+05:30', 0),
+(251, 'Asia/Krasnoyarsk', '+07', '+07:00', 0),
+(252, 'Asia/Kuala_Lumpur', 'MYT', '+08:00', 0),
+(253, 'Asia/Kuching', 'MYT', '+08:00', 0),
+(254, 'Asia/Kuwait', 'AST', '+03:00', 0),
+(255, 'Asia/Macau', 'CST', '+08:00', 0),
+(256, 'Asia/Magadan', '+11', '+11:00', 0),
+(257, 'Asia/Makassar', 'WITA', '+08:00', 0),
+(258, 'Asia/Manila', 'PHT', '+08:00', 0),
+(259, 'Asia/Muscat', 'GST', '+04:00', 0),
+(260, 'Asia/Nicosia', 'EEST', '+03:00', 1),
+(261, 'Asia/Novokuznetsk', '+07', '+07:00', 0),
+(262, 'Asia/Novosibirsk', '+07', '+07:00', 0),
+(263, 'Asia/Omsk', '+06', '+06:00', 0),
+(264, 'Asia/Oral', '+05', '+05:00', 0),
+(265, 'Asia/Phnom_Penh', 'ICT', '+07:00', 0),
+(266, 'Asia/Pontianak', 'WIB', '+07:00', 0),
+(267, 'Asia/Pyongyang', 'KST', '+08:30', 0),
+(268, 'Asia/Qatar', 'AST', '+03:00', 0),
+(269, 'Asia/Qyzylorda', '+06', '+06:00', 0),
+(270, 'Asia/Riyadh', 'AST', '+03:00', 0),
+(271, 'Asia/Sakhalin', '+11', '+11:00', 0),
+(272, 'Asia/Samarkand', '+05', '+05:00', 0),
+(273, 'Asia/Seoul', 'KST', '+09:00', 0),
+(274, 'Asia/Shanghai', 'CST', '+08:00', 0),
+(275, 'Asia/Singapore', 'SGT', '+08:00', 0),
+(276, 'Asia/Srednekolymsk', '+11', '+11:00', 0),
+(277, 'Asia/Taipei', 'CST', '+08:00', 0),
+(278, 'Asia/Tashkent', '+05', '+05:00', 0),
+(279, 'Asia/Tbilisi', '+04', '+04:00', 0),
+(280, 'Asia/Tehran', 'IRDT', '+04:30', 1),
+(281, 'Asia/Thimphu', 'BTT', '+06:00', 0),
+(282, 'Asia/Tokyo', 'JST', '+09:00', 0),
+(283, 'Asia/Tomsk', '+07', '+07:00', 0),
+(284, 'Asia/Ulaanbaatar', 'ULAST', '+09:00', 1),
+(285, 'Asia/Urumqi', 'XJT', '+06:00', 0),
+(286, 'Asia/Ust-Nera', '+10', '+10:00', 0),
+(287, 'Asia/Vientiane', 'ICT', '+07:00', 0),
+(288, 'Asia/Vladivostok', '+10', '+10:00', 0),
+(289, 'Asia/Yakutsk', '+09', '+09:00', 0),
+(290, 'Asia/Yangon', 'MMT', '+06:30', 0),
+(291, 'Asia/Yekaterinburg', '+05', '+05:00', 0),
+(292, 'Asia/Yerevan', '+04', '+04:00', 0),
+(293, 'Atlantic/Azores', 'AZOST', '+00:00', 1),
+(294, 'Atlantic/Bermuda', 'ADT', '-03:00', 1),
+(295, 'Atlantic/Canary', 'WEST', '+01:00', 1),
+(296, 'Atlantic/Cape_Verde', 'CVT', '-01:00', 0),
+(297, 'Atlantic/Faroe', 'WEST', '+01:00', 1),
+(298, 'Atlantic/Madeira', 'WEST', '+01:00', 1),
+(299, 'Atlantic/Reykjavik', 'GMT', '+00:00', 0),
+(300, 'Atlantic/South_Georgia', 'GST', '-02:00', 0),
+(301, 'Atlantic/St_Helena', 'GMT', '+00:00', 0),
+(302, 'Atlantic/Stanley', 'FKST', '-03:00', 0),
+(303, 'Australia/Adelaide', 'ACST', '+09:30', 0),
+(304, 'Australia/Brisbane', 'AEST', '+10:00', 0),
+(305, 'Australia/Broken_Hill', 'ACST', '+09:30', 0),
+(306, 'Australia/Currie', 'AEST', '+10:00', 0),
+(307, 'Australia/Darwin', 'ACST', '+09:30', 0),
+(308, 'Australia/Eucla', 'ACWST', '+08:45', 0),
+(309, 'Australia/Hobart', 'AEST', '+10:00', 0),
+(310, 'Australia/Lindeman', 'AEST', '+10:00', 0),
+(311, 'Australia/Lord_Howe', 'LHST', '+10:30', 0),
+(312, 'Australia/Melbourne', 'AEST', '+10:00', 0),
+(313, 'Australia/Perth', 'AWST', '+08:00', 0),
+(314, 'Australia/Sydney', 'AEST', '+10:00', 0),
+(315, 'Europe/Amsterdam', 'CEST', '+02:00', 1),
+(316, 'Europe/Andorra', 'CEST', '+02:00', 1),
+(317, 'Europe/Astrakhan', '+04', '+04:00', 0),
+(318, 'Europe/Athens', 'EEST', '+03:00', 1),
+(319, 'Europe/Belgrade', 'CEST', '+02:00', 1),
+(320, 'Europe/Berlin', 'CEST', '+02:00', 1),
+(321, 'Europe/Bratislava', 'CEST', '+02:00', 1),
+(322, 'Europe/Brussels', 'CEST', '+02:00', 1),
+(323, 'Europe/Bucharest', 'EEST', '+03:00', 1),
+(324, 'Europe/Budapest', 'CEST', '+02:00', 1),
+(325, 'Europe/Busingen', 'CEST', '+02:00', 1),
+(326, 'Europe/Chisinau', 'EEST', '+03:00', 1),
+(327, 'Europe/Copenhagen', 'CEST', '+02:00', 1),
+(328, 'Europe/Dublin', 'IST', '+01:00', 1),
+(329, 'Europe/Gibraltar', 'CEST', '+02:00', 1),
+(330, 'Europe/Guernsey', 'BST', '+01:00', 1),
+(331, 'Europe/Helsinki', 'EEST', '+03:00', 1),
+(332, 'Europe/Isle_of_Man', 'BST', '+01:00', 1),
+(333, 'Europe/Istanbul', '+03', '+03:00', 0),
+(334, 'Europe/Jersey', 'BST', '+01:00', 1),
+(335, 'Europe/Kaliningrad', 'EET', '+02:00', 0),
+(336, 'Europe/Kiev', 'EEST', '+03:00', 1),
+(337, 'Europe/Kirov', '+03', '+03:00', 0),
+(338, 'Europe/Lisbon', 'WEST', '+01:00', 1),
+(339, 'Europe/Ljubljana', 'CEST', '+02:00', 1),
+(340, 'Europe/London', 'BST', '+01:00', 1),
+(341, 'Europe/Luxembourg', 'CEST', '+02:00', 1),
+(342, 'Europe/Madrid', 'CEST', '+02:00', 1),
+(343, 'Europe/Malta', 'CEST', '+02:00', 1),
+(344, 'Europe/Mariehamn', 'EEST', '+03:00', 1),
+(345, 'Europe/Minsk', '+03', '+03:00', 0),
+(346, 'Europe/Monaco', 'CEST', '+02:00', 1),
+(347, 'Europe/Moscow', 'MSK', '+03:00', 0),
+(348, 'Europe/Oslo', 'CEST', '+02:00', 1),
+(349, 'Europe/Paris', 'CEST', '+02:00', 1),
+(350, 'Europe/Podgorica', 'CEST', '+02:00', 1),
+(351, 'Europe/Prague', 'CEST', '+02:00', 1),
+(352, 'Europe/Riga', 'EEST', '+03:00', 1),
+(353, 'Europe/Rome', 'CEST', '+02:00', 1),
+(354, 'Europe/Samara', '+04', '+04:00', 0),
+(355, 'Europe/San_Marino', 'CEST', '+02:00', 1),
+(356, 'Europe/Sarajevo', 'CEST', '+02:00', 1),
+(357, 'Europe/Saratov', '+04', '+04:00', 0),
+(358, 'Europe/Simferopol', 'MSK', '+03:00', 0),
+(359, 'Europe/Skopje', 'CEST', '+02:00', 1),
+(360, 'Europe/Sofia', 'EEST', '+03:00', 1),
+(361, 'Europe/Stockholm', 'CEST', '+02:00', 1),
+(362, 'Europe/Tallinn', 'EEST', '+03:00', 1),
+(363, 'Europe/Tirane', 'CEST', '+02:00', 1),
+(364, 'Europe/Ulyanovsk', '+04', '+04:00', 0),
+(365, 'Europe/Uzhgorod', 'EEST', '+03:00', 1),
+(366, 'Europe/Vaduz', 'CEST', '+02:00', 1),
+(367, 'Europe/Vatican', 'CEST', '+02:00', 1),
+(368, 'Europe/Vienna', 'CEST', '+02:00', 1),
+(369, 'Europe/Vilnius', 'EEST', '+03:00', 1),
+(370, 'Europe/Volgograd', '+03', '+03:00', 0),
+(371, 'Europe/Warsaw', 'CEST', '+02:00', 1),
+(372, 'Europe/Zagreb', 'CEST', '+02:00', 1),
+(373, 'Europe/Zaporozhye', 'EEST', '+03:00', 1),
+(374, 'Europe/Zurich', 'CEST', '+02:00', 1),
+(375, 'Indian/Antananarivo', 'EAT', '+03:00', 0),
+(376, 'Indian/Chagos', 'IOT', '+06:00', 0),
+(377, 'Indian/Christmas', 'CXT', '+07:00', 0),
+(378, 'Indian/Cocos', 'CCT', '+06:30', 0),
+(379, 'Indian/Comoro', 'EAT', '+03:00', 0),
+(380, 'Indian/Kerguelen', '+05', '+05:00', 0),
+(381, 'Indian/Mahe', 'SCT', '+04:00', 0),
+(382, 'Indian/Maldives', 'MVT', '+05:00', 0),
+(383, 'Indian/Mauritius', 'MUT', '+04:00', 0),
+(384, 'Indian/Mayotte', 'EAT', '+03:00', 0),
+(385, 'Indian/Reunion', 'RET', '+04:00', 0),
+(386, 'Pacific/Apia', 'WSST', '+13:00', 0),
+(387, 'Pacific/Auckland', 'NZST', '+12:00', 0),
+(388, 'Pacific/Bougainville', 'BST', '+11:00', 0),
+(389, 'Pacific/Chatham', 'CHAST', '+12:45', 0),
+(390, 'Pacific/Chuuk', 'CHUT', '+10:00', 0),
+(391, 'Pacific/Easter', 'EASST', '-05:00', 1),
+(392, 'Pacific/Efate', 'VUT', '+11:00', 0),
+(393, 'Pacific/Enderbury', 'PHOT', '+13:00', 0),
+(394, 'Pacific/Fakaofo', 'TKT', '+13:00', 0),
+(395, 'Pacific/Fiji', 'FJT', '+12:00', 0),
+(396, 'Pacific/Funafuti', 'TVT', '+12:00', 0),
+(397, 'Pacific/Galapagos', 'GALT', '-06:00', 0),
+(398, 'Pacific/Gambier', 'GAMT', '-09:00', 0),
+(399, 'Pacific/Guadalcanal', 'SBT', '+11:00', 0),
+(400, 'Pacific/Guam', 'ChST', '+10:00', 0),
+(401, 'Pacific/Honolulu', 'HST', '-10:00', 0),
+(402, 'Pacific/Johnston', 'HST', '-10:00', 0),
+(403, 'Pacific/Kiritimati', 'LINT', '+14:00', 0),
+(404, 'Pacific/Kosrae', 'KOST', '+11:00', 0),
+(405, 'Pacific/Kwajalein', 'MHT', '+12:00', 0),
+(406, 'Pacific/Majuro', 'MHT', '+12:00', 0),
+(407, 'Pacific/Marquesas', 'MART', '-09:30', 0),
+(408, 'Pacific/Midway', 'SST', '-11:00', 0),
+(409, 'Pacific/Nauru', 'NRT', '+12:00', 0),
+(410, 'Pacific/Niue', 'NUT', '-11:00', 0),
+(411, 'Pacific/Norfolk', 'NFT', '+11:00', 0),
+(412, 'Pacific/Noumea', 'NCT', '+11:00', 0),
+(413, 'Pacific/Pago_Pago', 'SST', '-11:00', 0),
+(414, 'Pacific/Palau', 'PWT', '+09:00', 0),
+(415, 'Pacific/Pitcairn', 'PST', '-08:00', 0),
+(416, 'Pacific/Pohnpei', 'PONT', '+11:00', 0),
+(417, 'Pacific/Port_Moresby', 'PGT', '+10:00', 0),
+(418, 'Pacific/Rarotonga', 'CKT', '-10:00', 0),
+(419, 'Pacific/Saipan', 'ChST', '+10:00', 0),
+(420, 'Pacific/Tahiti', 'TAHT', '-10:00', 0),
+(421, 'Pacific/Tarawa', 'GILT', '+12:00', 0),
+(422, 'Pacific/Tongatapu', '+13', '+13:00', 0),
+(423, 'Pacific/Wake', 'WAKT', '+12:00', 0),
+(424, 'Pacific/Wallis', 'WFT', '+12:00', 0),
+(425, 'UTC', 'UTC', '+00:00', 0);
+
+-- --------------------------------------------------------
+
+--
 -- Table structure for table `wr_users`
 --
 
@@ -13620,6 +14080,12 @@ ALTER TABLE `wr_api_calls_external`
 --
 ALTER TABLE `wr_api_calls_internal`
   ADD PRIMARY KEY (`id`);
+
+--
+-- Indexes for table `wr_blacklisted_ips`
+--
+ALTER TABLE `wr_blacklisted_ips`
+  ADD PRIMARY KEY (`ip_id`);
 
 --
 -- Indexes for table `wr_browser_connections`
@@ -13802,6 +14268,12 @@ ALTER TABLE `wr_tags`
   ADD PRIMARY KEY (`tag_id`);
 
 --
+-- Indexes for table `wr_timezones`
+--
+ALTER TABLE `wr_timezones`
+  ADD PRIMARY KEY (`timezone_id`);
+
+--
 -- Indexes for table `wr_users`
 --
 ALTER TABLE `wr_users`
@@ -13845,6 +14317,11 @@ ALTER TABLE `wr_api_calls_external`
 --
 ALTER TABLE `wr_api_calls_internal`
   MODIFY `id` int(9) NOT NULL AUTO_INCREMENT;
+--
+-- AUTO_INCREMENT for table `wr_blacklisted_ips`
+--
+ALTER TABLE `wr_blacklisted_ips`
+  MODIFY `ip_id` int(9) NOT NULL AUTO_INCREMENT;
 --
 -- AUTO_INCREMENT for table `wr_browser_connections`
 --
@@ -13946,10 +14423,16 @@ ALTER TABLE `wr_statuses`
 ALTER TABLE `wr_tags`
   MODIFY `tag_id` int(9) NOT NULL AUTO_INCREMENT;
 --
+-- AUTO_INCREMENT for table `wr_timezones`
+--
+ALTER TABLE `wr_timezones`
+  MODIFY `timezone_id` int(3) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=426;
+--
 -- AUTO_INCREMENT for table `wr_users`
 --
 ALTER TABLE `wr_users`
-  MODIFY `user_id` int(9) UNSIGNED NOT NULL AUTO_INCREMENT;
+  MODIFY `user_id` int(9) UNSIGNED NOT NULL AUTO_INCREMENT;COMMIT;
+
 /*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;
 /*!40101 SET CHARACTER_SET_RESULTS=@OLD_CHARACTER_SET_RESULTS */;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;

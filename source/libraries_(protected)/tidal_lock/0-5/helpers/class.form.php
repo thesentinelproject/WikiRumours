@@ -66,11 +66,6 @@
 								$tl->page['console'] .= __FUNCTION__ . " (" . $name . "): eventHandlers must be an array.\n";
 								return false;
 							}
-						// initialize
-							if ($type == 'readonly') {
-								$placeholder = $value;
-								$value = null;
-							}
 						// return
 							if ($type == 'number_without_spin_buttons' || $type == 'title') $field = "<input type='text' name='" . $name . "' id='" . $name . "'";
 							elseif ($type == 'decimal') $field = "<input type='number' " . (!@$otherAttributes['step'] ? "step='.01' " : false) . "name='" . $name . "' id='" . $name . "'";
@@ -1290,7 +1285,6 @@
 
 		public function rowStart($name = null, $label = null, $truncate = false, $class = null, $stacked = true) {
 
-			global $operators;
 			global $parser;
 
 			if (!isset($name)) $name = null;
@@ -1298,7 +1292,7 @@
 			
 			if (floatval($truncate)) $label = $parser->truncate($label, 'character', $truncate, '', '', '');
 			
-			$row = "<!-- " . $operators->firstTrue($label, $name) . " -->\n";
+			$row = "<!-- " . $name . " -->\n";
 			$row .= "  <div id='" . trim('formContainer_' . $name, '_') . "' class='form-group" . ($class ? ' ' . $class : false) . "'>\n";
 
 			if ($this->style == 'horizontal') {
