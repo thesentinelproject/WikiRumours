@@ -85,6 +85,12 @@
 			$tl->page['javascript'] .= "    var options = {\n";
 			$tl->page['javascript'] .= "      is3D: true,\n";
 			$tl->page['javascript'] .= "      chartArea: { left: 0, top: 0, width: '100%', height: '100%' },\n";
+			$tl->page['javascript'] .= "      colors: [";
+			for ($counter = 0; $counter < count($statuses); $counter++) {
+				$tl->page['javascript'] .= "'#" . $statuses[$counter]['hex_color']. "'";
+				if ($counter < count($statuses) - 1) $tl->page['javascript'] .= ",";
+			}
+			$tl->page['javascript'] .= "],\n";
 			$tl->page['javascript'] .= "      pieSliceText: 'value'\n";
 			$tl->page['javascript'] .= "    };\n\n";
 			$tl->page['javascript'] .= "    var chart = new google.visualization.PieChart(document.getElementById('statusPie'));\n";

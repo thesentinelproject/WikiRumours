@@ -38,7 +38,7 @@
 		$rumoursAndSightingsByDateTable = array_reverse($rumoursAndSightingsByDateChart);
 
 	// statuses
-		$statuses = directlyQueryDb("SELECT " . $tablePrefix . "statuses.status, COUNT(" . $tablePrefix . "statuses.status) AS count FROM " . $tablePrefix . "rumours LEFT JOIN " . $tablePrefix . "statuses ON " . $tablePrefix . "rumours.status_id = " . $tablePrefix . "statuses.status_id" . (@$tl->page['domain_alias']['cms_id'] ? " WHERE domain_alias_id = '" . $tl->page['domain_alias']['cms_id'] . "'" : false ) . " GROUP BY " . $tablePrefix . "statuses.status ORDER BY position ASC");
+		$statuses = directlyQueryDb("SELECT " . $tablePrefix . "statuses.status, " . $tablePrefix . "statuses.hex_color, COUNT(" . $tablePrefix . "statuses.status) AS count FROM " . $tablePrefix . "rumours LEFT JOIN " . $tablePrefix . "statuses ON " . $tablePrefix . "rumours.status_id = " . $tablePrefix . "statuses.status_id" . (@$tl->page['domain_alias']['cms_id'] ? " WHERE domain_alias_id = '" . $tl->page['domain_alias']['cms_id'] . "'" : false ) . " GROUP BY " . $tablePrefix . "statuses.status ORDER BY position ASC");
 
 	// tags
 		$numberOfTagsToDisplay = 20;
