@@ -161,7 +161,8 @@
 					$attributableOutput = $attributable->measure(trim(@$tl->page['domain_alias']['title'] . " Sightings"), "=" . count($sightings));
 
 				// redirect
-					$authentication_manager->forceRedirect('/sighting_edit/' . $id . '/success=sighting_updated');
+					$authentication_manager->forceRedirect('/rumour/' . (@$sighting[0]['rumour_public_id'] ? $sighting[0]['rumour_public_id'] : $rumour[0]['public_id']) . '/' . $parser->seoFriendlySuffix((@$sighting[0]['description'] ? $sighting[0]['description'] : $rumour[0]['description'])) . '/' . urlencode('success=sighting_updated'));
+					
 			}
 			
 		}
