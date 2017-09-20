@@ -255,7 +255,7 @@
 				// Username
 					echo "    <td>" . ($sightings[$counter]['anonymous'] ? "anonymous" : "<a href='/profile/" . $sightings[$counter]['username'] . "'>" . $sightings[$counter]['username'] . "</a>") . "</td>\n";
 				// Source
-					echo "    <td>" . $sightings[$counter]['source'] . "</td>\n";
+					echo "    <td>" . (@$sightings[$counter]['details'] ? "<span class='tooltips' data-toggle='tooltip' title='" . htmlspecialchars($sightings[$counter]['details'], ENT_QUOTES) . "'>" . $sightings[$counter]['source'] . "</span>" : $sightings[$counter]['source']) . "</td>\n";
 				// Date
 					echo "    <td>";
 					echo date('j-M-Y', strtotime($sightings[$counter]['heard_on']));

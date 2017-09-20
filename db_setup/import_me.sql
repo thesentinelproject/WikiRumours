@@ -3,9 +3,9 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: mysql.wikirumours.org
--- Generation Time: Sep 18, 2017 at 01:33 AM
+-- Generation Time: Sep 20, 2017 at 07:57 AM
 -- Server version: 5.6.34-log
--- PHP Version: 7.1.0
+-- PHP Version: 7.1.7
 
 SET SQL_MODE = "NO_AUTO_VALUE_ON_ZERO";
 SET AUTOCOMMIT = 0;
@@ -13369,10 +13369,8 @@ CREATE TABLE `wr_rumours_x_tags` (
 CREATE TABLE `wr_rumour_sightings` (
   `sighting_id` int(9) NOT NULL,
   `public_id` varchar(6) COLLATE utf8_unicode_ci NOT NULL,
-  `created_by` int(9) NOT NULL,
   `rumour_id` int(9) NOT NULL,
-  `entered_by` int(9) NOT NULL,
-  `entered_on` datetime NOT NULL,
+  `details` varchar(255) COLLATE utf8_unicode_ci NOT NULL,
   `heard_on` datetime NOT NULL,
   `country_id` varchar(2) COLLATE utf8_unicode_ci DEFAULT NULL,
   `city` varchar(50) COLLATE utf8_unicode_ci DEFAULT NULL,
@@ -13382,7 +13380,10 @@ CREATE TABLE `wr_rumour_sightings` (
   `unable_to_geocode` tinyint(1) NOT NULL,
   `source_id` tinyint(2) DEFAULT NULL,
   `ipv4` int(10) NOT NULL,
-  `ipv6` binary(16) NOT NULL
+  `ipv6` binary(16) NOT NULL,
+  `created_by` int(9) NOT NULL,
+  `entered_by` int(9) NOT NULL,
+  `entered_on` datetime NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
 
 -- --------------------------------------------------------

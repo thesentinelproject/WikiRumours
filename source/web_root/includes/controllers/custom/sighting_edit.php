@@ -148,7 +148,7 @@
 
 				// save sighting
 					if (!@$id) $id = insertIntoDb('rumour_sightings', array('public_id'=>$sightingPublicID, 'rumour_id'=>$rumour[0]['rumour_id']));
-					updateDb('rumour_sightings', array('created_by'=>$createdBy, 'entered_by'=>$logged_in['user_id'], 'entered_on'=>date('Y-m-d H:i:s'), 'source_id'=>$_POST['source_id'], 'ipv4'=>@$ipv4, 'ipv6'=>@$ipv6, 'country_id'=>$_POST['country_id'], 'city'=>@$_POST['city'], 'location_type'=>@$_POST['location_type'], 'latitude'=>@$_POST['heard_at_latitude'], 'longitude'=>@$_POST['heard_at_longitude'], 'heard_on'=>$_POST['heard_on']), array('sighting_id'=>$id), null, null, null, null, 1);
+					updateDb('rumour_sightings', array('created_by'=>$createdBy, 'entered_by'=>$logged_in['user_id'], 'entered_on'=>date('Y-m-d H:i:s'), 'source_id'=>$_POST['source_id'], 'details'=>$_POST['details'], 'ipv4'=>@$ipv4, 'ipv6'=>@$ipv6, 'country_id'=>$_POST['country_id'], 'city'=>@$_POST['city'], 'location_type'=>@$_POST['location_type'], 'latitude'=>@$_POST['heard_at_latitude'], 'longitude'=>@$_POST['heard_at_longitude'], 'heard_on'=>$_POST['heard_on']), array('sighting_id'=>$id), null, null, null, null, 1);
 										
 				// update log
 					$activity = $logged_in['full_name'] . " has saved a sighting for the rumour &quot;" . $operators->firstTrue(@$sighting[0]['description'], @$rumour[0]['description']) . "&quot;";
