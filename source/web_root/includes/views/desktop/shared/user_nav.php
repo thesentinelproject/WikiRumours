@@ -39,6 +39,8 @@
 						}
 					// Notifications
 						echo "                  <li role='presentation' class='hideBullets" . ($tl->page['template'] == 'admin_notifications' ? " active" : false) . "'><a href='/admin_notifications'><span class='glyphicon glyphicon-envelope transluscent'></span> &nbsp; Notifications</a></li>\n";
+					// Backups
+						echo "                <li class='hideBullets" . ($tl->page['template'] == 'admin_backups' ? " pillActive" : false) . "'><a href='/admin_backups'><span class='glyphicon glyphicon-floppy-disk transluscent'></span> &nbsp; Backups</a></li>\n";
 					// Logs
 						echo "                <li class='hideBullets" . ($tl->page['template'] == 'admin_logs' ? " pillActive" : false) . "'><a href='/admin_logs'><span class='glyphicon glyphicon-align-justify transluscent'></span> &nbsp; Logs</a></li>\n";
 					// Housekeeping

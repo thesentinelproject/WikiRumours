@@ -3,9 +3,9 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: mysql.wikirumours.org
--- Generation Time: Sep 20, 2017 at 07:57 AM
+-- Generation Time: Sep 24, 2017 at 11:11 AM
 -- Server version: 5.6.34-log
--- PHP Version: 7.1.7
+-- PHP Version: 7.1.0
 
 SET SQL_MODE = "NO_AUTO_VALUE_ON_ZERO";
 SET AUTOCOMMIT = 0;
@@ -13431,7 +13431,7 @@ INSERT INTO `wr_settings` (`setting_id`, `setting`, `value`, `prepend`, `append`
 (2, 'Describe this application', 'Web- and mobile-based platform for moderating misinformation and disinformation', '', '', 'text', '', 0, '', 1, '2015-04-01 12:58:13'),
 (3, 'Home timezone', 'America/Toronto', '', '', 'timezone', '', 1, '', 1, '2015-04-01 12:58:13'),
 (4, 'Keep logs for', '90', '', 'days', 'number', '', 1, '', 1, '2015-04-01 12:58:13'),
-(5, 'Enable database backups', '0', '', '', 'yesno_bootstrap_switch', '', 1, '', 1, '2015-04-01 12:58:13'),
+(5, 'Enable backups', '0', '', '', 'yesno_bootstrap_switch', '', 1, '', 1, '2017-09-24 14:07:13'),
 (6, 'Keep backups for', '30', '', 'days', 'number', '', 1, '', 1, '2015-04-01 12:58:13'),
 (7, 'Maximum filesize for uploads', '3', '', 'MB', 'number', '', 1, '', 1, '2015-04-01 12:58:13'),
 (8, 'Enable friending', '0', '', '', 'yesno_bootstrap_switch', '', 1, '', 1, '2015-04-01 12:58:13'),
@@ -13441,23 +13441,22 @@ INSERT INTO `wr_settings` (`setting_id`, `setting`, `value`, `prepend`, `append`
 (12, 'Maximum API calls', '100', '', 'per day', 'number', '', 0, '', 1, '2015-04-01 12:58:13'),
 (13, 'Registration requires validated email address', '1', '', '', 'yesno_bootstrap_switch', '', 1, '', 1, '2015-04-01 12:58:13'),
 (14, 'Registration requires administrator approval', '0', '', '', 'yesno_bootstrap_switch', '', 1, '', 1, '2015-04-01 12:58:13'),
-(15, 'Keep users logged in for', '365', '', 'days', 'number', '', 1, '', 1, '2015-04-01 12:58:13'),
+(15, 'Keep users logged in for', '1', '', 'days', 'number', '', 1, '', 1, '2016-07-07 19:04:04'),
 (16, 'Password reset link active for', '48', '', 'hours', 'number', '', 1, '', 1, '2015-04-01 12:58:13'),
 (17, 'Email confirmation link active for', '48', '', 'hours', 'number', '', 1, '', 1, '2015-04-01 12:58:13'),
 (18, 'Pending registrations auto-deleted after', '14', '', 'days', 'number', '', 0, '', 1, '2015-04-01 12:58:13'),
-(19, 'Server path to ImageMagick|e.g. /usr/bin/', '/usr/bin/', '', '', 'text', '', 0, '', 1, '2015-04-01 12:58:13'),
-(20, 'Server path to FFmpeg|e.g. /usr/local/dh/bin/', '/usr/local/dh/bin/', '', '', 'text', '', 0, '', 1, '2015-04-01 12:58:13'),
-(21, 'Redirect for mobile', '0', '', '', 'yesno_bootstrap_switch', '', 1, '', 1, '2015-04-01 12:58:13'),
-(22, 'Redirect for tablet', '0', '', '', 'yesno_bootstrap_switch', '', 1, '', 1, '2015-04-01 12:58:13'),
 (23, 'Enable cron connections', '1', '', '', 'yesno_bootstrap_switch', '', 1, '', 1, '2015-04-01 12:58:13'),
 (24, 'Interval between cron connections', '10', '', 'minutes', 'number', '', 0, '', 1, '2015-04-01 12:58:13'),
 (25, 'Maximum allowable failures per email address', '3', '', 'failures', 'number', '', 1, '', 1, '2015-04-01 12:58:13'),
 (26, 'Enable console for testers', '1', '', '', 'yesno_bootstrap_switch', '', 1, '', 1, '2015-04-01 12:58:13'),
 (27, 'Root URL', 'www.wikirumours.org', '', '', 'text', '', 1, '', 1, '2015-04-08 15:09:59'),
-(28, 'Google Analytics ID', '', '', '', 'text', '', 0, '', 1, '0000-00-00 00:00:00'),
-(29, 'Default language', 'eng', '', '', 'language', '', 1, '', 1, '0000-00-00 00:00:00'),
+(28, 'Enable Google Analytics', '0', '', '', 'yesno_bootstrap_switch', '', 0, '', 1, '0000-00-00 00:00:00'),
+(29, 'Default language', 'eng', '', '', 'language', '', 1, '', 1, '2015-08-24 14:19:15'),
 (30, 'Delete downloadables after', '1', '', 'days', 'number', '', 0, 'Specify 0 to disable automated deletion', 1, '0000-00-00 00:00:00'),
-(31, 'Keep interrupted sessions for', '30', '', 'days', 'number', '', 1, '', 0, '0000-00-00 00:00:00');
+(31, 'Keep connection metadata for', '90', '', 'days', 'number', '', 1, '', 1, '2016-05-03 14:02:03'),
+(32, 'Keep interrupted sessions for', '30', '', 'days', 'number', '', 1, '', 1, '2016-05-18 00:00:00'),
+(33, 'API key active for', '12', '', 'months', 'number', '', 1, '', 1, '2017-06-22 00:00:00'),
+(34, 'Block blacklisted users', '1', '', '', 'yesno_bootstrap_switch', '', 1, '', 1, '0000-00-00 00:00:00');
 
 -- --------------------------------------------------------
 
@@ -14407,7 +14406,7 @@ ALTER TABLE `wr_rumour_sightings`
 -- AUTO_INCREMENT for table `wr_settings`
 --
 ALTER TABLE `wr_settings`
-  MODIFY `setting_id` int(9) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=32;
+  MODIFY `setting_id` int(9) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=35;
 --
 -- AUTO_INCREMENT for table `wr_sources`
 --

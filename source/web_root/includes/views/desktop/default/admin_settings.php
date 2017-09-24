@@ -21,14 +21,14 @@
 
 				echo "<tr>\n";
 				// setting
-					echo "<td><a href='/admin_settings/update/" . $settings[$counter]['preference_id'] . "'" . (@$settings[$counter]['tooltip'] ? " class='tooltips' onClick='return false' data-toggle='tooltip' title='" . htmlspecialchars($settings[$counter]['tooltip'], ENT_QUOTES) . "'" : false) . ">" . $settings[$counter]['preference'] . "</a></td>\n";
+					echo "<td><a href='/admin_settings/update/" . $settings[$counter]['setting_id'] . "'" . (@$settings[$counter]['tooltip'] ? " class='tooltips' onClick='return false' data-toggle='tooltip' title='" . htmlspecialchars($settings[$counter]['tooltip'], ENT_QUOTES) . "'" : false) . ">" . $settings[$counter]['setting'] . "</a></td>\n";
 				// value
 					if ($settings[$counter]['input_type'] == 'yesno_bootstrap_switch') echo "<td>" . ($settings[$counter]['value'] == 1 ? 'Yes' : 'No') . "</td>\n";
 					elseif ($settings[$counter]['input_type'] == 'country') echo "<td>" . @$localization_manager->countries[$settings[$counter]['value']] . "</td>\n";
 					elseif ($settings[$counter]['input_type'] == 'language' || $settings[$counter]['input_type'] == 'language_common') echo "<td>" . @$localization_manager->languages[$settings[$counter]['value']] . "</td>\n";
 					else echo "<td>" . trim($settings[$counter]['prepend'] . " " . $settings[$counter]['value'] . " " . $settings[$counter]['append']) . "</td>\n";
 				// actions
-					echo "<td class='text-right'><a href='/admin_settings/update/" . $settings[$counter]['preference_id'] . "'>Update</a></td>\n";
+					echo "<td class='text-right'><a href='/admin_settings/update/" . $settings[$counter]['setting_id'] . "'>Update</a></td>\n";
 				echo "</tr>\n";
 
 			}
@@ -72,7 +72,7 @@
 			echo "    " . $form->input('cancel_and_return', 'cancel_button', null, false, 'Cancel', 'btn btn-link') . "\n";
 			echo "  </div>\n";
 			echo "  <div class='col-lg-6 col-md-6 col-sm-6 col-xs-6 text-right'>\n";
-			if ($logged_in['can_edit_settings']) echo "    " . $form->input('button', 'edit_button', null, false, 'Edit or delete', 'btn btn-link', '', '', '', '', array('onClick'=>'document.location.href="/admin_settings/edit/' . $setting[0]['preference_id'] . '"; return false;')) . "\n";
+			if ($logged_in['can_edit_settings']) echo "    " . $form->input('button', 'edit_button', null, false, 'Edit or delete', 'btn btn-link', '', '', '', '', array('onClick'=>'document.location.href="/admin_settings/edit/' . $setting[0]['setting_id'] . '"; return false;')) . "\n";
 			echo "  </div>\n";
 			echo "</div>\n";
 
@@ -84,7 +84,7 @@
 		echo $form->start('editSettingForm', '', 'post') . "\n";
 		echo $form->input('hidden', 'deleteThisSetting') . "\n";
 
-		/* Setting */		echo $form->row('text', 'preference', $operators->firstTrue(@$_POST['preference'], @$setting[0]['preference']), true, "<a href='javascript:void(0)' class='tooltips' onClick='return false' data-toggle='tooltip' title='Use a pipe to specify placeholder text, e.g. {label} &#124; {placeholder}'>Setting</a>", 'form-control', '', 255);
+		/* Setting */		echo $form->row('text', 'setting', $operators->firstTrue(@$_POST['setting'], @$setting[0]['setting']), true, "<a href='javascript:void(0)' class='tooltips' onClick='return false' data-toggle='tooltip' title='Use a pipe to specify placeholder text, e.g. {label} &#124; {placeholder}'>Setting</a>", 'form-control', '', 255);
 		/* Prepend */		echo $form->row('text', 'prepend', $operators->firstTrue(@$_POST['prepend'], @$setting[0]['prepend']), false, 'Prepend', 'form-control', '', 30);
 		/* Value */			if ($screen == 'add') echo $form->row('text', 'setting_value', @$_POST['setting_value'], true, 'Value', 'form-control', '', 255);
 		/* Append */		echo $form->row('text', 'append', $operators->firstTrue(@$_POST['append'], @$setting[0]['append']), false, 'Append', 'form-control', '', 30);
@@ -100,7 +100,7 @@
 							echo "    " . $form->input('cancel_and_return', 'cancel_button', null, false, 'Cancel', 'btn btn-link') . "\n";
 							echo "  </div>\n";
 							echo "  <div class='col-lg-6 col-md-6 col-sm-6 col-xs-6 text-right'>\n";
-							if (@$setting[0]['preference_id']) echo "    " . $form->input('button', 'delete_button', null, false, 'Delete', 'btn btn-danger', '', '', '', '', array('onClick'=>'deleteSetting(); return false;')) . "\n";
+							if (@$setting[0]['setting_id']) echo "    " . $form->input('button', 'delete_button', null, false, 'Delete', 'btn btn-danger', '', '', '', '', array('onClick'=>'deleteSetting(); return false;')) . "\n";
 							echo "  </div>\n";
 							echo "</div>\n";
 							echo $form->rowEnd();
