@@ -39,27 +39,27 @@
 
 		if ($_POST['formName'] == 'profileForm' && $_POST['deleteCurrentProfileImage'] == 'Y') {
 
-			// delete profile images (& verify deletion)
-				$success = $avatar_manager->deleteProfileImage($user[0]['username']);
-				if (!$success) $tl->page['error'] .= "There was a problem deleting this profile image. ";
-				else {
-					// update log
-						if ($logged_in['user_id'] != $user[0]['user_id']) {
-							$activity = $logged_in['full_name'] . " (" . $logged_in['user_id'] . ") has deleted the profile photo of " . $user[0]['full_name'] . " (" . $user[0]['user_id'] . ")";
-							$logger->logItInDb($activity, null, array('user_id=' . $logged_in['user_id'], 'user_id=' . $user[0]['user_id']));
-						}
-						else {
-							$activity = $logged_in['full_name'] . " (user_id " . $logged_in['user_id'] . ") has deleted his/her own profile photo";
-							$logger->logItInDb($activity, null, array('user_id=' . $logged_in['user_id']));
-						}
-
-						$attributableOutput = $attributable->capture($activity, null, ['user_id'=>$logged_in['user_id'], 'first_name'=>$logged_in['first_name'], 'last_name'=>$logged_in['last_name'], 'email'=>$logged_in['email'], 'phone'=>$logged_in['primary_phone']], ($logged_in['user_id'] != $user[0]['user_id'] ? ['user_id'=>$user[0]['user_id']] : false));
-						if (!@count($attributableOutput['content']['success'])) emailSystemNotification(__FILE__ . ": " . (is_array($attributableOutput) ? print_r($attributableOutput, true) : $attributableOutput) . (@$logged_in ? " [" . $logged_in['username'] . "]" : false), 'Attributable failure');
-
-					// redirect
-						$authentication_manager->forceRedirect('/account/' . $_POST['username'] . '/success=profile_image_deleted');
-
+			// delete profile images
+				foreach ($profileImageSizes as $type=>$width) {
+					@unlink('assets/profile_images/' . $encrypter->quickEncrypt($user[0]['username'], $tl->salts['public_keys']) . '_' . $type . '.jpg');
 				}
+
+
+			// update log
+				if ($logged_in['user_id'] != $user[0]['user_id']) {
+					$activity = $logged_in['full_name'] . " (" . $logged_in['user_id'] . ") has deleted the profile photo of " . $user[0]['full_name'] . " (" . $user[0]['user_id'] . ")";
+					$logger->logItInDb($activity, null, array('user_id=' . $logged_in['user_id'], 'user_id=' . $user[0]['user_id']));
+				}
+				else {
+					$activity = $logged_in['full_name'] . " (user_id " . $logged_in['user_id'] . ") has deleted his/her own profile photo";
+					$logger->logItInDb($activity, null, array('user_id=' . $logged_in['user_id']));
+				}
+
+				$attributableOutput = $attributable->capture($activity, null, ['user_id'=>$logged_in['user_id'], 'first_name'=>$logged_in['first_name'], 'last_name'=>$logged_in['last_name'], 'email'=>$logged_in['email'], 'phone'=>$logged_in['primary_phone']], ($logged_in['user_id'] != $user[0]['user_id'] ? ['user_id'=>$user[0]['user_id']] : false));
+				if (!@count($attributableOutput['content']['success'])) emailSystemNotification(__FILE__ . ": " . (is_array($attributableOutput) ? print_r($attributableOutput, true) : $attributableOutput) . (@$logged_in ? " [" . $logged_in['username'] . "]" : false), 'Attributable failure');
+
+			// redirect
+				$authentication_manager->forceRedirect('/account/' . $_POST['username'] . '/success=profile_image_deleted');
 									
 		}
 		elseif ($_POST['formName'] == 'profileForm') {
@@ -152,13 +152,18 @@
 						if ($_FILES['profile_image']['tmp_name']) {
 
 							// delete old image
-								$success = $avatar_manager->deleteProfileImage($user[0]['username']);
-								if (!$success) $tl->page['error'] .= "There was a problem deleting this profile image. ";
+								foreach ($profileImageSizes as $type=>$width) {
+									@unlink('uploads/profile_images/' . $encrypter->quickEncrypt($user[0]['username'], $tl->salts['public_keys']) . '_' . $type . '.jpg');
+								}
 								
 							// save new image
-								$success = $avatar_manager->createProfileImage($user[0]['username'], $_FILES['profile_image']['tmp_name']);
-								if (!$success) $tl->page['error'] .= "There was a problem saving this profile image. ";
-							
+								foreach ($profileImageSizes as $type=>$width) {
+									$destinationFile = $encrypter->quickEncrypt($user[0]['username'], $tl->salts['public_keys']) . '_' . $type . '.jpg';
+									$destinationPath = 'uploads/profile_images/';
+									$success = $media_converter->convertImage($_FILES['profile_image']['tmp_name'], $destinationFile, $destinationPath, $width, $width, null);
+									if (!file_exists($destinationPath . $destinationFile)) $tl->page['error'] .= "Unable to create " . $type . " profile image .";
+								}
+
 						}
 				}
 				

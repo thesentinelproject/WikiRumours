@@ -64,7 +64,7 @@
 
 			if (!$rumour[0]['enabled']) $tl->page['warning'] = "This rumour is disabled.";
 
-			if (file_exists('assets/rumour_attachments/' . $publicID)) $attachments = $directory_manager->read('assets/rumour_attachments/' . $publicID, false, false, true);
+			if (file_exists('uploads/rumour_attachments/' . $publicID)) $attachments = $directory_manager->read('uploads/rumour_attachments/' . $publicID, false, false, true);
 			
 	if (@$filters['view'] == 'sightings') $tl->page['events'] = "populateMap();";
 	$tl->page['description'] = $rumour[0]['description'];

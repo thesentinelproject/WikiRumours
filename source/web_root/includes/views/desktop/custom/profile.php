@@ -21,8 +21,9 @@
 	// Photo
 		echo "<div class='row'>\n";
 		echo "  <div id='profilePhoto' class='col-md-4 col-md-push-8 col-sm-4 col-sm-push-8'>\n";
-		$image = $avatar_manager->retrieveProfileImage($user[0]['username']);
-		echo "    <img src='" . (@$image['sizes']['large'] ? "/" . $image['sizes']['large'] : "/resources/img/default_profile_image.jpg") . "' border='0' class='img-thumbnail' alt='" . htmlspecialchars($user[0]['full_name'], ENT_QUOTES) . "' />\n";
+		$profileImage = 'uploads/profile_images/' . $encrypter->quickEncrypt($user[0]['username'], $tl->salts['public_keys']) . '_large.jpg';
+		if (!file_exists($profileImage)) $profileImage = "resources/img/default_profile_image.jpg";
+		echo "    <img src='/" . $profileImage . "' border='0' class='img-thumbnail' alt='" . htmlspecialchars($user[0]['full_name'], ENT_QUOTES) . "' />\n";
 		echo "  </div>\n";
 	
 	// User data

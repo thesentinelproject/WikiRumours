@@ -40,9 +40,9 @@
 	/* Region */		echo $form->row('region', 'region', ['country_id'=>$operators->firstTrue(@$_POST['country_id'], @$user[0]['country_id']), 'region_id'=>$operators->firstTrue(@$_POST['region_id'], @$user[0]['region_id']), 'region_other'=>$operators->firstTrue(@$_POST['region_other'], @$user[0]['other_region'])], false, "Region", 'form-control', null, null, ['link-to'=>'country_id']) . "\n";
 	/* Community */		echo $form->row('text', 'city', $operators->firstTrue(@$_POST['city'], @$user[0]['city']), false, 'Community', 'form-control', '', 50) . "\n";
 	/* Profile Image */	echo $form->rowStart('profile_image', "Profile image");
-						$image = $avatar_manager->retrieveProfileImage($user[0]['username']);
-						if (@$image['sizes']['small']) echo "    <img src='/" . $image['sizes']['small'] . "' border='0' class='img-thumbnail' alt='Current profile image' />\n";
-						else echo "  <div><img src='/libraries/tidal_lock/php/dynamic_thumbnailer.php?source=../../../resources/img/default_profile_image.jpg&desired_width=" . $profileImageSizes['small'] . "' border='0' class='img-thumbnail' alt='" . htmlspecialchars($user[0]['full_name'], ENT_QUOTES) . "' /></div>\n";
+						$profileImage = 'uploads/profile_images/' . $encrypter->quickEncrypt($user[0]['username'], $tl->salts['public_keys']) . '_small.jpg';
+						if (!file_exists($profileImage)) $profileImage = "libraries/tidal_lock/php/dynamic_thumbnailer.php?source=../../../resources/img/default_profile_image.jpg&desired_width=" . $profileImageSizes['small'];
+						echo "  <div><img src='/" . $profileImage . "' border='0' class='img-thumbnail' alt='" . htmlspecialchars($user[0]['full_name'], ENT_QUOTES) . "' /></div>\n";
 						echo "  <div>" . $form->input('file', 'profile_image', '', false, 'New profile image') . "</div>\n";
 						echo $form->rowEnd();
 	if ($logged_in['can_edit_users']) {
