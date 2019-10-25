@@ -5,14 +5,17 @@
 <style>
 	a, a:visited { color: #4899ec; text-decoration: none; }
 	a:hover, a:active { color: #87b9ec; text-decoration: underline; }
+	#logoContainer { padding-bottom: 15px; }
+	#logo { max-width: 300px; }
+	#bodyContainer { font-family: Helvetica, Arial, sans-serif; font-size: 10pt; color: #000000; }
 </style>
 </head>
 
 <body>
 
-<div style='padding-bottom: 15px;'><a href='{URL}'><img src='{LOGO}' border='0' /></a></div>
+<div id='logoContainer'><a href='{URL}'><img src='{LOGO}' id='logo' border='0' /></a></div>
 
-<div style='font-family: Helvetica, Arial, sans-serif; font-size: 10pt; color: #000000;'>
+<div id='bodyContainer'>
 
 {CONTENT}
 

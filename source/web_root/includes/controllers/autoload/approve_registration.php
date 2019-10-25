@@ -58,11 +58,7 @@
 			$activity = $name . " has completed registration";
 			$logger->logItInDb($activity, null, array('user_id=' . $userID, 'registration_id=' . $registrationID));
 
-			$attributableOutput = $attributable->capture($activity, null, ['user_id'=>$userID, 'first_name'=>$registration[0]['first_name'], 'last_name'=>$registration[0]['last_name'], 'email'=>$registration[0]['email'], 'phone'=>$registration[0]['primary_phone']], ['registration_id'=>$registrationID, 'domain_alias_id'=>@$tl->page['domain_alias']['cms_id']]);
-			if (!@count($attributableOutput['content']['success'])) emailSystemNotification(__FILE__ . ": " . (is_array($attributableOutput) ? print_r($attributableOutput, true) : $attributableOutput), 'Attributable failure');
-
 			$users = retrieveUsers();
-			$attributableOutput = $attributable->measure('Registrations', "=" . count($users));
 						
 		// send welcome email
 			emailNewUser($name, $registration[0]['email']);

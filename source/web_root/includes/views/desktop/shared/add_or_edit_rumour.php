@@ -64,7 +64,7 @@
 							}
 							else echo $form->row('uneditable_static', 'priority', $operators->firstTrue(@$rumour[0]['priority'], '-'), true, 'Priority');
 		/* Assigned to */	if (!$matchingRumour) {
-								if ($logged_in['is_moderator'] || ($logged_in['is_administrator'] && $logged_in['can_edit_content'])) echo $form->row('select', 'assigned_to', $operators->firstTrue(@$_POST['assigned_to'], @$rumour[0]['assigned_to']), false, 'Asigned to', 'form-control', $allModeratorsAndCommunityLiaisons);
+								if ($logged_in['is_moderator'] || ($logged_in['is_administrator'] && $logged_in['can_edit_content'])) echo $form->row('select', 'assigned_to', $operators->firstTrue(@$_POST['assigned_to'], @$rumour[0]['assigned_to']), false, 'Assigned to', 'form-control', $allModeratorsAndCommunityLiaisons);
 							}
 							else echo $form->row('uneditable_static', 'assigned_to', $operators->firstTrue(@$rumour[0]['assigned_to_full_name'], '-'), true, 'Assigned to');
 	}

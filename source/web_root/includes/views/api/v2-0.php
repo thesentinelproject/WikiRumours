@@ -69,6 +69,12 @@
 			if (count($user) < 1) $errors[count($errors)] = 3; // invalid API key
 		}
 
+	// update logs
+		if (!count($errors)) {
+			$activity = $user[0]['full_name'] . " initiated an API connection";
+		}
+
+
 	// any valid filters? mandatory for non-administrators
 		if (!$user[0]['is_administrator']) {
 			if (count($filters) < 1) $errors[count($errors)] = 1; // no valid filters found

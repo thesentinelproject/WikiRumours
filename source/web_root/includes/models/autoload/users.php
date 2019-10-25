@@ -50,8 +50,8 @@
 		
 		// build query
 			$query = "SELECT " . $tablePrefix . "user_keys.*,";
-			if (@$matching['name'] == 'API' && @$matching['hash']) $query .= " (SELECT COUNT(id) FROM " .$tablePrefix . "api_calls_internal WHERE " .$tablePrefix . "api_calls_internal.api_key = '" .$matching['hash'] . "') AS total_internal_api_calls,";
-			if (@$matching['name'] == 'API' && @$matching['hash']) $query .= " (SELECT COUNT(id) FROM " .$tablePrefix . "api_calls_internal WHERE " .$tablePrefix . "api_calls_internal.api_key = '" .$matching['hash'] . "' AND queried_on > '" . $expiry . "') AS internal_api_calls_today,";
+			if (@$matching['user_key'] == 'API' && @$matching['hash']) $query .= " (SELECT COUNT(id) FROM " .$tablePrefix . "api_calls_internal WHERE " .$tablePrefix . "api_calls_internal.api_key = '" .$matching['hash'] . "') AS total_internal_api_calls,";
+			if (@$matching['user_key'] == 'API' && @$matching['hash']) $query .= " (SELECT COUNT(id) FROM " .$tablePrefix . "api_calls_internal WHERE " .$tablePrefix . "api_calls_internal.api_key = '" .$matching['hash'] . "' AND queried_on > '" . $expiry . "') AS internal_api_calls_today,";
 			$query .= " TRIM(CONCAT(" . $tablePrefix . "users.first_name, ' ', " . $tablePrefix . "users.last_name)) as full_name";
 			$query .= " FROM " . $tablePrefix . "user_keys";
 			$query .= " LEFT JOIN " . $tablePrefix . "users ON " . $tablePrefix . "users.user_id = " . $tablePrefix . "user_keys.user_id";

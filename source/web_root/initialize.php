@@ -1,5 +1,9 @@
 <?php
 
+		use PHPMailer\PHPMailer\PHPMailer;
+		use PHPMailer\PHPMailer\Exception;
+		use PHPMailer\PHPMailer\SMTP;
+
 		session_start();
 		parse_str($_SERVER['QUERY_STRING']);
 
@@ -202,7 +206,7 @@
 			// Verify that root path of application is in database
 				if (!$tl->settings['Root URL']) {
 					$tl->settings['Root URL'] = $tl->page['protocol'] . $tl->page['root'];
-					$database_manager->updateOrInsert('preferences', ['value'=>$tl->settings['Root URL'], 'input_type'=>'text', 'is_mandatory'=>'1'], ['preference'=>'Root URL'], null, null, null, null, 1);
+					$database_manager->updateOrInsert('settings', ['value'=>$tl->settings['Root URL'], 'input_type'=>'text', 'is_mandatory'=>'1'], ['setting'=>'Root URL'], null, null, null, null, 1);
 				}
 		
 			// Set timezone
@@ -210,25 +214,18 @@
 				date_default_timezone_set($tl->settings['Home timezone']);
 				putenv('TZ=' . $tl->settings['Home timezone']);
 				
-			// Initialize Attributable
-				if (@$attributableConfig[$currentAttributableCredentials]['API']) {
-					$attributable = new attributable();
-					$attributable->key = $attributableConfig[$currentAttributableCredentials]['API'];
-				}
-
 			// Terminate session for blacklisted IPs
 				if ($tl->settings['Block blacklisted users']) {
 
 					$tl->initialize['connecting_ip'] = (@$_SERVER['REMOTE_ADDR'] ? $_SERVER['REMOTE_ADDR'] : @$_SERVER['REMOTE_HOST']);
-					if (strlen($tl->initialize['connecting_ip']) < 16) $tl->initialize['blacklisted'] = $database_manager->retrieveSingle('blacklisted_ips', null, ['ipv4'=>$parser->encodeIP($tl->initialize['connecting_ip'])]);
-					elseif ($tl->initialize['connecting_ip']) $tl->initialize['blacklisted'] = $database_manager->retrieveSingle('blacklisted_ips', null, ['ipv6'=>$parser->encodeIP($tl->initialize['connecting_ip'])]);
+					$tl->initialize['blacklisted'] = $database_manager->retrieveSingle('ips', null, ['ip'=>$tl->initialize['connecting_ip']]);
 
 					if (count(@$tl->initialize['blacklisted'])) {
 						$activity = "Attempted connection by blacklisted IP " . $tl->initialize['connecting_ip'] . " intercepted";
-						$attributableOutput = $attributable->capture($activity, null, null, ['domain_alias_id'=>@$tl->page['domain_alias']['cms_id']]);
-						if (!@count($attributableOutput['content']['success'])) emailSystemNotification(__FILE__ . ": " . (is_array($attributableOutput) ? print_r($attributableOutput, true) : $attributableOutput) . (@$logged_in ? " [" . $logged_in['username'] . "]" : false), 'Attributable failure');
 
 						$tl->page['template'] = 'blacklisted';
+
+						$database_manager->updateSingle('ips', ['attempts'=>(floatval($tl->initialize['blacklisted'][0]['attempts']) + 1)], ['ip_id'=>$tl->initialize['blacklisted'][0]['ip_id']]);
 					}
 
 				}
@@ -265,9 +262,6 @@
 							if ($tl->initialize['cron_error']) {
 								$activity = $tl->initialize['cron_error'];
 								$logger->logItInDb($activity, null, null, array('is_error'=>'1', 'is_resolved'=>'0'), true);
-
-								$attributableOutput = $attributable->capture($activity, null, ['user_id'=>$logged_in['user_id'], 'first_name'=>$logged_in['first_name'], 'last_name'=>$logged_in['last_name'], 'email'=>$logged_in['email'], 'phone'=>$logged_in['primary_phone']], ['user_id'=>@$user[0]['user_id'], 'domain_alias_id'=>@$tl->page['domain_alias']['cms_id']], 1);
-								if (!@count($attributableOutput['content']['success'])) emailSystemNotification(__FILE__ . ": " . (is_array($attributableOutput) ? print_r($attributableOutput, true) : $attributableOutput) . (@$logged_in ? " [" . $logged_in['username'] . "]" : false), 'Attributable failure');
 
 								emailSystemNotification($tl->initialize['cron_error'], 'Critical error');
 							}
@@ -307,10 +301,6 @@
 					@$logged_in['rumours_assigned'] += count($result);
 					unset($otherCriteria);
 				}
-
-			// Log session in DB
-				$tl->session['id'] = rand(1,999999999);
-				$database_manager->insert('sessions', ['session_id'=>$tl->session['id'], 'connected_on'=>date('Y-m-d H:i:s'), 'template'=>$_SERVER['REQUEST_URI'], 'user_id'=>@$logged_in['user_id'], 'user_agent'=>$_SERVER['HTTP_USER_AGENT'], 'ip'=>(@$_SERVER['REMOTE_ADDR'] ? $_SERVER['REMOTE_ADDR'] : @$_SERVER['REMOTE_HOST'])]);
 
 			// Execute page-specific controllers
 				if (!@$tl->page['is_cron'] && file_exists(__DIR__ . '/includes/controllers/custom/' . $tl->page['template'] . '.php')) include __DIR__ . '/includes/controllers/custom/' . $tl->page['template'] . '.php';
@@ -425,8 +415,5 @@
 				}
 
 			}
-
-		// clear session in DB
-			$database_manager->deleteSingle('sessions', array('session_id'=>$tl->session['id']));
 
 ?>

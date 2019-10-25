@@ -1,7 +1,7 @@
 RewriteEngine on
 RewriteBase /
-RewriteCond %{HTTPS} !=on
-RewriteRule ^(.*)$ https://%{HTTP_HOST}%{REQUEST_URI} [L,R=301]
+# RewriteCond %{HTTPS} !=on
+# RewriteRule ^(.*)$ https://%{HTTP_HOST}%{REQUEST_URI} [L,R=301]
 RewriteRule ^([0-z|+-]+)/([0-z|+&'",!?@=#;:*\ %-]+)/([0-z|+&'",!?@=#;:*\ %-]+)/([0-z|+&'",!?@=#;:*\ %-]+)/([0-z|+&'",!?@=#;:*\ %-]+)$ /initialize.php?templateName=$1&parameter1=$2&parameter2=$3&parameter3=$4&parameter4=$5 [L]
 RewriteRule ^([0-z|+-]+)/([0-z|+&'",!?@=#;:*\ %-]+)/([0-z|+&'",!?@=#;:*\ %-]+)/([0-z|+&'",!?@=#;:*\ %-]+)/([0-z|+&'",!?@=#;:*\ %-]+)/$ /initialize.php?templateName=$1&parameter1=$2&parameter2=$3&parameter3=$4&parameter4=$5 [L]
 RewriteRule ^([0-z|+-]+)/([0-z|+&'",!?@=#;:*\ %-]+)/([0-z|+&'",!?@=#;:*\ %-]+)/([0-z|+&'",!?@=#;:*\ %-]+)$ /initialize.php?templateName=$1&parameter1=$2&parameter2=$3&parameter3=$4 [L]

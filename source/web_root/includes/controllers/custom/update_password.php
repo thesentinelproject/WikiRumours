@@ -71,9 +71,6 @@
 						else $activity = $logged_in['full_name'] . " has updated his/her own password";
 						$logger->logItInDb($activity, null, array('user_id=' . $logged_in['user_id']));
 
-						$attributableOutput = $attributable->capture($activity, null, ['user_id'=>$logged_in['user_id'], 'first_name'=>$logged_in['first_name'], 'last_name'=>$logged_in['last_name'], 'email'=>$logged_in['email'], 'phone'=>$logged_in['primary_phone']], ['user_id'=>@$user[0]['user_id'], 'domain_alias_id'=>@$tl->page['domain_alias']['cms_id']]);
-						if (!@count($attributableOutput['content']['success'])) emailSystemNotification(__FILE__ . ": " . (is_array($attributableOutput) ? print_r($attributableOutput, true) : $attributableOutput) . (@$logged_in ? " [" . $logged_in['username'] . "]" : false), 'Attributable failure');
-
 					// redirect
 						$authentication_manager->forceRedirect('/profile/' . $user[0]['username'] . '/success=password_updated');
 

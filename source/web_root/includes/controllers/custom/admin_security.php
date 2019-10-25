@@ -5,7 +5,7 @@
 	-------------------------------------- */
 
 	// authenticate user
-		if (!$logged_in['is_administrator'] || !$logged_in['can_update_settings']) $authentication_manager->forceLoginThenRedirectHere(true);
+		if (!$logged_in['is_administrator']) $authentication_manager->forceLoginThenRedirectHere(true);
 
 	// initialize
 		$ip_monitor_widget = new ip_monitor_widget_TL();

@@ -55,9 +55,6 @@
 					$logger->logItInDb($activity, null, array('user_id=' . $logged_in['user_id']));
 				}
 
-				$attributableOutput = $attributable->capture($activity, null, ['user_id'=>$logged_in['user_id'], 'first_name'=>$logged_in['first_name'], 'last_name'=>$logged_in['last_name'], 'email'=>$logged_in['email'], 'phone'=>$logged_in['primary_phone']], ($logged_in['user_id'] != $user[0]['user_id'] ? ['user_id'=>$user[0]['user_id']] : false));
-				if (!@count($attributableOutput['content']['success'])) emailSystemNotification(__FILE__ . ": " . (is_array($attributableOutput) ? print_r($attributableOutput, true) : $attributableOutput) . (@$logged_in ? " [" . $logged_in['username'] . "]" : false), 'Attributable failure');
-
 			// redirect
 				$authentication_manager->forceRedirect('/account/' . $_POST['username'] . '/success=profile_image_deleted');
 									
@@ -178,9 +175,6 @@
 							$activity = $logged_in['full_name'] . " has updated his/her own profile";
 							$logger->logItInDb($activity, null, array('user_id=' . $logged_in['user_id']));
 						}
-
-						$attributableOutput = $attributable->capture($activity, null, ['user_id'=>$logged_in['user_id'], 'first_name'=>$logged_in['first_name'], 'last_name'=>$logged_in['last_name'], 'email'=>$logged_in['email'], 'phone'=>$logged_in['primary_phone']], ($logged_in['user_id'] != $user[0]['user_id'] ? ['user_id'=>$user[0]['user_id']] : false));
-						if (!@count($attributableOutput['content']['success'])) emailSystemNotification(__FILE__ . ": " . (is_array($attributableOutput) ? print_r($attributableOutput, true) : $attributableOutput) . (@$logged_in ? " [" . $logged_in['username'] . "]" : false), 'Attributable failure');
 
 					// redirect
 						if ($logged_in['user_id'] == $user[0]['user_id'] && $_POST['email'] != $user[0]['email']) $authentication_manager->forceRedirect('/account/' . $_POST['username'] . '/success=profile_updated_check_email');

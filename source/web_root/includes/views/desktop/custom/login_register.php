@@ -8,7 +8,7 @@
 		echo "    " . $form->start('loginForm', null, 'post', null, null, array('onSubmit'=>'validateLoginForm(); return false;')) . "\n";
 		/* Username */		echo $form->row('text', 'loginUsername', $operators->firstTrue(@$_POST['loginUsername'], @$_COOKIE['username']), true, 'Username', 'form-control', '', 30) . "\n";
 		/* Honeypot */		echo "<div class='hidden'>\n";
-							echo $form->row('text', 'loginEmail', @$_POST['loginEmail'], false, 'Email') . "\n";
+							echo $form->row('text', 'loginTitle', @$_POST['loginTitle'], false, 'Title') . "\n";
 							echo "</div>\n";
 		/* Password */		echo $form->row('password', 'loginPassword', '', true, 'Password', 'form-control', '', 72) . "\n";
 		/* Actions */		echo $form->rowStart('actions');

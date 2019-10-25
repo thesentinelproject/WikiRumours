@@ -20,8 +20,7 @@
 					
 					$output .= $activity . "\n";
 					
-					if (@$attributableConfig[$currentAttributableCredentials]['API'] && class_exists('attributable')) $attributable->capture($activity, null, ['user_id'=>($tl->page['is_cron'] ? 'CRON' : @$logged_in['user_id'])], null, 1);
-					else $logger->logItInDb($activity, null, null, array('is_error'=>'1', 'is_resolved'=>'0'), true);
+					$logger->logItInDb($activity, null, null, array('is_error'=>'1', 'is_resolved'=>'0'), true);
 
 					emailSystemNotification($activity, 'Critical error');
 				}
@@ -50,8 +49,7 @@
 										
 										$output .= $activity . "\n";
 										
-										if (@$attributableConfig[$currentAttributableCredentials]['API'] && class_exists('attributable')) $attributable->capture($activity, null, ['user_id'=>($tl->page['is_cron'] ? 'CRON' : @$logged_in['user_id'])], null, 1);
-										else $logger->logItInDb($activity, null, null, array('is_error'=>'1', 'is_resolved'=>'0'), true);
+										$logger->logItInDb($activity, null, null, array('is_error'=>'1', 'is_resolved'=>'0'), true);
 
 										emailSystemNotification($activity, 'Critical error');
 									}

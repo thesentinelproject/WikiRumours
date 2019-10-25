@@ -79,9 +79,6 @@
 			// check for errors
 				if (!$url) return false;
 
-			// clear session in DB
-				if (@$tl->session['id']) deleteFromDbSingle('sessions', array('session_id'=>$tl->session['id']));
-
 			// redirect
 				header ('Location: ' . $url);
 				exit;

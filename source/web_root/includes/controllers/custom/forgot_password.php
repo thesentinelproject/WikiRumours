@@ -34,9 +34,6 @@
 						$activity = trim($doesUserExist[0]['first_name'] . ' ' . $doesUserExist[0]['last_name']) . " has requested a password reset";
 						$logger->logItInDb($activity, null, array('user_id=' . $doesUserExist[0]['user_id']));
 
-						$attributableOutput = $attributable->capture($activity, null, ['user_id'=>$doesUserExist[0]['user_id'], 'first_name'=>$doesUserExist[0]['first_name'], 'last_name'=>$doesUserExist[0]['last_name'], 'email'=>$doesUserExist[0]['email'], 'phone'=>$doesUserExist[0]['primary_phone']], ['domain_alias_id'=>@$tl->page['domain_alias']['cms_id']]);
-						if (!@count($attributableOutput['content']['success'])) emailSystemNotification(__FILE__ . ": " . (is_array($attributableOutput) ? print_r($attributableOutput, true) : $attributableOutput), 'Attributable failure');
-
 					// email user
 						$emailSent = emailPasswordResetKey(trim($doesUserExist[0]['first_name'] . ' ' . $doesUserExist[0]['last_name']), addSlashes($_POST['email']), $key);
 						if (!$emailSent) $tl->page['error'] = "Unable to email your password reset link. Please try again, and if you continue to encounter difficulties, <a href='/contact' class='errorMessage'>let us know</a>. ";
