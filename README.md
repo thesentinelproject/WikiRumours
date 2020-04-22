@@ -8,7 +8,7 @@ attribution.
 
 WikiRumours is the brainchild of The Sentinel Project and is
 supporting current efforts in Kenya's Tana Delta:
-http://thesentinelproject.org/how-it-works-una-hakika/
+https://thesentinelproject.org/project/una-hakika/
 
 # Setup and installation
 
