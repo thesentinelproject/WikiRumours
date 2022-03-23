@@ -10,10 +10,47 @@ WikiRumours is the brainchild of The Sentinel Project and is
 supporting current efforts in Kenya's Tana Delta:
 https://thesentinelproject.org/project/una-hakika/
 
+# Local development setup:
+```
+docker-compose up -d
+```
+should get things running - and then you'll need to run:
+```
+make docker-reset
+```
+to load the database in. (You'll need a database dump in `db_setup/wikirumours_msf.sql`)
+or
+```
+make docker-blank-reset
+```
+if you don't have a database dump to work from.
+
+You should then be able to visit the site at http://localhost/ (127.0.0.1)
+
+(You will need to set up `source/config/autoload/db.php` to have:
+```php
+<?php
+
+	// set environment
+		$currentDatabase = 'dev';
+		$tablePrefix = "wr_";
+
+	// define databases
+		$databases = array();
+	
+        $databases['dev'] = array(
+            "Server" => "mysql",
+            "Name" => "wikirumours",
+            "User" => "root",
+            "Password" => "dev-db-root-pass"
+        );
+?>
+```
+
 # Setup and installation
 
 The following steps are required to install and start using an
-instance of WikiRumours.
+full instance of WikiRumours.
 
 - Create a database and import the scheme provided in the
   db_setup folder. Consider using a unique prefix for your
